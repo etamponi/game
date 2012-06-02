@@ -1,0 +1,4 @@
+gamelib
+=======
+
+GAME Core Library
