@@ -1,4 +1,4 @@
-gamelib
+game
 =======
 
-GAME Core Library
+GAME Project
