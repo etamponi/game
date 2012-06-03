@@ -1,15 +1,93 @@
 package game.configuration;
 
+import java.lang.reflect.Field;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.util.LinkedList;
+import java.util.Observable;
+import java.util.Observer;
 
-public abstract class Configurable {
+public abstract class Configurable extends Observable implements Observer {
+	
+	private class Change {
+		private String path;
+		
+		public Change(String path) {
+			this.path = path;
+		}
+		
+		public String getPath() {
+			return path;
+		}
+	}
+	
+	private class RequestForBoundOptions {
+		private LinkedList<String> boundOptions;
+		private String path;
+		
+		public RequestForBoundOptions(LinkedList<String> boundOptions, String path) {
+			this.boundOptions = boundOptions;
+			this.path = path;
+		}
+		
+		public LinkedList<String> getBoundOptions() { return boundOptions; }
+		public String getPath() { return path; }
+	}
+	
+	private class OptionBinding {
+		private String masterPath;
+		private String[] slaves;
+		
+		public OptionBinding(String masterPath, String... slaves) {
+			this.masterPath = masterPath;
+			this.slaves = slaves;
+		}
+		
+		public void updateOnChange(String changedOption) {
+			Object masterContent = Configurable.this.getOption(masterPath);
+			if (changeOnSubpath(masterPath, changedOption)) {
+				for (String slave: slaves)
+					Configurable.this.setOption(slave, masterContent);
+			} else {
+				for (String slave: slaves) {
+					String pathToParent = getParentPath(slave);
+					if (changeOnSubpath(pathToParent, changedOption))
+						Configurable.this.setOption(slave, masterContent);
+				}
+			}
+		}
+		
+		public LinkedList<String> getBoundOptions(String pathToParent) {
+			LinkedList<String> ret = new LinkedList<>();
+			for (String slave: slaves) {
+				if (slave.startsWith(pathToParent)) {
+					String lastpart = slave.replace(pathToParent, "");
+					if (!lastpart.contains("."))
+						ret.add(lastpart);
+				}
+			}
+			return ret;
+		}
+		
+		private boolean changeOnSubpath(String reference, String changePath) {
+			return reference.startsWith(changePath);
+		}
+		
+		private String getParentPath(String optionPath) {
+			int dotIndex = optionPath.lastIndexOf('.');
+			if (dotIndex < 0)
+				return "";
+			else
+				return optionPath.substring(0, dotIndex);
+		}
+	}
 
 	public String name;
 	
-	private LinkedList<String> boundOptions = new LinkedList<>();
+	private LinkedList<OptionBinding> optionBindings = new LinkedList<>();
 	
 	public Configurable() {
-		this.name = String.format("%s%4d", getClass().getSimpleName(), hashCode() % 1000);
+		this.name = String.format("%s%03d", getClass().getSimpleName(), hashCode() % 1000);
 	}
 	
 	public <T> T getOption(String optionPath) {
@@ -17,20 +95,143 @@ public abstract class Configurable {
 			return null;
 		
 		int dotIndex = optionPath.indexOf('.');
+		int firstOptionIndex = dotIndex < 0 ? optionPath.length() : dotIndex;
+		Object object = getLocalOption(optionPath.substring(0, firstOptionIndex));
+		if (dotIndex < 0 || object == null)
+			return (T)object;
+		else
+			return (T)((Configurable)object).getOption(optionPath.substring(firstOptionIndex+1));
+	}
+	
+	public Configurable getParent(String optionPath) {
+		if (optionPath.isEmpty())
+			return null;
+		
+		int dotIndex = optionPath.lastIndexOf('.');
+		if (dotIndex < 0)
+			return this;
+		else
+			return getOption(optionPath.substring(0, dotIndex));
+	}
+	
+	public void setOption(String optionPath, Object content) {
+		if (optionPath.isEmpty())
+			return;
+		
+		Configurable parent = getParent(optionPath);
+		if (parent != null)
+			parent.setLocalOption(optionPath.substring(optionPath.lastIndexOf('.')+1), content);
+	}
+	
+	public LinkedList<String> getUnboundOptionNames() {
+		LinkedList<String> bound = new LinkedList<>();
+		setChanged();
+		notifyObservers(new RequestForBoundOptions(bound, ""));
+		
+		LinkedList<String> ret = getOptionNames();
+		ret.removeAll(bound);
+		return ret;
+	}
+	
+	public LinkedList<String> getOptionNames() {
+		LinkedList<String> ret = new LinkedList<>();
+		for (Field f: getClass().getFields())
+			ret.add(f.getName());
+		return ret;
+	}
+	
+	protected void addOptionBinding(String masterPath, String... slaves) {
+		optionBindings.add(new OptionBinding(masterPath, slaves));
+	}
+	
+	private Object getLocalOption(String optionName) {
 		try {
-			if (dotIndex < 0) {
-				return (T)getClass().getField(optionPath).get(this);
+			Method getter = getMethodByName(getAccessorName("get", optionName));
+			if (getter != null) {
+				return getter.invoke(this);
 			} else {
-				Configurable sub = (Configurable)getClass().getField(optionPath.substring(0, dotIndex)).get(this);
-				if (sub == null)
-					return null;
-				else
-					return sub.getOption(optionPath.substring(dotIndex+1));
+				return getClass().getField(optionName).get(this);
 			}
-		} catch (NoSuchFieldException | SecurityException | IllegalArgumentException | IllegalAccessException e) {
+		} catch (IllegalAccessException | IllegalArgumentException
+				| InvocationTargetException | NoSuchFieldException | SecurityException e) {
 			e.printStackTrace();
 			return null;
 		}
+	}
+	
+	private void setLocalOption(String optionName, Object content) {
+		try {
+			Object oldContent = getLocalOption(optionName);
+			if (oldContent instanceof Configurable) {
+				((Configurable)oldContent).deleteObserver(this);
+			}
+			
+			Method setter = getMethodByName(getAccessorName("set", optionName));
+			if (setter != null) {
+				setter.invoke(this, content);
+			} else {
+				getClass().getField(optionName).set(this, content);
+			}
+			
+			if (content instanceof Configurable) {
+				((Configurable)content).addObserver(this);
+			}
+			
+			checkOptionBindings(optionName);
+			setChanged();
+			notifyObservers(new Change(optionName));
+		} catch (IllegalAccessException | IllegalArgumentException
+				| InvocationTargetException | NoSuchFieldException | SecurityException e) {
+			e.printStackTrace();
+		}
+	}
+	
+	private String getAccessorName(String prefix, String optionName) {
+		return prefix + optionName.substring(0,1).toUpperCase() + optionName.substring(1);
+	}
+	
+	private Method getMethodByName(String methodName) {
+		for (Method method: getClass().getMethods()) {
+			if (method.getName().equals(methodName))
+				return method;
+		}
+		return null;
+	}
+
+	@Override
+	public void update(Observable observedOption, Object message) {
+		if (message instanceof Change) {
+			Change change = (Change)message;
+			String changedOption = getOptionNameFromContent(observedOption) + "." + change.getPath();
+			checkOptionBindings(changedOption);
+			setChanged();
+			notifyObservers(new Change(changedOption));
+		}
+		
+		if (message instanceof RequestForBoundOptions) {
+			RequestForBoundOptions request = (RequestForBoundOptions)message;
+			String pathToParent = getOptionNameFromContent(observedOption) + "." + request.getPath();
+			for (OptionBinding binding: optionBindings) {
+				request.getBoundOptions().addAll(binding.getBoundOptions(pathToParent));
+			}
+		}
+	}
+	
+	private String getOptionNameFromContent(Object content) {
+		try {
+			for (Field field: getClass().getFields()) {
+				if (field.get(this) == content)
+					return field.getName();
+			}
+		} catch (IllegalArgumentException | IllegalAccessException e) {
+			e.printStackTrace();
+		}
+		return null;
+	}
+	
+	private void checkOptionBindings(String changedOption) {
+		for (OptionBinding binding: optionBindings)
+			binding.updateOnChange(changedOption);
 	}
 	
 }
