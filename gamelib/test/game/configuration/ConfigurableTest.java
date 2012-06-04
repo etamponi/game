@@ -66,5 +66,30 @@ public class ConfigurableTest {
 		assertEquals("This is optionB3", object2.getOption("optionC2"));
 		assertEquals("This is the new optionC3", object2.getOption("optionC3"));
 	}
+	
+	@Test
+	public void testConfigurationErrors() {
+		Configurable object = new ConfigurableTestA();
+		object.setOption("optionA3", "Small string");
+		
+		LinkedList<String> errors = new LinkedList<>();
+		errors.add("optionA1: is null");
+		errors.add("optionA2: is null");
+		errors.add("optionA3: should have at least 20 characters");
+		errors.add("optionA4: is null");
+		errors.add("optionA5: is null");
+		assertEquals(5, object.getConfigurationErrors().size());
+		assertTrue(object.getConfigurationErrors().containsAll(errors));
+
+		object.setOption("optionA1", "Option set");
+		object.setOption("optionA2", "Option set");
+		object.setOption("optionA3", "Looooooooooong String!!!");
+		object.setOption("optionA4", new ConfigurableTestB());
+		errors.clear();
+		errors.add("optionA4.optionB3: is null");
+		errors.add("optionA5: is null");
+		assertEquals(2, object.getConfigurationErrors().size());
+		assertTrue(object.getConfigurationErrors().containsAll(errors));
+	}
 
 }

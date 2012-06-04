@@ -87,6 +87,7 @@ public abstract class Configurable extends Observable implements Observer {
 	public String name;
 	
 	private LinkedList<OptionBinding> optionBindings = new LinkedList<>();
+	private HashMap<String, LinkedList<ErrorCheck>> optionChecks = new HashMap<>();
 	
 	public Configurable() {
 		this.name = String.format("%s%03d", getClass().getSimpleName(), hashCode() % 1000);
@@ -154,28 +155,35 @@ public abstract class Configurable extends Observable implements Observer {
 	public LinkedList<String> getConfigurationErrors() {
 		LinkedList<String> ret = new LinkedList<>();
 		
-		try {
-			for (Map.Entry<String, Object> entry: getOptionsMap().entrySet()) {
-				if (entry.getValue() == null) {
-					ret.add(entry.getKey() + ": is null");
-				} else {
-					Method errors = getMethodByName(getAccessorName("errorsOf", entry.getKey()));
-					if (errors != null)
-						ret.addAll(putPrefix(entry.getKey(), (LinkedList<String>)errors.invoke(this)));
-					if (entry.getValue() instanceof Configurable)
-						ret.addAll(putPrefix(entry.getKey(),
-								             ((Configurable)entry.getValue()).getConfigurationErrors()));
+		for (Map.Entry<String, Object> entry: getOptionsMap().entrySet()) {
+			if (entry.getValue() == null) {
+				ret.add(entry.getKey() + ": is null");
+			} else {
+				if (optionChecks.containsKey(entry.getKey())) {
+					for (ErrorCheck check: optionChecks.get(entry.getKey())) {
+						String error = check.getError(entry.getValue());
+						if (error != null)
+							ret.add(entry.getKey() + ": " + error);
+					}
 				}
+				if (entry.getValue() instanceof Configurable)
+					ret.addAll(putPrefix(entry.getKey() + ".",
+							             ((Configurable)entry.getValue()).getConfigurationErrors()));
 			}
-		} catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
-			e.printStackTrace();
 		}
-		
+	
 		return ret;
 	}
 	
 	protected void addOptionBinding(String masterPath, String... slaves) {
 		optionBindings.add(new OptionBinding(masterPath, slaves));
+	}
+	
+	protected void addOptionChecks(String optionName, ErrorCheck... checks) {
+		if (!optionChecks.containsKey(optionName))
+			optionChecks.put(optionName, new LinkedList<ErrorCheck>());
+		for (ErrorCheck check: checks)
+			optionChecks.get(optionName).add(check);
 	}
 	
 	private Object getLocalOption(String optionName) {
@@ -228,7 +236,7 @@ public abstract class Configurable extends Observable implements Observer {
 		LinkedList<String> ret = new LinkedList<>();
 		
 		for (String s: list)
-			ret.add(prefix + "." + s);
+			ret.add(prefix + s);
 		
 		return ret;
 	}
