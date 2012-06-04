@@ -36,7 +36,7 @@ public class ConfigurableTestA extends Configurable {
 		addOptionBinding("optionA2",			"optionA4.optionB2");
 		addOptionBinding("optionA4.optionB3",	"optionA5.optionC2");
 		
-		addOptionCheck("optionA3", new StringLengthCheck(20));
+		addOptionChecks("optionA3", new StringLengthCheck(20));
 	}
 
 }
