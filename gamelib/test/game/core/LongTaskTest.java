@@ -14,7 +14,7 @@ public class LongTaskTest {
 	private static class LongTaskImplB extends LongTask {
 
 		@Override
-		protected void execute(Object... params) {
+		protected Object execute(Object... params) {
 			try {
 				Thread.sleep(100);
 				updateStatus(0.2, "LongTaskImplB slept for 1 seconds");
@@ -27,6 +27,7 @@ public class LongTaskTest {
 				Thread.sleep(100);
 				updateStatus(1.0, "LongTaskImplB slept for 5 seconds");
 			} catch (InterruptedException e) {}
+			return null;
 		}
 		
 	}
@@ -34,7 +35,7 @@ public class LongTaskTest {
 	private static class LongTaskImplA extends LongTask {
 
 		@Override
-		protected void execute(Object... params) {
+		protected Object execute(Object... params) {
 			try {
 				Thread.sleep(100);
 				updateStatus(0.1, "slept for 1 seconds");
@@ -44,10 +45,11 @@ public class LongTaskTest {
 				updateStatus(0.3, "slept for 3 seconds");
 				LongTask other = new LongTaskImplB();
 				other.setOption("name", "OtherTask");
-				startAnotherTaskAndWait(0.8, other);
+				startAnotherTaskAndWait(0.8, other, "subtest");
 				Thread.sleep(100);
 				updateStatus(1.0, "slept for a lot of seconds");
 			} catch (InterruptedException e) {}
+			return null;
 		}
 		
 	}
@@ -61,26 +63,26 @@ public class LongTaskTest {
 			public void update(Observable o, Object m) {
 				if (m instanceof LongTaskUpdate) {
 					LongTask observed = (LongTask)o;
-					System.out.println(String.format("%6.2f%% of %s: %s", observed.getPercentCompleted()*100, observed, observed.getCurrentMessage()));
+					System.out.println(String.format("%6.2f%% of %s: %s", observed.getCurrentPercent()*100, observed, observed.getCurrentMessage()));
 					if (count == 0)
-						assertEquals("start task", observed.getCurrentMessage());
+						assertEquals("start task test", observed.getCurrentMessage());
 					else if (count > 0 && count < 4)
 						assertEquals("slept for " + count + " seconds", observed.getCurrentMessage());
 					else if (count == 4)
-						assertEquals("  0,00% of OtherTask: start task", observed.getCurrentMessage());
+						assertEquals("  0,00% of OtherTask: start task subtest", observed.getCurrentMessage());
 					else if (count > 4 && count < 10)
 						assertEquals(String.format("%6.2f%%", 20.0*(count-4))+" of OtherTask: LongTaskImplB slept for " + (count-4) + " seconds", observed.getCurrentMessage());
 					else if (count == 10)
-						assertEquals("100,00% of OtherTask: task finished", observed.getCurrentMessage());
+						assertEquals("100,00% of OtherTask: task subtest finished", observed.getCurrentMessage());
 					else if (count == 11)
 						assertEquals("slept for a lot of seconds", observed.getCurrentMessage());
 					else
-						assertEquals("task finished", observed.getCurrentMessage());
+						assertEquals("task test finished", observed.getCurrentMessage());
 					count++;
 				}
 			}
 		});
-		task.startTask();
+		task.startTask("test");
 	}
 
 }

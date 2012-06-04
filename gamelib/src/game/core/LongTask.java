@@ -9,37 +9,44 @@ public abstract class LongTask extends Configurable {
 	
 	public class LongTaskUpdate {}
 
-	private double percentCompleted;
+	private String taskType;
+	private double currentPercent;
 	private String currentMessage;
 	
-	protected abstract void execute(Object... params);
+	protected abstract Object execute(Object... params);
 	
-	public void startTask(Object... params) {
-		updateStatus(0.0, "start task");
-		execute(params);
-		updateStatus(1.0, "task finished");
+	public Object startTask(String taskType, Object... params) {
+		this.taskType = taskType;
+		updateStatus(0.0, "start task " + taskType);
+		Object ret = execute(params);
+		updateStatus(1.0, "task " + taskType + " finished");
+		return ret;
 	}
 	
-	public void startAnotherTaskAndWait(double percentAtEnd, LongTask task, Object... params) {
-		final double percentAtStart = percentCompleted;
-		final double ratio = percentAtEnd - percentCompleted;
+	protected void startAnotherTaskAndWait(double percentAtEnd, LongTask task, String taskName, Object... params) {
+		final double percentAtStart = currentPercent;
+		final double ratio = percentAtEnd - percentAtStart;
 		Observer temp = new Observer() {
 			@Override
 			public void update(Observable o, Object m) {
 				if (m instanceof LongTaskUpdate) {
 					LongTask task = (LongTask)o;
-					LongTask.this.updateStatus(percentAtStart + task.getPercentCompleted()*ratio,
-						String.format("%6.2f%% of %s: %s", task.getPercentCompleted()*100, task, task.getCurrentMessage()));
+					LongTask.this.updateStatus(percentAtStart + task.getCurrentPercent()*ratio,
+						String.format("%6.2f%% of %s: %s", task.getCurrentPercent()*100, task, task.getCurrentMessage()));
 				}
 			}
 		};
 		task.addObserver(temp);
-		task.startTask(params);
+		task.startTask(taskName, params);
 		task.deleteObserver(temp);
 	}
 	
-	public double getPercentCompleted() {
-		return percentCompleted;
+	public String getTaskType() {
+		return taskType;
+	}
+	
+	public double getCurrentPercent() {
+		return currentPercent;
 	}
 	
 	public String getCurrentMessage() {
@@ -47,7 +54,7 @@ public abstract class LongTask extends Configurable {
 	}
 	
 	protected void updateStatus(double percentCompleted, String message) {
-		this.percentCompleted = percentCompleted;
+		this.currentPercent = percentCompleted;
 		this.currentMessage = message;
 		setChanged();
 		notifyObservers(new LongTaskUpdate());
