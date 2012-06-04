@@ -15,12 +15,12 @@ public abstract class LongTask extends Configurable {
 	
 	protected abstract Object execute(Object... params);
 	
-	public Object startTask(String taskType, Object... params) {
+	protected <T> T startTask(String taskType, Object... params) {
 		this.taskType = taskType;
 		updateStatus(0.0, "start task " + taskType);
 		Object ret = execute(params);
 		updateStatus(1.0, "task " + taskType + " finished");
-		return ret;
+		return (T)ret;
 	}
 	
 	protected void startAnotherTaskAndWait(double percentAtEnd, LongTask task, String taskName, Object... params) {

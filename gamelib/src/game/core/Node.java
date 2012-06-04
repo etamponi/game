@@ -1,5 +1,7 @@
 package game.core;
 
+import game.configuration.errorchecks.ListOfConfigurablesCheck;
+
 import java.util.LinkedList;
 
 public abstract class Node extends LongTask {
@@ -9,6 +11,10 @@ public abstract class Node extends LongTask {
 	
 	public LinkedList<Node> parents = new LinkedList<>();
 	
+	public Node() {
+		addOptionChecks("parents", new ListOfConfigurablesCheck());
+	}
+	
 	public abstract boolean isTrained();
 	
 	protected abstract double train(Dataset trainingSet);
@@ -16,11 +22,11 @@ public abstract class Node extends LongTask {
 	protected abstract Encoding transform(Object inputData);
 
 	public double startTraining(Dataset trainingSet) {
-		return (double)startTask(TRAIN, trainingSet);
+		return startTask(TRAIN, trainingSet);
 	}
 	
 	public Encoding startTransform(Object inputData) {
-		return (Encoding)startTask(TRANSFORM, inputData);
+		return startTask(TRANSFORM, inputData);
 	}
 	
 	@Override
