@@ -15,9 +15,9 @@ public class ConfigurableTestA extends Configurable {
 	public ConfigurableTestC optionA5;
 	
 	public ConfigurableTestA() {
-		addOptionBinding("optionA1", "optionA4.optionB1", "optionA5.optionC1");
-		addOptionBinding("optionA2", "optionA4.optionB2");
-		addOptionBinding("optionA4.optionB3", "optionA5.optionC2");
+		addOptionBinding("optionA1",			"optionA4.optionB1", "optionA5.optionC1");
+		addOptionBinding("optionA2",			"optionA4.optionB2");
+		addOptionBinding("optionA4.optionB3",	"optionA5.optionC2");
 	}
 
 }

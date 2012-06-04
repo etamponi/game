@@ -1,8 +1,11 @@
 package game.configuration;
 
+import game.configuration.Configurable;
+
 import java.util.LinkedList;
 
 import org.junit.Test;
+
 import static org.junit.Assert.*;
 
 public class ConfigurableTest {

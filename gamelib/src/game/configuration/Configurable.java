@@ -3,7 +3,9 @@ package game.configuration;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.util.HashMap;
 import java.util.LinkedList;
+import java.util.Map;
 import java.util.Observable;
 import java.util.Observer;
 
@@ -140,6 +142,38 @@ public abstract class Configurable extends Observable implements Observer {
 		return ret;
 	}
 	
+	public HashMap<String, Object> getOptionsMap() {
+		HashMap<String, Object> ret = new HashMap<>();
+		
+		for (Field f: getClass().getFields())
+			ret.put(f.getName(), getLocalOption(f.getName()));
+		
+		return ret;
+	}
+	
+	public LinkedList<String> getConfigurationErrors() {
+		LinkedList<String> ret = new LinkedList<>();
+		
+		try {
+			for (Map.Entry<String, Object> entry: getOptionsMap().entrySet()) {
+				if (entry.getValue() == null) {
+					ret.add(entry.getKey() + ": is null");
+				} else {
+					Method errors = getMethodByName(getAccessorName("getErrorsOf", entry.getKey()));
+					if (errors != null)
+						ret.addAll(putPrefix(entry.getKey(), (LinkedList<String>)errors.invoke(this)));
+					if (entry.getValue() instanceof Configurable)
+						ret.addAll(putPrefix(entry.getKey(),
+								             ((Configurable)entry.getValue()).getConfigurationErrors()));
+				}
+			}
+		} catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
+			e.printStackTrace();
+		}
+		
+		return ret;
+	}
+	
 	protected void addOptionBinding(String masterPath, String... slaves) {
 		optionBindings.add(new OptionBinding(masterPath, slaves));
 	}
@@ -177,7 +211,7 @@ public abstract class Configurable extends Observable implements Observer {
 				((Configurable)content).addObserver(this);
 			}
 			
-			checkOptionBindings(optionName);
+			updateOptionBindings(optionName);
 			setChanged();
 			notifyObservers(new Change(optionName));
 		} catch (IllegalAccessException | IllegalArgumentException
@@ -188,6 +222,15 @@ public abstract class Configurable extends Observable implements Observer {
 	
 	private String getAccessorName(String prefix, String optionName) {
 		return prefix + optionName.substring(0,1).toUpperCase() + optionName.substring(1);
+	}
+	
+	private LinkedList<String> putPrefix(String prefix, LinkedList<String> list) {
+		LinkedList<String> ret = new LinkedList<>();
+		
+		for (String s: list)
+			ret.add(prefix + "." + s);
+		
+		return ret;
 	}
 	
 	private Method getMethodByName(String methodName) {
@@ -203,7 +246,8 @@ public abstract class Configurable extends Observable implements Observer {
 		if (message instanceof Change) {
 			Change change = (Change)message;
 			String changedOption = getOptionNameFromContent(observedOption) + "." + change.getPath();
-			checkOptionBindings(changedOption);
+			updateOptionBindings(changedOption);
+			
 			setChanged();
 			notifyObservers(new Change(changedOption));
 		}
@@ -214,6 +258,9 @@ public abstract class Configurable extends Observable implements Observer {
 			for (OptionBinding binding: optionBindings) {
 				request.getBoundOptions().addAll(binding.getBoundOptions(pathToParent));
 			}
+			
+			setChanged();
+			notifyObservers(new RequestForBoundOptions(request.getBoundOptions(), pathToParent));
 		}
 	}
 	
@@ -229,7 +276,7 @@ public abstract class Configurable extends Observable implements Observer {
 		return null;
 	}
 	
-	private void checkOptionBindings(String changedOption) {
+	private void updateOptionBindings(String changedOption) {
 		for (OptionBinding binding: optionBindings)
 			binding.updateOnChange(changedOption);
 	}
