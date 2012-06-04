@@ -174,7 +174,35 @@ public abstract class Configurable extends Observable implements Observer {
 	
 		return ret;
 	}
+
+	@Override
+	public void update(Observable observedOption, Object message) {
+		if (message instanceof Change) {
+			Change change = (Change)message;
+			String changedOption = getOptionNameFromContent(observedOption) + "." + change.getPath();
+			updateOptionBindings(changedOption);
+			
+			setChanged();
+			notifyObservers(new Change(changedOption));
+		}
+		
+		if (message instanceof RequestForBoundOptions) {
+			RequestForBoundOptions request = (RequestForBoundOptions)message;
+			String pathToParent = getOptionNameFromContent(observedOption) + "." + request.getPath();
+			for (OptionBinding binding: optionBindings) {
+				request.getBoundOptions().addAll(binding.getBoundOptions(pathToParent));
+			}
+			
+			setChanged();
+			notifyObservers(new RequestForBoundOptions(request.getBoundOptions(), pathToParent));
+		}
+	}
 	
+	@Override
+	public String toString() {
+		return name;
+	}
+
 	protected void addOptionBinding(String masterPath, String... slaves) {
 		optionBindings.add(new OptionBinding(masterPath, slaves));
 	}
@@ -247,29 +275,6 @@ public abstract class Configurable extends Observable implements Observer {
 				return method;
 		}
 		return null;
-	}
-
-	@Override
-	public void update(Observable observedOption, Object message) {
-		if (message instanceof Change) {
-			Change change = (Change)message;
-			String changedOption = getOptionNameFromContent(observedOption) + "." + change.getPath();
-			updateOptionBindings(changedOption);
-			
-			setChanged();
-			notifyObservers(new Change(changedOption));
-		}
-		
-		if (message instanceof RequestForBoundOptions) {
-			RequestForBoundOptions request = (RequestForBoundOptions)message;
-			String pathToParent = getOptionNameFromContent(observedOption) + "." + request.getPath();
-			for (OptionBinding binding: optionBindings) {
-				request.getBoundOptions().addAll(binding.getBoundOptions(pathToParent));
-			}
-			
-			setChanged();
-			notifyObservers(new RequestForBoundOptions(request.getBoundOptions(), pathToParent));
-		}
 	}
 	
 	private String getOptionNameFromContent(Object content) {
