@@ -159,7 +159,7 @@ public abstract class Configurable extends Observable implements Observer {
 				if (entry.getValue() == null) {
 					ret.add(entry.getKey() + ": is null");
 				} else {
-					Method errors = getMethodByName(getAccessorName("getErrorsOf", entry.getKey()));
+					Method errors = getMethodByName(getAccessorName("errorsOf", entry.getKey()));
 					if (errors != null)
 						ret.addAll(putPrefix(entry.getKey(), (LinkedList<String>)errors.invoke(this)));
 					if (entry.getValue() instanceof Configurable)
