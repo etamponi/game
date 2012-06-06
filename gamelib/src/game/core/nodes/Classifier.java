@@ -11,8 +11,8 @@ public abstract class Classifier extends Node {
 	public Encoder outputEncoder;
 	
 	public Classifier() {
-		addOptionChecks("parents", new SizeCheck(1));
 		addOptionBinding("template.outputTemplate", "outputEncoder.template");
+		addOptionChecks("parents", new SizeCheck(1));
 	}
 
 }

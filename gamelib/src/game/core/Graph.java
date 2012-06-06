@@ -7,6 +7,8 @@ public class Graph extends LongTask {
 	private static final String CLASSIFY = "classify";
 	private static final String CLASSIFYALL = "classifyall";
 	
+	public InstanceTemplate template; 
+	
 	public Classifier finalClassifier;
 	
 	public Decoder decoder;

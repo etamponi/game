@@ -11,7 +11,7 @@ import java.util.Observer;
 
 public abstract class Configurable extends Observable implements Observer {
 	
-	private class Change {
+	protected class Change {
 		private String path;
 		
 		public Change(String path) {
@@ -47,13 +47,13 @@ public abstract class Configurable extends Observable implements Observer {
 		
 		public void updateOnChange(String changedOption) {
 			Object masterContent = Configurable.this.getOption(masterPath);
-			if (changeOnSubpath(masterPath, changedOption)) {
+			if (changeOnPath(masterPath, changedOption)) {
 				for (String slave: slaves)
 					Configurable.this.setOption(slave, masterContent);
 			} else {
 				for (String slave: slaves) {
 					String pathToParent = getParentPath(slave);
-					if (changeOnSubpath(pathToParent, changedOption))
+					if (changeOnPath(pathToParent, changedOption))
 						Configurable.this.setOption(slave, masterContent);
 				}
 			}
@@ -71,8 +71,21 @@ public abstract class Configurable extends Observable implements Observer {
 			return ret;
 		}
 		
-		private boolean changeOnSubpath(String reference, String changePath) {
-			return reference.startsWith(changePath);
+		private boolean changeOnPath(String reference, String changePath) {
+			String[] referenceTokens = reference.split("\\.");
+			String[] changePathTokens = changePath.split("\\.");
+			
+			if (changePathTokens.length > referenceTokens.length)
+				return false;
+			
+			for (int i = 0; i < changePathTokens.length; i++) {
+				if (referenceTokens[i].equals("*"))
+					continue;
+				if (!referenceTokens[i].equals(changePathTokens[i]))
+					return false;
+			}
+			
+			return true;
 		}
 		
 		private String getParentPath(String optionPath) {
@@ -100,13 +113,14 @@ public abstract class Configurable extends Observable implements Observer {
 		int dotIndex = optionPath.indexOf('.');
 		int firstOptionIndex = dotIndex < 0 ? optionPath.length() : dotIndex;
 		Object object = getLocalOption(optionPath.substring(0, firstOptionIndex));
+		
 		if (dotIndex < 0 || object == null)
 			return (T)object;
 		else
 			return (T)((Configurable)object).getOption(optionPath.substring(firstOptionIndex+1));
 	}
 	
-	public Configurable getParent(String optionPath) {
+	/*public Configurable getParent(String optionPath) {
 		if (optionPath.isEmpty())
 			return null;
 		
@@ -115,15 +129,22 @@ public abstract class Configurable extends Observable implements Observer {
 			return this;
 		else
 			return getOption(optionPath.substring(0, dotIndex));
-	}
+	}*/
 	
 	public void setOption(String optionPath, Object content) {
 		if (optionPath.isEmpty())
 			return;
 		
-		Configurable parent = getParent(optionPath);
-		if (parent != null)
-			parent.setLocalOption(optionPath.substring(optionPath.lastIndexOf('.')+1), content);
+		int dotIndex = optionPath.indexOf('.');
+		int firstOptionIndex = dotIndex < 0 ? optionPath.length() : dotIndex;
+		
+		if (dotIndex < 0) {
+			setLocalOption(optionPath, content);
+		} else {
+			Configurable object = getOption(optionPath.substring(0, firstOptionIndex));
+			if (object != null)
+				object.setOption(optionPath.substring(firstOptionIndex+1), content);
+		}
 	}
 	
 	public LinkedList<String> getUnboundOptionNames() {
@@ -180,8 +201,8 @@ public abstract class Configurable extends Observable implements Observer {
 		if (message instanceof Change) {
 			Change change = (Change)message;
 			String changedOption = getOptionNameFromContent(observedOption) + "." + change.getPath();
-			updateOptionBindings(changedOption);
 			
+			updateOptionBindings(changedOption);
 			setChanged();
 			notifyObservers(new Change(changedOption));
 		}
@@ -277,7 +298,7 @@ public abstract class Configurable extends Observable implements Observer {
 		return null;
 	}
 	
-	private String getOptionNameFromContent(Object content) {
+	protected String getOptionNameFromContent(Object content) {
 		try {
 			for (Field field: getClass().getFields()) {
 				if (field.get(this) == content)
@@ -289,7 +310,7 @@ public abstract class Configurable extends Observable implements Observer {
 		return null;
 	}
 	
-	private void updateOptionBindings(String changedOption) {
+	protected void updateOptionBindings(String changedOption) {
 		for (OptionBinding binding: optionBindings)
 			binding.updateOnChange(changedOption);
 	}
