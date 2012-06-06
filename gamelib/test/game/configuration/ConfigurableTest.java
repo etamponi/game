@@ -71,8 +71,16 @@ public class ConfigurableTest {
 		assertEquals("This is optionA1", object.getOption("optionA5.optionC1"));
 		assertEquals("This is optionB3", object2.getOption("optionC2"));
 		assertEquals("This is the new optionC3", object2.getOption("optionC3"));
+		
+		object2 = object.getOption("optionList.0");
+		unbound.clear();
+		unbound.add("name");
+		unbound.add("optionB1");
+		unbound.add("optionB3");
+		assertEquals(3, object2.getUnboundOptionNames().size());
+		assertTrue(object2.getUnboundOptionNames().containsAll(unbound));
 	}
-	/*
+	
 	@Test
 	public void testConfigurationErrors() {
 		Configurable object = new ConfigurableTestA();
@@ -96,6 +104,12 @@ public class ConfigurableTest {
 		errors.add("optionA5: is null");
 		assertEquals(2, object.getConfigurationErrors().size());
 		assertTrue(object.getConfigurationErrors().containsAll(errors));
+		
+		object.setOption("optionList.add", new ConfigurableTestB());
+		errors.add("optionList.0.optionB1: is null");
+		errors.add("optionList.0.optionB3: is null");
+		assertEquals(4, object.getConfigurationErrors().size());
+		assertTrue(object.getConfigurationErrors().containsAll(errors));
 	}
-	*/
+	
 }

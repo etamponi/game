@@ -3,6 +3,7 @@ package game.configuration;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.ListIterator;
 
@@ -10,31 +11,9 @@ public class ConfigurableList<E> extends Configurable implements List<E> {
 	
 	private ArrayList<E> internal = new ArrayList<>();
 	
-	public ConfigurableList() {
-		super();
-	}
-	
 	public ConfigurableList(Configurable owner) {
 		super();
 		this.addObserver(owner);
-	}
-
-	@Override
-	public <T> T getOption(String optionPath) {
-		int dotIndex = optionPath.indexOf('.');
-		int firstOptionIndex = dotIndex < 0 ? optionPath.length() : dotIndex;
-		String firstOption = optionPath.substring(0, firstOptionIndex); 
-		if (firstOption.matches("\\d+")) {
-			int index = Integer.parseInt(firstOption);
-			if (index >= size())
-				return null;
-			Object object = get(index);
-			if (dotIndex < 0)
-				return (T)object;
-			else
-				return ((Configurable)object).getOption(optionPath.substring(firstOptionIndex+1));
-		}
-		return super.getOption(optionPath);
 	}
 
 	@Override
@@ -55,6 +34,14 @@ public class ConfigurableList<E> extends Configurable implements List<E> {
 				super.setOption(optionPath, content);
 			}
 		}
+	}
+
+	@Override
+	public LinkedList<String> getOptionNames() {
+		LinkedList<String> ret = super.getOptionNames();
+		for(int i = 0; i < internal.size(); i++)
+			ret.add(String.valueOf(i));
+		return ret;
 	}
 
 	@Override
@@ -206,6 +193,18 @@ public class ConfigurableList<E> extends Configurable implements List<E> {
 	@Override
 	public <T> T[] toArray(T[] a) {
 		return internal.toArray(a);
+	}
+
+	@Override
+	protected Object getLocalOption(String optionName) {
+		if (optionName.matches("\\d+")) {
+			int index = Integer.parseInt(optionName);
+			if (index >= size())
+				return null;
+			else
+				return get(index);
+		} else
+			return super.getLocalOption(optionName);
 	}
 
 	@Override

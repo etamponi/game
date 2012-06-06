@@ -47,13 +47,13 @@ public abstract class Configurable extends Observable implements Observer {
 		
 		public void updateOnChange(String changedOption) {
 			Object masterContent = Configurable.this.getOption(masterPath);
-			if (changeOnPath(masterPath, changedOption)) {
+			if (isOnPath(masterPath, changedOption)) {
 				for (String slave: slaves)
 					Configurable.this.setOption(slave, masterContent);
 			} else {
 				for (String slave: slaves) {
 					String pathToParent = getParentPath(slave);
-					if (changeOnPath(pathToParent, changedOption))
+					if (isOnPath(pathToParent, changedOption))
 						Configurable.this.setOption(slave, masterContent);
 				}
 			}
@@ -62,16 +62,15 @@ public abstract class Configurable extends Observable implements Observer {
 		public LinkedList<String> getBoundOptions(String pathToParent) {
 			LinkedList<String> ret = new LinkedList<>();
 			for (String slave: slaves) {
-				if (slave.startsWith(pathToParent)) {
-					String lastpart = slave.replace(pathToParent, "");
-					if (!lastpart.contains("."))
-						ret.add(lastpart);
+				if (isOnPath(slave, pathToParent)) {
+					if (slave.split("\\.").length == pathToParent.split("\\.").length+1)
+						ret.add(slave.substring(slave.lastIndexOf('.')+1));
 				}
 			}
 			return ret;
 		}
 		
-		private boolean changeOnPath(String reference, String changePath) {
+		private boolean isOnPath(String reference, String changePath) {
 			String[] referenceTokens = reference.split("\\.");
 			String[] changePathTokens = changePath.split("\\.");
 			
@@ -120,17 +119,6 @@ public abstract class Configurable extends Observable implements Observer {
 			return (T)((Configurable)object).getOption(optionPath.substring(firstOptionIndex+1));
 	}
 	
-	/*public Configurable getParent(String optionPath) {
-		if (optionPath.isEmpty())
-			return null;
-		
-		int dotIndex = optionPath.lastIndexOf('.');
-		if (dotIndex < 0)
-			return this;
-		else
-			return getOption(optionPath.substring(0, dotIndex));
-	}*/
-	
 	public void setOption(String optionPath, Object content) {
 		if (optionPath.isEmpty())
 			return;
@@ -167,14 +155,14 @@ public abstract class Configurable extends Observable implements Observer {
 	public HashMap<String, Object> getOptionsMap() {
 		HashMap<String, Object> ret = new HashMap<>();
 		
-		for (Field f: getClass().getFields())
-			ret.put(f.getName(), getLocalOption(f.getName()));
+		for (String name: getOptionNames())
+			ret.put(name, getLocalOption(name));
 		
 		return ret;
 	}
 	
 	public LinkedList<String> getConfigurationErrors() {
-		LinkedList<String> ret = new LinkedList<>();
+		LinkedList<String> ret = getErrors();
 		
 		for (Map.Entry<String, Object> entry: getOptionsMap().entrySet()) {
 			if (entry.getValue() == null) {
@@ -235,7 +223,7 @@ public abstract class Configurable extends Observable implements Observer {
 			optionChecks.get(optionName).add(check);
 	}
 	
-	private Object getLocalOption(String optionName) {
+	protected Object getLocalOption(String optionName) {
 		try {
 			Method getter = getMethodByName(getAccessorName("get", optionName));
 			if (getter != null) {
@@ -248,6 +236,27 @@ public abstract class Configurable extends Observable implements Observer {
 			e.printStackTrace();
 			return null;
 		}
+	}
+	
+	protected String getOptionNameFromContent(Object content) {
+		try {
+			for (Field field: getClass().getFields()) {
+				if (field.get(this) == content)
+					return field.getName();
+			}
+		} catch (IllegalArgumentException | IllegalAccessException e) {
+			e.printStackTrace();
+		}
+		return null;
+	}
+	
+	protected void updateOptionBindings(String changedOption) {
+		for (OptionBinding binding: optionBindings)
+			binding.updateOnChange(changedOption);
+	}
+	
+	protected LinkedList<String> getErrors() {
+		return new LinkedList<>();
 	}
 	
 	private void setLocalOption(String optionName, Object content) {
@@ -296,23 +305,6 @@ public abstract class Configurable extends Observable implements Observer {
 				return method;
 		}
 		return null;
-	}
-	
-	protected String getOptionNameFromContent(Object content) {
-		try {
-			for (Field field: getClass().getFields()) {
-				if (field.get(this) == content)
-					return field.getName();
-			}
-		} catch (IllegalArgumentException | IllegalAccessException e) {
-			e.printStackTrace();
-		}
-		return null;
-	}
-	
-	protected void updateOptionBindings(String changedOption) {
-		for (OptionBinding binding: optionBindings)
-			binding.updateOnChange(changedOption);
 	}
 	
 }

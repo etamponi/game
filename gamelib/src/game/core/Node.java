@@ -1,19 +1,13 @@
 package game.core;
 
-import game.configuration.errorchecks.ListOfConfigurablesCheck;
-
-import java.util.LinkedList;
+import game.configuration.ConfigurableList;
 
 public abstract class Node extends LongTask {
 
 	private static final String TRAIN = "training";
 	private static final String TRANSFORM = "transforming";
 	
-	public LinkedList<Node> parents = new LinkedList<>();
-	
-	public Node() {
-		addOptionChecks("parents", new ListOfConfigurablesCheck());
-	}
+	public ConfigurableList<Node> parents = new ConfigurableList<>(this);
 	
 	public abstract boolean isTrained();
 	
