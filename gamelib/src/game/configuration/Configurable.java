@@ -11,7 +11,7 @@ import java.util.Observer;
 
 public abstract class Configurable extends Observable implements Observer {
 	
-	protected class Change {
+	public class Change {
 		private String path;
 		
 		public Change(String path) {

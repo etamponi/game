@@ -23,14 +23,14 @@ public class ConfigurableTest {
 		object.setOption("optionA5.optionC3", "This is optionC3");
 		object.setOption("optionList.add", new ConfigurableTestB());
 		object.setOption("optionList.add", new ConfigurableTestB());
-		object.setOption("optionList.0.optionB1", "This is optionB1 of the 0 element of the list");
-		object.setOption("optionList.1.optionB1", "This is optionB1 of the 1 element of the list");
+		object.setOption("optionList.0.optionB1", "This is optionB1 on list.0");
+		object.setOption("optionList.1.optionB1", "This is optionB1 on list.1");
 
 		assertEquals("This is optionA1", object.getOption("optionA1"));
 		assertEquals("This is optionA2", object.getOption("optionA2"));
 		assertEquals("This is optionA3", object.getOption("optionA3"));
-		assertEquals("This is optionB1 of the 0 element of the list", object.getOption("optionList.0.optionB1"));
-		assertEquals("This is optionB1 of the 1 element of the list", object.getOption("optionList.1.optionB1"));
+		assertEquals("This is optionB1 on list.0", object.getOption("optionList.0.optionB1"));
+		assertEquals("This is optionB1 on list.1", object.getOption("optionList.1.optionB1"));
 		assertEquals("This is optionA3", object.getOption("optionList.0.optionB3"));
 		assertEquals("This is optionA3", object.getOption("optionList.1.optionB3"));
 		

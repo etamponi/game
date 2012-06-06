@@ -23,19 +23,7 @@ public class ConfigurableList<E> extends Configurable implements List<E> {
 			for (E element: internal)
 				((Configurable)element).setOption(remainingPath, content);
 		} else {
-			switch (optionPath) {
-			case "add":
-				add((E)content);
-				break;
-			case "remove":
-				if (content instanceof Integer)
-					remove((int)content);
-				else
-					remove(content);
-				break;
-			default:
-				super.setOption(optionPath, content);
-			}
+			super.setOption(optionPath, content);
 		}
 	}
 
@@ -221,13 +209,26 @@ public class ConfigurableList<E> extends Configurable implements List<E> {
 			int index = Integer.parseInt(optionName);
 			if (index < size())
 				set(index, (E)content);
-		} else
-			super.setLocalOption(optionName, content);
+		} else {
+			switch (optionName) {
+			case "add":
+				add((E)content);
+				break;
+			case "remove":
+				if (content instanceof Integer)
+					remove((int)content);
+				else
+					remove(content);
+				break;
+			default:
+				super.setLocalOption(optionName, content);
+			}
+		}
 	}
 
 	@Override
 	protected String getOptionNameFromContent(Object content) {
-		int index = indexOf(content);
+		int index = internal.indexOf(content);
 		if (index < 0)
 			return super.getOptionNameFromContent(content);
 		else
