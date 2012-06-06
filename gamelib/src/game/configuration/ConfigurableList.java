@@ -28,7 +28,10 @@ public class ConfigurableList<E> extends Configurable implements List<E> {
 				add((E)content);
 				break;
 			case "remove":
-				remove(content);
+				if (content instanceof Integer)
+					remove((int)content);
+				else
+					remove(content);
 				break;
 			default:
 				super.setOption(optionPath, content);
@@ -172,6 +175,11 @@ public class ConfigurableList<E> extends Configurable implements List<E> {
 				((Configurable)element).addObserver(this);
 		}
 		
+		String indexString = String.valueOf(index);
+		updateOptionBindings(indexString);
+		setChanged();
+		notifyObservers(new Change(indexString));
+		
 		return ret;
 	}
 
@@ -199,12 +207,22 @@ public class ConfigurableList<E> extends Configurable implements List<E> {
 	protected Object getLocalOption(String optionName) {
 		if (optionName.matches("\\d+")) {
 			int index = Integer.parseInt(optionName);
-			if (index >= size())
-				return null;
-			else
+			if (index < size())
 				return get(index);
+			else
+				return null;
 		} else
 			return super.getLocalOption(optionName);
+	}
+
+	@Override
+	protected void setLocalOption(String optionName, Object content) {
+		if (optionName.matches("\\d+")) {
+			int index = Integer.parseInt(optionName);
+			if (index < size())
+				set(index, (E)content);
+		} else
+			super.setLocalOption(optionName, content);
 	}
 
 	@Override

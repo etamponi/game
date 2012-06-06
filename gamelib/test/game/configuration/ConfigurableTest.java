@@ -1,10 +1,12 @@
 package game.configuration;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+
 import java.util.LinkedList;
+import java.util.List;
 
 import org.junit.Test;
-
-import static org.junit.Assert.*;
 
 public class ConfigurableTest {
 
@@ -29,8 +31,16 @@ public class ConfigurableTest {
 		assertEquals("This is optionA3", object.getOption("optionA3"));
 		assertEquals("This is optionB1 of the 0 element of the list", object.getOption("optionList.0.optionB1"));
 		assertEquals("This is optionB1 of the 1 element of the list", object.getOption("optionList.1.optionB1"));
-		assertEquals("This is optionA3", object.getOption("optionList.0.optionB2"));
-		assertEquals("This is optionA3", object.getOption("optionList.1.optionB2"));
+		assertEquals("This is optionA3", object.getOption("optionList.0.optionB3"));
+		assertEquals("This is optionA3", object.getOption("optionList.1.optionB3"));
+		
+		object.setOption("optionList.1", new ConfigurableTestB());
+		assertEquals("This is optionA3", object.getOption("optionList.1.optionB3"));
+
+		object.setOption("optionList.remove", 1);
+		object.setOption("optionList.remove", object.getOption("optionList.0"));
+		assertEquals(0, ((List)object.getOption("optionList")).size());
+		object.setOption("optionList.add", new ConfigurableTestB());
 
 		object2 = object.getOption("optionA4");
 		LinkedList<String> unbound = new LinkedList<>();
@@ -76,7 +86,7 @@ public class ConfigurableTest {
 		unbound.clear();
 		unbound.add("name");
 		unbound.add("optionB1");
-		unbound.add("optionB3");
+		unbound.add("optionB2");
 		assertEquals(3, object2.getUnboundOptionNames().size());
 		assertTrue(object2.getUnboundOptionNames().containsAll(unbound));
 	}
@@ -107,7 +117,7 @@ public class ConfigurableTest {
 		
 		object.setOption("optionList.add", new ConfigurableTestB());
 		errors.add("optionList.0.optionB1: is null");
-		errors.add("optionList.0.optionB3: is null");
+		errors.add("optionList.0.optionB2: is null");
 		assertEquals(4, object.getConfigurationErrors().size());
 		assertTrue(object.getConfigurationErrors().containsAll(errors));
 	}

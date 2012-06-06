@@ -238,28 +238,7 @@ public abstract class Configurable extends Observable implements Observer {
 		}
 	}
 	
-	protected String getOptionNameFromContent(Object content) {
-		try {
-			for (Field field: getClass().getFields()) {
-				if (field.get(this) == content)
-					return field.getName();
-			}
-		} catch (IllegalArgumentException | IllegalAccessException e) {
-			e.printStackTrace();
-		}
-		return null;
-	}
-	
-	protected void updateOptionBindings(String changedOption) {
-		for (OptionBinding binding: optionBindings)
-			binding.updateOnChange(changedOption);
-	}
-	
-	protected LinkedList<String> getErrors() {
-		return new LinkedList<>();
-	}
-	
-	private void setLocalOption(String optionName, Object content) {
+	protected void setLocalOption(String optionName, Object content) {
 		try {
 			Object oldContent = getLocalOption(optionName);
 			if (oldContent instanceof Configurable) {
@@ -284,6 +263,27 @@ public abstract class Configurable extends Observable implements Observer {
 				| InvocationTargetException | NoSuchFieldException | SecurityException e) {
 			e.printStackTrace();
 		}
+	}
+	
+	protected String getOptionNameFromContent(Object content) {
+		try {
+			for (Field field: getClass().getFields()) {
+				if (field.get(this) == content)
+					return field.getName();
+			}
+		} catch (IllegalArgumentException | IllegalAccessException e) {
+			e.printStackTrace();
+		}
+		return null;
+	}
+	
+	protected void updateOptionBindings(String changedOption) {
+		for (OptionBinding binding: optionBindings)
+			binding.updateOnChange(changedOption);
+	}
+	
+	protected LinkedList<String> getErrors() {
+		return new LinkedList<>();
 	}
 	
 	private String getAccessorName(String prefix, String optionName) {
