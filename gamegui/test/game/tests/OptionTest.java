@@ -1,13 +1,15 @@
 package game.tests;
 
-import javafx.application.Application;
-import javafx.stage.Stage;
+import static org.junit.Assert.assertEquals;
 import game.configuration.Configurable;
 import game.editorsystem.Editor;
 import game.editorsystem.Option;
+import game.plugins.editors.NumberEditor;
+import javafx.application.Application;
+import javafx.scene.control.TextField;
+import javafx.stage.Stage;
 
 import org.junit.Test;
-import static org.junit.Assert.*;
 
 public class OptionTest extends Application {
 	
@@ -38,7 +40,7 @@ public class OptionTest extends Application {
 	}
 
 	@Test
-	public void test() {
+	public void test() throws Exception {
 		launch();
 	}
 
@@ -48,9 +50,9 @@ public class OptionTest extends Application {
 		
 		Option option = new Option(object, "optionA3");
 		
-		System.out.println(Number.class.isAssignableFrom(double.class));
-		
 		Editor best = option.getBestEditor();
+		assertEquals(NumberEditor.class, best.getClass());
+		best.setModel(option);
 		
 		System.exit(0);
 	}

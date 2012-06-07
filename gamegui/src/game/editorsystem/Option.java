@@ -63,7 +63,7 @@ public class Option {
 		Set<Class> currents = new HashSet<>();
 		currents.add(target);
 		int d = 0;
-		while(!currents.contains(origin)) {
+		while(!currents.contains(origin) && !currents.isEmpty()) {
 			currents = findAllParents(currents);
 			d++;
 		}

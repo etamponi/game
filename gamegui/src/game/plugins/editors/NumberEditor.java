@@ -25,4 +25,10 @@ public class NumberEditor extends TextFieldEditor {
 		return Number.class;
 	}
 
+	@Override
+	public boolean canEdit(Class type) {
+		return super.canEdit(type)
+				|| (type.isPrimitive() && !type.equals(boolean.class));
+	}
+
 }
