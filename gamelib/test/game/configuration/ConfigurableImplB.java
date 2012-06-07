@@ -2,7 +2,7 @@ package game.configuration;
 
 import game.configuration.Configurable;
 
-public class ConfigurableTestB extends Configurable {
+public class ConfigurableImplB extends Configurable {
 
 	public String optionB1;
 	

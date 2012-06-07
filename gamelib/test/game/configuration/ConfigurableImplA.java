@@ -2,7 +2,7 @@ package game.configuration;
 
 
 
-public class ConfigurableTestA extends Configurable {
+public class ConfigurableImplA extends Configurable {
 	
 	public String optionA1;
 	
@@ -10,11 +10,11 @@ public class ConfigurableTestA extends Configurable {
 	
 	public String optionA3;
 	
-	public ConfigurableTestB optionA4;
+	public ConfigurableImplB optionA4;
 	
-	public ConfigurableTestC optionA5;
+	public ConfigurableImplC optionA5;
 	
-	public ConfigurableList<ConfigurableTestB> optionList = new ConfigurableList<>(this);
+	public ConfigurableList<ConfigurableImplB> optionList = new ConfigurableList<>(this);
 	
 	private class StringLengthCheck implements ErrorCheck<String> {
 		
@@ -34,7 +34,7 @@ public class ConfigurableTestA extends Configurable {
 
 	}
 	
-	public ConfigurableTestA() {
+	public ConfigurableImplA() {
 		addOptionBinding("optionA1",			"optionA4.optionB1", "optionA5.optionC1");
 		addOptionBinding("optionA2",			"optionA4.optionB2");
 		addOptionBinding("optionA4.optionB3",	"optionA5.optionC2");

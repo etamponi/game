@@ -193,6 +193,15 @@ public abstract class Configurable extends Observable implements Observer {
 	public Set<Object> getCompatibleOptionInstances(String optionName, PluginManager manager) {
 		return manager.getCompatibleInstancesOf(getOptionType(optionName), getOptionConstraint(optionName));
 	}
+	
+	public Class getOptionType(String optionName) {
+		try {
+			return getClass().getField(optionName).getType();
+		} catch (NoSuchFieldException | SecurityException e) {
+			e.printStackTrace();
+			return null;
+		}
+	}
 
 	@Override
 	public void update(Observable observedOption, Object message) {
@@ -301,15 +310,6 @@ public abstract class Configurable extends Observable implements Observer {
 	protected void updateOptionBindings(String changedOption) {
 		for (OptionBinding binding: optionBindings)
 			binding.updateOnChange(changedOption);
-	}
-	
-	protected Class getOptionType(String optionName) {
-		try {
-			return getClass().getField(optionName).getType();
-		} catch (NoSuchFieldException | SecurityException e) {
-			e.printStackTrace();
-			return null;
-		}
 	}
 	
 	protected LinkedList<String> getErrors() {

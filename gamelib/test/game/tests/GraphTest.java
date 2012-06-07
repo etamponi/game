@@ -1,8 +1,13 @@
-package game.core;
+package game.tests;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 import game.configuration.Configurable;
+import game.core.Dataset;
+import game.core.Decoder;
+import game.core.Encoding;
+import game.core.Graph;
+import game.core.InstanceTemplate;
 import game.core.datatemplates.LabelTemplate;
 import game.core.datatemplates.VectorTemplate;
 import game.core.nodes.Classifier;
@@ -107,7 +112,7 @@ public class GraphTest {
 	@Test
 	public void test() {
 		PluginManager manager = new PluginManager();
-		manager.setOption("packages.add", "game.core");
+		manager.setOption("packages.add", "game.tests");
 		
 		Graph graph = new Graph();
 		
@@ -166,7 +171,7 @@ public class GraphTest {
 		assertEquals(graph.getOption("template.inputTemplate"), object.getOption("0.template"));
 	}
 	
-	private Set<Class> classSet(Set<Object> set) {
+	private Set<Class> classSet(Set set) {
 		Set<Class> ret = new HashSet<>();
 		for (Object o: set)
 			ret.add(o.getClass());

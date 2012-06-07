@@ -1,7 +1,8 @@
-package game.core;
+package game.tests;
 
 import static org.junit.Assert.*;
 
+import game.core.LongTask;
 import game.core.LongTask.LongTaskUpdate;
 
 import java.util.Observable;
@@ -52,11 +53,16 @@ public class LongTaskTest {
 			return null;
 		}
 		
+		public Object startTest() {
+			return startTask("test");
+		}
+		
 	}
 
 	@Test
 	public void test() {
-		LongTask task = new LongTaskImplA();
+		LongTaskImplA task = new LongTaskImplA();
+		task.setOption("name", "MainTask");
 		task.addObserver(new Observer() {
 			private int count = 0;
 			@Override
@@ -82,7 +88,7 @@ public class LongTaskTest {
 				}
 			}
 		});
-		task.startTask("test");
+		task.startTest();
 	}
 
 }

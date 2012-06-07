@@ -1,7 +1,12 @@
-package game.configuration;
+package game.tests;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
+
+import game.configuration.Configurable;
+import game.configuration.ConfigurableImplA;
+import game.configuration.ConfigurableImplB;
+import game.configuration.ConfigurableImplC;
 
 import java.util.LinkedList;
 import java.util.List;
@@ -12,17 +17,17 @@ public class ConfigurableTest {
 
 	@Test
 	public void testConfigurable() {
-		Configurable object = new ConfigurableTestA(), object2;
+		Configurable object = new ConfigurableImplA(), object2;
 		
-		object.setOption("optionA4", new ConfigurableTestB());
+		object.setOption("optionA4", new ConfigurableImplB());
 		object.setOption("optionA1", "This is optionA1");
-		object.setOption("optionA5", new ConfigurableTestC());
+		object.setOption("optionA5", new ConfigurableImplC());
 		object.setOption("optionA2", "This is optionA2");
 		object.setOption("optionA3", "This is optionA3");
 		object.setOption("optionA4.optionB3", "This is optionB3");
 		object.setOption("optionA5.optionC3", "This is optionC3");
-		object.setOption("optionList.add", new ConfigurableTestB());
-		object.setOption("optionList.add", new ConfigurableTestB());
+		object.setOption("optionList.add", new ConfigurableImplB());
+		object.setOption("optionList.add", new ConfigurableImplB());
 		object.setOption("optionList.0.optionB1", "This is optionB1 on list.0");
 		object.setOption("optionList.1.optionB1", "This is optionB1 on list.1");
 
@@ -34,13 +39,13 @@ public class ConfigurableTest {
 		assertEquals("This is optionA3", object.getOption("optionList.0.optionB3"));
 		assertEquals("This is optionA3", object.getOption("optionList.1.optionB3"));
 		
-		object.setOption("optionList.1", new ConfigurableTestB());
+		object.setOption("optionList.1", new ConfigurableImplB());
 		assertEquals("This is optionA3", object.getOption("optionList.1.optionB3"));
 
 		object.setOption("optionList.remove", 1);
 		object.setOption("optionList.remove", object.getOption("optionList.0"));
 		assertEquals(0, ((List)object.getOption("optionList")).size());
-		object.setOption("optionList.add", new ConfigurableTestB());
+		object.setOption("optionList.add", new ConfigurableImplB());
 
 		object2 = object.getOption("optionA4");
 		LinkedList<String> unbound = new LinkedList<>();
@@ -63,7 +68,7 @@ public class ConfigurableTest {
 		assertEquals("This is optionB3", object2.getOption("optionC2"));
 		assertEquals("This is optionC3", object2.getOption("optionC3"));
 		
-		object.setOption("optionA5", new ConfigurableTestC());
+		object.setOption("optionA5", new ConfigurableImplC());
 		object.setOption("optionA5.optionC3", "This is the new optionC3");
 		
 		assertEquals(4, object2.getUnboundOptionNames().size());
@@ -93,7 +98,7 @@ public class ConfigurableTest {
 	
 	@Test
 	public void testConfigurationErrors() {
-		Configurable object = new ConfigurableTestA();
+		Configurable object = new ConfigurableImplA();
 		object.setOption("optionA3", "Small string");
 		
 		LinkedList<String> errors = new LinkedList<>();
@@ -108,14 +113,14 @@ public class ConfigurableTest {
 		object.setOption("optionA1", "Option set");
 		object.setOption("optionA2", "Option set");
 		object.setOption("optionA3", "Looooooooooong String!!!");
-		object.setOption("optionA4", new ConfigurableTestB());
+		object.setOption("optionA4", new ConfigurableImplB());
 		errors.clear();
 		errors.add("optionA4.optionB3: is null");
 		errors.add("optionA5: is null");
 		assertEquals(2, object.getConfigurationErrors().size());
 		assertTrue(object.getConfigurationErrors().containsAll(errors));
 		
-		object.setOption("optionList.add", new ConfigurableTestB());
+		object.setOption("optionList.add", new ConfigurableImplB());
 		errors.add("optionList.0.optionB1: is null");
 		errors.add("optionList.0.optionB2: is null");
 		assertEquals(4, object.getConfigurationErrors().size());

@@ -1,8 +1,15 @@
-package game.plugins;
+package game.tests;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 import game.base.Subparent;
+import game.plugins.ChildAA;
+import game.plugins.ChildB;
+import game.plugins.ChildC;
+import game.plugins.Constraint;
+import game.plugins.Interface;
+import game.plugins.Parent;
+import game.plugins.PluginManager;
 import game.plugins.subpack.ChildD;
 
 import java.util.HashSet;
@@ -23,6 +30,7 @@ public class PluginManagerTest {
 	@Test
 	public void test() {
 		PluginManager manager = new PluginManager();
+		manager.setOption("packages.add", "game.tests");
 		
 		Set<Class> set = classSet(manager.getInstancesOf(Parent.class));
 		Set<Class> real = new HashSet<>();
@@ -57,7 +65,7 @@ public class PluginManagerTest {
 		assertTrue(set.containsAll(real));
 	}
 	
-	private Set<Class> classSet(Set<Object> set) {
+	private Set<Class> classSet(Set set) {
 		Set<Class> ret = new HashSet<>();
 		for (Object o: set)
 			ret.add(o.getClass());

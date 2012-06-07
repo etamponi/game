@@ -39,6 +39,16 @@ public class ConfigurableList<E> extends Configurable implements List<E> {
 	}
 
 	@Override
+	public Class getOptionType(String optionName) {
+		if (optionName.equals("*") || optionName.matches("\\d+")) {
+			ParameterizedType type = (ParameterizedType)getClass().getGenericSuperclass();
+			return (Class)type.getActualTypeArguments()[0];
+		} else {
+			return super.getOptionType(optionName);
+		}
+	}
+
+	@Override
 	public boolean add(E e) {
 		add(internal.size(), e);
 		return true;
@@ -244,16 +254,6 @@ public class ConfigurableList<E> extends Configurable implements List<E> {
 			return super.getOptionConstraint("*");
 		else
 			return super.getOptionConstraint(optionName);
-	}
-
-	@Override
-	protected Class getOptionType(String optionName) {
-		if (optionName.equals("*") || optionName.matches("\\d+")) {
-			ParameterizedType type = (ParameterizedType)getClass().getGenericSuperclass();
-			return (Class)type.getActualTypeArguments()[0];
-		} else {
-			return super.getOptionType(optionName);
-		}
 	}
 
 }

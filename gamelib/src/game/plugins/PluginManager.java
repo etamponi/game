@@ -3,6 +3,7 @@ package game.plugins;
 import game.configuration.Configurable;
 import game.configuration.ConfigurableList;
 import game.configuration.errorchecks.ListMustContainCheck;
+import game.utils.Utils;
 
 import java.lang.reflect.Modifier;
 import java.net.MalformedURLException;
@@ -64,23 +65,24 @@ public class PluginManager extends Configurable {
 			conf.addClassLoader(loader);
 		}
 		
+		FilterBuilder filter = new FilterBuilder();
 		for (String p: packages) {
-			conf.filterInputsBy(new FilterBuilder().include(FilterBuilder.prefix(p)));
+			filter.include(FilterBuilder.prefix(p));
 		}
+		conf.filterInputsBy(filter);
 		
 		conf.addUrls(ClasspathHelper.forClassLoader());
 		
 		internal = new Reflections(conf);
 	}
 	
-	public <T> Set<Object> getInstancesOf(Class<T> base) {
+	public <T> Set<T> getInstancesOf(Class<T> base) {
 		Set<Class<? extends T>> all = internal.getSubTypesOf(base);
-		Set<Object> ret = new HashSet<>();
+		Set<T> ret = new HashSet<>();
 		
 		try {
-			for (Class c: all) {
-			if (!Modifier.isInterface(c.getModifiers()) && !Modifier.isAbstract(c.getModifiers())
-					&& Modifier.isPublic(c.getModifiers())
+			for (Class<? extends T> c: all) {
+			if (Utils.isConcrete(c)	&& Modifier.isPublic(c.getModifiers())
 					&& (c.getEnclosingClass() == null || Modifier.isStatic(c.getModifiers())))
 				
 					ret.add(c.newInstance());
@@ -93,11 +95,11 @@ public class PluginManager extends Configurable {
 		return ret;
 	}
 	
-	public <T> Set<Object> getCompatibleInstancesOf(Class<T> base, Constraint c) {
-		Set<Object> all = getInstancesOf(base);
-		Set<Object> ret = new HashSet<>();
+	public <T> Set<T> getCompatibleInstancesOf(Class<T> base, Constraint c) {
+		Set<T> all = getInstancesOf(base);
+		Set<T> ret = new HashSet<>();
 		
-		for (Object o: all) {
+		for (T o: all) {
 			if (c.isValid(o))
 				ret.add(o);
 		}
