@@ -58,7 +58,6 @@ public class PluginManager extends Configurable {
 					urls[i++] = new URI(path).toURL();
 				loader = new URLClassLoader(urls, getClass().getClassLoader());
 			} catch (MalformedURLException | URISyntaxException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 			
