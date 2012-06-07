@@ -16,7 +16,6 @@ import java.util.Observer;
 import java.util.Set;
 
 import org.reflections.Reflections;
-import org.reflections.scanners.SubTypesScanner;
 import org.reflections.util.ClasspathHelper;
 import org.reflections.util.ConfigurationBuilder;
 import org.reflections.util.FilterBuilder;
@@ -56,21 +55,20 @@ public class PluginManager extends Configurable {
 				int i = 0;
 				for(String path: paths)
 					urls[i++] = new URI(path).toURL();
-				loader = new URLClassLoader(urls);
+				loader = new URLClassLoader(urls, getClass().getClassLoader());
 			} catch (MalformedURLException | URISyntaxException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 			
 			conf.addClassLoader(loader);
-			conf.addUrls(ClasspathHelper.forClassLoader(loader));
 		}
 		
-		for (String p: packages)
-			conf.filterInputsBy(new FilterBuilder().include(p));
+		for (String p: packages) {
+			conf.filterInputsBy(new FilterBuilder().include(FilterBuilder.prefix(p)));
+		}
 		
 		conf.addUrls(ClasspathHelper.forClassLoader());
-		conf.addScanners(new SubTypesScanner());
 		
 		internal = new Reflections(conf);
 	}

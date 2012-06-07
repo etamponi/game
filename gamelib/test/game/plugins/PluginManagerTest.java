@@ -1,5 +1,7 @@
 package game.plugins;
 
+import game.plugins.subpack.ChildD;
+
 import java.util.HashSet;
 import java.util.Set;
 
@@ -16,9 +18,16 @@ public class PluginManagerTest {
 		Set<Class> real = new HashSet<>();
 		real.add(ChildAA.class);
 		real.add(ChildB.class);
-		assertEquals(2, set.size());
+		real.add(ChildD.class);
+		assertEquals(3, set.size());
 		assertTrue(set.containsAll(set));
 		
+		set = manager.getImplementationsOf(Interface.class);
+		real.clear();
+		real.add(ChildAA.class);
+		real.add(ChildC.class);
+		assertEquals(2, set.size());
+		assertTrue(set.containsAll(real));
 	}
 
 }
