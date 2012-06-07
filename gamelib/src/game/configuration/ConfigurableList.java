@@ -1,11 +1,15 @@
 package game.configuration;
 
+import game.plugins.PluginManager;
+
+import java.lang.reflect.ParameterizedType;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.ListIterator;
+import java.util.Set;
 
 public class ConfigurableList<E> extends Configurable implements List<E> {
 	
@@ -33,6 +37,21 @@ public class ConfigurableList<E> extends Configurable implements List<E> {
 		for(int i = 0; i < internal.size(); i++)
 			ret.add(String.valueOf(i));
 		return ret;
+	}
+
+	@Override
+	public Set<Class> getCompatibleOptionTypes(String optionName, PluginManager manager) {
+		if (optionName.equals("*") || optionName.matches("\\d+")) {
+			ParameterizedType type = (ParameterizedType)getClass().getGenericSuperclass();
+			Class base = (Class)type.getActualTypeArguments()[0];
+			if (optionConstraints.containsKey(optionName))
+				return manager.getCompatibleImplementationsOf(base, optionConstraints.get(optionName));
+			else if (optionConstraints.containsKey("*"))
+				return manager.getCompatibleImplementationsOf(base, optionConstraints.get("*"));
+			else
+				return manager.getImplementationsOf(base);
+		}
+		return super.getCompatibleOptionTypes(optionName, manager);
 	}
 
 	@Override

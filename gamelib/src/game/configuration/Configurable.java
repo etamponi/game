@@ -1,5 +1,8 @@
 package game.configuration;
 
+import game.plugins.Constraint;
+import game.plugins.PluginManager;
+
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -8,6 +11,7 @@ import java.util.LinkedList;
 import java.util.Map;
 import java.util.Observable;
 import java.util.Observer;
+import java.util.Set;
 
 public abstract class Configurable extends Observable implements Observer {
 	
@@ -100,6 +104,7 @@ public abstract class Configurable extends Observable implements Observer {
 	
 	private LinkedList<OptionBinding> optionBindings = new LinkedList<>();
 	private HashMap<String, LinkedList<ErrorCheck>> optionChecks = new HashMap<>();
+	protected HashMap<String, Constraint> optionConstraints = new HashMap<>();
 	
 	public Configurable() {
 		this.name = String.format("%s%03d", getClass().getSimpleName(), hashCode() % 1000);
@@ -183,6 +188,20 @@ public abstract class Configurable extends Observable implements Observer {
 	
 		return ret;
 	}
+	
+	public Set<Class> getCompatibleOptionTypes(String optionName, PluginManager manager) {
+		try {
+			Class base = getClass().getField(optionName).getType();
+			if (optionConstraints.containsKey(optionName))
+				return manager.getCompatibleImplementationsOf(base, optionConstraints.get(optionName));
+			else
+				return manager.getImplementationsOf(base);
+		} catch (NoSuchFieldException | SecurityException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			return null;
+		}
+	}
 
 	@Override
 	public void update(Observable observedOption, Object message) {
@@ -221,6 +240,10 @@ public abstract class Configurable extends Observable implements Observer {
 			optionChecks.put(optionName, new LinkedList<ErrorCheck>());
 		for (ErrorCheck check: checks)
 			optionChecks.get(optionName).add(check);
+	}
+	
+	protected void setOptionConstraint(String optionName, Constraint c) {
+		optionConstraints.put(optionName, c);
 	}
 	
 	protected Object getLocalOption(String optionName) {

@@ -9,12 +9,14 @@ import org.junit.Test;
 public class EncoderTest {
 	
 	private static class EncoderTestA extends Encoder<VectorTemplate> {
-
 		@Override
 		protected Encoding transform(Object inputData) {
 			return null;
 		}
-		
+		@Override
+		public Class getBaseTemplateClass() {
+			return VectorTemplate.class;
+		}
 	}
 
 	@Test

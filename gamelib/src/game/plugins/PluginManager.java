@@ -78,8 +78,29 @@ public class PluginManager extends Configurable {
 		Set<Class> ret = new HashSet<>();
 		
 		for (Class c: all) {
-			if (!Modifier.isAbstract(c.getModifiers()) && !Modifier.isInterface(c.getModifiers()))
+			if (Modifier.isPublic(c.getModifiers()) 
+					&& !Modifier.isInterface(c.getModifiers())
+					&& !Modifier.isAbstract(c.getModifiers())
+					&& (c.getEnclosingClass() == null || Modifier.isStatic(c.getModifiers())))
 				ret.add(c);
+		}
+		
+		return ret;
+	}
+	
+	public <T> Set<Class> getCompatibleImplementationsOf(Class<T> base, Constraint c) {
+		Set<Class> all = getImplementationsOf(base);
+		Set<Class> ret = new HashSet<>();
+		
+		try {
+			for (Class cls: all) {
+				Object o = cls.newInstance();
+				if (c.isValid(o))
+					ret.add(cls);
+			}
+		} catch (InstantiationException | IllegalAccessException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		}
 		
 		return ret;

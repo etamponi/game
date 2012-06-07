@@ -1,7 +1,5 @@
 package game.core.nodes;
 
-import java.lang.reflect.ParameterizedType;
-
 import game.configuration.errorchecks.SizeCheck;
 import game.core.DataTemplate;
 import game.core.Dataset;
@@ -25,9 +23,6 @@ public abstract class Encoder<DT extends DataTemplate> extends Node {
 		throw new UnsupportedOperationException("You cannot train an Encoder!");
 	}
 	
-	public Class getBaseTemplateClass() {
-		ParameterizedType type = (ParameterizedType)getClass().getGenericSuperclass();
-		return (Class)type.getActualTypeArguments()[0];
-	}
+	public abstract Class getBaseTemplateClass();
 
 }

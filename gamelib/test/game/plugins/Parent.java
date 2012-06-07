@@ -1,5 +1,7 @@
 package game.plugins;
 
-public abstract class Parent {
+import game.base.Subparent;
+
+public abstract class Parent extends Subparent {
 	
 }

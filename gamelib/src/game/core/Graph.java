@@ -1,12 +1,29 @@
 package game.core;
 
-import java.util.LinkedList;
-
+import game.configuration.Configurable;
 import game.configuration.ConfigurableList;
 import game.core.nodes.Classifier;
 import game.core.nodes.Encoder;
+import game.plugins.constraints.CompatibleDecoderConstraint;
+import game.plugins.constraints.CompatibleEncoderConstraint;
+
+import java.util.LinkedList;
 
 public class Graph extends LongTask {
+	
+	public static class EncoderList extends ConfigurableList<Encoder> {
+		
+		public DataTemplate template;
+		
+		public EncoderList(Configurable owner) {
+			super(owner);
+			
+			addOptionBinding("template", "*.template");
+			
+			setOptionConstraint("*", new CompatibleEncoderConstraint(this, "template"));
+		}
+		
+	}
 
 	private static final String CLASSIFY = "classify";
 	private static final String CLASSIFYALL = "classifyall";
@@ -16,14 +33,16 @@ public class Graph extends LongTask {
 	public Classifier outputClassifier;
 
 	public ConfigurableList<Classifier> classifiers = new ConfigurableList<>(this);
-	public ConfigurableList<Encoder> inputEncoders = new ConfigurableList<>(this);
+	public EncoderList inputEncoders = new EncoderList(this);
 	
 	public Decoder decoder;
 	
 	public Graph() {
 		addOptionBinding("template", 						"classifiers.*.template");
-		addOptionBinding("template.inputTemplate", 			"inputEncoders.*.template");
+		addOptionBinding("template.inputTemplate", 			"inputEncoders.template");
 		addOptionBinding("outputClassifier.outputEncoder", 	"decoder.encoder");
+		
+		setOptionConstraint("decoder", new CompatibleDecoderConstraint(this, "outputClassifier.outputEncoder"));
 	}
 	
 	public <T> T startClassification(Object object) {
