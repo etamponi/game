@@ -73,34 +73,33 @@ public class PluginManager extends Configurable {
 		internal = new Reflections(conf);
 	}
 	
-	public <T> Set<Class> getImplementationsOf(Class<T> base) {
+	public <T> Set<Object> getInstancesOf(Class<T> base) {
 		Set<Class<? extends T>> all = internal.getSubTypesOf(base);
-		Set<Class> ret = new HashSet<>();
+		Set<Object> ret = new HashSet<>();
 		
-		for (Class c: all) {
-			if (Modifier.isPublic(c.getModifiers()) 
-					&& !Modifier.isInterface(c.getModifiers())
-					&& !Modifier.isAbstract(c.getModifiers())
+		try {
+			for (Class c: all) {
+			if (!Modifier.isInterface(c.getModifiers()) && !Modifier.isAbstract(c.getModifiers())
+					&& Modifier.isPublic(c.getModifiers())
 					&& (c.getEnclosingClass() == null || Modifier.isStatic(c.getModifiers())))
-				ret.add(c);
+				
+					ret.add(c.newInstance());
+			}
+		} catch (InstantiationException | IllegalAccessException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		}
 		
 		return ret;
 	}
 	
-	public <T> Set<Class> getCompatibleImplementationsOf(Class<T> base, Constraint c) {
-		Set<Class> all = getImplementationsOf(base);
-		Set<Class> ret = new HashSet<>();
+	public <T> Set<Object> getCompatibleInstancesOf(Class<T> base, Constraint c) {
+		Set<Object> all = getInstancesOf(base);
+		Set<Object> ret = new HashSet<>();
 		
-		try {
-			for (Class cls: all) {
-				Object o = cls.newInstance();
-				if (c.isValid(o))
-					ret.add(cls);
-			}
-		} catch (InstantiationException | IllegalAccessException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+		for (Object o: all) {
+			if (c.isValid(o))
+				ret.add(o);
 		}
 		
 		return ret;

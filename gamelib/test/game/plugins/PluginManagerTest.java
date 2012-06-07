@@ -24,37 +24,44 @@ public class PluginManagerTest {
 	public void test() {
 		PluginManager manager = new PluginManager();
 		
-		Set<Class> set = manager.getImplementationsOf(Parent.class);
+		Set<Class> set = classSet(manager.getInstancesOf(Parent.class));
 		Set<Class> real = new HashSet<>();
 		real.add(ChildAA.class);
 		real.add(ChildB.class);
 		real.add(ChildD.class);
 		real.add(ChildNested.class);
 		assertEquals(4, set.size());
-		assertTrue(set.containsAll(set));
-		set = manager.getImplementationsOf(Subparent.class);
+		assertTrue(set.containsAll(real));
+		set = classSet(manager.getInstancesOf(Subparent.class));
 		assertEquals(4, set.size());
-		assertTrue(set.containsAll(set));
+		assertTrue(set.containsAll(real));
 		
-		set = manager.getImplementationsOf(Interface.class);
+		set = classSet(manager.getInstancesOf(Interface.class));
 		real.clear();
 		real.add(ChildAA.class);
 		real.add(ChildC.class);
 		assertEquals(2, set.size());
 		assertTrue(set.containsAll(real));
 		
-		set = manager.getCompatibleImplementationsOf(Parent.class, new Constraint() {
+		set = classSet(manager.getCompatibleInstancesOf(Parent.class, new Constraint() {
 			@Override
 			public boolean isValid(Object o) {
 				return o.getClass().getSimpleName().length() < 8;
 			}
-		});
+		}));
 		real.clear();
 		real.add(ChildAA.class);
 		real.add(ChildB.class);
 		real.add(ChildD.class);
 		assertEquals(3, set.size());
-		assertTrue(set.containsAll(set));
+		assertTrue(set.containsAll(real));
+	}
+	
+	private Set<Class> classSet(Set<Object> set) {
+		Set<Class> ret = new HashSet<>();
+		for (Object o: set)
+			ret.add(o.getClass());
+		return ret;
 	}
 
 }

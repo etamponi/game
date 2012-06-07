@@ -23,7 +23,7 @@ public abstract class LongTask extends Configurable {
 		return (T)ret;
 	}
 	
-	protected void startAnotherTaskAndWait(double percentAtEnd, LongTask task, String taskName, Object... params) {
+	protected Object startAnotherTaskAndWait(double percentAtEnd, LongTask task, String taskName, Object... params) {
 		final double percentAtStart = currentPercent;
 		final double ratio = percentAtEnd - percentAtStart;
 		Observer temp = new Observer() {
@@ -37,8 +37,9 @@ public abstract class LongTask extends Configurable {
 			}
 		};
 		task.addObserver(temp);
-		task.startTask(taskName, params);
+		Object ret = task.startTask(taskName, params);
 		task.deleteObserver(temp);
+		return ret;
 	}
 	
 	public String getTaskType() {

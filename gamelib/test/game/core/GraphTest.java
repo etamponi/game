@@ -119,7 +119,7 @@ public class GraphTest {
 		graph.setOption("template.outputTemplate.labels.add", "B");
 		graph.setOption("template.outputTemplate.labels.add", "C");
 		
-		Set<Class> set = graph.getCompatibleOptionTypes("outputClassifier", manager);
+		Set<Class> set = classSet(graph.getCompatibleOptionInstances("outputClassifier", manager));
 		Set<Class> real = new HashSet<>();
 		real.add(ClassifierImplA.class);
 		real.add(ClassifierImplB.class);
@@ -132,7 +132,7 @@ public class GraphTest {
 		graph.setOption("outputClassifier", graph.getOption("classifiers.0"));
 		
 		Configurable object = graph.getOption("outputClassifier");
-		set = object.getCompatibleOptionTypes("outputEncoder", manager);
+		set = classSet(object.getCompatibleOptionInstances("outputEncoder", manager));
 		real.clear();
 		real.add(EncoderImplB.class);
 		real.add(EncoderImplC.class);
@@ -142,7 +142,7 @@ public class GraphTest {
 		graph.setOption("outputClassifier.outputEncoder", new EncoderImplB());
 		assertEquals(graph.getOption("template.outputTemplate"), graph.getOption("outputClassifier.outputEncoder.template"));
 		
-		set = graph.getCompatibleOptionTypes("decoder", manager);
+		set = classSet(graph.getCompatibleOptionInstances("decoder", manager));
 		real.clear();
 		real.add(DecoderImplB.class);
 		assertEquals(real.size(), set.size());
@@ -152,18 +152,25 @@ public class GraphTest {
 		
 		object = graph.getOption("inputEncoders");
 		assertEquals(graph.getOption("template.inputTemplate"), object.getOption("template"));
-		set = object.getCompatibleOptionTypes("*", manager);
+		set = classSet(object.getCompatibleOptionInstances("*", manager));
 		real.clear();
 		real.add(EncoderImplA.class);
 		assertEquals(real.size(), set.size());
 		assertTrue(set.containsAll(real));
 		
 		graph.setOption("inputEncoders.add", new EncoderImplA());
-		set = object.getCompatibleOptionTypes("0", manager);
+		set = classSet(object.getCompatibleOptionInstances("0", manager));
 		assertEquals(real.size(), set.size());
 		assertTrue(set.containsAll(real));
 		
 		assertEquals(graph.getOption("template.inputTemplate"), object.getOption("0.template"));
+	}
+	
+	private Set<Class> classSet(Set<Object> set) {
+		Set<Class> ret = new HashSet<>();
+		for (Object o: set)
+			ret.add(o.getClass());
+		return ret;
 	}
 
 }

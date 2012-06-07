@@ -2,6 +2,7 @@ package game.configuration;
 
 import game.plugins.Constraint;
 import game.plugins.PluginManager;
+import game.plugins.constraints.TrueConstraint;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
@@ -189,18 +190,8 @@ public abstract class Configurable extends Observable implements Observer {
 		return ret;
 	}
 	
-	public Set<Class> getCompatibleOptionTypes(String optionName, PluginManager manager) {
-		try {
-			Class base = getClass().getField(optionName).getType();
-			if (optionConstraints.containsKey(optionName))
-				return manager.getCompatibleImplementationsOf(base, optionConstraints.get(optionName));
-			else
-				return manager.getImplementationsOf(base);
-		} catch (NoSuchFieldException | SecurityException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-			return null;
-		}
+	public Set<Object> getCompatibleOptionInstances(String optionName, PluginManager manager) {
+		return manager.getCompatibleInstancesOf(getOptionType(optionName), getOptionConstraint(optionName));
 	}
 
 	@Override
@@ -244,6 +235,13 @@ public abstract class Configurable extends Observable implements Observer {
 	
 	protected void setOptionConstraint(String optionName, Constraint c) {
 		optionConstraints.put(optionName, c);
+	}
+	
+	protected Constraint getOptionConstraint(String optionName) {
+		if (!optionConstraints.containsKey(optionName))
+			return TrueConstraint.getInstance();
+		else
+			return optionConstraints.get(optionName);
 	}
 	
 	protected Object getLocalOption(String optionName) {
@@ -303,6 +301,15 @@ public abstract class Configurable extends Observable implements Observer {
 	protected void updateOptionBindings(String changedOption) {
 		for (OptionBinding binding: optionBindings)
 			binding.updateOnChange(changedOption);
+	}
+	
+	protected Class getOptionType(String optionName) {
+		try {
+			return getClass().getField(optionName).getType();
+		} catch (NoSuchFieldException | SecurityException e) {
+			e.printStackTrace();
+			return null;
+		}
 	}
 	
 	protected LinkedList<String> getErrors() {

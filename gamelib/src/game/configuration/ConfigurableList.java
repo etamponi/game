@@ -1,6 +1,6 @@
 package game.configuration;
 
-import game.plugins.PluginManager;
+import game.plugins.Constraint;
 
 import java.lang.reflect.ParameterizedType;
 import java.util.ArrayList;
@@ -9,7 +9,6 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.ListIterator;
-import java.util.Set;
 
 public class ConfigurableList<E> extends Configurable implements List<E> {
 	
@@ -37,21 +36,6 @@ public class ConfigurableList<E> extends Configurable implements List<E> {
 		for(int i = 0; i < internal.size(); i++)
 			ret.add(String.valueOf(i));
 		return ret;
-	}
-
-	@Override
-	public Set<Class> getCompatibleOptionTypes(String optionName, PluginManager manager) {
-		if (optionName.equals("*") || optionName.matches("\\d+")) {
-			ParameterizedType type = (ParameterizedType)getClass().getGenericSuperclass();
-			Class base = (Class)type.getActualTypeArguments()[0];
-			if (optionConstraints.containsKey(optionName))
-				return manager.getCompatibleImplementationsOf(base, optionConstraints.get(optionName));
-			else if (optionConstraints.containsKey("*"))
-				return manager.getCompatibleImplementationsOf(base, optionConstraints.get("*"));
-			else
-				return manager.getImplementationsOf(base);
-		}
-		return super.getCompatibleOptionTypes(optionName, manager);
 	}
 
 	@Override
@@ -252,6 +236,24 @@ public class ConfigurableList<E> extends Configurable implements List<E> {
 			return super.getOptionNameFromContent(content);
 		else
 			return String.valueOf(index);
+	}
+
+	@Override
+	protected Constraint getOptionConstraint(String optionName) {
+		if (!optionConstraints.containsKey(optionName) && optionName.matches("\\d+"))
+			return super.getOptionConstraint("*");
+		else
+			return super.getOptionConstraint(optionName);
+	}
+
+	@Override
+	protected Class getOptionType(String optionName) {
+		if (optionName.equals("*") || optionName.matches("\\d+")) {
+			ParameterizedType type = (ParameterizedType)getClass().getGenericSuperclass();
+			return (Class)type.getActualTypeArguments()[0];
+		} else {
+			return super.getOptionType(optionName);
+		}
 	}
 
 }
