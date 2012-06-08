@@ -1,4 +1,4 @@
-package game.plugins.editors;
+package game.plugins.editors.configurablelist;
 
 import game.configuration.ConfigurableList;
 import game.editorsystem.Editor;
