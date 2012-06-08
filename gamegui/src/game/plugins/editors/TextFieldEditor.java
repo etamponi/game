@@ -1,55 +1,53 @@
 package game.plugins.editors;
 
 import game.editorsystem.Editor;
-import game.editorsystem.Option;
-import game.utils.Utils;
-import javafx.event.EventHandler;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.scene.Node;
 import javafx.scene.control.TextField;
-import javafx.scene.input.KeyEvent;
 
-public abstract class TextFieldEditor extends TextField implements Editor {
+public abstract class TextFieldEditor extends Editor {
 	
-	private Option model;
+	protected TextField textField = new TextField();
 	
-	protected abstract Object parseText();
-
-	@Override
-	public Node getNode() {
-		return this;
-	}
-
-	@Override
-	public Option getModel() {
-		return model;
-	}
-
-	@Override
-	public void setModel(Option option) {
-		this.model = option;
-		if (option != null)
-			connect();
-		else
-			disconnect();
-	}
-	
-	@Override
-	public boolean canEdit(Class type) {
-		return Utils.isConcreteSubtype(type, getBaseEditableClass());
-	}
-	
-	private void connect() {
-		setText(model.getContent().toString());
-		setOnKeyReleased(new EventHandler<KeyEvent>() {
+	public TextFieldEditor() {
+		textField.textProperty().addListener(new ChangeListener<String>() {
 			@Override
-			public void handle(KeyEvent event) {
-				model.setContent(parseText());
+			public void changed(
+					ObservableValue<? extends String> observable,
+					String oldValue, String newValue) {
+				updateModel();
 			}
 		});
 	}
 	
-	private void disconnect() {
-		setOnKeyReleased(null);
+	protected abstract Object parseText();
+
+	@Override
+	public Node getView() {
+		return textField;
+	}
+
+	@Override
+	public void updateModel() {
+		if (getModel() != null) {
+			Object content = parseText();
+			if (content != null)
+				getModel().setContent(content);
+		}
+	}
+
+	@Override
+	public void updateView() {
+		if (getModel() != null && getModel().getContent() != null)
+			textField.setText(getModel().getContent().toString());
+		else
+			textField.setText("");
+	}
+
+	@Override
+	public void connectView() {
+		updateView();
 	}
 
 }

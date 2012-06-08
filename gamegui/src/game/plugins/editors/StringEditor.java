@@ -5,7 +5,7 @@ public class StringEditor extends TextFieldEditor {
 
 	@Override
 	protected Object parseText() {
-		return getText();
+		return textField.getText();
 	}
 
 	@Override

@@ -13,28 +13,55 @@ public class Option {
 	
 	private Configurable owner;
 	private String optionName;
-	private Class optionType;
 	
 	public Option(Configurable owner, String optionName) {
 		this.owner = owner;
 		this.optionName = optionName;
-		this.optionType = owner.getOptionType(optionName);
+	}
+	
+	public Configurable getOwner() {
+		return owner;
+	}
+	
+	public String getOptionName() {
+		return optionName;
 	}
 	
 	public <T> T getContent() {
-		return owner.getOption(optionName);
+		if (optionName.equals("this"))
+			return (T)owner;
+		else
+			return owner.getOption(optionName);
 	}
 	
 	public void setContent(Object content) {
-		owner.setOption(optionName, content);
+		if (optionName.equals("this"))
+			owner = (Configurable)content;
+		else
+			owner.setOption(optionName, content);
 	}
 	
 	public Class getType() {
-		return optionType;
+		if (optionName.equals("this"))
+			return owner.getClass();
+		else
+			return owner.getOptionType(optionName);
+	}
+	
+	public Set<Object> getCompatibleInstances() {
+		if (optionName.equals("this")) {
+			Set<Object> ret = new HashSet<>();
+			ret.add(owner);
+			return ret;
+		} else
+			return owner.getCompatibleOptionInstances(optionName, Settings.getInstance().getPluginManager());
 	}
 	
 	public boolean isBound() {
-		return !owner.getUnboundOptionNames().contains(optionName);
+		if (optionName.equals("this"))
+			return false;
+		else
+			return !owner.getUnboundOptionNames().contains(optionName);
 	}
 	
 	public Editor getBestEditor() {
