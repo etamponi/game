@@ -2,6 +2,7 @@ package game.plugins.editors.configurablelist;
 
 import game.configuration.ConfigurableList;
 import game.editorsystem.Editor;
+import game.editorsystem.EditorController;
 import game.editorsystem.EditorWindow;
 import game.editorsystem.Option;
 
@@ -10,14 +11,10 @@ import java.util.ResourceBundle;
 
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
-import javafx.fxml.Initializable;
-import javafx.scene.Node;
-import javafx.scene.Parent;
 import javafx.scene.control.ListView;
 
-public class ConfigurableListEditorController implements Initializable {
+public class ConfigurableListEditorController implements EditorController {
 	
-	private Parent root;
 	private ConfigurableList list;
 	
 	@FXML
@@ -28,21 +25,15 @@ public class ConfigurableListEditorController implements Initializable {
 
 	}
 	
+	@Override
 	public void setModel(Option model) {
 		if (model != null)
 			this.list = model.getContent();
 		else
 			this.list = null;
 	}
-	
-	public void setView(Parent root) {
-		this.root = root; 
-	}
 
-	public Node getView() {
-		return root;
-	}
-
+	@Override
 	public void connectView() {
 		listView.getItems().clear();
 		
@@ -55,10 +46,12 @@ public class ConfigurableListEditorController implements Initializable {
 		}
 	}
 
+	@Override
 	public void updateView() {
 		connectView();
 	}
 
+	@Override
 	public void updateModel() {
 		// Done by the single cells and by addAction and removeAction
 	}

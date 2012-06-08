@@ -1,38 +1,13 @@
 package game.plugins.editors.graph;
 
-import javafx.scene.Node;
-import game.editorsystem.Editor;
+import game.core.Graph;
+import game.editorsystem.ControlledEditor;
 
-public class GraphEditor extends Editor {
-
-	@Override
-	public Node getView() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public void connectView() {
-		// TODO Auto-generated method stub
-
-	}
-
-	@Override
-	public void updateView() {
-		// TODO Auto-generated method stub
-
-	}
-
-	@Override
-	public void updateModel() {
-		// TODO Auto-generated method stub
-
-	}
+public class GraphEditor extends ControlledEditor {
 
 	@Override
 	public Class getBaseEditableClass() {
-		// TODO Auto-generated method stub
-		return null;
+		return Graph.class;
 	}
 
 }

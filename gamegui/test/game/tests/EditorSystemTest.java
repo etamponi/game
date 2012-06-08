@@ -7,10 +7,10 @@ import game.editorsystem.Editor;
 import game.editorsystem.Option;
 import game.main.Settings;
 import game.plugins.Constraint;
-import game.plugins.editors.ConfigurableEditor;
 import game.plugins.editors.ImplementationChooserEditor;
 import game.plugins.editors.ImplementationChooserEditor.Implementation;
 import game.plugins.editors.NumberEditor;
+import game.plugins.editors.graph.GraphEditor;
 import javafx.application.Application;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
@@ -118,7 +118,7 @@ public class EditorSystemTest extends Application {
 		
 		option = new Option(new Graph());
 		best = option.getBestEditor();
-		assertEquals(ConfigurableEditor.class, best.getClass());
+		assertEquals(GraphEditor.class, best.getClass());
 		best.setModel(option);
 		primaryStage.setScene(new Scene((Parent)best.getView()));
 		primaryStage.show();
