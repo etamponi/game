@@ -214,7 +214,8 @@ public abstract class Configurable extends Observable implements Observer {
 	public void update(Observable observedOption, Object message) {
 		if (message instanceof Change) {
 			Change change = (Change)message;
-			String changedOption = getOptionNameFromContent(observedOption) + "." + change.getPath();
+			String changedOption = getOptionNameFromContent(observedOption);
+				   changedOption += change.getPath().isEmpty() ? "" : "." + change.getPath();
 			
 			updateOptionBindings(changedOption);
 			setChanged();

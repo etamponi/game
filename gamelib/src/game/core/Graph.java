@@ -11,12 +11,12 @@ import java.util.LinkedList;
 
 public class Graph extends LongTask {
 	
-	public static class EncoderList extends ConfigurableList<Encoder> {
+	public static class EncoderList extends ConfigurableList {
 		
 		public DataTemplate template;
 		
 		public EncoderList(Configurable owner) {
-			super(owner);
+			super(owner, Encoder.class);
 			
 			addOptionBinding("template", "*.template");
 			
@@ -29,13 +29,13 @@ public class Graph extends LongTask {
 	private static final String CLASSIFYALL = "classifyall";
 	
 	public InstanceTemplate template; 
-	
-	public Classifier outputClassifier;
 
-	public ConfigurableList<Classifier> classifiers = new ConfigurableList<>(this);
+	public ConfigurableList classifiers = new ConfigurableList(this, Classifier.class);
 	public EncoderList inputEncoders = new EncoderList(this);
 	
 	public Decoder decoder;
+	
+	private Classifier outputClassifier;
 	
 	public Graph() {
 		addOptionBinding("template", 						"classifiers.*.template");
@@ -45,6 +45,14 @@ public class Graph extends LongTask {
 		setOptionConstraint("decoder", new CompatibleDecoderConstraint(this, "outputClassifier.outputEncoder"));
 	}
 	
+	public Classifier getOutputClassifier() {
+		return outputClassifier;
+	}
+
+	public void setOutputClassifier(Classifier outputClassifier) {
+		this.outputClassifier = outputClassifier;
+	}
+
 	public <T> T startClassification(Object object) {
 		if (object instanceof Dataset)
 			return (T)startTask(CLASSIFYALL, object);
@@ -96,7 +104,7 @@ public class Graph extends LongTask {
 		if (all.contains(current))
 			return "graph cannot have directed cycles.";
 		all.add(current);
-		for (Block parent: current.parents) {
+		for (Block parent: current.parents.getList(Block.class)) {
 			String ret = recursivelyAddAll(parent, all);
 			if (ret != null)
 				return ret;

@@ -2,7 +2,6 @@ package game.configuration;
 
 import game.plugins.Constraint;
 
-import java.lang.reflect.ParameterizedType;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
@@ -10,21 +9,29 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.ListIterator;
 
-public class ConfigurableList<E> extends Configurable implements List<E> {
+public class ConfigurableList extends Configurable implements List {
 	
-	private ArrayList<E> internal = new ArrayList<>();
+	private Class elementType;
+	private ArrayList internal = new ArrayList();
 	
-	public ConfigurableList(Configurable owner) {
+	public ConfigurableList(Configurable owner, Class elementType) {
 		super();
+		this.elementType = elementType;
 		this.addObserver(owner);
+	}
+	
+	public <T> List<T> getList(Class<T> type) {
+		return (List<T>)internal;
 	}
 
 	@Override
 	public void setOption(String optionPath, Object content) {
 		if (optionPath.startsWith("*.")) {
 			String remainingPath = optionPath.substring(2);
-			for (E element: internal)
-				((Configurable)element).setOption(remainingPath, content);
+			for (Object element: internal) {
+				if (element != null)
+					((Configurable)element).setOption(remainingPath, content);
+			}
 		} else {
 			super.setOption(optionPath, content);
 		}
@@ -40,22 +47,20 @@ public class ConfigurableList<E> extends Configurable implements List<E> {
 
 	@Override
 	public Class getOptionType(String optionName) {
-		if (optionName.equals("*") || optionName.matches("\\d+")) {
-			ParameterizedType type = (ParameterizedType)getClass().getGenericSuperclass();
-			return (Class)type.getActualTypeArguments()[0];
-		} else {
+		if (optionName.equals("*") || optionName.matches("\\d+"))
+			return elementType;
+		else
 			return super.getOptionType(optionName);
-		}
 	}
 
 	@Override
-	public boolean add(E e) {
+	public boolean add(Object e) {
 		add(internal.size(), e);
 		return true;
 	}
 
 	@Override
-	public void add(int index, E element) {
+	public void add(int index, Object element) {
 		String indexString = String.valueOf(index);
 
 		internal.add(index, element);
@@ -67,16 +72,15 @@ public class ConfigurableList<E> extends Configurable implements List<E> {
 		updateOptionBindings(indexString);
 		setChanged();
 		notifyObservers(new Change(indexString));
-		
 	}
 
 	@Override
-	public boolean addAll(Collection<? extends E> c) {
+	public boolean addAll(Collection c) {
 		return internal.addAll(c);
 	}
 
 	@Override
-	public boolean addAll(int index, Collection<? extends E> c) {
+	public boolean addAll(int index, Collection c) {
 		return internal.addAll(index, c);
 	}
 
@@ -97,12 +101,12 @@ public class ConfigurableList<E> extends Configurable implements List<E> {
 	}
 
 	@Override
-	public boolean containsAll(Collection<?> c) {
+	public boolean containsAll(Collection c) {
 		return internal.containsAll(c);
 	}
 
 	@Override
-	public E get(int index) {
+	public Object get(int index) {
 		return internal.get(index);
 	}
 
@@ -117,7 +121,7 @@ public class ConfigurableList<E> extends Configurable implements List<E> {
 	}
 
 	@Override
-	public Iterator<E> iterator() {
+	public Iterator<Object> iterator() {
 		return internal.iterator();
 	}
 
@@ -127,12 +131,12 @@ public class ConfigurableList<E> extends Configurable implements List<E> {
 	}
 
 	@Override
-	public ListIterator<E> listIterator() {
+	public ListIterator<Object> listIterator() {
 		return internal.listIterator();
 	}
 
 	@Override
-	public ListIterator<E> listIterator(int index) {
+	public ListIterator<Object> listIterator(int index) {
 		return internal.listIterator(index);
 	}
 
@@ -141,35 +145,45 @@ public class ConfigurableList<E> extends Configurable implements List<E> {
 		if (contains(o) && o instanceof Configurable)
 			((Configurable)o).deleteObserver(this);
 		
-		return internal.remove(o);
+		boolean ret = internal.remove(o); 
+		
+		setChanged();
+		notifyObservers(new Change(""));
+		
+		return ret;
 	}
 
 	@Override
-	public E remove(int index) {
+	public Object remove(int index) {
 		if (index >= 0 && index < size() && get(index) instanceof Configurable)
 			((Configurable)get(index)).deleteObserver(this);
 		
-		return internal.remove(index);
+		Object ret = internal.remove(index);
+		
+		setChanged();
+		notifyObservers(new Change(""));
+		
+		return ret;
 	}
 
 	@Override
-	public boolean removeAll(Collection<?> c) {
+	public boolean removeAll(Collection c) {
 		return internal.removeAll(c);
 	}
 
 	@Override
-	public boolean retainAll(Collection<?> c) {
+	public boolean retainAll(Collection c) {
 		return internal.retainAll(c);
 	}
 
 	@Override
-	public E set(int index, E element) {
+	public Object set(int index, Object element) {
 		if (index >= 0 && index < size()) {
 			if (get(index) instanceof Configurable)
 				((Configurable)get(index)).deleteObserver(this);
 		}
 		
-		E ret = internal.set(index, element);
+		Object ret = internal.set(index, element);
 		
 		if (index >= 0 && index < size()) {
 			if (element instanceof Configurable)
@@ -190,7 +204,7 @@ public class ConfigurableList<E> extends Configurable implements List<E> {
 	}
 
 	@Override
-	public List<E> subList(int fromIndex, int toIndex) {
+	public List<Object> subList(int fromIndex, int toIndex) {
 		return internal.subList(fromIndex, toIndex);
 	}
 
@@ -200,7 +214,7 @@ public class ConfigurableList<E> extends Configurable implements List<E> {
 	}
 
 	@Override
-	public <T> T[] toArray(T[] a) {
+	public Object[] toArray(Object[] a) {
 		return internal.toArray(a);
 	}
 
@@ -221,11 +235,11 @@ public class ConfigurableList<E> extends Configurable implements List<E> {
 		if (optionName.matches("\\d+")) {
 			int index = Integer.parseInt(optionName);
 			if (index < size())
-				set(index, (E)content);
+				set(index, (Object)content);
 		} else {
 			switch (optionName) {
 			case "add":
-				add((E)content);
+				add((Object)content);
 				break;
 			case "remove":
 				if (content instanceof Integer)

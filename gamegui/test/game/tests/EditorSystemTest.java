@@ -2,6 +2,7 @@ package game.tests;
 
 import static org.junit.Assert.assertEquals;
 import game.configuration.Configurable;
+import game.core.Graph;
 import game.editorsystem.Editor;
 import game.editorsystem.Option;
 import game.main.Settings;
@@ -115,7 +116,7 @@ public class EditorSystemTest extends Application {
 		option.setContent(new ConfigurableImplB());
 		assertEquals(option.getContent(), cb.getValue().getContent());
 		
-		option = new Option(object, "this");
+		option = new Option(new Graph());
 		best = option.getBestEditor();
 		assertEquals(ConfigurableEditor.class, best.getClass());
 		best.setModel(option);

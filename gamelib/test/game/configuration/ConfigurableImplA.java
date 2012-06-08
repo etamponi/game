@@ -14,7 +14,7 @@ public class ConfigurableImplA extends Configurable {
 	
 	public ConfigurableImplC optionA5;
 	
-	public ConfigurableList<ConfigurableImplB> optionList = new ConfigurableList<>(this);
+	public ConfigurableList optionList = new ConfigurableList(this, ConfigurableImplB.class);
 	
 	private class StringLengthCheck implements ErrorCheck<String> {
 		

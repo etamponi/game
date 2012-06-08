@@ -6,7 +6,7 @@ import game.configuration.errorchecks.SizeCheck;
 
 public class LabelTemplate extends AtomicTemplate {
 
-	public ConfigurableList<String> labels = new ConfigurableList<>(this);
+	public ConfigurableList labels = new ConfigurableList(this, String.class);
 	
 	public LabelTemplate() {
 		addOptionChecks("labels", new NoRepetitionCheck(), new SizeCheck(2));

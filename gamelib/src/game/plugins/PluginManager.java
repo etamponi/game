@@ -25,11 +25,11 @@ public class PluginManager extends Configurable {
 	
 	private Reflections internal;
 	
-	public ConfigurableList<String> packages = new ConfigurableList<>(this);
-	public ConfigurableList<String> paths = new ConfigurableList<>(this);
+	public ConfigurableList packages = new ConfigurableList(this, String.class);
+	public ConfigurableList paths = new ConfigurableList(this, String.class);
 	
 	public PluginManager() {
-		addOptionChecks("packages", new ListMustContainCheck("game.plugins"));
+		addOptionChecks("packages", new ListMustContainCheck("game"));
 		
 		this.addObserver(new Observer() {
 			@Override
@@ -43,7 +43,7 @@ public class PluginManager extends Configurable {
 			}
 		});
 		
-		packages.add("game.plugins");
+		packages.add("game");
 	}
 	
 	private void reset() {
@@ -54,7 +54,7 @@ public class PluginManager extends Configurable {
 			try {
 				URL[] urls = new URL[paths.size()];
 				int i = 0;
-				for(String path: paths)
+				for(String path: paths.getList(String.class))
 					urls[i++] = new URI(path).toURL();
 				loader = new URLClassLoader(urls, getClass().getClassLoader());
 			} catch (MalformedURLException | URISyntaxException e) {
@@ -65,7 +65,7 @@ public class PluginManager extends Configurable {
 		}
 		
 		FilterBuilder filter = new FilterBuilder();
-		for (String p: packages) {
+		for (String p: packages.getList(String.class)) {
 			filter.include(FilterBuilder.prefix(p));
 		}
 		conf.filterInputsBy(filter);

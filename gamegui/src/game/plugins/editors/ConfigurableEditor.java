@@ -3,6 +3,13 @@ package game.plugins.editors;
 import game.configuration.Configurable;
 import game.editorsystem.Editor;
 import game.editorsystem.Option;
+import game.utils.Utils;
+
+import java.util.HashSet;
+
+import javafx.geometry.HPos;
+import javafx.geometry.Insets;
+import javafx.geometry.VPos;
 import javafx.scene.Node;
 import javafx.scene.control.Label;
 import javafx.scene.layout.AnchorPane;
@@ -13,12 +20,13 @@ public class ConfigurableEditor extends Editor {
 	
 	private GridPane pane = new GridPane();
 	
+	private HashSet<String> hiddenOptions = new HashSet<>();
+	
 	public ConfigurableEditor() {
 		AnchorPane.setTopAnchor(pane, 0.0);
 		AnchorPane.setLeftAnchor(pane, 0.0);
 		AnchorPane.setRightAnchor(pane, 0.0);
 		AnchorPane.setBottomAnchor(pane, 0.0);
-		//pane.setStyle("-fx-background-color:#ff0000;");
 	}
 
 	@Override
@@ -33,13 +41,25 @@ public class ConfigurableEditor extends Editor {
 		if (getModel() != null && getModel().getContent() != null) {
 			Configurable content = getModel().getContent();
 			for (String optionName: content.getUnboundOptionNames()) {
+				if (hiddenOptions.contains(optionName))
+					continue;
+				
 				Option option = new Option(content, optionName);
-				Editor editor = option.getBestEditor(); editor.setModel(option);
-				if (optionName.equals("name"))
-					pane.addRow(0, new Label(optionName), editor.getView());
-				else
-					pane.addRow(count++, new Label(optionName), editor.getView());
+				Label label = new Label(optionName+":");
+				Editor editor = option.getBestEditor();
+				try {
+					if (option.getContent() == null && Utils.isConcrete(option.getType()))
+						option.setContent(option.getType().newInstance());
+				} catch (InstantiationException | IllegalAccessException e) {
+					e.printStackTrace();
+				}
+				editor.setModel(option);
+				pane.addRow(optionName.equals("name") ? 0 : count++, label, editor.getView());
+				GridPane.setValignment(label, VPos.TOP);
+				GridPane.setHalignment(label, HPos.RIGHT);
+				GridPane.setMargin(label, new Insets(5, 2, 2, 2));
 				GridPane.setHgrow(editor.getView(), Priority.ALWAYS);
+				GridPane.setMargin(editor.getView(), new Insets(2, 2, 2, 2));
 			}
 		}
 	}
@@ -57,6 +77,10 @@ public class ConfigurableEditor extends Editor {
 	@Override
 	public Class getBaseEditableClass() {
 		return Configurable.class;
+	}
+	
+	protected void addHiddenOption(String optionName) {
+		hiddenOptions.add(optionName);
 	}
 
 }

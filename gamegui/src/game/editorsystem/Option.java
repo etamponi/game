@@ -11,8 +11,20 @@ import java.util.Set;
 
 public class Option {
 	
+	public static class Container extends Configurable {
+		public Object content;
+	}
+	
+	private Container container = new Container();
+	
 	private Configurable owner;
 	private String optionName;
+	
+	public Option(Object content) {
+		container.setOption("content", content);
+		this.owner = container;
+		this.optionName = "content";
+	}
 	
 	public Option(Configurable owner, String optionName) {
 		this.owner = owner;
@@ -28,30 +40,24 @@ public class Option {
 	}
 	
 	public <T> T getContent() {
-		if (optionName.equals("this"))
-			return (T)owner;
-		else
-			return owner.getOption(optionName);
+		return owner.getOption(optionName);
 	}
 	
 	public void setContent(Object content) {
-		if (optionName.equals("this"))
-			owner = (Configurable)content;
-		else
-			owner.setOption(optionName, content);
+		owner.setOption(optionName, content);
 	}
 	
 	public Class getType() {
-		if (optionName.equals("this"))
-			return owner.getClass();
+		if (owner == container && getContent() != null)
+			return getContent().getClass();
 		else
 			return owner.getOptionType(optionName);
 	}
 	
 	public Set<Object> getCompatibleInstances() {
-		if (optionName.equals("this")) {
+		if (owner == container) {
 			Set<Object> ret = new HashSet<>();
-			ret.add(owner);
+			ret.add(getContent());
 			return ret;
 		} else
 			return owner.getCompatibleOptionInstances(optionName, Settings.getInstance().getPluginManager());
@@ -86,6 +92,14 @@ public class Option {
 		return best;
 	}
 	
+	@Override
+	public String toString() {
+		if (getContent() == null)
+			return "<null>";
+		else
+			return getContent().toString();
+	}
+
 	private int distance(Class origin, Class target) {
 		Set<Class> currents = new HashSet<>();
 		currents.add(target);

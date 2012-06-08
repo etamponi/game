@@ -18,6 +18,7 @@ import javafx.scene.Node;
 import javafx.scene.control.Button;
 import javafx.scene.control.ChoiceBox;
 import javafx.scene.layout.HBox;
+import javafx.scene.layout.Priority;
 
 public class ImplementationChooserEditor extends Editor {
 	
@@ -54,6 +55,7 @@ public class ImplementationChooserEditor extends Editor {
 	private ChoiceBox<Implementation> box = new ChoiceBox<>();
 	
 	public ImplementationChooserEditor() {
+		HBox.setHgrow(box, Priority.ALWAYS);
 		Button editButton = new Button("Edit");
 		editButton.setOnAction(new EventHandler<ActionEvent>() {
 			@Override
@@ -61,7 +63,7 @@ public class ImplementationChooserEditor extends Editor {
 				if (getModel().getContent() == null)
 					return;
 				
-				Option option = new Option((Configurable)getModel().getContent(), "this");
+				Option option = new Option((Configurable)getModel().getContent());
 				Editor editor = option.getBestEditor();
 				editor.setModel(option);
 				EditorWindow window = new EditorWindow(editor);

@@ -7,7 +7,7 @@ public abstract class Block extends LongTask {
 	private static final String TRAIN = "training";
 	private static final String TRANSFORM = "transforming";
 	
-	public ConfigurableList<Block> parents = new ConfigurableList<>(this);
+	public ConfigurableList parents = new ConfigurableList(this, Block.class);
 	
 	public abstract boolean isTrained();
 	

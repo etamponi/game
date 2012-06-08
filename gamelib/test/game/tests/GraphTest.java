@@ -112,7 +112,6 @@ public class GraphTest {
 	@Test
 	public void test() {
 		PluginManager manager = new PluginManager();
-		manager.setOption("packages.add", "game.tests");
 		
 		Graph graph = new Graph();
 		
@@ -124,7 +123,8 @@ public class GraphTest {
 		graph.setOption("template.outputTemplate.labels.add", "B");
 		graph.setOption("template.outputTemplate.labels.add", "C");
 		
-		Set<Class> set = classSet(graph.getCompatibleOptionInstances("outputClassifier", manager));
+		Configurable classifiers = graph.getOption("classifiers");
+		Set<Class> set = classSet(classifiers.getCompatibleOptionInstances("*", manager));
 		Set<Class> real = new HashSet<>();
 		real.add(ClassifierImplA.class);
 		real.add(ClassifierImplB.class);

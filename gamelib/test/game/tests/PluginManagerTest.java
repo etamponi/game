@@ -30,7 +30,6 @@ public class PluginManagerTest {
 	@Test
 	public void test() {
 		PluginManager manager = new PluginManager();
-		manager.setOption("packages.add", "game.tests");
 		
 		Set<Class> set = classSet(manager.getInstancesOf(Parent.class));
 		Set<Class> real = new HashSet<>();
