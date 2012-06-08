@@ -7,8 +7,10 @@ import game.plugins.constraints.TrueConstraint;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.LinkedList;
+import java.util.List;
 import java.util.Map;
 import java.util.Observable;
 import java.util.Observer;
@@ -25,6 +27,11 @@ public abstract class Configurable extends Observable implements Observer {
 		
 		public String getPath() {
 			return path;
+		}
+		
+		public boolean pathContains(String element) {
+			List<String> tokens = Arrays.asList(path.split("\\."));
+			return tokens.contains(element);
 		}
 	}
 	
@@ -190,7 +197,7 @@ public abstract class Configurable extends Observable implements Observer {
 		return ret;
 	}
 	
-	public Set<Object> getCompatibleOptionInstances(String optionName, PluginManager manager) {
+	public <T> Set<T> getCompatibleOptionInstances(String optionName, PluginManager manager) {
 		return manager.getCompatibleInstancesOf(getOptionType(optionName), getOptionConstraint(optionName));
 	}
 	

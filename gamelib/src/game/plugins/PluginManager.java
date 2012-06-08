@@ -36,7 +36,7 @@ public class PluginManager extends Configurable {
 			public void update(Observable o, Object m) {
 				if (m instanceof Change) {
 					Change change = (Change)m;
-					if (change.getPath().contains("packages.") || change.getPath().contains("paths.")) {
+					if (change.getPath().startsWith("packages.") || change.getPath().startsWith("paths.")) {
 						reset();	
 					}
 				}

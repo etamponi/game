@@ -2,8 +2,8 @@ package game.tests;
 
 import static org.junit.Assert.*;
 import game.core.Encoding;
-import game.core.datatemplates.VectorTemplate;
-import game.core.nodes.Encoder;
+import game.core.blocks.Encoder;
+import game.plugins.datatemplates.VectorTemplate;
 
 import org.junit.Test;
 

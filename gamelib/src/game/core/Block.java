@@ -2,12 +2,12 @@ package game.core;
 
 import game.configuration.ConfigurableList;
 
-public abstract class Node extends LongTask {
+public abstract class Block extends LongTask {
 
 	private static final String TRAIN = "training";
 	private static final String TRANSFORM = "transforming";
 	
-	public ConfigurableList<Node> parents = new ConfigurableList<>(this);
+	public ConfigurableList<Block> parents = new ConfigurableList<>(this);
 	
 	public abstract boolean isTrained();
 	

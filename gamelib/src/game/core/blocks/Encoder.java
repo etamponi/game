@@ -1,11 +1,11 @@
-package game.core.nodes;
+package game.core.blocks;
 
 import game.configuration.errorchecks.SizeCheck;
 import game.core.DataTemplate;
 import game.core.Dataset;
-import game.core.Node;
+import game.core.Block;
 
-public abstract class Encoder<DT extends DataTemplate> extends Node {
+public abstract class Encoder<DT extends DataTemplate> extends Block {
 	
 	public DT template;
 	

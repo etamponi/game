@@ -1,7 +1,7 @@
 package game.plugins.constraints;
 
 import game.configuration.Configurable;
-import game.core.nodes.Encoder;
+import game.core.blocks.Encoder;
 import game.plugins.Constraint;
 
 public class CompatibleEncoderConstraint implements Constraint<Encoder> {

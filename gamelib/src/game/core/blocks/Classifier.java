@@ -1,11 +1,11 @@
-package game.core.nodes;
+package game.core.blocks;
 
 import game.configuration.errorchecks.SizeCheck;
 import game.core.InstanceTemplate;
-import game.core.Node;
+import game.core.Block;
 import game.plugins.constraints.CompatibleEncoderConstraint;
 
-public abstract class Classifier extends Node {
+public abstract class Classifier extends Block {
 	
 	public InstanceTemplate template;
 	

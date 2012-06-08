@@ -1,7 +1,7 @@
 package game.core;
 
 import game.configuration.Configurable;
-import game.core.nodes.Encoder;
+import game.core.blocks.Encoder;
 
 public abstract class Decoder<E extends Encoder> extends Configurable {
 	

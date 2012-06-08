@@ -1,4 +1,4 @@
-package game.core.datatemplates;
+package game.plugins.datatemplates;
 
 import game.configuration.ConfigurableList;
 import game.configuration.errorchecks.NoRepetitionCheck;

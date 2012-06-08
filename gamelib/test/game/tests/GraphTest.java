@@ -8,11 +8,11 @@ import game.core.Decoder;
 import game.core.Encoding;
 import game.core.Graph;
 import game.core.InstanceTemplate;
-import game.core.datatemplates.LabelTemplate;
-import game.core.datatemplates.VectorTemplate;
-import game.core.nodes.Classifier;
-import game.core.nodes.Encoder;
+import game.core.blocks.Classifier;
+import game.core.blocks.Encoder;
 import game.plugins.PluginManager;
+import game.plugins.datatemplates.LabelTemplate;
+import game.plugins.datatemplates.VectorTemplate;
 
 import java.util.HashSet;
 import java.util.Set;

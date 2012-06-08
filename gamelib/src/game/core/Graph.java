@@ -2,8 +2,8 @@ package game.core;
 
 import game.configuration.Configurable;
 import game.configuration.ConfigurableList;
-import game.core.nodes.Classifier;
-import game.core.nodes.Encoder;
+import game.core.blocks.Classifier;
+import game.core.blocks.Encoder;
 import game.plugins.constraints.CompatibleDecoderConstraint;
 import game.plugins.constraints.CompatibleEncoderConstraint;
 
@@ -92,11 +92,11 @@ public class Graph extends LongTask {
 		return ret;
 	}
 	
-	private String recursivelyAddAll(Node current, LinkedList all) {
+	private String recursivelyAddAll(Block current, LinkedList all) {
 		if (all.contains(current))
 			return "graph cannot have directed cycles.";
 		all.add(current);
-		for (Node parent: current.parents) {
+		for (Block parent: current.parents) {
 			String ret = recursivelyAddAll(parent, all);
 			if (ret != null)
 				return ret;
