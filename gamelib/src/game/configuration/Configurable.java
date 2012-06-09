@@ -59,6 +59,14 @@ public abstract class Configurable extends Observable implements Observer {
 		public String getPath() { return path; }
 	}
 	
+	private class RequestForParents {
+		private LinkedList<Configurable> parents;
+		
+		public LinkedList<Configurable> getParents() {
+			return parents;
+		}
+	}
+	
 	private class OptionBinding {
 		private String masterPath;
 		private String[] slaves;
@@ -173,6 +181,14 @@ public abstract class Configurable extends Observable implements Observer {
 		return ret;
 	}
 	
+	public LinkedList<Configurable> getParents() {
+		RequestForParents request = new RequestForParents();
+		setChanged();
+		notifyObservers(request);
+		
+		return request.getParents();
+	}
+	
 	public LinkedList<String> getOptionNames() {
 		LinkedList<String> ret = new LinkedList<>();
 		for (Field f: getClass().getFields())
@@ -224,6 +240,18 @@ public abstract class Configurable extends Observable implements Observer {
 			return null;
 		}
 	}
+	
+	public String getOptionNameFromContent(Object content) {
+		try {
+			for (Field field: getClass().getFields()) {
+				if (field.get(this) == content)
+					return field.getName();
+			}
+		} catch (IllegalArgumentException | IllegalAccessException e) {
+			e.printStackTrace();
+		}
+		return null;
+	}
 
 	@Override
 	public void update(Observable observedOption, Object message) {
@@ -246,6 +274,11 @@ public abstract class Configurable extends Observable implements Observer {
 			
 			setChanged();
 			notifyObservers(new RequestForBoundOptions(request.getBoundOptions(), pathToParent));
+		}
+		
+		if (message instanceof RequestForParents) {
+			RequestForParents request = (RequestForParents)message;
+			request.getParents().add(this);
 		}
 	}
 	
@@ -316,18 +349,6 @@ public abstract class Configurable extends Observable implements Observer {
 				| InvocationTargetException | NoSuchFieldException | SecurityException e) {
 			e.printStackTrace();
 		}
-	}
-	
-	protected String getOptionNameFromContent(Object content) {
-		try {
-			for (Field field: getClass().getFields()) {
-				if (field.get(this) == content)
-					return field.getName();
-			}
-		} catch (IllegalArgumentException | IllegalAccessException e) {
-			e.printStackTrace();
-		}
-		return null;
 	}
 	
 	protected void updateOptionBindings(String changedOption) {

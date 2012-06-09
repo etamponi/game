@@ -12,9 +12,13 @@ package game.plugins.editors.graph;
 
 
 import game.core.Block;
+import game.editorsystem.Editor;
+import game.editorsystem.EditorWindow;
+import game.editorsystem.Option;
 import game.main.Settings;
 import javafx.event.EventHandler;
 import javafx.geometry.Insets;
+import javafx.geometry.Pos;
 import javafx.scene.control.Label;
 import javafx.scene.input.ClipboardContent;
 import javafx.scene.input.DataFormat;
@@ -25,25 +29,33 @@ import javafx.scene.input.TransferMode;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
+import javafx.scene.text.TextAlignment;
 
 public class BlockNode extends VBox {
 	
 	public static final DataFormat BLOCKDATA = new DataFormat("game/block");
 	
 	private Block block;
+	
 	private boolean isTemplate;
+	
+	private Label label;
 
 	public BlockNode(Block b, boolean isTpl) {
 		this.block = b;
 		this.isTemplate = isTpl;
 		
+		setStyle("-fx-border-style: solid; -fx-border-color:green;");
 		setPadding(new Insets(5));
 		
 		Rectangle rect = new Rectangle(50, 50);
 		rect.setFill(Color.RED);
 		
-		Label label = new Label(isTemplate ? block.getClass().getSimpleName() : (String)block.getOption("name"));
+		label = new Label(isTemplate ? block.getClass().getSimpleName() : (String)block.getOption("name"));
 		label.setWrapText(true);
+		label.setAlignment(Pos.CENTER);
+		label.setTextAlignment(TextAlignment.CENTER);
+		label.setPrefWidth(50.0);
 		
 		getChildren().addAll(rect, label);
 		
@@ -69,6 +81,28 @@ public class BlockNode extends VBox {
 				event.consume();
 			}
 		});
+		
+		if (!isTemplate) {
+			setOnMouseClicked(new EventHandler<MouseEvent>() {
+				@Override
+				public void handle(MouseEvent event) {
+					if (event.getClickCount() > 1) {
+						Option option = new Option(block);
+						Editor editor = option.getBestEditor();
+						editor.setModel(option);
+						new EditorWindow(editor).showAndWait();
+						label.setText((String)block.getOption("name"));
+					}
+				}
+			});
+		}
+	}
+	
+	public Block getBlock() {
+		if (isTemplate)
+			return null;
+		else
+			return block;
 	}
 	
 	public void setPosition(HandlePosition handle, double left, double top) {

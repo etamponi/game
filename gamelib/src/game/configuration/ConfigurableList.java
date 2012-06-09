@@ -64,6 +64,15 @@ public class ConfigurableList extends Configurable implements List {
 	}
 
 	@Override
+	public String getOptionNameFromContent(Object content) {
+		int index = internal.indexOf(content);
+		if (index < 0)
+			return super.getOptionNameFromContent(content);
+		else
+			return String.valueOf(index);
+	}
+
+	@Override
 	public boolean add(Object e) {
 		add(internal.size(), e);
 		return true;
@@ -263,15 +272,6 @@ public class ConfigurableList extends Configurable implements List {
 				super.setLocalOption(optionName, content);
 			}
 		}
-	}
-
-	@Override
-	protected String getOptionNameFromContent(Object content) {
-		int index = internal.indexOf(content);
-		if (index < 0)
-			return super.getOptionNameFromContent(content);
-		else
-			return String.valueOf(index);
 	}
 
 	@Override

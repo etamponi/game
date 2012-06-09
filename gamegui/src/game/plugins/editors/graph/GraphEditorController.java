@@ -10,11 +10,13 @@
  ******************************************************************************/
 package game.plugins.editors.graph;
 
+import game.core.Block;
 import game.core.Dataset;
 import game.core.Encoding;
 import game.core.Graph;
 import game.core.InstanceTemplate;
 import game.core.blocks.Classifier;
+import game.core.blocks.Encoder;
 import game.editorsystem.Editor;
 import game.editorsystem.EditorController;
 import game.editorsystem.Option;
@@ -33,6 +35,7 @@ import javafx.scene.control.Label;
 import javafx.scene.input.DragEvent;
 import javafx.scene.input.TransferMode;
 import javafx.scene.layout.AnchorPane;
+import javafx.scene.layout.FlowPane;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Priority;
 
@@ -47,9 +50,9 @@ public class GraphEditorController implements EditorController {
 	@FXML
 	private GridPane confPane;
 	@FXML
-	private GridPane classifiersPane;
+	private FlowPane classifiersPane;
 	@FXML
-	private GridPane inputEncodersPane;
+	private FlowPane inputEncodersPane;
 
 	@Override
 	public void initialize(URL location, ResourceBundle resources) {
@@ -100,6 +103,11 @@ public class GraphEditorController implements EditorController {
 			@Override
 			public void handle(DragEvent event) {
 				if (event.getDragboard().hasContent(BlockNode.BLOCKDATA)) {
+					Block block = Settings.getInstance().getDragging().getBlock();
+					if (block instanceof Classifier)
+						graph.setOption("classifiers.add", block);
+					if (block instanceof Encoder)
+						graph.setOption("inputEncoders.add", block);
 					Settings.getInstance().setDragging(null);
 					event.setDropCompleted(true);
 				} else {
@@ -150,7 +158,7 @@ public class GraphEditorController implements EditorController {
 			}
 		};
 		
-		classifiersPane.add(new BlockNode(temp, true), 0, 0);
+		classifiersPane.getChildren().add(new BlockNode(temp, true));
 	}
 
 	@Override
