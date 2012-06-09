@@ -7,6 +7,7 @@ import javafx.fxml.FXMLLoader;
 import javafx.fxml.JavaFXBuilderFactory;
 import javafx.scene.Node;
 import javafx.scene.Parent;
+import javafx.scene.layout.AnchorPane;
 
 public abstract class ControlledEditor extends Editor {
 	
@@ -24,6 +25,11 @@ public abstract class ControlledEditor extends Editor {
 
 			root = (Parent)fxmlLoader.load(location.openStream());
 			controller = fxmlLoader.getController();
+
+			AnchorPane.setTopAnchor(root, 0.0);
+			AnchorPane.setLeftAnchor(root, 0.0);
+			AnchorPane.setRightAnchor(root, 0.0);
+			AnchorPane.setBottomAnchor(root, 0.0);
 		} catch (IOException e) {
 			e.printStackTrace();
 		}

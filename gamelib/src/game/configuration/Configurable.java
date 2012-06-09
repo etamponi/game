@@ -1,5 +1,6 @@
 package game.configuration;
 
+import game.configuration.errorchecks.LengthCheck;
 import game.plugins.Constraint;
 import game.plugins.PluginManager;
 import game.plugins.constraints.TrueConstraint;
@@ -60,12 +61,14 @@ public abstract class Configurable extends Observable implements Observer {
 		public void updateOnChange(String changedOption) {
 			Object masterContent = Configurable.this.getOption(masterPath);
 			if (isOnPath(masterPath, changedOption)) {
-				for (String slave: slaves)
-					Configurable.this.setOption(slave, masterContent);
+				for (String slave: slaves) {
+					if (Configurable.this.getOption(slave) == null)
+						Configurable.this.setOption(slave, masterContent);
+				}
 			} else {
 				for (String slave: slaves) {
 					String pathToParent = getParentPath(slave);
-					if (isOnPath(pathToParent, changedOption))
+					if (isOnPath(pathToParent, changedOption) && Configurable.this.getOption(slave) == null)
 						Configurable.this.setOption(slave, masterContent);
 				}
 			}
@@ -116,6 +119,8 @@ public abstract class Configurable extends Observable implements Observer {
 	
 	public Configurable() {
 		this.name = String.format("%s%03d", getClass().getSimpleName(), hashCode() % 1000);
+		
+		addOptionChecks("name", new LengthCheck(1));
 	}
 	
 	public <T> T getOption(String optionPath) {

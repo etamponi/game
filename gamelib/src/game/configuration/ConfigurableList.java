@@ -220,6 +220,8 @@ public class ConfigurableList extends Configurable implements List {
 
 	@Override
 	protected Object getLocalOption(String optionName) {
+		if (optionName.matches("\\*"))
+			return null;
 		if (optionName.matches("\\d+")) {
 			int index = Integer.parseInt(optionName);
 			if (index < size())

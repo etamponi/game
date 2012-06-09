@@ -4,12 +4,27 @@ import game.configuration.Configurable;
 import game.configuration.ConfigurableList;
 import game.core.blocks.Classifier;
 import game.core.blocks.Encoder;
+import game.plugins.constraints.CompatibleClassifierConstraint;
 import game.plugins.constraints.CompatibleDecoderConstraint;
 import game.plugins.constraints.CompatibleEncoderConstraint;
 
 import java.util.LinkedList;
 
 public class Graph extends LongTask {
+	
+	public static class ClassifierList extends ConfigurableList {
+		
+		public InstanceTemplate template;
+		
+		public ClassifierList(Configurable owner) {
+			super(owner, Classifier.class);
+			
+			addOptionBinding("template", "*.template");
+			
+			setOptionConstraint("*", new CompatibleClassifierConstraint(this, "template"));
+		}
+		
+	}
 	
 	public static class EncoderList extends ConfigurableList {
 		
@@ -30,7 +45,7 @@ public class Graph extends LongTask {
 	
 	public InstanceTemplate template; 
 
-	public ConfigurableList classifiers = new ConfigurableList(this, Classifier.class);
+	public ClassifierList classifiers = new ClassifierList(this);
 	public EncoderList inputEncoders = new EncoderList(this);
 	
 	public Decoder decoder;
@@ -38,7 +53,7 @@ public class Graph extends LongTask {
 	private Classifier outputClassifier;
 	
 	public Graph() {
-		addOptionBinding("template", 						"classifiers.*.template");
+		addOptionBinding("template", 						"classifiers.template");
 		addOptionBinding("template.inputTemplate", 			"inputEncoders.template");
 		addOptionBinding("outputClassifier.outputEncoder", 	"decoder.encoder");
 		

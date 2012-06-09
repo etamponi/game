@@ -11,6 +11,8 @@ public abstract class Classifier extends Block {
 	
 	public Encoder outputEncoder;
 	
+	public abstract boolean supportsTemplate(InstanceTemplate template);
+	
 	public Classifier() {
 		addOptionBinding("template.outputTemplate", "outputEncoder.template");
 		addOptionChecks("parents", new SizeCheck(1));

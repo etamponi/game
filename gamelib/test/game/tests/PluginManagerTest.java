@@ -2,7 +2,6 @@ package game.tests;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
-import game.base.Subparent;
 import game.plugins.ChildAA;
 import game.plugins.ChildB;
 import game.plugins.ChildC;
@@ -37,9 +36,6 @@ public class PluginManagerTest {
 		real.add(ChildB.class);
 		real.add(ChildD.class);
 		real.add(ChildNested.class);
-		assertEquals(4, set.size());
-		assertTrue(set.containsAll(real));
-		set = classSet(manager.getInstancesOf(Subparent.class));
 		assertEquals(4, set.size());
 		assertTrue(set.containsAll(real));
 		

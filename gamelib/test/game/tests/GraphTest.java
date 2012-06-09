@@ -89,6 +89,10 @@ public class GraphTest {
 			// TODO Auto-generated method stub
 			return null;
 		}
+		@Override
+		public boolean supportsTemplate(InstanceTemplate template) {
+			return true;
+		}
 	}
 	
 	public static class ClassifierImplB extends Classifier {
@@ -106,6 +110,10 @@ public class GraphTest {
 		protected Encoding transform(Object inputData) {
 			// TODO Auto-generated method stub
 			return null;
+		}
+		@Override
+		public boolean supportsTemplate(InstanceTemplate template) {
+			return false;
 		}
 	}
 
@@ -127,7 +135,6 @@ public class GraphTest {
 		Set<Class> set = classSet(classifiers.getCompatibleOptionInstances("*", manager));
 		Set<Class> real = new HashSet<>();
 		real.add(ClassifierImplA.class);
-		real.add(ClassifierImplB.class);
 		assertEquals(real.size(), set.size());
 		assertTrue(set.containsAll(real));
 		

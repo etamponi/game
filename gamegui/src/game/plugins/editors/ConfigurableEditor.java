@@ -41,11 +41,12 @@ public class ConfigurableEditor extends Editor {
 		if (getModel() != null && getModel().getContent() != null) {
 			Configurable content = getModel().getContent();
 			for (String optionName: content.getUnboundOptionNames()) {
+//			for (String optionName: content.getOptionNames()) {
 				if (hiddenOptions.contains(optionName))
 					continue;
 				
 				Option option = new Option(content, optionName);
-				Label label = new Label(optionName+":");
+				Label label = new Label(optionName+": ");
 				Editor editor = option.getBestEditor();
 				try {
 					if (option.getContent() == null && Utils.isConcrete(option.getType()))
@@ -54,6 +55,8 @@ public class ConfigurableEditor extends Editor {
 					e.printStackTrace();
 				}
 				editor.setModel(option);
+//				if (option.isBound())
+//					editor.getView().setDisable(true);
 				pane.addRow(optionName.equals("name") ? 0 : count++, label, editor.getView());
 				GridPane.setValignment(label, VPos.TOP);
 				GridPane.setHalignment(label, HPos.RIGHT);
