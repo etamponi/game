@@ -6,20 +6,28 @@
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.paint.*?>
 
-<AnchorPane id="AnchorPane" fx:id="root" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" xmlns:fx="http://javafx.com/fxml" fx:controller="game.plugins.editors.graph.GraphEditorController">
+<AnchorPane id="AnchorPane" fx:id="root" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="600.0" prefWidth="800.0" xmlns:fx="http://javafx.com/fxml" fx:controller="game.plugins.editors.graph.GraphEditorController">
   <children>
-    <SplitPane dividerPositions="0.7006688963210702" focusTraversable="true" prefHeight="400.0" prefWidth="600.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+    <SplitPane dividerPositions="0.568922305764411" focusTraversable="true" prefHeight="400.0" prefWidth="600.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
       <items>
-        <AnchorPane fx:id="graphRoot" minHeight="0.0" minWidth="0.0" prefHeight="160.0" prefWidth="100.0" />
+        <AnchorPane id="graphRoot" fx:id="leftSide" minHeight="0.0" minWidth="0.0" prefHeight="576.0" prefWidth="451.0">
+          <children>
+            <AnchorPane maxHeight="30.0" minHeight="30.0" prefHeight="30.0" prefWidth="451.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0">
+              <children>
+                <Slider fx:id="zoom" min="10.0" onKeyReleased="#onZoom" onKeyTyped="#onZoom" onMouseClicked="#onZoom" onMouseDragged="#onZoom" onMouseMoved="#onZoom" onMouseReleased="#onZoom" onScroll="#onZoom" onTouchMoved="#onZoom" onTouchReleased="#onZoom" value="100.0" AnchorPane.bottomAnchor="5.0" AnchorPane.rightAnchor="5.0" />
+              </children>
+            </AnchorPane>
+          </children>
+        </AnchorPane>
         <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="160.0" prefWidth="100.0">
           <children>
             <Accordion minWidth="176.0" prefHeight="398.0" prefWidth="176.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
               <expandedPane>
-                <TitledPane fx:id="x1" animated="false" text="Classifiers pool">
+                <TitledPane fx:id="x2" animated="false" text="Input encoders pool">
                   <content>
                     <AnchorPane id="Content" minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
                       <children>
-                        <FlowPane fx:id="classifiersPane" prefHeight="328.0" prefWidth="172.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
+                        <FlowPane fx:id="inputEncodersPane" onZoom="#onZoom" prefHeight="328.0" prefWidth="172.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
                       </children>
                     </AnchorPane>
                   </content>
@@ -42,16 +50,16 @@
                     </AnchorPane>
                   </content>
                 </TitledPane>
-                <fx:reference source="x1" />
-                <TitledPane animated="false" expanded="false" text="Input encoders pool">
+                <TitledPane fx:id="x1" animated="false" text="Classifiers pool">
                   <content>
                     <AnchorPane id="Content" minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
                       <children>
-                        <FlowPane fx:id="inputEncodersPane" prefHeight="328.0" prefWidth="172.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
+                        <FlowPane fx:id="classifiersPane" prefHeight="328.0" prefWidth="172.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
                       </children>
                     </AnchorPane>
                   </content>
                 </TitledPane>
+                <fx:reference source="x2" />
               </panes>
             </Accordion>
           </children>

@@ -25,6 +25,7 @@ import game.utils.Utils;
 
 import java.net.URL;
 import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Observable;
@@ -32,6 +33,7 @@ import java.util.Observer;
 import java.util.ResourceBundle;
 import java.util.Set;
 
+import javafx.event.Event;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.geometry.HPos;
@@ -40,9 +42,11 @@ import javafx.geometry.Pos;
 import javafx.geometry.VPos;
 import javafx.scene.Node;
 import javafx.scene.control.Label;
+import javafx.scene.control.Slider;
 import javafx.scene.input.DragEvent;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
+import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.input.TransferMode;
 import javafx.scene.layout.AnchorPane;
@@ -54,25 +58,42 @@ import javafx.scene.paint.Color;
 import javafx.scene.shape.Polygon;
 
 public class GraphEditorController implements EditorController, Observer {
-	
+	/*
+	private static final ImageCursor TRASH = new ImageCursor(new Image(GraphEditorController.class.getResourceAsStream("trash.gif")));
+	private static final ImageCursor ADD = new ImageCursor(new Image(GraphEditorController.class.getResourceAsStream("add.png")));
+	*/
 	private Graph graph;
 	
 	@FXML
 	private AnchorPane root;
 	@FXML
-	private AnchorPane graphRoot;
+	private AnchorPane leftSide;
 	@FXML
 	private GridPane confPane;
 	@FXML
 	private FlowPane classifiersPane;
 	@FXML
 	private FlowPane inputEncodersPane;
+	@FXML
+	private Slider zoom;
+	
+	private ZoomablePane graphPane;
+	
+	private AnchorPane graphRoot;
 
+	private Polygon outputBlock = null;
 	private boolean connectionInProgress = false;
 	private Map<BlockNode, EventHandler> previousHandlers = new HashMap<>();
 	
 	@Override
 	public void initialize(URL location, ResourceBundle resources) {
+		graphPane = new ZoomablePane(2000, 2000);
+		leftSide.getChildren().add(graphPane);
+		AnchorPane.setTopAnchor(graphPane, 0.0);
+		AnchorPane.setLeftAnchor(graphPane, 0.0);
+		AnchorPane.setRightAnchor(graphPane, 0.0);
+		AnchorPane.setBottomAnchor(graphPane, 30.0);
+		graphRoot = graphPane.getContentPane();
 		
 		root.setOnKeyReleased(new EventHandler<KeyEvent>() {
 			@Override
@@ -93,8 +114,6 @@ public class GraphEditorController implements EditorController, Observer {
 					node.setPosition(handle, event.getX(), event.getY());
 					node.setDragging(true);
 				}
-				
-				event.consume();
 			}
 		});
 		
@@ -106,6 +125,10 @@ public class GraphEditorController implements EditorController, Observer {
 					
 					if (node.getWrapper() == null && !graphRoot.getChildren().contains(node))
 						graphRoot.getChildren().add(node);
+					if (node.getWrapper() != null && !graphRoot.getChildren().contains(node.getWrapper()))
+						graphRoot.getChildren().add(node.getWrapper());
+					
+					updateConnections(node.getWrapper(), false);
 				}
 				
 				event.consume();
@@ -118,8 +141,11 @@ public class GraphEditorController implements EditorController, Observer {
 				if (event.getDragboard().hasContent(BlockNode.BLOCKDATA)) {
 					BlockNode node = Settings.getInstance().getDragging();
 					if (node != null) {
-						if (node.getBlock() instanceof Classifier)
+						if (node.getBlock() instanceof Classifier) {
 							graph.setOption("classifiers.remove", node.getBlock());
+							if (graph.outputClassifier == node.getBlock())
+								graph.setOption("outputClassifier", null);
+						}
 						if (node.getBlock() instanceof Encoder)
 							graph.setOption("inputEncoders.remove", node.getBlock());
 						
@@ -127,6 +153,8 @@ public class GraphEditorController implements EditorController, Observer {
 							graphRoot.getChildren().remove(node.getWrapper());
 						else
 							graphRoot.getChildren().remove(node);
+						
+						updateConnections(node.getWrapper(), true);
 					}
 				}
 				
@@ -155,10 +183,42 @@ public class GraphEditorController implements EditorController, Observer {
 				} else {
 					event.setDropCompleted(false);
 				}
-				
-				event.consume();
 			}
 		});
+		
+		root.setOnDragOver(new EventHandler<DragEvent>() {
+			@Override
+			public void handle(DragEvent event) {
+				if (event.getDragboard().hasContent(BlockNode.BLOCKDATA)) {
+					event.acceptTransferModes(TransferMode.ANY);
+				}
+			}
+		});
+		
+		root.setOnDragDropped(new EventHandler<DragEvent>() {
+			@Override
+			public void handle(DragEvent event) {
+				for (Node child: new LinkedList<>(graphRoot.getChildren())) {
+					if (child instanceof Connection) {
+						if (((Connection)child).invalid())
+							graphRoot.getChildren().remove(child);
+					}
+				}
+			}
+		});
+	}
+	
+	private void updateConnections(HBox box, boolean hide) {
+		for (Node child: graphRoot.getChildren()) {
+			if (child instanceof Connection) {
+				if (((Connection)child).relativeTo(box)) {
+					if (hide)
+						child.setOpacity(0);
+					else
+						child.setOpacity(1);
+				}
+			}
+		}
 	}
 	
 	private void wrapNode(final BlockNode node) {
@@ -172,17 +232,17 @@ public class GraphEditorController implements EditorController, Observer {
 			 0.0, 20.0
 		});
 		in.setFill(Color.GREEN);
-		/*
-		Polygon out = new Polygon();
+		final Polygon out = new Polygon();
 		out.getPoints().addAll(new Double[]{
 			 0.0,  0.0,
-			10.0,  5.0,
-			 0.0, 10.0
+			20.0, 10.0,
+			 0.0, 20.0
 		});
 		out.setFill(Color.GREEN);
-		*/
+		if (graph.outputClassifier != node.getBlock())
+			out.setOpacity(0);
 		node.setWrapper(wrapper);
-		wrapper.getChildren().addAll(in, node/*, out*/);
+		wrapper.getChildren().addAll(in, node, out);
 		wrapper.setLayoutX(node.getLayoutX() - 20.0);
 		wrapper.setLayoutY(node.getLayoutY());
 		graphRoot.getChildren().remove(node);
@@ -199,6 +259,26 @@ public class GraphEditorController implements EditorController, Observer {
 				}
 			});
 		}
+		
+		if (node.getBlock() instanceof Classifier) {
+			node.addEventHandler(MouseEvent.MOUSE_CLICKED, new EventHandler<MouseEvent>() {
+				@Override
+				public void handle(MouseEvent event) {
+					if (event.getButton() == MouseButton.SECONDARY) {
+						if (node.getBlock() == graph.outputClassifier) {
+							graph.setOption("outputClassifier", null);
+							out.setOpacity(0);
+						} else {
+							if (outputBlock != null)
+								outputBlock.setOpacity(0);
+							graph.setOption("outputClassifier", node.getBlock());
+							out.setOpacity(1);
+							outputBlock = out;
+						}
+					}
+				}
+			});
+		}
 	}
 	
 	private void startConnection(HBox wrapper) {
@@ -207,6 +287,9 @@ public class GraphEditorController implements EditorController, Observer {
 		final BlockNode node = (BlockNode)wrapper.getChildren().get(1);
 		connectionInProgress = true;
 		for (Node child: graphRoot.getChildren()) {
+			if (!(child instanceof HBox))
+				continue;
+			
 			if (child == wrapper)
 				continue;
 			final BlockNode other = (BlockNode)((HBox)child).getChildren().get(1);
@@ -220,25 +303,44 @@ public class GraphEditorController implements EditorController, Observer {
 			other.setOnMouseClicked(new EventHandler<MouseEvent>() {
 				@Override
 				public void handle(MouseEvent event) {
-					String action;
-					if (node.getBlock().parents.contains(other.getBlock()))
-						action = "remove";
-					else
-						action = "add";
-					node.getBlock().setOption("parents."+action, other.getBlock());
+					if (node.getBlock().parents.contains(other.getBlock())) {
+						node.getBlock().setOption("parents.remove", other.getBlock());
+						removeConnection(other.getWrapper(), node.getWrapper());
+					} else {
+						node.getBlock().setOption("parents.add", other.getBlock());
+						addConnection(other.getWrapper(), node.getWrapper());
+					}
 					endConnection();
 				}
 			});
 		}
 	}
 	
+	private void addConnection(HBox from, HBox to) {
+		final Connection connection = new Connection(graphRoot, from, to);
+		graphRoot.getChildren().add(connection);
+	}
+	
+	private void removeConnection(HBox from, HBox to) {
+		for (Node child: graphRoot.getChildren()) {
+			if (child instanceof Connection) {
+				if (((Connection)child).matches(from, to)) {
+					graphRoot.getChildren().remove(child);
+					return;
+				}
+			}
+		}
+	}
+	
 	private void endConnection() {
 		connectionInProgress = false;
 		for (Node child: graphRoot.getChildren()) {
-			BlockNode node = (BlockNode)((HBox)child).getChildren().get(1); 
-			node.setStyle("-fx-border-style: solid; -fx-border-color:gray");
-			if (previousHandlers.containsKey(node))
-				node.setOnMouseClicked(previousHandlers.get(node));
+			if (child instanceof HBox) {
+				BlockNode node = (BlockNode)((HBox)child).getChildren().get(1); 
+				node.setStyle("-fx-border-style: solid; -fx-border-color:gray");
+				if (previousHandlers.containsKey(node))
+					node.setOnMouseClicked(previousHandlers.get(node));
+			}
 		}
 		
 		previousHandlers.clear();
@@ -327,6 +429,14 @@ public class GraphEditorController implements EditorController, Observer {
 			if (change.getPath().startsWith("template"))
 				fillPools();
 		}
+	}
+	
+	@FXML
+	void onZoom(Event event) {
+		double value = zoom.getValue()/100;
+		
+		graphPane.setZoomLevel(value);
+		graphRoot.setStyle("-fx-background-color:#aaaaaa");
 	}
 
 }
