@@ -1,0 +1,54 @@
+package game.configuration;
+
+import com.thoughtworks.xstream.converters.Converter;
+import com.thoughtworks.xstream.converters.MarshallingContext;
+import com.thoughtworks.xstream.converters.UnmarshallingContext;
+import com.thoughtworks.xstream.io.HierarchicalStreamReader;
+import com.thoughtworks.xstream.io.HierarchicalStreamWriter;
+
+public class ConfigurableConverter implements Converter {
+
+	@Override
+	public boolean canConvert(Class type) {
+		return Configurable.class.isAssignableFrom(type);
+	}
+
+	@Override
+	public void marshal(Object o, HierarchicalStreamWriter writer,
+			MarshallingContext context) {
+		Configurable object = (Configurable)o;
+		
+		for (String optionName: object.getOptionNames()) {
+			Object option = object.getOption(optionName);
+			if (option != null) {
+				writer.startNode(optionName);
+				if (option.getClass() != object.getOptionType(optionName))
+					writer.addAttribute("class", option.getClass().getName());
+				context.convertAnother(option);
+				writer.endNode();
+			}
+		}
+	}
+
+	@Override
+	public Object unmarshal(HierarchicalStreamReader reader,
+			UnmarshallingContext context) {
+		Configurable object = null;
+		try {
+			object = (Configurable)(context.currentObject() != null ? context.currentObject() 
+																	: context.getRequiredType().newInstance());
+			while(reader.hasMoreChildren()) {
+				reader.moveDown();
+				String optionName = reader.getNodeName();
+				String className = reader.getAttribute("class");
+				Class optionType = className != null ? Class.forName(className) : object.getOptionType(optionName);
+				object.setOption(optionName, context.convertAnother(object, optionType));
+				reader.moveUp();
+			}
+		} catch (ClassNotFoundException | InstantiationException | IllegalAccessException e) {
+			e.printStackTrace();
+		}
+		return object;
+	}
+
+}

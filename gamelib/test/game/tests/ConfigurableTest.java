@@ -12,12 +12,12 @@ package game.tests;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
-
 import game.configuration.Configurable;
 import game.configuration.ConfigurableImplA;
 import game.configuration.ConfigurableImplB;
 import game.configuration.ConfigurableImplC;
 
+import java.io.File;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -114,7 +114,7 @@ public class ConfigurableTest {
 		LinkedList<String> errors = new LinkedList<>();
 		errors.add("optionA1: is null");
 		errors.add("optionA2: is null");
-		errors.add("optionA3: should have at least 20 characters");
+		errors.add("optionA3: must have at least 20 characters");
 		errors.add("optionA4: is null");
 		errors.add("optionA5: is null");
 		assertEquals(5, object.getConfigurationErrors().size());
@@ -135,6 +135,32 @@ public class ConfigurableTest {
 		errors.add("optionList.0.optionB2: is null");
 		assertEquals(4, object.getConfigurationErrors().size());
 		assertTrue(object.getConfigurationErrors().containsAll(errors));
+	}
+	
+	@Test
+	public void serializationTest() {
+		Configurable objectA = new ConfigurableImplA();
+		objectA.setOption("optionA1", "This is optionA1");
+		objectA.setOption("optionA2", "This is optionA2");
+		objectA.setOption("optionA3", "This is optionA3");
+		objectA.setOption("optionA4", new ConfigurableImplB());
+		
+		Configurable objectB = objectA.cloneConfiguration();
+		assertEquals("This is optionA1", objectB.getOption("optionA1"));
+		assertEquals("This is optionA2", objectB.getOption("optionA2"));
+		assertEquals("This is optionA3", objectB.getOption("optionA3"));
+		assertEquals("This is optionA1", objectB.getOption("optionA4.optionB1"));
+		
+		objectA.saveConfiguration("testdata/testconfig.xml");
+		
+		Configurable objectC = new ConfigurableImplA();
+		objectC.loadConfiguration("testdata/testconfig.xml");
+		assertEquals("This is optionA1", objectC.getOption("optionA1"));
+		assertEquals("This is optionA2", objectC.getOption("optionA2"));
+		assertEquals("This is optionA3", objectC.getOption("optionA3"));
+		assertEquals("This is optionA1", objectC.getOption("optionA4.optionB1"));
+		
+		assertTrue(new File("testdata/testconfig.xml").delete());
 	}
 	
 }

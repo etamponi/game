@@ -59,8 +59,7 @@ public class Graph extends LongTask {
 	public EncoderList inputEncoders = new EncoderList(this);
 	
 	public Decoder decoder;
-	
-	private Classifier outputClassifier;
+	public Classifier outputClassifier;
 	
 	public Graph() {
 		addOptionBinding("template", 						"classifiers.template");
@@ -68,14 +67,6 @@ public class Graph extends LongTask {
 		addOptionBinding("outputClassifier.outputEncoder", 	"decoder.encoder");
 		
 		setOptionConstraint("decoder", new CompatibleDecoderConstraint(this, "outputClassifier.outputEncoder"));
-	}
-	
-	public Classifier getOutputClassifier() {
-		return outputClassifier;
-	}
-
-	public void setOutputClassifier(Classifier outputClassifier) {
-		this.outputClassifier = outputClassifier;
 	}
 
 	public <T> T startClassification(Object object) {

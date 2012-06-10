@@ -21,13 +21,19 @@ import java.util.ListIterator;
 
 public class ConfigurableList extends Configurable implements List {
 	
-	private Class elementType;
-	private ArrayList internal = new ArrayList();
+	public Class elementType;
+	
+	public ArrayList internal = new ArrayList();
+	
+	public ConfigurableList() {
+		// DO NOT USE NEVER NEVER NEVER
+		elementType = Object.class;
+	}
 	
 	public ConfigurableList(Configurable owner, Class elementType) {
 		super();
 		this.elementType = elementType;
-		this.addObserver(owner);
+		addObserver(owner);
 	}
 	
 	public <T> List<T> getList(Class<T> type) {

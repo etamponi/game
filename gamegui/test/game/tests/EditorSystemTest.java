@@ -14,6 +14,7 @@ import static org.junit.Assert.assertEquals;
 import game.configuration.Configurable;
 import game.core.Graph;
 import game.editorsystem.Editor;
+import game.editorsystem.EditorWindow;
 import game.editorsystem.Option;
 import game.main.Settings;
 import game.plugins.Constraint;
@@ -22,11 +23,15 @@ import game.plugins.editors.ImplementationChooserEditor.Implementation;
 import game.plugins.editors.NumberEditor;
 import game.plugins.editors.graph.GraphEditor;
 import javafx.application.Application;
-import javafx.scene.Parent;
+import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
 import javafx.scene.Scene;
+import javafx.scene.control.Button;
 import javafx.scene.control.ChoiceBox;
+import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.HBox;
+import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 
 import org.junit.Test;
@@ -126,11 +131,25 @@ public class EditorSystemTest extends Application {
 		option.setContent(new ConfigurableImplB());
 		assertEquals(option.getContent(), cb.getValue().getContent());
 		
-		option = new Option(new Graph());
-		best = option.getBestEditor();
-		//assertEquals(GraphEditor.class, best.getClass());
-		best.setModel(option);
-		primaryStage.setScene(new Scene((Parent)best.getView()));
+		final Graph graph = new Graph();
+		option = new Option(graph);
+		final Editor graphEditor = option.getBestEditor();
+		assertEquals(GraphEditor.class, graphEditor.getClass());
+		graphEditor.setModel(option);
+		
+		Button button = new Button("Click me");
+		VBox parent = new VBox();
+		parent.getChildren().addAll(new Label("Please put one classifier and one encoder in the graph"), button);
+		button.setOnAction(new EventHandler<ActionEvent>() {
+			@Override
+			public void handle(ActionEvent event) {
+				new EditorWindow(graphEditor).showAndWait();
+				assertEquals(1, graph.classifiers.size());
+				assertEquals(1, graph.inputEncoders.size());
+			}
+		});
+		
+		primaryStage.setScene(new Scene(parent));
 		primaryStage.show();
 	}
 

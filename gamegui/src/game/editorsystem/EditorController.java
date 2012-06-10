@@ -20,6 +20,4 @@ public interface EditorController extends Initializable {
 
 	public void updateView();
 
-	public void updateModel();
-
 }

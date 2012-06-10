@@ -54,7 +54,7 @@ public abstract class Editor implements Observer {
 	public void update(Observable observed, Object m) {
 		if (m instanceof Change) {
 			Change change = (Change)m;
-			if (change.getPath().endsWith(model.getOptionName()))
+			if (change.pathContains(model.getOptionName()))
 				updateView();
 		}
 	}

@@ -68,7 +68,7 @@ public abstract class ControlledEditor extends Editor {
 
 	@Override
 	public void updateModel() {
-		controller.updateModel();
+		// The model is updated by the controller
 	}
 	
 	protected String getFXML() {

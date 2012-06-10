@@ -15,11 +15,15 @@ import game.plugins.Constraint;
 import game.plugins.PluginManager;
 import game.plugins.constraints.TrueConstraint;
 
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -27,7 +31,16 @@ import java.util.Observable;
 import java.util.Observer;
 import java.util.Set;
 
+import com.thoughtworks.xstream.XStream;
+import com.thoughtworks.xstream.annotations.XStreamOmitField;
+import com.thoughtworks.xstream.io.xml.DomDriver;
+
 public abstract class Configurable extends Observable implements Observer {
+	
+	@XStreamOmitField
+	protected static XStream configStream = new XStream(new DomDriver());
+	@XStreamOmitField
+	protected static XStream stateStream = new XStream(new DomDriver());
 	
 	public class Change {
 		private String path;
@@ -59,11 +72,11 @@ public abstract class Configurable extends Observable implements Observer {
 		public String getPath() { return path; }
 	}
 	
-	private class RequestForParents {
-		private LinkedList<Configurable> parents;
+	private class RequestForOwners {
+		private LinkedList<Configurable> owners;
 		
-		public LinkedList<Configurable> getParents() {
-			return parents;
+		public LinkedList<Configurable> getOwners() {
+			return owners;
 		}
 	}
 	
@@ -80,13 +93,13 @@ public abstract class Configurable extends Observable implements Observer {
 			Object masterContent = Configurable.this.getOption(masterPath);
 			if (isOnPath(masterPath, changedOption)) {
 				for (String slave: slaves) {
-					if (Configurable.this.getOption(slave) == null)
+//					if (Configurable.this.getOption(slave) == null)
 						Configurable.this.setOption(slave, masterContent);
 				}
 			} else {
 				for (String slave: slaves) {
 					String pathToParent = getParentPath(slave);
-					if (isOnPath(pathToParent, changedOption) && Configurable.this.getOption(slave) == null)
+					if (isOnPath(pathToParent, changedOption)/* && Configurable.this.getOption(slave) == null*/)
 						Configurable.this.setOption(slave, masterContent);
 				}
 			}
@@ -135,6 +148,10 @@ public abstract class Configurable extends Observable implements Observer {
 	private HashMap<String, LinkedList<ErrorCheck>> optionChecks = new HashMap<>();
 	protected HashMap<String, Constraint> optionConstraints = new HashMap<>();
 	
+	static {
+		configStream.registerConverter(new ConfigurableConverter());
+	}
+	
 	public Configurable() {
 		this.name = String.format("%s%03d", getClass().getSimpleName(), hashCode() % 1000);
 		
@@ -165,10 +182,18 @@ public abstract class Configurable extends Observable implements Observer {
 		if (dotIndex < 0) {
 			setLocalOption(optionPath, content);
 		} else {
-			Configurable object = getOption(optionPath.substring(0, firstOptionIndex));
+			Configurable object = (Configurable)getLocalOption(optionPath.substring(0, firstOptionIndex));
 			if (object != null)
 				object.setOption(optionPath.substring(firstOptionIndex+1), content);
 		}
+	}
+	
+	public LinkedList<Configurable> getOwners() {
+		RequestForOwners request = new RequestForOwners();
+		setChanged();
+		notifyObservers(request);
+		
+		return request.getOwners();
 	}
 	
 	public LinkedList<String> getUnboundOptionNames() {
@@ -179,14 +204,6 @@ public abstract class Configurable extends Observable implements Observer {
 		LinkedList<String> ret = getOptionNames();
 		ret.removeAll(bound);
 		return ret;
-	}
-	
-	public LinkedList<Configurable> getParents() {
-		RequestForParents request = new RequestForParents();
-		setChanged();
-		notifyObservers(request);
-		
-		return request.getParents();
 	}
 	
 	public LinkedList<String> getOptionNames() {
@@ -208,6 +225,14 @@ public abstract class Configurable extends Observable implements Observer {
 	public LinkedList<String> getConfigurationErrors() {
 		LinkedList<String> ret = getErrors();
 		
+		ret.addAll(getConfigurationErrors(new HashSet<Configurable>()));
+		
+		return ret;
+	}
+	
+	private LinkedList<String> getConfigurationErrors(Set<Configurable> seen) {
+		LinkedList<String> ret = new LinkedList<>();
+		seen.add(this);
 		for (Map.Entry<String, Object> entry: getOptionsMap().entrySet()) {
 			if (entry.getValue() == null) {
 				ret.add(entry.getKey() + ": is null");
@@ -219,11 +244,13 @@ public abstract class Configurable extends Observable implements Observer {
 							ret.add(entry.getKey() + ": " + error);
 					}
 				}
-				if (entry.getValue() instanceof Configurable)
+				if (entry.getValue() instanceof Configurable && !seen.contains(entry.getValue()))
 					ret.addAll(putPrefix(entry.getKey() + ".",
-							             ((Configurable)entry.getValue()).getConfigurationErrors()));
+							             ((Configurable)entry.getValue()).getConfigurationErrors(seen)));
 			}
 		}
+		
+		// TODO All not respected binding and contraints.
 	
 		return ret;
 	}
@@ -252,6 +279,30 @@ public abstract class Configurable extends Observable implements Observer {
 		}
 		return null;
 	}
+	
+	public String getConfiguration() {
+		return configStream.toXML(this);
+	}
+	
+	public void loadConfiguration(String fileName) {
+		configStream.fromXML(new File(fileName), this);
+	}
+
+	public void saveConfiguration(String fileName) {
+		try {
+			FileOutputStream stream = new FileOutputStream(new File(fileName));
+			configStream.toXML(this, stream);
+			stream.close();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
+	
+	public <T extends Configurable> T cloneConfiguration() {
+		Configurable clone = (Configurable)configStream.fromXML(this.getConfiguration());
+		clone.name = String.format("%s%03d", getClass().getSimpleName(), clone.hashCode() % 1000);
+		return (T)clone;
+	}
 
 	@Override
 	public void update(Observable observedOption, Object message) {
@@ -276,9 +327,9 @@ public abstract class Configurable extends Observable implements Observer {
 			notifyObservers(new RequestForBoundOptions(request.getBoundOptions(), pathToParent));
 		}
 		
-		if (message instanceof RequestForParents) {
-			RequestForParents request = (RequestForParents)message;
-			request.getParents().add(this);
+		if (message instanceof RequestForOwners) {
+			RequestForOwners request = (RequestForOwners)message;
+			request.getOwners().add(this);
 		}
 	}
 	

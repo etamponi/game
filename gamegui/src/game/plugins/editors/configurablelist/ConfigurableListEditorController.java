@@ -60,11 +60,6 @@ public class ConfigurableListEditorController implements EditorController {
 	public void updateView() {
 		connectView();
 	}
-
-	@Override
-	public void updateModel() {
-		// Done by the single cells and by addAction and removeAction
-	}
 	
 	@FXML
 	public void addAction(ActionEvent event) {
