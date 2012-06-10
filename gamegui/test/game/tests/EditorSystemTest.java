@@ -12,12 +12,20 @@ package game.tests;
 
 import static org.junit.Assert.assertEquals;
 import game.configuration.Configurable;
+import game.core.Dataset;
+import game.core.Encoding;
 import game.core.Graph;
+import game.core.InstanceTemplate;
+import game.core.blocks.Classifier;
+import game.core.blocks.Encoder;
 import game.editorsystem.Editor;
 import game.editorsystem.EditorWindow;
 import game.editorsystem.Option;
 import game.main.Settings;
 import game.plugins.Constraint;
+import game.plugins.datatemplates.LabelTemplate;
+import game.plugins.datatemplates.SequenceTemplate;
+import game.plugins.datatemplates.VectorTemplate;
 import game.plugins.editors.ImplementationChooserEditor;
 import game.plugins.editors.ImplementationChooserEditor.Implementation;
 import game.plugins.editors.NumberEditor;
@@ -87,6 +95,105 @@ public class EditorSystemTest extends Application {
 		public double optionC2;
 		
 	}
+	
+	public static class ClassifierA extends Classifier {
+
+		@Override
+		public boolean supportsTemplate(InstanceTemplate template) {
+			return true;
+		}
+
+		@Override
+		public boolean isTrained() {
+			// TODO Auto-generated method stub
+			return false;
+		}
+
+		@Override
+		protected double train(Dataset trainingSet) {
+			// TODO Auto-generated method stub
+			return 0;
+		}
+
+		@Override
+		protected Encoding transform(Object inputData) {
+			// TODO Auto-generated method stub
+			return null;
+		}
+		
+	}
+	
+	public static class ClassifierB extends Classifier {
+
+		@Override
+		public boolean supportsTemplate(InstanceTemplate template) {
+			return true;
+		}
+
+		@Override
+		public boolean isTrained() {
+			// TODO Auto-generated method stub
+			return false;
+		}
+
+		@Override
+		protected double train(Dataset trainingSet) {
+			// TODO Auto-generated method stub
+			return 0;
+		}
+
+		@Override
+		protected Encoding transform(Object inputData) {
+			// TODO Auto-generated method stub
+			return null;
+		}
+		
+	}
+	
+	public static class EncoderA extends Encoder<VectorTemplate> {
+
+		@Override
+		public Class getBaseTemplateClass() {
+			return VectorTemplate.class;
+		}
+
+		@Override
+		protected Encoding transform(Object inputData) {
+			// TODO Auto-generated method stub
+			return null;
+		}
+		
+	}
+	
+	public static class EncoderB extends Encoder<LabelTemplate> {
+
+		@Override
+		public Class getBaseTemplateClass() {
+			return LabelTemplate.class;
+		}
+
+		@Override
+		protected Encoding transform(Object inputData) {
+			// TODO Auto-generated method stub
+			return null;
+		}
+		
+	}
+	
+	public static class EncoderC extends Encoder<SequenceTemplate> {
+
+		@Override
+		public Class getBaseTemplateClass() {
+			return SequenceTemplate.class;
+		}
+
+		@Override
+		protected Encoding transform(Object inputData) {
+			// TODO Auto-generated method stub
+			return null;
+		}
+		
+	}
 
 	@Test
 	public void test() throws Exception {
@@ -132,6 +239,28 @@ public class EditorSystemTest extends Application {
 		assertEquals(option.getContent(), cb.getValue().getContent());
 		
 		final Graph graph = new Graph();
+		graph.setOption("classifiers.add", new ClassifierA());
+		graph.setOption("classifiers.add", new ClassifierB());
+		graph.setOption("classifiers.add", new ClassifierB());
+		graph.setOption("classifiers.add", new ClassifierA());
+		graph.setOption("classifiers.add", new ClassifierA());
+		graph.setOption("classifiers.add", new ClassifierB());
+		graph.setOption("classifiers.add", new ClassifierA());
+		graph.setOption("classifiers.add", new ClassifierB());
+		graph.setOption("inputEncoders.add", new EncoderA());
+		graph.setOption("inputEncoders.add", new EncoderA());
+		
+		graph.setOption("outputClassifier", graph.getOption("classifiers.0"));
+		graph.setOption("classifiers.0.parents.add", graph.getOption("classifiers.1"));
+		graph.setOption("classifiers.0.parents.add", graph.getOption("classifiers.2"));
+		graph.setOption("classifiers.1.parents.add", graph.getOption("classifiers.3"));
+		graph.setOption("classifiers.2.parents.add", graph.getOption("classifiers.3"));
+		graph.setOption("classifiers.3.parents.add", graph.getOption("classifiers.4"));
+		graph.setOption("classifiers.3.parents.add", graph.getOption("classifiers.5"));
+		graph.setOption("classifiers.4.parents.add", graph.getOption("inputEncoders.0"));
+		graph.setOption("classifiers.5.parents.add", graph.getOption("inputEncoders.0"));
+		graph.setOption("classifiers.4.parents.add", graph.getOption("classifiers.2"));
+		
 		option = new Option(graph);
 		final Editor graphEditor = option.getBestEditor();
 		assertEquals(GraphEditor.class, graphEditor.getClass());
@@ -143,9 +272,7 @@ public class EditorSystemTest extends Application {
 		button.setOnAction(new EventHandler<ActionEvent>() {
 			@Override
 			public void handle(ActionEvent event) {
-				new EditorWindow(graphEditor).showAndWait();
-				assertEquals(1, graph.classifiers.size());
-				assertEquals(1, graph.inputEncoders.size());
+				new EditorWindow(graphEditor).show();
 			}
 		});
 		

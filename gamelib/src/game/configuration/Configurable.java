@@ -310,10 +310,8 @@ public abstract class Configurable extends Observable implements Observer {
 			Change change = (Change)message;
 			String changedOption = getOptionNameFromContent(observedOption);
 				   changedOption += change.getPath().isEmpty() ? "" : "." + change.getPath();
-			
-			updateOptionBindings(changedOption);
-			setChanged();
-			notifyObservers(new Change(changedOption));
+
+			propagateChange(observedOption, changedOption);
 		}
 		
 		if (message instanceof RequestForBoundOptions) {
@@ -323,14 +321,24 @@ public abstract class Configurable extends Observable implements Observer {
 				request.getBoundOptions().addAll(binding.getBoundOptions(pathToParent));
 			}
 			
+			observedOption.deleteObserver(this);
 			setChanged();
 			notifyObservers(new RequestForBoundOptions(request.getBoundOptions(), pathToParent));
+			observedOption.addObserver(this);
 		}
 		
 		if (message instanceof RequestForOwners) {
 			RequestForOwners request = (RequestForOwners)message;
 			request.getOwners().add(this);
 		}
+	}
+	
+	private void propagateChange(Observable observedOption, String changedOption) {
+		observedOption.deleteObserver(this);
+		updateOptionBindings(changedOption);
+		setChanged();
+		notifyObservers(new Change(changedOption));
+		observedOption.addObserver(this);
 	}
 	
 	@Override

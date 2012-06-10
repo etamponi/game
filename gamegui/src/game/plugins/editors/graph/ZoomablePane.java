@@ -12,6 +12,9 @@ public class ZoomablePane extends ScrollPane {
 	private double level = 1;
 	
 	public ZoomablePane(double width, double height) {
+		setHbarPolicy(ScrollBarPolicy.ALWAYS);
+		setVbarPolicy(ScrollBarPolicy.ALWAYS);
+		
 		String image = getClass().getResource("background.png").toExternalForm();
 		
 		content.setStyle("-fx-background-image: url('" + image + "');" + 

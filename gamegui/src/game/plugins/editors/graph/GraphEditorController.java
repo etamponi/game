@@ -25,6 +25,7 @@ import game.utils.Utils;
 
 import java.net.URL;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -114,6 +115,8 @@ public class GraphEditorController implements EditorController, Observer {
 					node.setPosition(handle, event.getX(), event.getY());
 					node.setDragging(true);
 				}
+				
+				event.consume();
 			}
 		});
 		
@@ -183,6 +186,8 @@ public class GraphEditorController implements EditorController, Observer {
 				} else {
 					event.setDropCompleted(false);
 				}
+				
+				event.consume();
 			}
 		});
 		
@@ -221,7 +226,7 @@ public class GraphEditorController implements EditorController, Observer {
 		}
 	}
 	
-	private void wrapNode(final BlockNode node) {
+	private HBox wrapNode(final BlockNode node) {
 		final HBox wrapper = new HBox();
 		wrapper.setAlignment(Pos.CENTER);
 		
@@ -241,12 +246,27 @@ public class GraphEditorController implements EditorController, Observer {
 		out.setFill(Color.GREEN);
 		if (graph.outputClassifier != node.getBlock())
 			out.setOpacity(0);
+		else
+			outputBlock = out;
 		node.setWrapper(wrapper);
 		wrapper.getChildren().addAll(in, node, out);
 		wrapper.setLayoutX(node.getLayoutX() - 20.0);
 		wrapper.setLayoutY(node.getLayoutY());
 		graphRoot.getChildren().remove(node);
 		graphRoot.getChildren().add(wrapper);
+
+		wrapper.setOnMouseEntered(new EventHandler<MouseEvent>() {
+			@Override
+			public void handle(MouseEvent event) {
+				graphPane.setPannable(false);
+			}
+		});
+		wrapper.setOnMouseExited(new EventHandler<MouseEvent>() {
+			@Override
+			public void handle(MouseEvent event) {
+				graphPane.setPannable(true);
+			}
+		});
 		
 		if (node.getBlock() instanceof Encoder) {
 			in.setOpacity(0);
@@ -279,6 +299,8 @@ public class GraphEditorController implements EditorController, Observer {
 				}
 			});
 		}
+		
+		return wrapper;
 	}
 	
 	private void startConnection(HBox wrapper) {
@@ -363,6 +385,7 @@ public class GraphEditorController implements EditorController, Observer {
 	public void connectView() {
 		connectConfRoot();
 		fillPools();
+		parseGraph();
 	}
 
 	@Override
@@ -421,6 +444,93 @@ public class GraphEditorController implements EditorController, Observer {
 			pool.getChildren().add(index, new BlockNode(block, true));
 		}
 	}
+	
+	private void parseGraph() {
+		Set<Block> seen = new HashSet<>();
+		
+		if (graph.outputClassifier != null) {
+			int level = countLevels(graph.outputClassifier, new HashSet<Block>());
+			
+			List<HBox> currentWrappers = new LinkedList<>();
+			List<Block> currentBlocks = new LinkedList<>();
+			currentBlocks.add(graph.outputClassifier);
+			List<HBox> previousWrappers = new LinkedList<>();
+			List<Block> previousBlocks = new LinkedList<>();
+			
+			while (level > 0) {
+				for(int i = 0; i < currentBlocks.size(); i++) {
+					Block c = currentBlocks.get(i);
+					if (seen.contains(c)) {
+						currentBlocks.remove(i);
+						i--;
+						continue;
+					}
+					seen.add(c);
+					if (c instanceof Classifier && !graph.classifiers.contains(c))
+						graph.setOption("classifiers.add", c);
+					if (c instanceof Encoder && !graph.inputEncoders.contains(c))
+						graph.setOption("inputEncoders.add", c);
+					
+					BlockNode node = new BlockNode(c, false);
+					graphRoot.getChildren().add(node);
+					node.setPosition(new HandlePosition(0, 0), 100*level+20, 100*(i+2));
+					HBox wrapper = wrapNode(node);
+					for (Block p: previousBlocks) {
+						if (p.parents.contains(c)) {
+							graphRoot.getChildren().add(
+									new Connection(graphRoot, wrapper, previousWrappers.get(previousBlocks.indexOf(p))));
+						}
+					}
+					currentWrappers.add(wrapper);
+				}
+				previousBlocks.clear();
+				previousBlocks.addAll(currentBlocks);
+				previousWrappers.clear();
+				previousWrappers.addAll(currentWrappers);
+				currentWrappers.clear();
+				currentBlocks.clear();
+				for(Block b: previousBlocks)
+					currentBlocks.addAll(b.parents);
+				level--;
+			}
+		}
+		
+		int count = addUnconnectedBlocks(graph.classifiers, seen, 1);
+		addUnconnectedBlocks(graph.inputEncoders, seen, count);
+	}
+	
+	private int addUnconnectedBlocks(List<Block> blocks, Set<Block> seen, int startAt) {
+		int count = startAt;
+		for (Block b: blocks) {
+			if (seen.contains(b))
+				continue;
+			seen.add(b);
+			
+			BlockNode node = new BlockNode(b, false);
+			graphRoot.getChildren().add(node);
+			node.setPosition(new HandlePosition(0, 0), 100*count+20, 0);
+			wrapNode(node);
+			count++;
+		}
+		return count;
+	}
+	
+	private int countLevels(Block current, Set<Block> seen) {
+		if (seen.contains(current))
+			return 0;
+		seen.add(current);
+		if (current.parents.isEmpty())
+			return 1;
+		else {
+			int max = 0;
+			for (Block parent: current.parents.getList(Block.class)) {
+				int count = countLevels(parent, seen);
+				if (count > max)
+					max = count;
+			}
+			return 1+max;
+		}
+	}
 
 	@Override
 	public void update(Observable o, Object message) {
@@ -436,7 +546,6 @@ public class GraphEditorController implements EditorController, Observer {
 		double value = zoom.getValue()/100;
 		
 		graphPane.setZoomLevel(value);
-		graphRoot.setStyle("-fx-background-color:#aaaaaa");
 	}
 
 }
