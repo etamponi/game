@@ -16,6 +16,7 @@ public class BlockEditor extends ConfigurableEditor {
 
 	public BlockEditor() {
 		addHiddenOption("parents");
+		addHiddenOption("position");
 	}
 
 	@Override

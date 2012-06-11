@@ -10,14 +10,25 @@
  ******************************************************************************/
 package game.core;
 
+import game.configuration.Configurable;
 import game.configuration.ConfigurableList;
 
 public abstract class Block extends LongTask {
+	
+	public static class Position extends Configurable {
+		public int x = -1;
+		public int y = -1;
+		
+		public boolean isValid() {
+			return x >= 0 && y >= 0;
+		}
+	}
 
 	private static final String TRAIN = "training";
 	private static final String TRANSFORM = "transforming";
 	
 	public ConfigurableList parents = new ConfigurableList(this, Block.class);
+	public Position position = new Position();
 	
 	public abstract boolean isTrained();
 	

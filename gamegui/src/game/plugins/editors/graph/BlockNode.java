@@ -137,7 +137,7 @@ public class BlockNode extends VBox {
 			setLayoutX(left-handle.x);
 			setLayoutY(top-handle.y);
 		} else {
-			wrapper.setLayoutX(left-handle.x-20);
+			wrapper.setLayoutX(left-handle.x);
 			wrapper.setLayoutY(top-handle.y);
 		}
 	}

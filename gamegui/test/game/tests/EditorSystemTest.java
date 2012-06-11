@@ -259,10 +259,10 @@ public class EditorSystemTest extends Application {
 		graph.setOption("classifiers.3.parents.add", graph.getOption("classifiers.5"));
 		graph.setOption("classifiers.4.parents.add", graph.getOption("inputEncoders.0"));
 		graph.setOption("classifiers.5.parents.add", graph.getOption("inputEncoders.0"));
-		graph.setOption("classifiers.4.parents.add", graph.getOption("classifiers.2"));
+		//graph.setOption("classifiers.4.parents.add", graph.getOption("classifiers.2"));
 		
 		option = new Option(graph);
-		final Editor graphEditor = option.getBestEditor();
+		Editor graphEditor = option.getBestEditor();
 		assertEquals(GraphEditor.class, graphEditor.getClass());
 		graphEditor.setModel(option);
 		
@@ -272,6 +272,10 @@ public class EditorSystemTest extends Application {
 		button.setOnAction(new EventHandler<ActionEvent>() {
 			@Override
 			public void handle(ActionEvent event) {
+				Option option = new Option(graph);
+				Editor graphEditor = option.getBestEditor();
+				graphEditor.setModel(option);
+				
 				new EditorWindow(graphEditor).show();
 			}
 		});
