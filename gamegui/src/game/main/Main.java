@@ -10,14 +10,28 @@
  ******************************************************************************/
 package game.main;
 
-public class Main {
+import game.core.Graph;
+import game.editorsystem.Editor;
+import game.editorsystem.Option;
+import javafx.application.Application;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
+import javafx.stage.Stage;
+
+public class Main extends Application {
 
 	/**
 	 * @param args
 	 */
 	public static void main(String[] args) {
-		// TODO Auto-generated method stub
+		launch(args);
+	}
 
+	@Override
+	public void start(Stage primaryStage) throws Exception {
+		Editor editor = new Option(new Graph()).getBestEditor();
+		primaryStage.setScene(new Scene((Parent)editor.getView()));
+		primaryStage.show();
 	}
 
 }

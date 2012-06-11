@@ -210,7 +210,6 @@ public class EditorSystemTest extends Application {
 		
 		Editor best = option.getBestEditor();
 		assertEquals(NumberEditor.class, best.getClass());
-		best.setModel(option);
 		
 		TextField tf = (TextField)best.getView();
 		tf.setText("3.14");
@@ -226,7 +225,6 @@ public class EditorSystemTest extends Application {
 		option = new Option(object, "optionA5");
 		best = option.getBestEditor();
 		assertEquals(ImplementationChooserEditor.class, best.getClass());
-		best.setModel(option);
 		
 		ChoiceBox<Implementation> cb = (ChoiceBox<Implementation>)((HBox)best.getView()).getChildren().get(0);
 		assertEquals(null, cb.getValue());
@@ -259,12 +257,11 @@ public class EditorSystemTest extends Application {
 		graph.setOption("classifiers.3.parents.add", graph.getOption("classifiers.5"));
 		graph.setOption("classifiers.4.parents.add", graph.getOption("inputEncoders.0"));
 		graph.setOption("classifiers.5.parents.add", graph.getOption("inputEncoders.0"));
-		//graph.setOption("classifiers.4.parents.add", graph.getOption("classifiers.2"));
+		graph.setOption("classifiers.4.parents.add", graph.getOption("classifiers.2"));
 		
 		option = new Option(graph);
 		Editor graphEditor = option.getBestEditor();
 		assertEquals(GraphEditor.class, graphEditor.getClass());
-		graphEditor.setModel(option);
 		
 		Button button = new Button("Click me");
 		VBox parent = new VBox();
@@ -274,8 +271,6 @@ public class EditorSystemTest extends Application {
 			public void handle(ActionEvent event) {
 				Option option = new Option(graph);
 				Editor graphEditor = option.getBestEditor();
-				graphEditor.setModel(option);
-				
 				new EditorWindow(graphEditor).show();
 			}
 		});

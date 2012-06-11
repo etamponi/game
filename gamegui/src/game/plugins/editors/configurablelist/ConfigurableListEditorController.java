@@ -87,7 +87,6 @@ public class ConfigurableListEditorController implements EditorController {
 		int index = listView.getSelectionModel().getSelectedIndex();
 		if (index >= 0) {
 			Editor editor = listView.getItems().get(index).getBestEditor();
-			editor.setModel(listView.getItems().get(index));
 			new EditorWindow(editor).show();
 		}
 	}

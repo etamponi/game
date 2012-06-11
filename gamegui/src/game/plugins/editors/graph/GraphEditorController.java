@@ -68,7 +68,7 @@ public class GraphEditorController implements EditorController, Observer {
 	
 	@Override
 	public void initialize(URL location, ResourceBundle resources) {
-		graphPane = new GraphPane(50, 50, 100, 100, getClass().getResource("background.png").toExternalForm());
+		graphPane = new GraphPane(50, 50, getClass().getResource("background.png").toExternalForm());
 		leftSide.getChildren().add(graphPane);
 		AnchorPane.setTopAnchor(graphPane, 0.0);
 		AnchorPane.setLeftAnchor(graphPane, 0.0);

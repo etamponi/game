@@ -112,7 +112,6 @@ public class BlockNode extends VBox {
 					if (event.getClickCount() > 1) {
 						Option option = new Option(block);
 						Editor editor = option.getBestEditor();
-						editor.setModel(option);
 						new EditorWindow(editor).show();
 					}
 				}

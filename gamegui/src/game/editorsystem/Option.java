@@ -99,6 +99,7 @@ public class Option {
 				bestDistance = currDistance;
 			}
 		}
+		best.setModel(this);
 		return best;
 	}
 	

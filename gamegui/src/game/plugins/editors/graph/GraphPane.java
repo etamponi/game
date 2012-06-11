@@ -17,6 +17,7 @@ import javafx.event.EventHandler;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.control.ScrollPane;
+import javafx.scene.image.Image;
 import javafx.scene.input.DragEvent;
 import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
@@ -45,9 +46,11 @@ public class GraphPane extends ScrollPane {
 	private double cellHeight;
 	private double cellWidth;
 	
-	public GraphPane(int hcells, int vcells, double cellWidth, double cellHeight, String image) {
-		this.cellWidth = cellWidth;
-		this.cellHeight = cellHeight;
+	public GraphPane(int hcells, int vcells, String cellImage) {
+		
+		Image img = new Image(cellImage);
+		this.cellWidth = img.getWidth();
+		this.cellHeight = img.getHeight();
 		
 		setHbarPolicy(ScrollBarPolicy.ALWAYS);
 		setVbarPolicy(ScrollBarPolicy.ALWAYS);
@@ -59,7 +62,7 @@ public class GraphPane extends ScrollPane {
 		content.setMinSize(width, height);
 		content.setMaxSize(width, height);
 		
-		content.setStyle("-fx-background-image: url('" + image + "');" + 
+		content.setStyle("-fx-background-image: url('" + cellImage + "');" + 
 		           		 "-fx-background-position: 0 0;" +
 		           		 "-fx-background-repeat: repeat;");
 		
@@ -405,6 +408,8 @@ public class GraphPane extends ScrollPane {
 	}
 	
 	private void registerGraphInTheGraph() {
+		if (graph.outputClassifier == null)
+			return;
 		Set<Block> seen = new HashSet<>();
 		List<Block> currents = new LinkedList<>();
 		currents.add(graph.outputClassifier);
