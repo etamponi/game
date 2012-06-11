@@ -103,7 +103,8 @@ public class Graph extends LongTask {
 	protected LinkedList<String> getErrors() {
 		LinkedList<String> ret = super.getErrors();
 		
-		LinkedList myNodes = new LinkedList(classifiers);
+		LinkedList myNodes = new LinkedList();
+		myNodes.addAll(classifiers);
 		myNodes.addAll(inputEncoders);
 		
 		LinkedList graphNodes = new LinkedList();

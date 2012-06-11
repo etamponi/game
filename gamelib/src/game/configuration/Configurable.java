@@ -93,13 +93,12 @@ public abstract class Configurable extends Observable implements Observer {
 			Object masterContent = Configurable.this.getOption(masterPath);
 			if (isOnPath(masterPath, changedOption)) {
 				for (String slave: slaves) {
-//					if (Configurable.this.getOption(slave) == null)
-						Configurable.this.setOption(slave, masterContent);
+					Configurable.this.setOption(slave, masterContent);
 				}
 			} else {
 				for (String slave: slaves) {
 					String pathToParent = getParentPath(slave);
-					if (isOnPath(pathToParent, changedOption)/* && Configurable.this.getOption(slave) == null*/)
+					if (isOnPath(pathToParent, changedOption))
 						Configurable.this.setOption(slave, masterContent);
 				}
 			}
@@ -303,6 +302,30 @@ public abstract class Configurable extends Observable implements Observer {
 		clone.name = String.format("%s%03d", getClass().getSimpleName(), clone.hashCode() % 1000);
 		return (T)clone;
 	}
+	
+	public String getState() {
+		return stateStream.toXML(this);
+	}
+	
+	public void loadState(String fileName) {
+		stateStream.fromXML(new File(fileName), this);
+	}
+	
+	public void saveState(String fileName) {
+		try {
+			FileOutputStream stream = new FileOutputStream(new File(fileName));
+			stateStream.toXML(this, stream);
+			stream.close();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
+	
+	public <T extends Configurable> T cloneState() {
+		Configurable clone = (Configurable)stateStream.fromXML(this.getConfiguration());
+		clone.name = String.format("%s%03d", getClass().getSimpleName(), clone.hashCode() % 1000);
+		return (T)clone;
+	}
 
 	@Override
 	public void update(Observable observedOption, Object message) {
@@ -311,7 +334,11 @@ public abstract class Configurable extends Observable implements Observer {
 			String changedOption = getOptionNameFromContent(observedOption);
 				   changedOption += change.getPath().isEmpty() ? "" : "." + change.getPath();
 
-			propagateChange(observedOption, changedOption);
+			observedOption.deleteObserver(this);
+			updateOptionBindings(changedOption);
+			setChanged();
+			notifyObservers(new Change(changedOption));
+			observedOption.addObserver(this);
 		}
 		
 		if (message instanceof RequestForBoundOptions) {
@@ -331,14 +358,6 @@ public abstract class Configurable extends Observable implements Observer {
 			RequestForOwners request = (RequestForOwners)message;
 			request.getOwners().add(this);
 		}
-	}
-	
-	private void propagateChange(Observable observedOption, String changedOption) {
-		observedOption.deleteObserver(this);
-		updateOptionBindings(changedOption);
-		setChanged();
-		notifyObservers(new Change(changedOption));
-		observedOption.addObserver(this);
 	}
 	
 	@Override
