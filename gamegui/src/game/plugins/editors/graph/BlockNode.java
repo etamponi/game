@@ -23,8 +23,6 @@ import java.util.Observer;
 
 import javafx.event.EventHandler;
 import javafx.geometry.Insets;
-import javafx.geometry.Pos;
-import javafx.scene.control.Label;
 import javafx.scene.input.ClipboardContent;
 import javafx.scene.input.DataFormat;
 import javafx.scene.input.DragEvent;
@@ -35,6 +33,7 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
+import javafx.scene.text.Text;
 import javafx.scene.text.TextAlignment;
 
 public class BlockNode extends VBox {
@@ -45,11 +44,11 @@ public class BlockNode extends VBox {
 	
 	private boolean isTemplate;
 	
-	private Label label;
+	private Text blockName;
 	
 	private HBox wrapper;
 
-	public BlockNode(Block b, boolean isTpl) {
+	public BlockNode(Block b, boolean isTpl, final GraphPane pane) {
 		this.block = b;
 		this.isTemplate = isTpl;
 		
@@ -62,13 +61,11 @@ public class BlockNode extends VBox {
 		Rectangle rect = new Rectangle(50, 50);
 		rect.setFill(Color.RED);
 		
-		label = new Label((String)block.getOption("name"));
-		label.setWrapText(true);
-		label.setAlignment(Pos.CENTER);
-		label.setTextAlignment(TextAlignment.CENTER);
-		label.setPrefWidth(50.0);
+		blockName = new Text((String)block.getOption("name"));
+		blockName.setTextAlignment(TextAlignment.CENTER);
+		blockName.setWrappingWidth(50.0);
 		
-		getChildren().addAll(rect, label);
+		getChildren().addAll(rect, blockName);
 		
 		setOnDragDetected(new EventHandler<MouseEvent>() {
 			@Override
@@ -77,7 +74,7 @@ public class BlockNode extends VBox {
 				
 				ClipboardContent content = new ClipboardContent();
 				Settings.getInstance().setDragging( isTemplate ?
-						new BlockNode((Block)block.cloneConfiguration(), false) : BlockNode.this);
+						new BlockNode((Block)block.cloneConfiguration(), false, pane) : BlockNode.this);
 				content.put(BLOCKDATA, new HandlePosition(event.getX(), event.getY()));
 				
 				db.setContent(content);
@@ -100,8 +97,10 @@ public class BlockNode extends VBox {
 				public void update(Observable o, Object arg) {
 					if (arg instanceof Change) {
 						Change change = (Change)arg;
-						if (change.getPath().contains("name"))
-							label.setText((String)block.getOption("name"));
+						if (change.getPath().contains("name")) {
+							blockName.setText((String)block.getOption("name"));
+							pane.fixPosition(BlockNode.this);
+						}
 					}
 				}
 			});

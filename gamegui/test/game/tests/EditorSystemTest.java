@@ -21,7 +21,6 @@ import game.core.blocks.Encoder;
 import game.editorsystem.Editor;
 import game.editorsystem.EditorWindow;
 import game.editorsystem.Option;
-import game.main.Settings;
 import game.plugins.Constraint;
 import game.plugins.datatemplates.LabelTemplate;
 import game.plugins.datatemplates.SequenceTemplate;
@@ -202,8 +201,6 @@ public class EditorSystemTest extends Application {
 
 	@Override
 	public void start(Stage primaryStage) throws Exception {
-		Settings.getInstance().getPluginManager().setOption("packages.add", "game.tests");
-		
 		Configurable object = new ConfigurableImplA();
 		
 		Option option = new Option(object, "optionA3");
@@ -269,9 +266,7 @@ public class EditorSystemTest extends Application {
 		button.setOnAction(new EventHandler<ActionEvent>() {
 			@Override
 			public void handle(ActionEvent event) {
-				Option option = new Option(graph);
-				Editor graphEditor = option.getBestEditor();
-				new EditorWindow(graphEditor).show();
+				new EditorWindow(new Option(graph).getBestEditor()).show();
 			}
 		});
 		

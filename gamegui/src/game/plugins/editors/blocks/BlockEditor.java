@@ -8,9 +8,10 @@
  * Contributors:
  *     Emanuele Tamponi - initial API and implementation
  ******************************************************************************/
-package game.plugins.editors;
+package game.plugins.editors.blocks;
 
 import game.core.Block;
+import game.plugins.editors.ConfigurableEditor;
 
 public class BlockEditor extends ConfigurableEditor {
 

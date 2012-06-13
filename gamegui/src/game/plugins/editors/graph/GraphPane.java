@@ -207,14 +207,14 @@ public class GraphPane extends ScrollPane {
 		registerGraphInTheGraph();
 		
 		Set<Block> all = new HashSet<>();
-		all.addAll(graph.classifiers);
 		all.addAll(graph.inputEncoders);
+		all.addAll(graph.classifiers);
 		
 		Map<Integer, Integer> countPerLevel = new HashMap<>();
 		List<BlockNode> allNodes = new LinkedList<>();
 		
 		for(Block b: all) {
-			BlockNode node = new BlockNode(b, false);
+			BlockNode node = new BlockNode(b, false, this);
 			double left, top;
 			if (b.position.isValid()) {
 				left = cellWidth*b.position.x;
@@ -251,17 +251,23 @@ public class GraphPane extends ScrollPane {
 		}
 	}
 	
-	private void fixPosition(BlockNode node) {
-		double x = node.getWrapper().getLayoutX()+node.getWidth()/2;
-		double y = node.getWrapper().getLayoutY()+node.getHeight()/2;
+	public void fixPosition(BlockNode node) {
+		HBox wrapper = node.getWrapper();
+		wrapper.getParent().layout();
+		
+		double x = wrapper.getLayoutX()+wrapper.getWidth()/2;
+		double y = wrapper.getLayoutY()+wrapper.getHeight()/2;
 		
 		int hcell = getNearestCell(x, cellWidth);
 		int vcell = getNearestCell(y, cellHeight);
 
 		node.getBlock().position.x = hcell;
 		node.getBlock().position.y = vcell;
+
+		int offsetX = (int)(cellWidth - wrapper.getWidth())/2;
+		int offsetY = (int)(cellHeight - wrapper.getHeight())/2;
 		
-		node.setPosition(new HandlePosition(0, 0), hcell*cellWidth, vcell*cellHeight);
+		node.setPosition(new HandlePosition(0, 0), hcell*cellWidth+offsetX, vcell*cellHeight+offsetY);
 	}
 	
 	private int getNearestCell(double pos, double cellSize) {

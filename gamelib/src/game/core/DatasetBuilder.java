@@ -17,5 +17,7 @@ public abstract class DatasetBuilder extends Configurable {
 	public InstanceTemplate template;
 	
 	public abstract Dataset buildDataset();
+	
+	public abstract boolean supportsTemplate(InstanceTemplate template);
 
 }

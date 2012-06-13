@@ -188,7 +188,7 @@ public class GraphEditorController implements EditorController, Observer {
 			while (index < pool.getChildren().size()
 					&& ((BlockNode)pool.getChildren().get(index)).getBlock().getClass().getSimpleName().compareTo(block.getClass().getSimpleName()) < 0)
 				index++;
-			pool.getChildren().add(index, new BlockNode(block, true));
+			pool.getChildren().add(index, new BlockNode(block, true, graphPane));
 		}
 	}
 

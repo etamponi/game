@@ -40,21 +40,17 @@ public class Connection extends CubicCurve {
 				setStartY(from.getLayoutY()+from.getHeight()/2);
 				setEndX(to.getLayoutX());
 				setEndY(to.getLayoutY()+to.getHeight()/2);
-				/*
-				setControlX1(getEndX());
+
+				double deltaX = Math.abs(getStartX()-getEndX());
+				setControlX1(getStartX()+deltaX);
 				setControlY1(getStartY());
-				setControlX2(getStartX());
-				setControlY2(getEndY());
-				*/
-				double delta = Math.abs(getStartX()-getEndX());
-				setControlX1(getStartX()+delta);
-				setControlY1(getStartY());
-				setControlX2(getEndX()-delta);
+				setControlX2(getEndX()-deltaX);
 				setControlY2(getEndY());
 				
-				if (getStartY() == getEndY() && getEndX() < getStartX()) {
-					setControlY1(getStartY()+5*Math.sqrt(delta));
-					setControlY2(getStartY()+5*Math.sqrt(delta));
+				double deltaY = Math.abs(getStartY()-getEndY());
+				if (deltaY < 60 && getEndX() < getStartX()) {
+					setControlY1(getStartY()+5*Math.sqrt(deltaX));
+					setControlY2(getEndY()+5*Math.sqrt(deltaX));
 				}
 			}
 		};
