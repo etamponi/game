@@ -8,10 +8,8 @@
  * Contributors:
  *     Emanuele Tamponi - initial API and implementation
  ******************************************************************************/
-package game.plugins.subpack;
+package testgame.plugins;
 
-import game.plugins.Parent;
-
-public class ChildD extends Parent {
-
+public class ChildC implements Interface {
+	
 }

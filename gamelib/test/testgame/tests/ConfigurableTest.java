@@ -8,20 +8,21 @@
  * Contributors:
  *     Emanuele Tamponi - initial API and implementation
  ******************************************************************************/
-package game.tests;
+package testgame.tests;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 import game.configuration.Configurable;
-import game.configuration.ConfigurableImplA;
-import game.configuration.ConfigurableImplB;
-import game.configuration.ConfigurableImplC;
 
 import java.io.File;
 import java.util.LinkedList;
 import java.util.List;
 
 import org.junit.Test;
+
+import testgame.configuration.ConfigurableImplA;
+import testgame.configuration.ConfigurableImplB;
+import testgame.configuration.ConfigurableImplC;
 
 public class ConfigurableTest {
 

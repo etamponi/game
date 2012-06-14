@@ -8,7 +8,7 @@
  * Contributors:
  *     Emanuele Tamponi - initial API and implementation
  ******************************************************************************/
-package game.tests;
+package testgame.tests;
 
 import static org.junit.Assert.*;
 import game.core.Encoding;

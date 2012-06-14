@@ -8,7 +8,7 @@
  * Contributors:
  *     Emanuele Tamponi - initial API and implementation
  ******************************************************************************/
-package game.tests;
+package testgame.tests;
 
 import static org.junit.Assert.assertEquals;
 import game.configuration.Configurable;
@@ -21,6 +21,7 @@ import game.core.blocks.Encoder;
 import game.editorsystem.Editor;
 import game.editorsystem.EditorWindow;
 import game.editorsystem.Option;
+import game.main.Settings;
 import game.plugins.Constraint;
 import game.plugins.datatemplates.LabelTemplate;
 import game.plugins.datatemplates.SequenceTemplate;
@@ -196,6 +197,8 @@ public class EditorSystemTest extends Application {
 
 	@Test
 	public void test() throws Exception {
+		Settings.getInstance().getPluginManager().setOption("packages.remove", "game");
+		Settings.getInstance().getPluginManager().setOption("packages.add", "testgame");
 		launch();
 	}
 

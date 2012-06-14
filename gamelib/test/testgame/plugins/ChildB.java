@@ -8,9 +8,8 @@
  * Contributors:
  *     Emanuele Tamponi - initial API and implementation
  ******************************************************************************/
-package game.plugins;
+package testgame.plugins;
 
-
-public abstract class Parent {
+public class ChildB extends Parent {
 	
 }

@@ -8,7 +8,7 @@
  * Contributors:
  *     Emanuele Tamponi - initial API and implementation
  ******************************************************************************/
-package game.tests;
+package testgame.tests;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
@@ -130,6 +130,8 @@ public class GraphTest {
 	@Test
 	public void test() {
 		PluginManager manager = new PluginManager();
+		manager.setOption("packages.remove", "game");
+		manager.setOption("packages.add", "testgame");
 		
 		Graph graph = new Graph();
 		

@@ -8,8 +8,10 @@
  * Contributors:
  *     Emanuele Tamponi - initial API and implementation
  ******************************************************************************/
-package game.configuration;
+package testgame.configuration;
 
+import game.configuration.Configurable;
+import game.configuration.ConfigurableList;
 import game.configuration.errorchecks.LengthCheck;
 
 

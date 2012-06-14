@@ -8,19 +8,10 @@
  * Contributors:
  *     Emanuele Tamponi - initial API and implementation
  ******************************************************************************/
-package game.plugins.editors.blocks;
+package testgame.plugins.subpack;
 
-import game.plugins.encoders.LabelEncoder;
+import testgame.plugins.Parent;
 
-public class LabelEncoderEditor extends BlockEditor {
+public class ChildD extends Parent {
 
-	public LabelEncoderEditor() {
-		setSpecificEditor("labelMapping", LabelMappingEditor.class);
-	}
-
-	@Override
-	public Class getBaseEditableClass() {
-		return LabelEncoder.class;
-	}
-	
 }

@@ -8,8 +8,16 @@
  * Contributors:
  *     Emanuele Tamponi - initial API and implementation
  ******************************************************************************/
-package game.plugins;
+package testgame.configuration;
 
-public class ChildC implements Interface {
+import game.configuration.Configurable;
+
+public class ConfigurableImplB extends Configurable {
+
+	public String optionB1;
+	
+	public String optionB2;
+	
+	public String optionB3;
 	
 }

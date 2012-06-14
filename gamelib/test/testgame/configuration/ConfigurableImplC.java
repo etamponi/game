@@ -8,15 +8,16 @@
  * Contributors:
  *     Emanuele Tamponi - initial API and implementation
  ******************************************************************************/
-package game.tests;
+package testgame.configuration;
 
-import org.junit.runner.RunWith;
-import org.junit.runners.Suite;
-import org.junit.runners.Suite.SuiteClasses;
+import game.configuration.Configurable;
 
-@RunWith(Suite.class)
-@SuiteClasses({ ConfigurableTest.class, EncoderTest.class, GraphTest.class,
-		LongTaskTest.class, PluginManagerTest.class })
-public class AllTests {
+public class ConfigurableImplC extends Configurable {
 
+	public String optionC1;
+	
+	public String optionC2;
+	
+	public String optionC3;
+	
 }

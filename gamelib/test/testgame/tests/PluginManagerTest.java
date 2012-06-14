@@ -8,23 +8,24 @@
  * Contributors:
  *     Emanuele Tamponi - initial API and implementation
  ******************************************************************************/
-package game.tests;
+package testgame.tests;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
-import game.plugins.ChildAA;
-import game.plugins.ChildB;
-import game.plugins.ChildC;
 import game.plugins.Constraint;
-import game.plugins.Interface;
-import game.plugins.Parent;
 import game.plugins.PluginManager;
-import game.plugins.subpack.ChildD;
 
 import java.util.HashSet;
 import java.util.Set;
 
 import org.junit.Test;
+
+import testgame.plugins.ChildAA;
+import testgame.plugins.ChildB;
+import testgame.plugins.ChildC;
+import testgame.plugins.Interface;
+import testgame.plugins.Parent;
+import testgame.plugins.subpack.ChildD;
 
 public class PluginManagerTest {
 	
@@ -39,6 +40,7 @@ public class PluginManagerTest {
 	@Test
 	public void test() {
 		PluginManager manager = new PluginManager();
+		manager.setOption("packages.add", "testgame");
 		
 		Set<Class> set = classSet(manager.getInstancesOf(Parent.class));
 		Set<Class> real = new HashSet<>();

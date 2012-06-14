@@ -8,8 +8,15 @@
  * Contributors:
  *     Emanuele Tamponi - initial API and implementation
  ******************************************************************************/
-package game.plugins;
+package game.core.blocks;
 
-public class ChildB extends Parent {
-	
+import game.plugins.datatemplates.SequenceTemplate;
+
+public abstract class SequenceEncoder extends Encoder<SequenceTemplate> {
+
+	@Override
+	public Class getBaseTemplateClass() {
+		return SequenceTemplate.class;
+	}
+
 }

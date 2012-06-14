@@ -8,8 +8,9 @@
  * Contributors:
  *     Emanuele Tamponi - initial API and implementation
  ******************************************************************************/
-package game.plugins;
+package testgame.plugins;
 
-public abstract class ChildA extends Parent implements Interface {
+
+public abstract class Parent {
 	
 }
