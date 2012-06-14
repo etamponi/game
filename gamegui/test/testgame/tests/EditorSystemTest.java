@@ -12,6 +12,7 @@ package testgame.tests;
 
 import static org.junit.Assert.assertEquals;
 import game.configuration.Configurable;
+import game.core.DataTemplate;
 import game.core.Dataset;
 import game.core.Encoding;
 import game.core.Graph;
@@ -99,26 +100,23 @@ public class EditorSystemTest extends Application {
 	public static class ClassifierA extends Classifier {
 
 		@Override
-		public boolean supportsTemplate(InstanceTemplate template) {
-			return true;
-		}
-
-		@Override
 		public boolean isTrained() {
-			// TODO Auto-generated method stub
 			return false;
 		}
 
 		@Override
 		protected double train(Dataset trainingSet) {
-			// TODO Auto-generated method stub
 			return 0;
 		}
 
 		@Override
 		protected Encoding transform(Object inputData) {
-			// TODO Auto-generated method stub
 			return null;
+		}
+
+		@Override
+		public boolean isCompatible(InstanceTemplate object) {
+			return true;
 		}
 		
 	}
@@ -126,26 +124,23 @@ public class EditorSystemTest extends Application {
 	public static class ClassifierB extends Classifier {
 
 		@Override
-		public boolean supportsTemplate(InstanceTemplate template) {
-			return true;
-		}
-
-		@Override
 		public boolean isTrained() {
-			// TODO Auto-generated method stub
 			return false;
 		}
 
 		@Override
 		protected double train(Dataset trainingSet) {
-			// TODO Auto-generated method stub
 			return 0;
 		}
 
 		@Override
 		protected Encoding transform(Object inputData) {
-			// TODO Auto-generated method stub
 			return null;
+		}
+
+		@Override
+		public boolean isCompatible(InstanceTemplate object) {
+			return true;
 		}
 		
 	}
@@ -153,14 +148,13 @@ public class EditorSystemTest extends Application {
 	public static class EncoderA extends Encoder<VectorTemplate> {
 
 		@Override
-		public Class getBaseTemplateClass() {
-			return VectorTemplate.class;
+		protected Encoding transform(Object inputData) {
+			return null;
 		}
 
 		@Override
-		protected Encoding transform(Object inputData) {
-			// TODO Auto-generated method stub
-			return null;
+		public boolean isCompatible(DataTemplate object) {
+			return object instanceof VectorTemplate;
 		}
 		
 	}
@@ -168,14 +162,13 @@ public class EditorSystemTest extends Application {
 	public static class EncoderB extends Encoder<LabelTemplate> {
 
 		@Override
-		public Class getBaseTemplateClass() {
-			return LabelTemplate.class;
+		protected Encoding transform(Object inputData) {
+			return null;
 		}
 
 		@Override
-		protected Encoding transform(Object inputData) {
-			// TODO Auto-generated method stub
-			return null;
+		public boolean isCompatible(DataTemplate object) {
+			return object instanceof LabelTemplate;
 		}
 		
 	}
@@ -183,21 +176,19 @@ public class EditorSystemTest extends Application {
 	public static class EncoderC extends Encoder<SequenceTemplate> {
 
 		@Override
-		public Class getBaseTemplateClass() {
-			return SequenceTemplate.class;
+		protected Encoding transform(Object inputData) {
+			return null;
 		}
 
 		@Override
-		protected Encoding transform(Object inputData) {
-			// TODO Auto-generated method stub
-			return null;
+		public boolean isCompatible(DataTemplate object) {
+			return object instanceof SequenceTemplate;
 		}
 		
 	}
 
 	@Test
 	public void test() throws Exception {
-		Settings.getInstance().getPluginManager().setOption("packages.remove", "game");
 		Settings.getInstance().getPluginManager().setOption("packages.add", "testgame");
 		launch();
 	}

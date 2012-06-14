@@ -11,23 +11,22 @@
 package game.plugins.constraints;
 
 import game.configuration.Configurable;
-import game.core.Decoder;
 import game.plugins.Constraint;
 
-public class CompatibleDecoderConstraint implements Constraint<Decoder> {
-
-	private Configurable owner;
-	private String encoderOption;
+public class CompatibleConstraint implements Constraint<Compatible> {
 	
-	public CompatibleDecoderConstraint(Configurable owner, String encoderOption) {
+	private Configurable owner;
+	private String constraintOption;
+	
+	public CompatibleConstraint(Configurable owner, String constraintOption) {
 		this.owner = owner;
-		this.encoderOption = encoderOption;
+		this.constraintOption = constraintOption;
 	}
 
 	@Override
-	public boolean isValid(Decoder o) {
-		if (owner.getOption(encoderOption) != null)
-			return o.getBaseEncoderClass().isAssignableFrom(owner.getOption(encoderOption).getClass());
+	public boolean isValid(Compatible o) {
+		if (owner.getOption(constraintOption) != null)
+			return o.isCompatible(owner.getOption(constraintOption));
 		else
 			return false;
 	}

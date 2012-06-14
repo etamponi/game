@@ -14,9 +14,7 @@ import game.configuration.Configurable;
 import game.configuration.ConfigurableList;
 import game.core.blocks.Classifier;
 import game.core.blocks.Encoder;
-import game.plugins.constraints.CompatibleClassifierConstraint;
-import game.plugins.constraints.CompatibleDecoderConstraint;
-import game.plugins.constraints.CompatibleEncoderConstraint;
+import game.plugins.constraints.CompatibleConstraint;
 
 import java.util.LinkedList;
 
@@ -31,7 +29,7 @@ public class Graph extends LongTask {
 			
 			addOptionBinding("template", "*.template");
 			
-			setOptionConstraint("*", new CompatibleClassifierConstraint(this, "template"));
+			setOptionConstraint("*", new CompatibleConstraint(this, "template"));
 		}
 		
 	}
@@ -45,7 +43,7 @@ public class Graph extends LongTask {
 			
 			addOptionBinding("template", "*.template");
 			
-			setOptionConstraint("*", new CompatibleEncoderConstraint(this, "template"));
+			setOptionConstraint("*", new CompatibleConstraint(this, "template"));
 		}
 		
 	}
@@ -66,7 +64,7 @@ public class Graph extends LongTask {
 		addOptionBinding("template.inputTemplate", 			"inputEncoders.template");
 		addOptionBinding("outputClassifier.outputEncoder", 	"decoder.encoder");
 		
-		setOptionConstraint("decoder", new CompatibleDecoderConstraint(this, "outputClassifier.outputEncoder"));
+		setOptionConstraint("decoder", new CompatibleConstraint(this, "outputClassifier.outputEncoder"));
 	}
 
 	public <T> T startClassification(Object object) {
@@ -121,7 +119,7 @@ public class Graph extends LongTask {
 		if (all.contains(current))
 			return "graph cannot have directed cycles.";
 		all.add(current);
-		for (Block parent: current.parents.getList(Block.class)) {
+		for (Block parent: current.getParents().getList(Block.class)) {
 			String ret = recursivelyAddAll(parent, all);
 			if (ret != null)
 				return ret;

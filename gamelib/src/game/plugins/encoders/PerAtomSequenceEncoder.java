@@ -11,15 +11,15 @@
 package game.plugins.encoders;
 
 import game.configuration.errorchecks.PositivenessCheck;
+import game.core.DataTemplate;
 import game.core.Encoding;
 import game.core.blocks.Encoder;
-import game.core.blocks.SequenceEncoder;
-import game.plugins.constraints.CompatibleEncoderConstraint;
+import game.plugins.constraints.CompatibleConstraint;
 import game.plugins.datatemplates.SequenceTemplate;
 
 import java.util.List;
 
-public class PerAtomSequenceEncoder extends SequenceEncoder {
+public class PerAtomSequenceEncoder extends Encoder<SequenceTemplate> {
 	
 	public Encoder atomEncoder;
 	
@@ -28,14 +28,9 @@ public class PerAtomSequenceEncoder extends SequenceEncoder {
 	public PerAtomSequenceEncoder() {
 		addOptionBinding("template.atom", "atomEncoder.template");
 		
-		setOptionConstraint("atomEncoder", new CompatibleEncoderConstraint(this, "template.atom"));
+		setOptionConstraint("atomEncoder", new CompatibleConstraint(this, "template.atom"));
 		
 		addOptionChecks("windowSize", new PositivenessCheck(false));
-	}
-	
-	@Override
-	public Class getBaseTemplateClass() {
-		return SequenceTemplate.class;
 	}
 
 	@Override
@@ -47,6 +42,11 @@ public class PerAtomSequenceEncoder extends SequenceEncoder {
 			ret.addAll(atomEncoder.startTransform(atom));
 		
 		return ret.makeWindowedEncoding(windowSize);
+	}
+
+	@Override
+	public boolean isCompatible(DataTemplate object) {
+		return object instanceof SequenceTemplate;
 	}
 
 }

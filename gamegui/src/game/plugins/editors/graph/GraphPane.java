@@ -204,9 +204,9 @@ public class GraphPane extends ScrollPane {
 	
 	public void parseGraph() {
 		content.getChildren().clear();
-		registerGraphInTheGraph();
+		//registerGraphInTheGraph();
 		
-		Set<Block> all = new HashSet<>();
+		List<Block> all = new LinkedList<>();
 		all.addAll(graph.inputEncoders);
 		all.addAll(graph.classifiers);
 		
@@ -245,7 +245,7 @@ public class GraphPane extends ScrollPane {
 				BlockNode A = allNodes.get(i);
 				BlockNode B = allNodes.get(j);
 				
-				if (A.getBlock().parents.contains(B.getBlock()))
+				if (A.getBlock().getParents().contains(B.getBlock()))
 					addConnection(B.getWrapper(), A.getWrapper());
 			}
 		}
@@ -337,7 +337,7 @@ public class GraphPane extends ScrollPane {
 			}
 		});
 		
-		if (node.getBlock() instanceof Encoder) {
+		if (!node.getBlock().acceptsNewParents()) {
 			in.setOpacity(0);
 		} else {
 			in.setOnMouseClicked(new EventHandler<MouseEvent>() {
@@ -385,7 +385,7 @@ public class GraphPane extends ScrollPane {
 				continue;
 			final BlockNode other = (BlockNode)((HBox)child).getChildren().get(1);
 			
-			if (node.getBlock().parents.contains(other.getBlock()))
+			if (node.getBlock().getParents().contains(other.getBlock()))
 				other.setStyle("-fx-border-style: solid; -fx-border-color:red");
 			else
 				other.setStyle("-fx-border-style: solid; -fx-border-color:green");
@@ -394,7 +394,7 @@ public class GraphPane extends ScrollPane {
 			other.setOnMouseClicked(new EventHandler<MouseEvent>() {
 				@Override
 				public void handle(MouseEvent event) {
-					if (node.getBlock().parents.contains(other.getBlock())) {
+					if (node.getBlock().getParents().contains(other.getBlock())) {
 						node.getBlock().setOption("parents.remove", other.getBlock());
 						removeConnection(other.getWrapper(), node.getWrapper());
 					} else {
@@ -422,7 +422,7 @@ public class GraphPane extends ScrollPane {
 			}
 		}
 	}
-	
+	/*
 	private void registerGraphInTheGraph() {
 		if (graph.outputClassifier == null)
 			return;
@@ -440,21 +440,21 @@ public class GraphPane extends ScrollPane {
 					graph.setOption("classifiers.add", b);
 				if (b instanceof Encoder && !graph.inputEncoders.contains(b))
 					graph.setOption("inputEncoders.add", b);
-				parents.addAll(b.parents);
+				parents.addAll(b.getParents());
 			}
 			currents = parents;
 		}
 	}
-	
+	*/
 	private int levelOf(Block current, Set<Block> seen) {
 		if (seen.contains(current))
 			return 0;
 		seen.add(current);
-		if (current.parents.isEmpty())
+		if (current.getParents().isEmpty())
 			return 1;
 		else {
 			int max = 0;
-			for (Block parent: current.parents.getList(Block.class)) {
+			for (Block parent: current.getParents().getList(Block.class)) {
 				int count = levelOf(parent, seen);
 				if (count > max)
 					max = count;

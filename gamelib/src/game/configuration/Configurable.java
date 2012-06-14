@@ -249,7 +249,7 @@ public abstract class Configurable extends Observable implements Observer {
 			}
 		}
 		
-		// TODO All not respected binding and contraints.
+		// TODO All not respected binding and constraints.
 	
 		return ret;
 	}

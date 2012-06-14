@@ -15,7 +15,7 @@ import org.junit.runners.Suite;
 import org.junit.runners.Suite.SuiteClasses;
 
 @RunWith(Suite.class)
-@SuiteClasses({ ConfigurableTest.class, EncoderTest.class, GraphTest.class,
+@SuiteClasses({ ConfigurableTest.class, GraphTest.class,
 		LongTaskTest.class, PluginManagerTest.class })
 public class AllTests {
 

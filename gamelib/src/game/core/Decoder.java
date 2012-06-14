@@ -12,13 +12,12 @@ package game.core;
 
 import game.configuration.Configurable;
 import game.core.blocks.Encoder;
+import game.plugins.constraints.Compatible;
 
-public abstract class Decoder<E extends Encoder> extends Configurable {
+public abstract class Decoder<E extends Encoder> extends Configurable implements Compatible<Encoder> {
 	
 	public E encoder;
 	
 	public abstract Object decode(Encoding outputEncoded);
-	
-	public abstract Class getBaseEncoderClass();
 
 }

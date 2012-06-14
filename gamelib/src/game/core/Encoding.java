@@ -46,7 +46,7 @@ public class Encoding extends ArrayList<double[]> {
 	}
 	
 	public Encoding makeInterpolatedEncoding(int windowSize) {
-		return null; // FIXME
+		return null; // FIXME makeInterpolatedEncoding
 	}
 	
 	public Encoding makeTrimmedEncoding(int windowSize) {

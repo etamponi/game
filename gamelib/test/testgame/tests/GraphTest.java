@@ -13,6 +13,7 @@ package testgame.tests;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 import game.configuration.Configurable;
+import game.core.DataTemplate;
 import game.core.Dataset;
 import game.core.Decoder;
 import game.core.Encoding;
@@ -34,24 +35,24 @@ public class GraphTest {
 	public static class EncoderImplA extends Encoder<VectorTemplate> {
 		@Override
 		protected Encoding transform(Object inputData) {
-			// TODO Auto-generated method stub
 			return null;
 		}
+
 		@Override
-		public Class getBaseTemplateClass() {
-			return VectorTemplate.class;
+		public boolean isCompatible(DataTemplate object) {
+			return object instanceof VectorTemplate;
 		}
 	}
 	
 	public static class EncoderImplB extends Encoder<LabelTemplate> {
 		@Override
 		protected Encoding transform(Object inputData) {
-			// TODO Auto-generated method stub
 			return null;
 		}
+
 		@Override
-		public Class getBaseTemplateClass() {
-			return LabelTemplate.class;
+		public boolean isCompatible(DataTemplate object) {
+			return object instanceof LabelTemplate;
 		}
 	}
 	
@@ -62,45 +63,42 @@ public class GraphTest {
 	public static class DecoderImplA extends Decoder<EncoderImplA> {
 		@Override
 		public Object decode(Encoding outputEncoded) {
-			// TODO Auto-generated method stub
 			return null;
 		}
+
 		@Override
-		public Class getBaseEncoderClass() {
-			return EncoderImplA.class;
+		public boolean isCompatible(Encoder object) {
+			return object instanceof EncoderImplA;
 		}
 	}
 	
 	public static class DecoderImplB extends Decoder<EncoderImplB> {
 		@Override
 		public Object decode(Encoding outputEncoded) {
-			// TODO Auto-generated method stub
 			return null;
 		}
+
 		@Override
-		public Class getBaseEncoderClass() {
-			return EncoderImplB.class;
+		public boolean isCompatible(Encoder object) {
+			return object instanceof EncoderImplB;
 		}
 	}
 	
 	public static class ClassifierImplA extends Classifier {
 		@Override
 		public boolean isTrained() {
-			// TODO Auto-generated method stub
 			return false;
 		}
 		@Override
 		protected double train(Dataset trainingSet) {
-			// TODO Auto-generated method stub
 			return 0;
 		}
 		@Override
 		protected Encoding transform(Object inputData) {
-			// TODO Auto-generated method stub
 			return null;
 		}
 		@Override
-		public boolean supportsTemplate(InstanceTemplate template) {
+		public boolean isCompatible(InstanceTemplate object) {
 			return true;
 		}
 	}
@@ -108,21 +106,18 @@ public class GraphTest {
 	public static class ClassifierImplB extends Classifier {
 		@Override
 		public boolean isTrained() {
-			// TODO Auto-generated method stub
 			return false;
 		}
 		@Override
 		protected double train(Dataset trainingSet) {
-			// TODO Auto-generated method stub
 			return 0;
 		}
 		@Override
 		protected Encoding transform(Object inputData) {
-			// TODO Auto-generated method stub
 			return null;
 		}
 		@Override
-		public boolean supportsTemplate(InstanceTemplate template) {
+		public boolean isCompatible(InstanceTemplate object) {
 			return false;
 		}
 	}

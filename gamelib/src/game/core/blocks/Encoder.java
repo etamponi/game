@@ -11,11 +11,12 @@
 package game.core.blocks;
 
 import game.configuration.errorchecks.SizeCheck;
+import game.core.Block;
 import game.core.DataTemplate;
 import game.core.Dataset;
-import game.core.Block;
+import game.plugins.constraints.Compatible;
 
-public abstract class Encoder<DT extends DataTemplate> extends Block {
+public abstract class Encoder<DT extends DataTemplate> extends Block implements Compatible<DataTemplate> {
 	
 	public DT template;
 	
@@ -33,6 +34,9 @@ public abstract class Encoder<DT extends DataTemplate> extends Block {
 		throw new UnsupportedOperationException("You cannot train an Encoder!");
 	}
 	
-	public abstract Class getBaseTemplateClass();
+	@Override
+	public boolean acceptsNewParents() {
+		return false;
+	}
 
 }

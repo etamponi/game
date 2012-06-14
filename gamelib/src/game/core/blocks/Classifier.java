@@ -11,23 +11,27 @@
 package game.core.blocks;
 
 import game.configuration.errorchecks.SizeCheck;
-import game.core.InstanceTemplate;
 import game.core.Block;
-import game.plugins.constraints.CompatibleEncoderConstraint;
+import game.core.InstanceTemplate;
+import game.plugins.constraints.Compatible;
+import game.plugins.constraints.CompatibleConstraint;
 
-public abstract class Classifier extends Block {
+public abstract class Classifier extends Block implements Compatible<InstanceTemplate> {
 	
 	public InstanceTemplate template;
 	
 	public Encoder outputEncoder;
 	
-	public abstract boolean supportsTemplate(InstanceTemplate template);
-	
 	public Classifier() {
 		addOptionBinding("template.outputTemplate", "outputEncoder.template");
 		addOptionChecks("parents", new SizeCheck(1));
 		
-		setOptionConstraint("outputEncoder", new CompatibleEncoderConstraint(this, "template.outputTemplate"));
+		setOptionConstraint("outputEncoder", new CompatibleConstraint(this, "template.outputTemplate"));
+	}
+
+	@Override
+	public boolean acceptsNewParents() {
+		return !isTrained();
 	}
 
 }

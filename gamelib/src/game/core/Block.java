@@ -27,7 +27,8 @@ public abstract class Block extends LongTask {
 	private static final String TRAIN = "training";
 	private static final String TRANSFORM = "transforming";
 	
-	public ConfigurableList parents = new ConfigurableList(this, Block.class);
+	private ConfigurableList parents = new ConfigurableList(this, Block.class);
+	
 	public Position position = new Position();
 	
 	public abstract boolean isTrained();
@@ -35,7 +36,9 @@ public abstract class Block extends LongTask {
 	protected abstract double train(Dataset trainingSet);
 	
 	protected abstract Encoding transform(Object inputData);
-
+	
+	public abstract boolean acceptsNewParents();
+	
 	public double startTraining(Dataset trainingSet) {
 		return startTask(TRAIN, trainingSet);
 	}
@@ -52,6 +55,10 @@ public abstract class Block extends LongTask {
 			return transform(params[0]);
 		else
 			return null;
+	}
+	
+	public ConfigurableList getParents() {
+		return parents;
 	}
 
 }

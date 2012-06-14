@@ -11,6 +11,7 @@
 package game.plugins.encoders;
 
 import game.configuration.ErrorCheck;
+import game.core.DataTemplate;
 import game.core.Encoding;
 import game.core.blocks.Encoder;
 import game.plugins.datatemplates.LabelTemplate;
@@ -41,11 +42,6 @@ public class LabelEncoder extends Encoder<LabelTemplate> {
 	}
 
 	@Override
-	public Class getBaseTemplateClass() {
-		return LabelTemplate.class;
-	}
-
-	@Override
 	protected Encoding transform(Object inputData) {
 		Encoding ret = new Encoding();
 		ret.add(labelMapping.get(inputData).clone());
@@ -61,6 +57,11 @@ public class LabelEncoder extends Encoder<LabelTemplate> {
 			labelMapping.put(label, enc);
 			i++;
 		}
+	}
+
+	@Override
+	public boolean isCompatible(DataTemplate object) {
+		return object instanceof LabelTemplate;
 	}
 
 }
