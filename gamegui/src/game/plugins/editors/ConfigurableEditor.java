@@ -23,6 +23,7 @@ import javafx.geometry.Insets;
 import javafx.geometry.VPos;
 import javafx.scene.Node;
 import javafx.scene.control.Label;
+import javafx.scene.control.ListView;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Priority;
@@ -30,6 +31,7 @@ import javafx.scene.layout.Priority;
 public class ConfigurableEditor extends Editor {
 	
 	private GridPane pane = new GridPane();
+	private ListView<String> errorList = new ListView<>();
 	
 	private HashSet<String> hiddenOptions = new HashSet<>();
 	private HashMap<String, Class<? extends Editor>> specificEditors = new HashMap<>();
@@ -69,12 +71,21 @@ public class ConfigurableEditor extends Editor {
 				GridPane.setHgrow(editor.getView(), Priority.ALWAYS);
 				GridPane.setMargin(editor.getView(), new Insets(2, 2, 2, 2));
 			}
+			
+			errorList.getItems().clear();
+			errorList.getItems().addAll(content.getConfigurationErrors());
+			errorList.setPrefHeight(100);
+			pane.add(errorList, 0, count, 2, 1);
 		}
 	}
 
 	@Override
 	public void updateView() {
 		// Everything is provided by the sub editors.
+
+		errorList.getItems().clear();
+		if (getModel() != null && getModel().getContent() != null)
+			errorList.getItems().addAll(((Configurable)getModel().getContent()).getConfigurationErrors());
 	}
 
 	@Override

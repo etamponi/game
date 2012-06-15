@@ -21,47 +21,61 @@
         </AnchorPane>
         <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="160.0" prefWidth="100.0">
           <children>
-            <Accordion minWidth="176.0" prefHeight="398.0" prefWidth="176.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
-              <expandedPane>
-                <TitledPane fx:id="x2" animated="false" text="Input encoders pool">
-                  <content>
-                    <AnchorPane id="Content" minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
-                      <children>
-                        <FlowPane fx:id="inputEncodersPane" onZoom="#onZoom" prefHeight="328.0" prefWidth="172.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
-                      </children>
-                    </AnchorPane>
-                  </content>
-                </TitledPane>
-              </expandedPane>
-              <panes>
-                <TitledPane id="x1" animated="false" text="Configuration">
-                  <content>
-                    <AnchorPane id="Content" minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
-                      <children>
-                        <GridPane fx:id="confPane" prefWidth="172.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
-                          <columnConstraints>
-                            <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
-                          </columnConstraints>
-                          <rowConstraints>
-                            <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                          </rowConstraints>
-                        </GridPane>
-                      </children>
-                    </AnchorPane>
-                  </content>
-                </TitledPane>
-                <TitledPane fx:id="x1" animated="false" text="Classifiers pool">
-                  <content>
-                    <AnchorPane id="Content" minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
-                      <children>
-                        <FlowPane fx:id="classifiersPane" prefHeight="328.0" prefWidth="172.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
-                      </children>
-                    </AnchorPane>
-                  </content>
-                </TitledPane>
-                <fx:reference source="x2" />
-              </panes>
-            </Accordion>
+            <VBox id="VBox" alignment="CENTER" prefHeight="598.0" prefWidth="341.0" spacing="5.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+              <children>
+                <Accordion minWidth="176.0" prefHeight="398.0" prefWidth="176.0" VBox.vgrow="ALWAYS">
+                  <expandedPane>
+                    <TitledPane id="x1" fx:id="x4" animated="false" text="Configuration">
+                      <content>
+                        <AnchorPane id="Content" minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
+                          <children>
+                            <GridPane fx:id="confPane" prefWidth="172.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                              <columnConstraints>
+                                <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                              </columnConstraints>
+                              <rowConstraints>
+                                <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                              </rowConstraints>
+                            </GridPane>
+                          </children>
+                        </AnchorPane>
+                      </content>
+                    </TitledPane>
+                  </expandedPane>
+                  <panes>
+                    <fx:reference source="x4" />
+                    <TitledPane fx:id="x1" animated="false" text="Classifiers pool">
+                      <content>
+                        <AnchorPane id="Content" minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
+                          <children>
+                            <FlowPane fx:id="classifiersPane" prefHeight="328.0" prefWidth="172.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
+                          </children>
+                        </AnchorPane>
+                      </content>
+                    </TitledPane>
+                    <TitledPane fx:id="x2" animated="false" text="Input encoders pool">
+                      <content>
+                        <AnchorPane id="Content" minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
+                          <children>
+                            <FlowPane fx:id="inputEncodersPane" onZoom="#onZoom" prefHeight="328.0" prefWidth="172.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
+                          </children>
+                        </AnchorPane>
+                      </content>
+                    </TitledPane>
+                    <TitledPane fx:id="x3" animated="false" styleClass="first-titled-pane" text="Pipes pool">
+                      <content>
+                        <AnchorPane id="Content" minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
+                          <children>
+                            <FlowPane id="pipesPool" fx:id="pipesPane" prefHeight="506.0" prefWidth="337.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
+                          </children>
+                        </AnchorPane>
+                      </content>
+                    </TitledPane>
+                  </panes>
+                </Accordion>
+                <ListView fx:id="errorList" prefHeight="200.0" VBox.vgrow="NEVER" />
+              </children>
+            </VBox>
           </children>
         </AnchorPane>
       </items>

@@ -21,10 +21,10 @@ import javafx.scene.shape.CubicCurve;
 public class Connection extends CubicCurve {
 	
 	private AnchorPane root;
-	private HBox from;
-	private HBox to;
+	private BlockNode from;
+	private BlockNode to;
 
-	public Connection(final AnchorPane graphRoot, final HBox from, final HBox to) {
+	public Connection(final AnchorPane graphRoot, BlockNode from, BlockNode to) {
 		this.root = graphRoot;
 		this.from = from;
 		this.to = to;
@@ -32,14 +32,16 @@ public class Connection extends CubicCurve {
 		this.setStroke(Color.BLACK);
 		this.setFill(Color.TRANSPARENT);
 		
+		final HBox fromWrapper = from.getWrapper();
+		final HBox toWrapper = to.getWrapper();
 		ChangeListener<Number> listener = new ChangeListener<Number>() {
 			@Override
 			public void changed(ObservableValue<? extends Number> observable,
 					Number oldValue, Number newValue) {
-				setStartX(from.getLayoutX()+from.getWidth()-20);
-				setStartY(from.getLayoutY()+from.getHeight()/2);
-				setEndX(to.getLayoutX());
-				setEndY(to.getLayoutY()+to.getHeight()/2);
+				setStartX(fromWrapper.getLayoutX()+fromWrapper.getWidth()-20);
+				setStartY(fromWrapper.getLayoutY()+fromWrapper.getHeight()/2);
+				setEndX(toWrapper.getLayoutX());
+				setEndY(toWrapper.getLayoutY()+toWrapper.getHeight()/2);
 
 				double deltaX = Math.abs(getStartX()-getEndX());
 				setControlX1(getStartX()+deltaX);
@@ -56,32 +58,36 @@ public class Connection extends CubicCurve {
 		};
 		listener.changed(null, null, null);
 
-		from.layoutXProperty().addListener(listener);
-		from.layoutYProperty().addListener(listener);
-		from.heightProperty().addListener(listener);
-		to.layoutXProperty().addListener(listener);
-		to.layoutYProperty().addListener(listener);
-		to.heightProperty().addListener(listener);
+		fromWrapper.layoutXProperty().addListener(listener);
+		fromWrapper.layoutYProperty().addListener(listener);
+		fromWrapper.heightProperty().addListener(listener);
+		toWrapper.layoutXProperty().addListener(listener);
+		toWrapper.layoutYProperty().addListener(listener);
+		toWrapper.heightProperty().addListener(listener);
 	}
 	
-	public boolean matches(HBox from, HBox to) {
+	public boolean matches(BlockNode from, BlockNode to) {
 		return this.from == from && this.to == to;
 	}
 	
-	public boolean relativeTo(HBox box) {
-		return this.from == box || this.to == box;
+	public boolean relativeTo(BlockNode node) {
+		return this.from == node || this.to == node;
 	}
 	
 	public boolean invalid() {
 		int count = 0;
 		for (Node child: root.getChildren()) {
-			if (child == from || child == to)
+			if (child == from.getWrapper() || child == to.getWrapper())
 				count++;
 		}
 		if (count == 2)
 			return false;
 		else
 			return true;
+	}
+
+	public void removeFromModel() {
+		to.getBlock().setOption("parents.remove", from.getBlock());
 	}
 	
 }

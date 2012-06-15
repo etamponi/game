@@ -14,6 +14,7 @@ import game.configuration.Configurable;
 import game.configuration.ConfigurableList;
 import game.core.blocks.Classifier;
 import game.core.blocks.Encoder;
+import game.core.blocks.Pipe;
 import game.plugins.constraints.CompatibleConstraint;
 
 import java.util.LinkedList;
@@ -55,6 +56,7 @@ public class Graph extends LongTask {
 
 	public ClassifierList classifiers = new ClassifierList(this);
 	public EncoderList inputEncoders = new EncoderList(this);
+	public ConfigurableList pipes = new ConfigurableList(this, Pipe.class);
 	
 	public Decoder decoder;
 	public Classifier outputClassifier;
@@ -65,6 +67,10 @@ public class Graph extends LongTask {
 		addOptionBinding("outputClassifier.outputEncoder", 	"decoder.encoder");
 		
 		setOptionConstraint("decoder", new CompatibleConstraint(this, "outputClassifier.outputEncoder"));
+
+		omitFromErrorCheck("classifiers");
+		omitFromErrorCheck("inputEncoders");
+		omitFromErrorCheck("pipes");
 	}
 
 	public <T> T startClassification(Object object) {
@@ -101,26 +107,22 @@ public class Graph extends LongTask {
 	protected LinkedList<String> getErrors() {
 		LinkedList<String> ret = super.getErrors();
 		
-		LinkedList myNodes = new LinkedList();
-		myNodes.addAll(classifiers);
-		myNodes.addAll(inputEncoders);
-		
 		LinkedList graphNodes = new LinkedList();
 		String cycleFound = recursivelyAddAll(outputClassifier, graphNodes);
 		if (cycleFound != null)
 			ret.add(cycleFound);
-		if (!myNodes.containsAll(graphNodes))
-			ret.add("graph has some nodes that are not registered.");
 		
 		return ret;
 	}
 	
-	private String recursivelyAddAll(Block current, LinkedList all) {
-		if (all.contains(current))
+	private String recursivelyAddAll(Block current, LinkedList path) {
+		if (current == null)
+			return null;
+		if (path.contains(current))
 			return "graph cannot have directed cycles.";
-		all.add(current);
+		path.add(current);
 		for (Block parent: current.getParents().getList(Block.class)) {
-			String ret = recursivelyAddAll(parent, all);
+			String ret = recursivelyAddAll(parent, new LinkedList(path));
 			if (ret != null)
 				return ret;
 		}

@@ -23,12 +23,15 @@ import java.util.Observer;
 
 import javafx.event.EventHandler;
 import javafx.geometry.Insets;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.scene.input.ClipboardContent;
 import javafx.scene.input.DataFormat;
 import javafx.scene.input.DragEvent;
 import javafx.scene.input.Dragboard;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.input.TransferMode;
+import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
@@ -37,12 +40,17 @@ import javafx.scene.text.Text;
 import javafx.scene.text.TextAlignment;
 
 public class BlockNode extends VBox {
+
+	private final Image STATUSOK = new Image(getClass().getResourceAsStream("blockOk.png"));
+	private final Image STATUSERRORS = new Image(getClass().getResourceAsStream("blockErrors.png"));
 	
 	public static final DataFormat BLOCKDATA = new DataFormat("game/block");
 	
 	private Block block;
 	
 	private boolean isTemplate;
+	
+	private ImageView status = new ImageView();
 	
 	private Text blockName;
 	
@@ -58,14 +66,16 @@ public class BlockNode extends VBox {
 		setStyle("-fx-border-style: solid; -fx-border-color:gray;");
 		setPadding(new Insets(5));
 		
-		Rectangle rect = new Rectangle(50, 50);
-		rect.setFill(Color.RED);
+		AnchorPane imagePane = new AnchorPane();
+		Rectangle rect = new Rectangle(60, 60);
+		rect.setFill(Color.INDIGO);
+		imagePane.getChildren().addAll(rect, status);
 		
 		blockName = new Text((String)block.getOption("name"));
 		blockName.setTextAlignment(TextAlignment.CENTER);
-		blockName.setWrappingWidth(50.0);
+		blockName.setWrappingWidth(60.0);
 		
-		getChildren().addAll(rect, blockName);
+		getChildren().addAll(imagePane, blockName);
 		
 		setOnDragDetected(new EventHandler<MouseEvent>() {
 			@Override
@@ -92,6 +102,8 @@ public class BlockNode extends VBox {
 		});
 	
 		if (!isTemplate) {
+			status.setImage(block.getConfigurationErrors().isEmpty() ? STATUSOK : STATUSERRORS);
+			
 			block.addObserver(new Observer() {
 				@Override
 				public void update(Observable o, Object arg) {
@@ -101,6 +113,8 @@ public class BlockNode extends VBox {
 							blockName.setText((String)block.getOption("name"));
 							pane.fixPosition(BlockNode.this);
 						}
+						
+						status.setImage(block.getConfigurationErrors().isEmpty() ? STATUSOK : STATUSERRORS);
 					}
 				}
 			});

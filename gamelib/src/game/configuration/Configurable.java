@@ -146,6 +146,7 @@ public abstract class Configurable extends Observable implements Observer {
 	private LinkedList<OptionBinding> optionBindings = new LinkedList<>();
 	private HashMap<String, LinkedList<ErrorCheck>> optionChecks = new HashMap<>();
 	protected HashMap<String, Constraint> optionConstraints = new HashMap<>();
+	private LinkedList<String> omittedFromErrorCheck = new LinkedList<>();
 	
 	static {
 		configStream.registerConverter(new ConfigurableConverter());
@@ -243,7 +244,9 @@ public abstract class Configurable extends Observable implements Observer {
 							ret.add(entry.getKey() + ": " + error);
 					}
 				}
-				if (entry.getValue() instanceof Configurable && !seen.contains(entry.getValue()))
+				if (entry.getValue() instanceof Configurable
+						&& !seen.contains(entry.getValue())
+						&& !omittedFromErrorCheck.contains(entry.getKey()))
 					ret.addAll(putPrefix(entry.getKey() + ".",
 							             ((Configurable)entry.getValue()).getConfigurationErrors(seen)));
 			}
@@ -364,6 +367,15 @@ public abstract class Configurable extends Observable implements Observer {
 	public String toString() {
 		return name;
 	}
+	
+	protected void omitFromErrorCheck(String optionName) {
+		omittedFromErrorCheck.add(optionName);
+	}
+	
+	protected void omitFromConfiguration(String optionName) {
+		configStream.omitField(getClass(), optionName);
+		omittedFromErrorCheck.add(optionName);
+	}
 
 	protected void addOptionBinding(String masterPath, String... slaves) {
 		optionBindings.add(new OptionBinding(masterPath, slaves));
@@ -397,7 +409,7 @@ public abstract class Configurable extends Observable implements Observer {
 			}
 		} catch (IllegalAccessException | IllegalArgumentException
 				| InvocationTargetException | NoSuchFieldException | SecurityException e) {
-			e.printStackTrace();
+			//e.printStackTrace();
 			return null;
 		}
 	}
@@ -425,7 +437,7 @@ public abstract class Configurable extends Observable implements Observer {
 			notifyObservers(new Change(optionName));
 		} catch (IllegalAccessException | IllegalArgumentException
 				| InvocationTargetException | NoSuchFieldException | SecurityException e) {
-			e.printStackTrace();
+			//e.printStackTrace();
 		}
 	}
 	

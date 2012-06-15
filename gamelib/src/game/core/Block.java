@@ -13,6 +13,9 @@ package game.core;
 import game.configuration.Configurable;
 import game.configuration.ConfigurableList;
 
+import java.util.LinkedList;
+import java.util.List;
+
 public abstract class Block extends LongTask {
 	
 	public static class Position extends Configurable {
@@ -27,9 +30,13 @@ public abstract class Block extends LongTask {
 	private static final String TRAIN = "training";
 	private static final String TRANSFORM = "transforming";
 	
-	private ConfigurableList parents = new ConfigurableList(this, Block.class);
+	public ConfigurableList parents = new ConfigurableList(this, Block.class);
 	
 	public Position position = new Position();
+	
+	public Block() {
+		omitFromConfiguration("parents");
+	}
 	
 	public abstract boolean isTrained();
 	
@@ -59,6 +66,23 @@ public abstract class Block extends LongTask {
 	
 	public ConfigurableList getParents() {
 		return parents;
+	}
+	
+	protected List<Encoding> getParentsEncodings(Object inputData) {
+		List<Encoding> ret = new LinkedList<>();
+		
+		for (Block parent: parents.getList(Block.class)) {
+			ret.add(parent.startTransform(inputData));
+		}
+		
+		return ret;
+	}
+	
+	public Encoding getParentEncoding(int i, Object inputData) {
+		if (i < parents.size())
+			return ((Block)parents.get(i)).startTransform(inputData);
+		else
+			return null;
 	}
 
 }

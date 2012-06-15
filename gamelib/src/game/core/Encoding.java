@@ -11,6 +11,7 @@
 package game.core;
 
 import java.util.ArrayList;
+import java.util.Collection;
 
 public class Encoding extends ArrayList<double[]> {
 
@@ -28,11 +29,22 @@ public class Encoding extends ArrayList<double[]> {
 		add(element);
 	}
 	
+	public Encoding(Collection<double[]> other) {
+		super(other);
+	}
+	
 	public int getElementSize() {
 		return !isEmpty() ? get(0).length : 0;
 	}
 	
 	public int length() { return size(); }
+	
+	public void mulBy(double factor) {
+		for(double[] element: this) {
+			for (int i = 0; i < element.length; i++)
+				element[i] *= factor;
+		}
+	}
 	
 	public Encoding makeWindowedEncoding(int windowSize) {
 		assert(windowSize > 0 && windowSize % 2 == 1);

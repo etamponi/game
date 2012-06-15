@@ -36,6 +36,7 @@ import javafx.geometry.Insets;
 import javafx.geometry.VPos;
 import javafx.scene.Node;
 import javafx.scene.control.Label;
+import javafx.scene.control.ListView;
 import javafx.scene.control.Slider;
 import javafx.scene.input.DragEvent;
 import javafx.scene.input.KeyCode;
@@ -62,7 +63,11 @@ public class GraphEditorController implements EditorController, Observer {
 	@FXML
 	private FlowPane inputEncodersPane;
 	@FXML
+	private FlowPane pipesPane;
+	@FXML
 	private Slider zoom;
+	@FXML
+	private ListView<String> errorList;
 	
 	private GraphPane graphPane;
 	
@@ -105,8 +110,10 @@ public class GraphEditorController implements EditorController, Observer {
 				AnchorPane graphRoot = graphPane.getContentPane();
 				for (Node child: new LinkedList<>(graphRoot.getChildren())) {
 					if (child instanceof Connection) {
-						if (((Connection)child).invalid())
+						if (((Connection)child).invalid()) {
 							graphRoot.getChildren().remove(child);
+							((Connection)child).removeFromModel();
+						}
 					}
 				}
 			}
@@ -130,6 +137,9 @@ public class GraphEditorController implements EditorController, Observer {
 
 	@Override
 	public void connectView() {
+		errorList.getItems().clear();
+		errorList.getItems().addAll(graph.getConfigurationErrors());
+		
 		connectConfRoot();
 		fillPools();
 		graphPane.parseGraph();
@@ -138,11 +148,16 @@ public class GraphEditorController implements EditorController, Observer {
 	@Override
 	public void updateView() {
 		// The view is updated locally, not as a whole.
+
+		errorList.getItems().clear();
+		if (graph != null)
+			errorList.getItems().addAll(graph.getConfigurationErrors());
 	}
 	
 	private void fillPools() {
 		fillPool(classifiersPane, "classifiers");
 		fillPool(inputEncodersPane, "inputEncoders");
+		fillPool(pipesPane, "pipes");
 	}
 	
 	private void connectConfRoot() {

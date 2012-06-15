@@ -14,6 +14,7 @@ import game.core.Block;
 import game.core.Graph;
 import game.core.blocks.Classifier;
 import game.core.blocks.Encoder;
+import game.core.blocks.Pipe;
 import game.main.Settings;
 
 import java.util.HashMap;
@@ -108,7 +109,7 @@ public class GraphPane extends ScrollPane {
 					if (node.getWrapper() != null && !content.getChildren().contains(node.getWrapper()))
 						content.getChildren().add(node.getWrapper());
 					
-					updateConnections(node.getWrapper(), false);
+					updateConnections(node, false);
 				}
 				
 				event.consume();
@@ -128,13 +129,15 @@ public class GraphPane extends ScrollPane {
 						}
 						if (node.getBlock() instanceof Encoder)
 							graph.setOption("inputEncoders.remove", node.getBlock());
+						if (node.getBlock() instanceof Pipe)
+							graph.setOption("pipes.remove", node.getBlock());
 						
 						if (node.getWrapper() != null)
 							content.getChildren().remove(node.getWrapper());
 						else
 							content.getChildren().remove(node);
 						
-						updateConnections(node.getWrapper(), true);
+						updateConnections(node, true);
 					}
 				}
 				
@@ -158,6 +161,8 @@ public class GraphPane extends ScrollPane {
 						graph.setOption("classifiers.add", block);
 					if (block instanceof Encoder && !((List)graph.getOption("inputEncoders")).contains(block))
 						graph.setOption("inputEncoders.add", block);
+					if (block instanceof Encoder && !graph.pipes.contains(block))
+						graph.setOption("pipes.add", block);
 					
 					Settings.getInstance().setDragging(null);
 					event.setDropCompleted(true);
@@ -246,7 +251,7 @@ public class GraphPane extends ScrollPane {
 				BlockNode B = allNodes.get(j);
 				
 				if (A.getBlock().getParents().contains(B.getBlock()))
-					addConnection(B.getWrapper(), A.getWrapper());
+					addConnection(B, A);
 			}
 		}
 	}
@@ -282,10 +287,10 @@ public class GraphPane extends ScrollPane {
 		parent.setMaxSize(content.getWidth()*level, content.getHeight()*level);
 	}
 	
-	private void updateConnections(HBox box, boolean hide) {
+	private void updateConnections(BlockNode node, boolean hide) {
 		for (Node child: content.getChildren()) {
 			if (child instanceof Connection) {
-				if (((Connection)child).relativeTo(box)) {
+				if (((Connection)child).relativeTo(node)) {
 					if (hide)
 						child.setOpacity(0);
 					else
@@ -396,10 +401,10 @@ public class GraphPane extends ScrollPane {
 				public void handle(MouseEvent event) {
 					if (node.getBlock().getParents().contains(other.getBlock())) {
 						node.getBlock().setOption("parents.remove", other.getBlock());
-						removeConnection(other.getWrapper(), node.getWrapper());
+						removeConnection(other, node);
 					} else {
 						node.getBlock().setOption("parents.add", other.getBlock());
-						addConnection(other.getWrapper(), node.getWrapper());
+						addConnection(other, node);
 					}
 					endConnection();
 				}
@@ -407,12 +412,12 @@ public class GraphPane extends ScrollPane {
 		}
 	}
 	
-	private void addConnection(HBox from, HBox to) {
+	private void addConnection(BlockNode from, BlockNode to) {
 		final Connection connection = new Connection(content, from, to);
 		content.getChildren().add(connection);
 	}
 	
-	private void removeConnection(HBox from, HBox to) {
+	private void removeConnection(BlockNode from, BlockNode to) {
 		for (Node child: content.getChildren()) {
 			if (child instanceof Connection) {
 				if (((Connection)child).matches(from, to)) {
@@ -422,30 +427,7 @@ public class GraphPane extends ScrollPane {
 			}
 		}
 	}
-	/*
-	private void registerGraphInTheGraph() {
-		if (graph.outputClassifier == null)
-			return;
-		Set<Block> seen = new HashSet<>();
-		List<Block> currents = new LinkedList<>();
-		currents.add(graph.outputClassifier);
-		
-		while(!currents.isEmpty()) {
-			List<Block> parents = new LinkedList<>();
-			for (Block b: currents) {
-				if (seen.contains(b))
-					continue;
-				seen.add(b);
-				if (b instanceof Classifier && !graph.classifiers.contains(b))
-					graph.setOption("classifiers.add", b);
-				if (b instanceof Encoder && !graph.inputEncoders.contains(b))
-					graph.setOption("inputEncoders.add", b);
-				parents.addAll(b.getParents());
-			}
-			currents = parents;
-		}
-	}
-	*/
+	
 	private int levelOf(Block current, Set<Block> seen) {
 		if (seen.contains(current))
 			return 0;
