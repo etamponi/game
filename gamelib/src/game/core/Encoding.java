@@ -15,9 +15,6 @@ import java.util.Collection;
 
 public class Encoding extends ArrayList<double[]> {
 
-	/**
-	 * 
-	 */
 	private static final long serialVersionUID = 3017584392455582111L;
 	
 	public Encoding() {

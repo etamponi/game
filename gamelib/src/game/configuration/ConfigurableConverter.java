@@ -29,9 +29,14 @@ public class ConfigurableConverter implements Converter {
 		Configurable object = (Configurable)o;
 		
 		for (String optionName: object.getOptionNames()) {
+			if (object.isOmittedFromConfiguration(optionName))
+				continue;
 			Object option = object.getOption(optionName);
 			if (option != null) {
-				writer.startNode(optionName);
+				if (optionName.matches("^\\d+$"))
+					writer.startNode("__"+optionName);
+				else
+					writer.startNode(optionName);
 				if (option.getClass() != object.getOptionType(optionName))
 					writer.addAttribute("class", option.getClass().getName());
 				context.convertAnother(option);
@@ -50,6 +55,8 @@ public class ConfigurableConverter implements Converter {
 			while(reader.hasMoreChildren()) {
 				reader.moveDown();
 				String optionName = reader.getNodeName();
+				if (optionName.startsWith("__"))
+					optionName = optionName.substring(2);
 				String className = reader.getAttribute("class");
 				Class optionType = className != null ? Class.forName(className) : object.getOptionType(optionName);
 				object.setOption(optionName, context.convertAnother(object, optionType));

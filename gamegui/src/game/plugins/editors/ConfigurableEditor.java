@@ -15,20 +15,148 @@ import game.editorsystem.Editor;
 import game.editorsystem.Option;
 import game.utils.Utils;
 
+import java.io.File;
 import java.util.HashMap;
 import java.util.HashSet;
 
+import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
 import javafx.geometry.HPos;
 import javafx.geometry.Insets;
 import javafx.geometry.VPos;
 import javafx.scene.Node;
+import javafx.scene.control.Button;
+import javafx.scene.control.ContentDisplay;
 import javafx.scene.control.Label;
 import javafx.scene.control.ListView;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.GridPane;
+import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
+import javafx.stage.FileChooser;
+import javafx.stage.FileChooser.ExtensionFilter;
 
 public class ConfigurableEditor extends Editor {
+	
+	public static class SerializationEditor extends Editor {
+		
+		private final Image SAVECONFIGURATION = new Image(getClass().getResourceAsStream("saveConfiguration.png"));
+		private final Image LOADCONFIGURATION = new Image(getClass().getResourceAsStream("loadConfiguration.png"));
+		private final Image SAVESTATE = new Image(getClass().getResourceAsStream("saveState.png"));
+		private final Image LOADSTATE = new Image(getClass().getResourceAsStream("loadState.png"));
+		
+		private HBox line = new HBox();
+
+		@Override
+		public Node getView() {
+			return line;
+		}
+
+		@Override
+		public void connectView() {
+			if (getModel() != null) {
+				line.getChildren().addAll(makeSaveAndLoadConfiguration("SAVE"),
+										  makeSaveAndLoadConfiguration("LOAD"),
+										  makeSaveAndLoadState("SAVE"),
+										  makeSaveAndLoadState("LOAD"));
+			}
+		}
+
+		private Button makeSaveAndLoadConfiguration(final String what) {
+			Button ret = new Button();
+			ImageView graphic = new ImageView();
+			if (what.equals("SAVE"))
+				graphic.setImage(SAVECONFIGURATION);
+			else
+				graphic.setImage(LOADCONFIGURATION);
+			ret.setGraphic(graphic);
+			ret.setContentDisplay(ContentDisplay.GRAPHIC_ONLY);
+			
+			final Configurable content = getModel().getContent();
+			ret.setOnAction(new EventHandler<ActionEvent>() {
+				@Override
+				public void handle(ActionEvent event) {
+					FileChooser chooser = new FileChooser();
+					chooser.setInitialDirectory(new File(System.getProperty("user.home")));
+					chooser.setTitle("Save object configuration");
+					chooser.getExtensionFilters().add(new ExtensionFilter("GAME configuration file", "*.config.xml"));
+					
+					if (what.equals("SAVE")) {
+						File out = chooser.showSaveDialog(line.getScene().getWindow());
+						if (out != null) {
+							if (!out.getName().endsWith(".config.xml"))
+								content.saveConfiguration(out.getPath() + ".config.xml");
+							else
+								content.saveConfiguration(out.getPath());
+						}
+					} else {
+						File out = chooser.showOpenDialog(line.getScene().getWindow());
+						if (out != null)
+							content.loadConfiguration(out.getPath());
+					}
+				}
+			});
+			
+			return ret;
+		}
+
+		private Button makeSaveAndLoadState(final String what) {
+			Button ret = new Button();
+			ImageView graphic = new ImageView();
+			if (what.equals("SAVE"))
+				graphic.setImage(SAVESTATE);
+			else
+				graphic.setImage(LOADSTATE);
+			ret.setGraphic(graphic);
+			ret.setContentDisplay(ContentDisplay.GRAPHIC_ONLY);
+
+			final Configurable content = getModel().getContent();
+			ret.setOnAction(new EventHandler<ActionEvent>() {
+				@Override
+				public void handle(ActionEvent event) {
+					FileChooser chooser = new FileChooser();
+					chooser.setInitialDirectory(new File(System.getProperty("user.home")));
+					chooser.setTitle("Save object configuration");
+					chooser.getExtensionFilters().add(new ExtensionFilter("GAME configuration file", "*.state.xml"));
+					
+					if (what.equals("SAVE")) {
+						File out = chooser.showSaveDialog(line.getScene().getWindow());
+						if (out != null) {
+							if (!out.getName().endsWith(".state.xml"))
+								content.saveState(out.getPath() + ".state.xml");
+							else
+								content.saveState(out.getPath());
+						}
+					} else {
+						File out = chooser.showOpenDialog(line.getScene().getWindow());
+						if (out != null)
+							content.loadState(out.getPath());
+					}
+				}
+			});
+			
+			return ret;
+		}
+
+		@Override
+		public void updateView() {
+			// TODO Auto-generated method stub
+			
+		}
+
+		@Override
+		public void updateModel() {
+			// Done in connectView
+		}
+
+		@Override
+		public Class getBaseEditableClass() {
+			return getClass();
+		}
+		
+	}
 	
 	private GridPane pane = new GridPane();
 	private ListView<String> errorList = new ListView<>();
@@ -51,9 +179,14 @@ public class ConfigurableEditor extends Editor {
 	@Override
 	public void connectView() {
 		pane.getChildren().clear();
-		int count = 1;
+		int count = 2;
 		if (getModel() != null && getModel().getContent() != null) {
 			Configurable content = getModel().getContent();
+			
+			Option serialization = new Option(content);
+			Editor serializationEditor = new SerializationEditor();
+			serializationEditor.setModel(serialization);
+			pane.add(serializationEditor.getView(), 0, 0, 2, 1);
 			for (String optionName: content.getUnboundOptionNames()) {
 				if (hiddenOptions.contains(optionName))
 					continue;
@@ -64,7 +197,7 @@ public class ConfigurableEditor extends Editor {
 				Editor editor = prepareEditor(option);
 				if (editor == null)
 					continue;
-				pane.addRow(optionName.equals("name") ? 0 : count++, label, editor.getView());
+				pane.addRow(optionName.equals("name") ? 1 : count++, label, editor.getView());
 				GridPane.setValignment(label, VPos.TOP);
 				GridPane.setHalignment(label, HPos.RIGHT);
 				GridPane.setMargin(label, new Insets(5, 2, 2, 2));

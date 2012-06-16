@@ -26,9 +26,8 @@ import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.scene.Node;
 import javafx.scene.control.Button;
-import javafx.scene.control.ChoiceBox;
+import javafx.scene.control.ComboBox;
 import javafx.scene.layout.HBox;
-import javafx.scene.layout.Priority;
 
 public class ImplementationChooserEditor extends Editor {
 	
@@ -62,10 +61,9 @@ public class ImplementationChooserEditor extends Editor {
 	
 	private HBox container = new HBox();
 	
-	private ChoiceBox<Implementation> box = new ChoiceBox<>();
+	private ComboBox<Implementation> box = new ComboBox<>();
 	
 	public ImplementationChooserEditor() {
-		HBox.setHgrow(box, Priority.ALWAYS);
 		Button editButton = new Button("Edit");
 		editButton.setOnAction(new EventHandler<ActionEvent>() {
 			@Override

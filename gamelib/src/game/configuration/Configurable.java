@@ -373,7 +373,6 @@ public abstract class Configurable extends Observable implements Observer {
 	}
 	
 	protected void omitFromConfiguration(String optionName) {
-		configStream.omitField(getClass(), optionName);
 		omittedFromErrorCheck.add(optionName);
 	}
 
@@ -469,6 +468,10 @@ public abstract class Configurable extends Observable implements Observer {
 				return method;
 		}
 		return null;
+	}
+
+	public boolean isOmittedFromConfiguration(String optionName) {
+		return omittedFromErrorCheck.contains(optionName);
 	}
 	
 }
