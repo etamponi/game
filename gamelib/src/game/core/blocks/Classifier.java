@@ -10,6 +10,7 @@
  ******************************************************************************/
 package game.core.blocks;
 
+import game.configuration.errorchecks.CompatibilityCheck;
 import game.configuration.errorchecks.SizeCheck;
 import game.core.Block;
 import game.core.InstanceTemplate;
@@ -25,6 +26,8 @@ public abstract class Classifier extends Block implements Compatible<InstanceTem
 	public Classifier() {
 		addOptionBinding("template.outputTemplate", "outputEncoder.template");
 		addOptionChecks("parents", new SizeCheck(1));
+		
+		addOptionChecks("template", new CompatibilityCheck(this));
 		
 		setOptionConstraint("outputEncoder", new CompatibleConstraint(this, "template.outputTemplate"));
 	}

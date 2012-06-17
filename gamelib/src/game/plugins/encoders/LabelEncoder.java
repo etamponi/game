@@ -32,7 +32,7 @@ public class LabelEncoder extends Encoder<LabelTemplate> {
 			public void update(Observable observed, Object message) {
 				if (message instanceof Change) {
 					if (((Change)message).pathContains("template"))
-						setTemplate((LabelTemplate)template);
+						updateMapping((LabelTemplate)template);
 				}
 			}
 		});
@@ -46,7 +46,7 @@ public class LabelEncoder extends Encoder<LabelTemplate> {
 		return ret;
 	}
 	
-	public void setTemplate(LabelTemplate template) {
+	private void updateMapping(LabelTemplate template) {
 		this.template = template;
 		
 		int i = 0; int n = template.labels.size();

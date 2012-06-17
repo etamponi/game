@@ -11,12 +11,17 @@
 package game.core;
 
 import game.configuration.Configurable;
+import game.configuration.errorchecks.CompatibilityCheck;
 import game.core.blocks.Encoder;
 import game.plugins.constraints.Compatible;
 
 public abstract class Decoder<E extends Encoder> extends Configurable implements Compatible<Encoder> {
 	
 	public E encoder;
+	
+	public Decoder() {
+		addOptionChecks("encoder", new CompatibilityCheck(this));
+	}
 	
 	public abstract Object decode(Encoding outputEncoded);
 

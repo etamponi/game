@@ -11,13 +11,17 @@
 package game.core;
 
 import game.configuration.Configurable;
+import game.configuration.errorchecks.CompatibilityCheck;
+import game.plugins.constraints.Compatible;
 
-public abstract class DatasetBuilder extends Configurable {
+public abstract class DatasetBuilder extends Configurable implements Compatible<InstanceTemplate> {
 	
 	public InstanceTemplate template;
 	
-	public abstract Dataset buildDataset();
+	public DatasetBuilder() {
+		addOptionChecks("template", new CompatibilityCheck(this));
+	}
 	
-	public abstract boolean supportsTemplate(InstanceTemplate template);
+	public abstract Dataset buildDataset();
 
 }

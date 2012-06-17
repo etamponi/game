@@ -10,6 +10,7 @@
  ******************************************************************************/
 package game.core.blocks;
 
+import game.configuration.errorchecks.CompatibilityCheck;
 import game.configuration.errorchecks.SizeCheck;
 import game.core.Block;
 import game.core.DataTemplate;
@@ -22,6 +23,7 @@ public abstract class Encoder<DT extends DataTemplate> extends Block implements 
 	
 	public Encoder() {
 		addOptionChecks("parents", new SizeCheck(0, 0));
+		addOptionChecks("template", new CompatibilityCheck(this));
 	}
 
 	@Override
