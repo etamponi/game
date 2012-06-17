@@ -45,7 +45,7 @@ public class KNNClassifier extends Classifier {
 
 	@Override
 	protected Encoding transform(Object inputData) {
-		// TODO Auto-generated method stub
+		// FIXME KNN transform
 		return null;
 	}
 	

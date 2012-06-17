@@ -10,6 +10,7 @@
  ******************************************************************************/
 package game.plugins.editors.configurablelist;
 
+import game.configuration.Configurable.Change;
 import game.configuration.ConfigurableList;
 import game.editorsystem.Editor;
 import game.editorsystem.EditorController;
@@ -57,7 +58,7 @@ public class ConfigurableListEditorController implements EditorController {
 	}
 
 	@Override
-	public void updateView() {
+	public void updateView(Change change) {
 		connectView();
 	}
 	

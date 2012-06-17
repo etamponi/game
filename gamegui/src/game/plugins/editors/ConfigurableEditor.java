@@ -11,6 +11,7 @@
 package game.plugins.editors;
 
 import game.configuration.Configurable;
+import game.configuration.Configurable.Change;
 import game.editorsystem.Editor;
 import game.editorsystem.Option;
 import game.utils.Utils;
@@ -32,6 +33,7 @@ import javafx.scene.control.ListView;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.AnchorPane;
+import javafx.scene.layout.ColumnConstraints;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
@@ -118,8 +120,8 @@ public class ConfigurableEditor extends Editor {
 				public void handle(ActionEvent event) {
 					FileChooser chooser = new FileChooser();
 					chooser.setInitialDirectory(new File(System.getProperty("user.home")));
-					chooser.setTitle("Save object configuration");
-					chooser.getExtensionFilters().add(new ExtensionFilter("GAME configuration file", "*.state.xml"));
+					chooser.setTitle("Save object state");
+					chooser.getExtensionFilters().add(new ExtensionFilter("GAME state file", "*.state.xml"));
 					
 					if (what.equals("SAVE")) {
 						File out = chooser.showSaveDialog(line.getScene().getWindow());
@@ -141,14 +143,8 @@ public class ConfigurableEditor extends Editor {
 		}
 
 		@Override
-		public void updateView() {
-			// TODO Auto-generated method stub
-			
-		}
-
-		@Override
-		public void updateModel() {
-			// Done in connectView
+		public void updateView(Change change) {
+			// Nothing to update
 		}
 
 		@Override
@@ -169,6 +165,12 @@ public class ConfigurableEditor extends Editor {
 		AnchorPane.setLeftAnchor(pane, 0.0);
 		AnchorPane.setRightAnchor(pane, 0.0);
 		AnchorPane.setBottomAnchor(pane, 0.0);
+		
+		ColumnConstraints c0 = new ColumnConstraints();
+		c0.setHgrow(Priority.NEVER);
+		ColumnConstraints c1 = new ColumnConstraints();
+		c1.setHgrow(Priority.ALWAYS);
+		pane.getColumnConstraints().addAll(c0, c1);
 	}
 
 	@Override
@@ -186,7 +188,7 @@ public class ConfigurableEditor extends Editor {
 			Option serialization = new Option(content);
 			Editor serializationEditor = new SerializationEditor();
 			serializationEditor.setModel(serialization);
-			pane.add(serializationEditor.getView(), 0, 0, 2, 1);
+			pane.add(serializationEditor.getView(), 1, 0);
 			for (String optionName: content.getUnboundOptionNames()) {
 				if (hiddenOptions.contains(optionName))
 					continue;
@@ -213,17 +215,10 @@ public class ConfigurableEditor extends Editor {
 	}
 
 	@Override
-	public void updateView() {
-		// Everything is provided by the sub editors.
-
+	public void updateView(Change change) {
 		errorList.getItems().clear();
 		if (getModel() != null && getModel().getContent() != null)
 			errorList.getItems().addAll(((Configurable)getModel().getContent()).getConfigurationErrors());
-	}
-
-	@Override
-	public void updateModel() {
-		// Everything is provided by the sub editors.
 	}
 
 	@Override

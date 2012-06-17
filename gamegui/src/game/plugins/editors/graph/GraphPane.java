@@ -157,11 +157,11 @@ public class GraphPane extends ScrollPane {
 					fixPosition(node);
 					
 					Block block = node.getBlock();
-					if (block instanceof Classifier && !((List)graph.getOption("classifiers")).contains(block))
+					if (block instanceof Classifier && !graph.classifiers.contains(block))
 						graph.setOption("classifiers.add", block);
-					if (block instanceof Encoder && !((List)graph.getOption("inputEncoders")).contains(block))
+					if (block instanceof Encoder && !graph.inputEncoders.contains(block))
 						graph.setOption("inputEncoders.add", block);
-					if (block instanceof Encoder && !graph.pipes.contains(block))
+					if (block instanceof Pipe && !graph.pipes.contains(block))
 						graph.setOption("pipes.add", block);
 					
 					Settings.getInstance().setDragging(null);
@@ -213,6 +213,7 @@ public class GraphPane extends ScrollPane {
 		
 		List<Block> all = new LinkedList<>();
 		all.addAll(graph.inputEncoders);
+		all.addAll(graph.pipes);
 		all.addAll(graph.classifiers);
 		
 		Map<Integer, Integer> countPerLevel = new HashMap<>();
@@ -230,8 +231,8 @@ public class GraphPane extends ScrollPane {
 					countPerLevel.put(level, 1);
 				int count = countPerLevel.get(level);
 				
-				left = 100*level;
-				top = 100*count;
+				left = cellWidth*level;
+				top = cellHeight*count;
 
 				countPerLevel.put(level, count+1);
 			}

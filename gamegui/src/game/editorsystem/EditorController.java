@@ -10,6 +10,7 @@
  ******************************************************************************/
 package game.editorsystem;
 
+import game.configuration.Configurable.Change;
 import javafx.fxml.Initializable;
 
 public interface EditorController extends Initializable {
@@ -18,6 +19,6 @@ public interface EditorController extends Initializable {
 
 	public void connectView();
 
-	public void updateView();
+	public void updateView(Change change);
 
 }

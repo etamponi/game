@@ -10,6 +10,7 @@
  ******************************************************************************/
 package game.plugins.editors.blocks;
 
+import game.configuration.Configurable.Change;
 import game.editorsystem.Editor;
 import game.plugins.encoders.LabelEncoder;
 import javafx.event.EventHandler;
@@ -86,13 +87,8 @@ public class LabelMappingEditor extends Editor {
 	}
 
 	@Override
-	public void updateView() {
+	public void updateView(Change change) {
 		connectView();
-	}
-
-	@Override
-	public void updateModel() {
-		// Done by the single textfield (that's bad)
 	}
 
 	@Override

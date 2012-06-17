@@ -26,9 +26,7 @@ public abstract class Editor implements Observer {
 	
 	public abstract void connectView();
 	
-	public abstract void updateView();
-	
-	public abstract void updateModel();
+	public abstract void updateView(Change change);
 	
 	public abstract Class getBaseEditableClass();
 	
@@ -54,8 +52,12 @@ public abstract class Editor implements Observer {
 	public void update(Observable observed, Object m) {
 		if (m instanceof Change) {
 			Change change = (Change)m;
-			if (change.pathContains(model.getOptionName()))
-				updateView();
+			if (change.pathContains(model.getOptionName())) {
+				if (!change.getPath().contains("."))
+					connectView();
+				else
+					updateView(change);
+			}
 		}
 	}
 

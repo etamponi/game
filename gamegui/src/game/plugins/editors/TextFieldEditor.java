@@ -10,6 +10,7 @@
  ******************************************************************************/
 package game.plugins.editors;
 
+import game.configuration.Configurable.Change;
 import game.editorsystem.Editor;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
@@ -26,7 +27,11 @@ public abstract class TextFieldEditor extends Editor {
 			public void changed(
 					ObservableValue<? extends String> observable,
 					String oldValue, String newValue) {
-				updateModel();
+				if (getModel() != null) {
+					Object content = parseText();
+					if (content != null)
+						getModel().setContent(content);
+				}
 			}
 		});
 	}
@@ -39,16 +44,7 @@ public abstract class TextFieldEditor extends Editor {
 	}
 
 	@Override
-	public void updateModel() {
-		if (getModel() != null) {
-			Object content = parseText();
-			if (content != null)
-				getModel().setContent(content);
-		}
-	}
-
-	@Override
-	public void updateView() {
+	public void updateView(Change change) {
 		if (getModel() != null && getModel().getContent() != null)
 			textField.setText(getModel().getContent().toString());
 		else
@@ -57,7 +53,7 @@ public abstract class TextFieldEditor extends Editor {
 
 	@Override
 	public void connectView() {
-		updateView();
+		updateView(null);
 	}
 
 }

@@ -10,34 +10,32 @@
  ******************************************************************************/
 package game.plugins.encoders;
 
-import game.configuration.ErrorCheck;
 import game.core.DataTemplate;
 import game.core.Encoding;
 import game.core.blocks.Encoder;
 import game.plugins.datatemplates.LabelTemplate;
 
-import java.util.Map;
-import java.util.TreeMap;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Observable;
+import java.util.Observer;
 
 public class LabelEncoder extends Encoder<LabelTemplate> {
 	
-	private class ContainsAllKeysCheck implements ErrorCheck<Map> {
-
-		@Override
-		public String getError(Map value) {
-			if (!value.keySet().containsAll(template.labels))
-				return "mapping is not valid: does not contain all labels";
-			else
-				return null;
-		}
-		
-	}
-	
-	public TreeMap<String, double[]> labelMapping = new TreeMap<>();
+	public HashMap<String, double[]> labelMapping = new HashMap<>();
 	
 	public LabelEncoder() {
 		
-		addOptionChecks("labelMapping", new ContainsAllKeysCheck());
+		addObserver(new Observer() {
+			
+			@Override
+			public void update(Observable observed, Object message) {
+				if (message instanceof Change) {
+					if (((Change)message).pathContains("template"))
+						setTemplate((LabelTemplate)template);
+				}
+			}
+		});
 		
 	}
 
@@ -53,9 +51,15 @@ public class LabelEncoder extends Encoder<LabelTemplate> {
 		
 		int i = 0; int n = template.labels.size();
 		for (String label: template.labels.getList(String.class)) {
-			double[] enc = new double[n]; enc[i] = 1;
-			labelMapping.put(label, enc);
+			if (label != null) {
+				double[] enc = new double[n]; enc[i] = 1;
+				labelMapping.put(label, enc);
+			}
 			i++;
+		}
+		for (String key: new HashSet<String>(labelMapping.keySet())) {
+			if (!template.labels.contains(key))
+				labelMapping.remove(key);
 		}
 	}
 

@@ -26,8 +26,9 @@ import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.scene.Node;
 import javafx.scene.control.Button;
-import javafx.scene.control.ComboBox;
+import javafx.scene.control.ChoiceBox;
 import javafx.scene.layout.HBox;
+import javafx.scene.layout.Priority;
 
 public class ImplementationChooserEditor extends Editor {
 	
@@ -55,13 +56,17 @@ public class ImplementationChooserEditor extends Editor {
 		public void changed(
 				ObservableValue<? extends Implementation> observable,
 				Implementation oldValue, Implementation newValue) {
-			updateModel();
+			if (getModel() == null)
+				return;
+			Object selected = box.getValue() == null ? null : box.getValue().getContent();
+			if (getModel().getContent() != selected)
+				getModel().setContent(selected);
 		}
 	};
 	
 	private HBox container = new HBox();
 	
-	private ComboBox<Implementation> box = new ComboBox<>();
+	private ChoiceBox<Implementation> box = new ChoiceBox<>();
 	
 	public ImplementationChooserEditor() {
 		Button editButton = new Button("Edit");
@@ -78,6 +83,7 @@ public class ImplementationChooserEditor extends Editor {
 			}
 		});
 		container.getChildren().addAll(box, editButton);
+		HBox.setHgrow(editButton, Priority.ALWAYS);
 	}
 
 	@Override
@@ -110,24 +116,15 @@ public class ImplementationChooserEditor extends Editor {
 	}
 
 	@Override
-	public void update(Observable observed, Object m) {
-		if (m instanceof Change) {
-			updateView();
+	public void update(Observable observed, Object message) {
+		if (message instanceof Change) {
+			updateView((Change)message);
 		}
 	}
 
 	@Override
-	public void updateView() {
+	public void updateView(Change change) {
 		connectView();
-	}
-
-	@Override
-	public void updateModel() {
-		if (getModel() == null)
-			return;
-		Object selected = box.getValue() == null ? null : box.getValue().getContent();
-		if (getModel().getContent() != selected)
-			getModel().setContent(selected);
 	}
 
 	@Override

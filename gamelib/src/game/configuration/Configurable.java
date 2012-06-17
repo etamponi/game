@@ -147,9 +147,10 @@ public abstract class Configurable extends Observable implements Observer {
 	private HashMap<String, LinkedList<ErrorCheck>> optionChecks = new HashMap<>();
 	protected HashMap<String, Constraint> optionConstraints = new HashMap<>();
 	private LinkedList<String> omittedFromErrorCheck = new LinkedList<>();
+	private LinkedList<String> omittedFromConfiguration = new LinkedList<>();
 	
 	static {
-		configStream.registerConverter(new ConfigurableConverter());
+		configStream.registerConverter(new ConfigurationConverter());
 	}
 	
 	public Configurable() {
@@ -373,6 +374,7 @@ public abstract class Configurable extends Observable implements Observer {
 	}
 	
 	protected void omitFromConfiguration(String optionName) {
+		omittedFromConfiguration.add(optionName);
 		omittedFromErrorCheck.add(optionName);
 	}
 
@@ -471,7 +473,7 @@ public abstract class Configurable extends Observable implements Observer {
 	}
 
 	public boolean isOmittedFromConfiguration(String optionName) {
-		return omittedFromErrorCheck.contains(optionName);
+		return omittedFromConfiguration.contains(optionName);
 	}
 	
 }

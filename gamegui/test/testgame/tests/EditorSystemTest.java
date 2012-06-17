@@ -260,7 +260,10 @@ public class EditorSystemTest extends Application {
 		button.setOnAction(new EventHandler<ActionEvent>() {
 			@Override
 			public void handle(ActionEvent event) {
-				new EditorWindow(new Option(graph).getBestEditor()).show();
+				new EditorWindow(new Option(graph).getBestEditor()).showAndWait();
+//				System.out.println(graph.classifiers.size());
+//				System.out.println(graph.inputEncoders.size());
+//				System.out.println(graph.pipes.size());
 			}
 		});
 		

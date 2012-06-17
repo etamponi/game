@@ -19,24 +19,17 @@ import game.editorsystem.EditorController;
 import game.editorsystem.Option;
 import game.main.Settings;
 import game.plugins.PluginManager;
-import game.utils.Utils;
+import game.plugins.editors.ConfigurableEditor;
 
 import java.net.URL;
 import java.util.LinkedList;
-import java.util.Observable;
-import java.util.Observer;
 import java.util.ResourceBundle;
 import java.util.Set;
 
 import javafx.event.Event;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
-import javafx.geometry.HPos;
-import javafx.geometry.Insets;
-import javafx.geometry.VPos;
 import javafx.scene.Node;
-import javafx.scene.control.Label;
-import javafx.scene.control.ListView;
 import javafx.scene.control.Slider;
 import javafx.scene.input.DragEvent;
 import javafx.scene.input.KeyCode;
@@ -45,10 +38,8 @@ import javafx.scene.input.MouseEvent;
 import javafx.scene.input.TransferMode;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.FlowPane;
-import javafx.scene.layout.GridPane;
-import javafx.scene.layout.Priority;
 
-public class GraphEditorController implements EditorController, Observer {
+public class GraphEditorController implements EditorController {
 
 	private Graph graph;
 	
@@ -57,7 +48,7 @@ public class GraphEditorController implements EditorController, Observer {
 	@FXML
 	private AnchorPane leftSide;
 	@FXML
-	private GridPane confPane;
+	private AnchorPane confPane;
 	@FXML
 	private FlowPane classifiersPane;
 	@FXML
@@ -66,13 +57,12 @@ public class GraphEditorController implements EditorController, Observer {
 	private FlowPane pipesPane;
 	@FXML
 	private Slider zoom;
-	@FXML
-	private ListView<String> errorList;
-	
+
 	private GraphPane graphPane;
 	
 	@Override
 	public void initialize(URL location, ResourceBundle resources) {
+		
 		graphPane = new GraphPane(50, 50, getClass().getResource("background.png").toExternalForm());
 		leftSide.getChildren().add(graphPane);
 		AnchorPane.setTopAnchor(graphPane, 0.0);
@@ -122,12 +112,8 @@ public class GraphEditorController implements EditorController, Observer {
 
 	@Override
 	public void setModel(Option model) {
-		if (graph != null)
-			graph.deleteObserver(this);
-		
 		if (model != null) {
 			graph = model.getContent();
-			graph.addObserver(this);
 			graphPane.setGraph(graph);
 		} else {
 			graph = null;
@@ -137,21 +123,20 @@ public class GraphEditorController implements EditorController, Observer {
 
 	@Override
 	public void connectView() {
-		errorList.getItems().clear();
-		errorList.getItems().addAll(graph.getConfigurationErrors());
-		
 		connectConfRoot();
 		fillPools();
 		graphPane.parseGraph();
 	}
 
 	@Override
-	public void updateView() {
-		// The view is updated locally, not as a whole.
-
-		errorList.getItems().clear();
-		if (graph != null)
-			errorList.getItems().addAll(graph.getConfigurationErrors());
+	public void updateView(Change change) {
+		if (change.getPath().matches(".+\\.template.*"))
+			fillPools();
+		if (change.getPath().matches(".+\\.classifiers")
+				|| change.getPath().matches(".+\\.inputEncoders")
+				|| change.getPath().matches(".+\\.pipes")
+				|| change.getPath().matches(".+\\.outputClassifier"))
+			graphPane.parseGraph();
 	}
 	
 	private void fillPools() {
@@ -160,43 +145,29 @@ public class GraphEditorController implements EditorController, Observer {
 		fillPool(pipesPane, "pipes");
 	}
 	
-	private void connectConfRoot() {
-		confPane.getChildren().clear();
-		if (graph != null) {
-			addConfPaneRow("name", 0);
-			addConfPaneRow("template", 1);
-			addConfPaneRow("decoder", 2);
+	private static class GraphConfigurationEditor extends ConfigurableEditor {
+		
+		public GraphConfigurationEditor() {
+			addHiddenOption("classifiers");
+			addHiddenOption("inputEncoders");
+			addHiddenOption("pipes");
+			addHiddenOption("outputClassifier");
 		}
+		
 	}
 	
-	private void addConfPaneRow(String optionName, int rowIndex) {
-		Option option = new Option(graph, optionName);
-		Label label = new Label(optionName+": ");
-		Editor editor = option.getBestEditor();
-		try {
-			if (option.getContent() == null && Utils.isConcrete(option.getType()))
-				option.setContent(option.getType().newInstance());
-		} catch (InstantiationException | IllegalAccessException e) {
-			e.printStackTrace();
-		}
-		editor.setModel(option);
-		
-		if (option.isBound())
-			editor.getView().setDisable(true);
-		
-		confPane.addRow(rowIndex, label, editor.getView());
-		GridPane.setValignment(label, VPos.TOP);
-		GridPane.setHalignment(label, HPos.RIGHT);
-		GridPane.setMargin(label, new Insets(5, 2, 2, 2));
-		GridPane.setHgrow(editor.getView(), Priority.ALWAYS);
-		GridPane.setMargin(editor.getView(), new Insets(2, 2, 2, 2));
+	private void connectConfRoot() {
+		Editor confEditor = new GraphConfigurationEditor();
+		confEditor.setModel(new Option(graph));
+		confPane.getChildren().add(confEditor.getView());
 	}
 	
 	private void fillPool(FlowPane pool, String optionName) {
 		pool.getChildren().clear();
 		PluginManager manager = Settings.getInstance().getPluginManager();
 		Configurable list = graph.getOption(optionName);
-		
+		if (list == null)
+			return;
 		Set<Block> blocks = list.getCompatibleOptionInstances("*", manager);
 		for (Block block: blocks) {
 			int index = 0;
@@ -207,15 +178,6 @@ public class GraphEditorController implements EditorController, Observer {
 		}
 	}
 
-	@Override
-	public void update(Observable o, Object message) {
-		if (message instanceof Change) {
-			Change change = (Change)message;
-			if (change.getPath().startsWith("template"))
-				fillPools();
-		}
-	}
-	
 	@FXML
 	void onZoom(Event event) {
 		double value = zoom.getValue()/100;

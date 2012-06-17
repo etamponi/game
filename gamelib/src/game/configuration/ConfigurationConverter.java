@@ -16,7 +16,7 @@ import com.thoughtworks.xstream.converters.UnmarshallingContext;
 import com.thoughtworks.xstream.io.HierarchicalStreamReader;
 import com.thoughtworks.xstream.io.HierarchicalStreamWriter;
 
-public class ConfigurableConverter implements Converter {
+public class ConfigurationConverter implements Converter {
 
 	@Override
 	public boolean canConvert(Class type) {
@@ -59,6 +59,7 @@ public class ConfigurableConverter implements Converter {
 					optionName = optionName.substring(2);
 				String className = reader.getAttribute("class");
 				Class optionType = className != null ? Class.forName(className) : object.getOptionType(optionName);
+				//System.out.println(optionName + ": " + optionType);
 				object.setOption(optionName, context.convertAnother(object, optionType));
 				reader.moveUp();
 			}

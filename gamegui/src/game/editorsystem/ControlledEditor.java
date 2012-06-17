@@ -10,6 +10,8 @@
  ******************************************************************************/
 package game.editorsystem;
 
+import game.configuration.Configurable.Change;
+
 import java.io.IOException;
 import java.net.URL;
 
@@ -62,13 +64,8 @@ public abstract class ControlledEditor extends Editor {
 	}
 
 	@Override
-	public void updateView() {
-		controller.updateView();
-	}
-
-	@Override
-	public void updateModel() {
-		// The model is updated by the controller
+	public void updateView(Change change) {
+		controller.updateView(change);
 	}
 	
 	protected String getFXML() {

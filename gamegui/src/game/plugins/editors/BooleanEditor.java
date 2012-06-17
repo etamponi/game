@@ -10,11 +10,12 @@
  ******************************************************************************/
 package game.plugins.editors;
 
+import game.configuration.Configurable.Change;
+import game.editorsystem.Editor;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.scene.Node;
 import javafx.scene.control.CheckBox;
-import game.editorsystem.Editor;
 
 public class BooleanEditor extends Editor {
 	
@@ -43,16 +44,11 @@ public class BooleanEditor extends Editor {
 	}
 
 	@Override
-	public void updateView() {
+	public void updateView(Change change) {
 		if (getModel() != null)
 			box.setSelected((boolean)getModel().getContent());
 		else
 			box.setSelected(false);
-	}
-
-	@Override
-	public void updateModel() {
-		// See the constructor
 	}
 
 	@Override
