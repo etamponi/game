@@ -59,7 +59,6 @@ public class ConfigurationConverter implements Converter {
 					optionName = optionName.substring(2);
 				String className = reader.getAttribute("class");
 				Class optionType = className != null ? Class.forName(className) : object.getOptionType(optionName);
-				//System.out.println(optionName + ": " + optionType);
 				object.setOption(optionName, context.convertAnother(object, optionType));
 				reader.moveUp();
 			}

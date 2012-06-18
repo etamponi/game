@@ -123,9 +123,9 @@ public class GraphEditorController implements EditorController {
 
 	@Override
 	public void connectView() {
-		connectConfRoot();
-		fillPools();
 		graphPane.parseGraph();
+		fillPools();
+		connectConfRoot();
 	}
 
 	@Override
@@ -157,6 +157,7 @@ public class GraphEditorController implements EditorController {
 	}
 	
 	private void connectConfRoot() {
+		confPane.getChildren().clear();
 		Editor confEditor = new GraphConfigurationEditor();
 		confEditor.setModel(new Option(graph));
 		confPane.getChildren().add(confEditor.getView());

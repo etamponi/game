@@ -313,6 +313,8 @@ public abstract class Configurable extends Observable implements Observer {
 	
 	public void loadState(String fileName) {
 		stateStream.fromXML(new File(fileName), this);
+		setChanged();
+		notifyObservers(new Change(""));
 	}
 	
 	public void saveState(String fileName) {

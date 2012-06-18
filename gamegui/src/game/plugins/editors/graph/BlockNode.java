@@ -39,7 +39,7 @@ import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Text;
 import javafx.scene.text.TextAlignment;
 
-public class BlockNode extends VBox {
+public class BlockNode extends VBox implements Observer {
 
 	private final Image STATUSOK = new Image(getClass().getResourceAsStream("blockOk.png"));
 	private final Image STATUSERRORS = new Image(getClass().getResourceAsStream("blockErrors.png"));
@@ -55,10 +55,13 @@ public class BlockNode extends VBox {
 	private Text blockName;
 	
 	private HBox wrapper;
+	
+	private GraphPane pane;
 
-	public BlockNode(Block b, boolean isTpl, final GraphPane pane) {
+	public BlockNode(Block b, boolean isTpl, GraphPane p) {
 		this.block = b;
 		this.isTemplate = isTpl;
+		this.pane = p;
 		
 		if (isTemplate)
 			block.setOption("name", block.getClass().getSimpleName());
@@ -104,20 +107,7 @@ public class BlockNode extends VBox {
 		if (!isTemplate) {
 			status.setImage(block.getConfigurationErrors().isEmpty() ? STATUSOK : STATUSERRORS);
 			
-			block.addObserver(new Observer() {
-				@Override
-				public void update(Observable o, Object arg) {
-					if (arg instanceof Change) {
-						Change change = (Change)arg;
-						if (change.getPath().contains("name")) {
-							blockName.setText((String)block.getOption("name"));
-							pane.fixPosition(BlockNode.this);
-						}
-						
-						status.setImage(block.getConfigurationErrors().isEmpty() ? STATUSOK : STATUSERRORS);
-					}
-				}
-			});
+			block.addObserver(this);
 			
 			setOnMouseClicked(new EventHandler<MouseEvent>() {
 				@Override
@@ -130,6 +120,10 @@ public class BlockNode extends VBox {
 				}
 			});
 		}
+	}
+	
+	public void disconnect() {
+		block.deleteObserver(this);
 	}
 	
 	public Block getBlock() {
@@ -159,6 +153,22 @@ public class BlockNode extends VBox {
 			(wrapper != null ? wrapper : this).setOpacity(0.3);
 		else
 			(wrapper != null ? wrapper : this).setOpacity(1.0);
+	}
+	
+	@Override
+	public void update(Observable o, Object arg) {
+		if (arg instanceof Change) {
+			Change change = (Change)arg;
+			System.out.println(change.getPath());
+			if (change.getPath().equals("name")) {
+				if (!blockName.getText().equals(block.name)) {
+					blockName.setText((String)block.getOption("name"));
+					pane.fixPosition(BlockNode.this);
+				}
+			}
+			
+			status.setImage(block.getConfigurationErrors().isEmpty() ? STATUSOK : STATUSERRORS);
+		}
 	}
 	
 }

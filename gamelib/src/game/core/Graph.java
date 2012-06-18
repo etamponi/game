@@ -10,6 +10,7 @@
  ******************************************************************************/
 package game.core;
 
+import game.configuration.Configurable;
 import game.configuration.ConfigurableList;
 import game.core.blocks.Classifier;
 import game.core.blocks.Encoder;
@@ -20,13 +21,34 @@ import java.util.LinkedList;
 
 public class Graph extends LongTask {
 	
+	public static class TemplateCompatibleList extends ConfigurableList {
+		
+		public Object constraint;
+		
+		public TemplateCompatibleList() {
+			// DO NOT NEVER EVER USE (NEVER!) Necessary for ConfigurableConverter
+			addOptionBinding("constraint", "*.template");
+			
+			setOptionConstraint("*", new CompatibleConstraint(this, "constraint"));
+		}
+		
+		public TemplateCompatibleList(Configurable owner, Class content) {
+			super(owner, content);
+			
+			addOptionBinding("constraint", "*.template");
+			
+			setOptionConstraint("*", new CompatibleConstraint(this, "constraint"));
+		}
+		
+	}
+	
 	private static final String CLASSIFY = "classify";
 	private static final String CLASSIFYALL = "classifyall";
 	
 	public InstanceTemplate template; 
 
-	public CompatibleList classifiers = new CompatibleList(this, Classifier.class, "template");
-	public CompatibleList inputEncoders = new CompatibleList(this, Encoder.class, "template");
+	public TemplateCompatibleList classifiers = new TemplateCompatibleList(this, Classifier.class);
+	public TemplateCompatibleList inputEncoders = new TemplateCompatibleList(this, Encoder.class);
 	public ConfigurableList pipes = new ConfigurableList(this, Pipe.class);
 	
 	public Decoder decoder;

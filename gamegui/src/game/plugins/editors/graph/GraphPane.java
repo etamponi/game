@@ -116,7 +116,7 @@ public class GraphPane extends ScrollPane {
 			}
 		});
 		
-		content.setOnDragExited(new EventHandler<DragEvent>() {
+		content.setOnDragExited(new EventHandler<DragEvent>() { // FIXME
 			@Override
 			public void handle(DragEvent event) {
 				if (event.getDragboard().hasContent(BlockNode.BLOCKDATA)) {
@@ -208,8 +208,8 @@ public class GraphPane extends ScrollPane {
 	}
 	
 	public void parseGraph() {
+		disconnectBlockNodes();
 		content.getChildren().clear();
-		//registerGraphInTheGraph();
 		
 		List<Block> all = new LinkedList<>();
 		all.addAll(graph.inputEncoders);
@@ -254,6 +254,13 @@ public class GraphPane extends ScrollPane {
 				if (A.getBlock().getParents().contains(B.getBlock()))
 					addConnection(B, A);
 			}
+		}
+	}
+	
+	private void disconnectBlockNodes() {
+		for (Node child: content.getChildren()) {
+			if (child instanceof HBox)
+				((BlockNode)((HBox)child).getChildren().get(1)).disconnect();
 		}
 	}
 	
