@@ -35,7 +35,7 @@ public abstract class Block extends LongTask {
 	public Position position = new Position();
 	
 	public Block() {
-		//omitFromConfiguration("parents");
+		omitFromErrorCheck("parents");
 	}
 	
 	public abstract boolean isTrained();

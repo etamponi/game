@@ -159,7 +159,6 @@ public class BlockNode extends VBox implements Observer {
 	public void update(Observable o, Object arg) {
 		if (arg instanceof Change) {
 			Change change = (Change)arg;
-			System.out.println(change.getPath());
 			if (change.getPath().equals("name")) {
 				if (!blockName.getText().equals(block.name)) {
 					blockName.setText((String)block.getOption("name"));
