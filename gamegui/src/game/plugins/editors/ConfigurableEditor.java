@@ -57,6 +57,11 @@ public class ConfigurableEditor extends Editor {
 		}
 
 		@Override
+		public boolean isInline() {
+			return true;
+		}
+
+		@Override
 		public void connectView() {
 			if (getModel() != null) {
 				line.getChildren().addAll(makeSaveAndLoadConfiguration("SAVE"),
@@ -199,18 +204,32 @@ public class ConfigurableEditor extends Editor {
 				if (editor == null)
 					continue;
 				pane.addRow(optionName.equals("name") ? 1 : count++, label, editor.getView());
-				GridPane.setValignment(label, VPos.TOP);
-				GridPane.setHalignment(label, HPos.RIGHT);
-				GridPane.setMargin(label, new Insets(5, 2, 2, 2));
-				GridPane.setHgrow(editor.getView(), Priority.ALWAYS);
-				GridPane.setMargin(editor.getView(), new Insets(2, 2, 2, 2));
+				applyRowLayout(label, editor.getView(), editor.isInline());
 			}
 			
 			errorList.getItems().clear();
 			errorList.getItems().addAll(content.getConfigurationErrors());
 			errorList.setPrefHeight(100);
-			pane.add(errorList, 0, count, 2, 1);
+			Label label = new Label("errors:");
+			pane.addRow(count, label, errorList);
+			applyRowLayout(label, errorList, true);
 		}
+	}
+	
+	private void applyRowLayout(Node label, Node view, boolean inline) {
+		GridPane.setValignment(label, VPos.TOP);
+		GridPane.setHalignment(label, HPos.RIGHT);
+		GridPane.setMargin(label, new Insets(5, 2, 2, 2));
+		GridPane.setHgrow(view, Priority.ALWAYS);
+		GridPane.setMargin(view, new Insets(2, 2, 2, 2));
+		if (!inline) {
+			view.setStyle("-fx-padding: 5px; -fx-border-color: -fx-color");
+		}
+	}
+
+	@Override
+	public boolean isInline() {
+		return false;
 	}
 
 	@Override

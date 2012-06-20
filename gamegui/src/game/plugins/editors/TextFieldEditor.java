@@ -39,6 +39,11 @@ public abstract class TextFieldEditor extends Editor {
 	protected abstract Object parseText();
 
 	@Override
+	public boolean isInline() {
+		return true;
+	}
+
+	@Override
 	public Node getView() {
 		return textField;
 	}

@@ -170,7 +170,7 @@ public class GraphTest {
 		assertEquals(graph.getOption("outputClassifier.outputEncoder"), graph.getOption("decoder.encoder"));
 		
 		object = graph.getOption("inputEncoders");
-		assertEquals(graph.getOption("template.inputTemplate"), object.getOption("template"));
+		assertEquals(graph.getOption("template.inputTemplate"), object.getOption("constraint"));
 		set = classSet(object.getCompatibleOptionInstances("*", manager));
 		real.clear();
 		real.add(EncoderImplA.class);

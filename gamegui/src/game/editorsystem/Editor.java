@@ -28,6 +28,8 @@ public abstract class Editor implements Observer {
 	
 	public abstract void updateView(Change change);
 	
+	public abstract boolean isInline();
+	
 	public abstract Class getBaseEditableClass();
 	
 	public Option getModel() {

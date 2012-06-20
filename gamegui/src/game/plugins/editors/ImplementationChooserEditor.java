@@ -138,4 +138,9 @@ public class ImplementationChooserEditor extends Editor {
 		return Configurable.class;
 	}
 
+	@Override
+	public boolean isInline() {
+		return true;
+	}
+
 }

@@ -29,8 +29,9 @@ import game.plugins.datatemplates.VectorTemplate;
 import game.plugins.editors.ImplementationChooserEditor;
 import game.plugins.editors.ImplementationChooserEditor.Implementation;
 import game.plugins.editors.NumberEditor;
-import game.plugins.editors.graph.GraphEditor;
+import game.plugins.editors.graph.OuterGraphEditor;
 import javafx.application.Application;
+import javafx.application.Platform;
 import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.HBox;
@@ -247,7 +248,9 @@ public class EditorSystemTest extends Application {
 		
 		option = new Option(graph);
 		Editor graphEditor = option.getBestEditor();
-		assertEquals(GraphEditor.class, graphEditor.getClass());
+		assertEquals(OuterGraphEditor.class, graphEditor.getClass());
+		
+		Platform.exit();
 	}
 
 }

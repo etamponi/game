@@ -34,6 +34,11 @@ public class BooleanEditor extends Editor {
 	}
 
 	@Override
+	public boolean isInline() {
+		return true;
+	}
+
+	@Override
 	public Node getView() {
 		return box;
 	}

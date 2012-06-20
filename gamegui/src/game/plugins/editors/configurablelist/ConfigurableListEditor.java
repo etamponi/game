@@ -20,4 +20,9 @@ public class ConfigurableListEditor extends ControlledEditor {
 		return ConfigurableList.class;
 	}
 
+	@Override
+	public boolean isInline() {
+		return false;
+	}
+
 }

@@ -30,6 +30,11 @@ public class LabelMappingEditor extends Editor {
 	}
 
 	@Override
+	public boolean isInline() {
+		return false;
+	}
+
+	@Override
 	public void connectView() {
 		if (getModel() == null || getModel().getContent() == null) {
 			root.getChildren().clear();
