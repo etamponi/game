@@ -78,6 +78,7 @@ public class ImplementationChooserEditor extends Editor {
 				
 				Option option = new Option((Configurable)getModel().getContent());
 				Editor editor = option.getBestEditor();
+				editor.setModel(option);
 				EditorWindow window = new EditorWindow(editor);
 				window.show();
 			}

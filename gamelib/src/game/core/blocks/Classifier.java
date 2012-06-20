@@ -15,7 +15,7 @@ import game.configuration.errorchecks.SizeCheck;
 import game.core.Block;
 import game.core.InstanceTemplate;
 import game.plugins.constraints.Compatible;
-import game.plugins.constraints.CompatibleConstraint;
+import game.plugins.constraints.CompatibleWith;
 
 public abstract class Classifier extends Block implements Compatible<InstanceTemplate> {
 	
@@ -29,7 +29,7 @@ public abstract class Classifier extends Block implements Compatible<InstanceTem
 		
 		addOptionChecks("template", new CompatibilityCheck(this));
 		
-		setOptionConstraint("outputEncoder", new CompatibleConstraint(this, "template.outputTemplate"));
+		setOptionConstraint("outputEncoder", new CompatibleWith(this, "template.outputTemplate"));
 	}
 
 	@Override

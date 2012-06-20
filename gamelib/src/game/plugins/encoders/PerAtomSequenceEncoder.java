@@ -14,7 +14,7 @@ import game.configuration.errorchecks.PositivenessCheck;
 import game.core.DataTemplate;
 import game.core.Encoding;
 import game.core.blocks.Encoder;
-import game.plugins.constraints.CompatibleConstraint;
+import game.plugins.constraints.CompatibleWith;
 import game.plugins.datatemplates.SequenceTemplate;
 
 import java.util.List;
@@ -28,7 +28,7 @@ public class PerAtomSequenceEncoder extends Encoder<SequenceTemplate> {
 	public PerAtomSequenceEncoder() {
 		addOptionBinding("template.atom", "atomEncoder.template");
 		
-		setOptionConstraint("atomEncoder", new CompatibleConstraint(this, "template.atom"));
+		setOptionConstraint("atomEncoder", new CompatibleWith(this, "template.atom"));
 		
 		addOptionChecks("windowSize", new PositivenessCheck(false));
 	}

@@ -8,24 +8,27 @@
  * Contributors:
  *     Emanuele Tamponi - initial API and implementation
  ******************************************************************************/
-package game.core;
+package game.plugins.constraints;
 
-public abstract class Tester extends LongTask {
+import game.configuration.Configurable;
+import game.plugins.Constraint;
+
+public class CompatibleWith implements Constraint<Compatible> {
 	
-	private static final String TESTING = "testing";
+	private Configurable owner;
+	private String constraintOption;
 	
-	public Object startTest() {
-		return startTask(TESTING);
+	public CompatibleWith(Configurable owner, String constraintOption) {
+		this.owner = owner;
+		this.constraintOption = constraintOption;
 	}
-	
-	protected abstract Object test();
 
 	@Override
-	protected Object execute(Object... params) {
-		if (getTaskType().equals(TESTING))
-			return test();
+	public boolean isValid(Compatible o) {
+		if (owner.getOption(constraintOption) != null)
+			return o.isCompatible(owner.getOption(constraintOption));
 		else
-			return null;
+			return false;
 	}
 
 }

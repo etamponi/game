@@ -17,7 +17,7 @@ import game.configuration.Configurable;
 
 public abstract class LongTask extends Configurable {
 	
-	public class LongTaskUpdate {}
+	public static class LongTaskUpdate {}
 
 	private String taskType;
 	private double currentPercent;

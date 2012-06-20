@@ -41,7 +41,7 @@ import javafx.scene.layout.FlowPane;
 
 public class GraphEditorController implements EditorController {
 
-	private Graph graph;
+	private Option model;
 	
 	@FXML
 	private AnchorPane root;
@@ -112,20 +112,18 @@ public class GraphEditorController implements EditorController {
 
 	@Override
 	public void setModel(Option model) {
-		if (model != null) {
-			graph = model.getContent();
-			graphPane.setGraph(graph);
-		} else {
-			graph = null;
-			graphPane.setGraph(null);
-		}
+		this.model = model;
 	}
 
 	@Override
 	public void connectView() {
-		graphPane.parseGraph();
-		fillPools();
-		connectConfRoot();
+		Graph graph = model.getContent();
+		if (graph != null) {
+			graphPane.setGraph(graph);
+			graphPane.parseGraph();
+			fillPools();
+			connectConfRoot();
+		}
 	}
 
 	@Override
@@ -159,14 +157,14 @@ public class GraphEditorController implements EditorController {
 	private void connectConfRoot() {
 		confPane.getChildren().clear();
 		Editor confEditor = new GraphConfigurationEditor();
-		confEditor.setModel(new Option(graph));
+		confEditor.setModel(model);
 		confPane.getChildren().add(confEditor.getView());
 	}
 	
 	private void fillPool(FlowPane pool, String optionName) {
 		pool.getChildren().clear();
 		PluginManager manager = Settings.getInstance().getPluginManager();
-		Configurable list = graph.getOption(optionName);
+		Configurable list = ((Graph)model.getContent()).getOption(optionName);
 		if (list == null)
 			return;
 		Set<Block> blocks = list.getCompatibleOptionInstances("*", manager);

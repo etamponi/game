@@ -185,9 +185,8 @@ public class ConfigurableEditor extends Editor {
 		if (getModel() != null && getModel().getContent() != null) {
 			Configurable content = getModel().getContent();
 			
-			Option serialization = new Option(content);
 			Editor serializationEditor = new SerializationEditor();
-			serializationEditor.setModel(serialization);
+			serializationEditor.setModel(getModel());
 			pane.add(serializationEditor.getView(), 1, 0);
 			for (String optionName: content.getUnboundOptionNames()) {
 				if (hiddenOptions.contains(optionName))

@@ -20,7 +20,6 @@ import game.core.InstanceTemplate;
 import game.core.blocks.Classifier;
 import game.core.blocks.Encoder;
 import game.editorsystem.Editor;
-import game.editorsystem.EditorWindow;
 import game.editorsystem.Option;
 import game.main.Settings;
 import game.plugins.Constraint;
@@ -32,15 +31,9 @@ import game.plugins.editors.ImplementationChooserEditor.Implementation;
 import game.plugins.editors.NumberEditor;
 import game.plugins.editors.graph.GraphEditor;
 import javafx.application.Application;
-import javafx.event.ActionEvent;
-import javafx.event.EventHandler;
-import javafx.scene.Scene;
-import javafx.scene.control.Button;
 import javafx.scene.control.ChoiceBox;
-import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.HBox;
-import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 
 import org.junit.Test;
@@ -201,6 +194,7 @@ public class EditorSystemTest extends Application {
 		
 		Editor best = option.getBestEditor();
 		assertEquals(NumberEditor.class, best.getClass());
+		best.setModel(option);
 		
 		TextField tf = (TextField)best.getView();
 		tf.setText("3.14");
@@ -216,6 +210,7 @@ public class EditorSystemTest extends Application {
 		option = new Option(object, "optionA5");
 		best = option.getBestEditor();
 		assertEquals(ImplementationChooserEditor.class, best.getClass());
+		best.setModel(option);
 		
 		ChoiceBox<Implementation> cb = (ChoiceBox<Implementation>)((HBox)best.getView()).getChildren().get(0);
 		assertEquals(null, cb.getValue());
@@ -253,22 +248,6 @@ public class EditorSystemTest extends Application {
 		option = new Option(graph);
 		Editor graphEditor = option.getBestEditor();
 		assertEquals(GraphEditor.class, graphEditor.getClass());
-		
-		Button button = new Button("Click me");
-		VBox parent = new VBox();
-		parent.getChildren().addAll(new Label("Please put one classifier and one encoder in the graph"), button);
-		button.setOnAction(new EventHandler<ActionEvent>() {
-			@Override
-			public void handle(ActionEvent event) {
-				new EditorWindow(new Option(graph).getBestEditor()).showAndWait();
-//				System.out.println(graph.classifiers.size());
-//				System.out.println(graph.inputEncoders.size());
-//				System.out.println(graph.pipes.size());
-			}
-		});
-		
-		primaryStage.setScene(new Scene(parent));
-		primaryStage.show();
 	}
 
 }

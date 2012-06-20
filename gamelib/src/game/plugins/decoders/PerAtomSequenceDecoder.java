@@ -13,7 +13,7 @@ package game.plugins.decoders;
 import game.core.Decoder;
 import game.core.Encoding;
 import game.core.blocks.Encoder;
-import game.plugins.constraints.CompatibleConstraint;
+import game.plugins.constraints.CompatibleWith;
 import game.plugins.encoders.PerAtomSequenceEncoder;
 
 import java.util.LinkedList;
@@ -28,7 +28,7 @@ public class PerAtomSequenceDecoder extends Decoder<PerAtomSequenceEncoder> {
 	public PerAtomSequenceDecoder() {
 		addOptionBinding("encoder.atomEncoder", "atomDecoder.encoder");
 		
-		setOptionConstraint("atomDecoder", new CompatibleConstraint(this, "encoder.atomEncoder"));
+		setOptionConstraint("atomDecoder", new CompatibleWith(this, "encoder.atomEncoder"));
 	}
 
 	@Override

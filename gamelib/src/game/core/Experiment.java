@@ -8,27 +8,25 @@
  * Contributors:
  *     Emanuele Tamponi - initial API and implementation
  ******************************************************************************/
-package game.plugins.constraints;
+package game.core;
 
-import game.configuration.Configurable;
-import game.plugins.Constraint;
 
-public class CompatibleConstraint implements Constraint<Compatible> {
+public abstract class Experiment extends LongTask {
 	
-	private Configurable owner;
-	private String constraintOption;
+	private static final String EXPERIMENT = "experimenting";
 	
-	public CompatibleConstraint(Configurable owner, String constraintOption) {
-		this.owner = owner;
-		this.constraintOption = constraintOption;
+	public Object startExperiment() {
+		return startTask(EXPERIMENT);
 	}
+	
+	protected abstract Object runExperiment();
 
 	@Override
-	public boolean isValid(Compatible o) {
-		if (owner.getOption(constraintOption) != null)
-			return o.isCompatible(owner.getOption(constraintOption));
+	protected Object execute(Object... params) {
+		if (getTaskType().equals(EXPERIMENT))
+			return runExperiment();
 		else
-			return false;
+			return null;
 	}
 
 }

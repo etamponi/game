@@ -10,9 +10,10 @@
  ******************************************************************************/
 package game.main;
 
-import game.core.Graph;
 import game.editorsystem.Editor;
 import game.editorsystem.Option;
+import game.plugins.editors.ConfigurableEditor;
+import game.plugins.testers.SimpleExperiment;
 import javafx.application.Application;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
@@ -29,7 +30,8 @@ public class Main extends Application {
 
 	@Override
 	public void start(Stage primaryStage) throws Exception {
-		Editor editor = new Option(new Graph()).getBestEditor();
+		Editor editor = new ConfigurableEditor();
+		editor.setModel(new Option(new SimpleExperiment()));
 		primaryStage.setScene(new Scene((Parent)editor.getView()));
 		primaryStage.show();
 	}

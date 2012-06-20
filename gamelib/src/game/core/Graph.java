@@ -15,7 +15,7 @@ import game.configuration.ConfigurableList;
 import game.core.blocks.Classifier;
 import game.core.blocks.Encoder;
 import game.core.blocks.Pipe;
-import game.plugins.constraints.CompatibleConstraint;
+import game.plugins.constraints.CompatibleWith;
 
 import java.util.LinkedList;
 
@@ -29,7 +29,7 @@ public class Graph extends LongTask {
 			// DO NOT NEVER EVER USE (NEVER!) Necessary for ConfigurableConverter
 			addOptionBinding("constraint", "*.template");
 			
-			setOptionConstraint("*", new CompatibleConstraint(this, "constraint"));
+			setOptionConstraint("*", new CompatibleWith(this, "constraint"));
 		}
 		
 		public TemplateCompatibleList(Configurable owner, Class content) {
@@ -37,7 +37,7 @@ public class Graph extends LongTask {
 			
 			addOptionBinding("constraint", "*.template");
 			
-			setOptionConstraint("*", new CompatibleConstraint(this, "constraint"));
+			setOptionConstraint("*", new CompatibleWith(this, "constraint"));
 		}
 		
 	}
@@ -59,7 +59,7 @@ public class Graph extends LongTask {
 		addOptionBinding("template.inputTemplate", 			"inputEncoders.constraint");
 		addOptionBinding("outputClassifier.outputEncoder", 	"decoder.encoder");
 		
-		setOptionConstraint("decoder", new CompatibleConstraint(this, "outputClassifier.outputEncoder"));
+		setOptionConstraint("decoder", new CompatibleWith(this, "outputClassifier.outputEncoder"));
 
 		omitFromErrorCheck("classifiers");
 		omitFromErrorCheck("inputEncoders");

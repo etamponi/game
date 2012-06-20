@@ -115,6 +115,7 @@ public class BlockNode extends VBox implements Observer {
 					if (event.getClickCount() > 1) {
 						Option option = new Option(block);
 						Editor editor = option.getBestEditor();
+						editor.setModel(option);
 						new EditorWindow(editor).show();
 					}
 				}

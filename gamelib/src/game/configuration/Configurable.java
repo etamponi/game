@@ -42,6 +42,10 @@ public abstract class Configurable extends Observable implements Observer {
 	@XStreamOmitField
 	protected static XStream stateStream = new XStream(new DomDriver());
 	
+	static {
+		stateStream.omitField(Observable.class, "obs");
+	}
+	
 	public class Change {
 		private String path;
 		
