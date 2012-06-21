@@ -21,10 +21,11 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.net.URLClassLoader;
-import java.util.HashSet;
 import java.util.Observable;
 import java.util.Observer;
 import java.util.Set;
+import java.util.SortedSet;
+import java.util.TreeSet;
 
 import org.reflections.Reflections;
 import org.reflections.util.ClasspathHelper;
@@ -85,16 +86,16 @@ public class PluginManager extends Configurable {
 		internal = new Reflections(conf);
 	}
 	
-	public <T> Set<T> getInstancesOf(Class<T> base) {
+	public <T> SortedSet<Implementation<T>> getImplementationsOf(Class<T> base) {
 		Set<Class<? extends T>> all = internal.getSubTypesOf(base);
-		Set<T> ret = new HashSet<>();
+		SortedSet<Implementation<T>> ret = new TreeSet<>();
 		
 		try {
 			for (Class<? extends T> c: all) {
 			if (Utils.isConcrete(c)	&& Modifier.isPublic(c.getModifiers())
 					&& (c.getEnclosingClass() == null || Modifier.isStatic(c.getModifiers())))
 				
-					ret.add(c.newInstance());
+					ret.add(new Implementation(c.newInstance()));
 			}
 		} catch (InstantiationException | IllegalAccessException e) {
 			e.printStackTrace();
@@ -103,13 +104,13 @@ public class PluginManager extends Configurable {
 		return ret;
 	}
 	
-	public <T> Set<T> getCompatibleInstancesOf(Class<T> base, Constraint c) {
-		Set<T> all = getInstancesOf(base);
-		Set<T> ret = new HashSet<>();
+	public <T> SortedSet<Implementation<T>> getCompatibleImplementationsOf(Class<T> base, Constraint c) {
+		Set<Implementation<T>> all = getImplementationsOf(base);
+		SortedSet<Implementation<T>> ret = new TreeSet<>();
 		
-		for (T o: all) {
-			if (c.isValid(o))
-				ret.add(o);
+		for (Implementation i: all) {
+			if (c.isValid(i.getContent()))
+				ret.add(i);
 		}
 		
 		return ret;

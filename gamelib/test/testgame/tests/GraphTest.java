@@ -21,6 +21,7 @@ import game.core.Graph;
 import game.core.InstanceTemplate;
 import game.core.blocks.Classifier;
 import game.core.blocks.Encoder;
+import game.plugins.Implementation;
 import game.plugins.PluginManager;
 import game.plugins.datatemplates.LabelTemplate;
 import game.plugins.datatemplates.VectorTemplate;
@@ -139,7 +140,7 @@ public class GraphTest {
 		graph.setOption("template.outputTemplate.labels.add", "C");
 		
 		Configurable classifiers = graph.getOption("classifiers");
-		Set<Class> set = classSet(classifiers.getCompatibleOptionInstances("*", manager));
+		Set<Class> set = classSet(classifiers.getCompatibleOptionImplementations("*", manager));
 		Set<Class> real = new HashSet<>();
 		real.add(ClassifierImplA.class);
 		assertEquals(real.size(), set.size());
@@ -151,7 +152,7 @@ public class GraphTest {
 		graph.setOption("outputClassifier", graph.getOption("classifiers.0"));
 		
 		Configurable object = graph.getOption("outputClassifier");
-		set = classSet(object.getCompatibleOptionInstances("outputEncoder", manager));
+		set = classSet(object.getCompatibleOptionImplementations("outputEncoder", manager));
 		real.clear();
 		real.add(EncoderImplB.class);
 		real.add(EncoderImplC.class);
@@ -161,7 +162,7 @@ public class GraphTest {
 		graph.setOption("outputClassifier.outputEncoder", new EncoderImplB());
 		assertEquals(graph.getOption("template.outputTemplate"), graph.getOption("outputClassifier.outputEncoder.template"));
 		
-		set = classSet(graph.getCompatibleOptionInstances("decoder", manager));
+		set = classSet(graph.getCompatibleOptionImplementations("decoder", manager));
 		real.clear();
 		real.add(DecoderImplB.class);
 		assertEquals(real.size(), set.size());
@@ -171,24 +172,24 @@ public class GraphTest {
 		
 		object = graph.getOption("inputEncoders");
 		assertEquals(graph.getOption("template.inputTemplate"), object.getOption("constraint"));
-		set = classSet(object.getCompatibleOptionInstances("*", manager));
+		set = classSet(object.getCompatibleOptionImplementations("*", manager));
 		real.clear();
 		real.add(EncoderImplA.class);
 		assertEquals(real.size(), set.size());
 		assertTrue(set.containsAll(real));
 		
 		graph.setOption("inputEncoders.add", new EncoderImplA());
-		set = classSet(object.getCompatibleOptionInstances("0", manager));
+		set = classSet(object.getCompatibleOptionImplementations("0", manager));
 		assertEquals(real.size(), set.size());
 		assertTrue(set.containsAll(real));
 		
 		assertEquals(graph.getOption("template.inputTemplate"), object.getOption("0.template"));
 	}
 	
-	private Set<Class> classSet(Set set) {
+	private <T> Set<Class> classSet(Set<Implementation<T>> set) {
 		Set<Class> ret = new HashSet<>();
-		for (Object o: set)
-			ret.add(o.getClass());
+		for (Implementation o: set)
+			ret.add(o.getContent().getClass());
 		return ret;
 	}
 

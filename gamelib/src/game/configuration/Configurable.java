@@ -12,6 +12,7 @@ package game.configuration;
 
 import game.configuration.errorchecks.LengthCheck;
 import game.plugins.Constraint;
+import game.plugins.Implementation;
 import game.plugins.PluginManager;
 import game.plugins.constraints.TrueConstraint;
 
@@ -30,6 +31,7 @@ import java.util.Map;
 import java.util.Observable;
 import java.util.Observer;
 import java.util.Set;
+import java.util.SortedSet;
 
 import com.thoughtworks.xstream.XStream;
 import com.thoughtworks.xstream.annotations.XStreamOmitField;
@@ -262,8 +264,8 @@ public abstract class Configurable extends Observable implements Observer {
 		return ret;
 	}
 	
-	public <T> Set<T> getCompatibleOptionInstances(String optionName, PluginManager manager) {
-		return manager.getCompatibleInstancesOf(getOptionType(optionName), getOptionConstraint(optionName));
+	public <T> SortedSet<Implementation<T>> getCompatibleOptionImplementations(String optionName, PluginManager manager) {
+		return manager.getCompatibleImplementationsOf(getOptionType(optionName), getOptionConstraint(optionName));
 	}
 	
 	public Class getOptionType(String optionName) {

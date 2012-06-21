@@ -30,12 +30,12 @@ import javafx.scene.control.Button;
 import javafx.scene.control.ContentDisplay;
 import javafx.scene.control.Label;
 import javafx.scene.control.ListView;
+import javafx.scene.control.ToolBar;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.ColumnConstraints;
 import javafx.scene.layout.GridPane;
-import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
 import javafx.stage.FileChooser;
 import javafx.stage.FileChooser.ExtensionFilter;
@@ -49,7 +49,7 @@ public class ConfigurableEditor extends Editor {
 		private final Image SAVESTATE = new Image(getClass().getResourceAsStream("saveState.png"));
 		private final Image LOADSTATE = new Image(getClass().getResourceAsStream("loadState.png"));
 		
-		private HBox line = new HBox();
+		private ToolBar line = new ToolBar();
 
 		@Override
 		public Node getView() {
@@ -64,10 +64,11 @@ public class ConfigurableEditor extends Editor {
 		@Override
 		public void connectView() {
 			if (getModel() != null) {
-				line.getChildren().addAll(makeSaveAndLoadConfiguration("SAVE"),
-										  makeSaveAndLoadConfiguration("LOAD"),
-										  makeSaveAndLoadState("SAVE"),
-										  makeSaveAndLoadState("LOAD"));
+				line.getItems().clear();
+				line.getItems().addAll(makeSaveAndLoadConfiguration("SAVE"),
+									   makeSaveAndLoadConfiguration("LOAD"),
+									   makeSaveAndLoadState("SAVE"),
+									   makeSaveAndLoadState("LOAD"));
 			}
 		}
 
@@ -103,6 +104,7 @@ public class ConfigurableEditor extends Editor {
 						if (out != null)
 							content.loadConfiguration(out.getPath());
 					}
+					event.consume();
 				}
 			});
 			
@@ -141,6 +143,7 @@ public class ConfigurableEditor extends Editor {
 						if (out != null)
 							content.loadState(out.getPath());
 					}
+					event.consume();
 				}
 			});
 			
@@ -192,7 +195,7 @@ public class ConfigurableEditor extends Editor {
 			
 			Editor serializationEditor = new SerializationEditor();
 			serializationEditor.setModel(getModel());
-			pane.add(serializationEditor.getView(), 1, 0);
+			pane.add(serializationEditor.getView(), 0, 0, 2, 1);
 			for (String optionName: content.getUnboundOptionNames()) {
 				if (hiddenOptions.contains(optionName))
 					continue;
@@ -209,7 +212,7 @@ public class ConfigurableEditor extends Editor {
 			
 			errorList.getItems().clear();
 			errorList.getItems().addAll(content.getConfigurationErrors());
-			errorList.setPrefHeight(100);
+			errorList.setPrefHeight(50);
 			Label label = new Label("errors:");
 			pane.addRow(count, label, errorList);
 			applyRowLayout(label, errorList, true);
@@ -223,7 +226,7 @@ public class ConfigurableEditor extends Editor {
 		GridPane.setHgrow(view, Priority.ALWAYS);
 		GridPane.setMargin(view, new Insets(2, 2, 2, 2));
 		if (!inline) {
-			view.setStyle("-fx-padding: 5px; -fx-border-color: -fx-color");
+			view.setStyle("-fx-padding: 0px 0px 5px 0px; -fx-border-color: -fx-color");
 		}
 	}
 

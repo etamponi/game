@@ -18,6 +18,7 @@ import game.editorsystem.Editor;
 import game.editorsystem.EditorController;
 import game.editorsystem.Option;
 import game.main.Settings;
+import game.plugins.Implementation;
 import game.plugins.PluginManager;
 import game.plugins.editors.ConfigurableEditor;
 
@@ -167,8 +168,9 @@ public class GraphEditorController implements EditorController {
 		Configurable list = ((Graph)model.getContent()).getOption(optionName);
 		if (list == null)
 			return;
-		Set<Block> blocks = list.getCompatibleOptionInstances("*", manager);
-		for (Block block: blocks) {
+		Set<Implementation<Block>> blocks = list.getCompatibleOptionImplementations("*", manager);
+		for (Implementation<Block> impl: blocks) {
+			Block block = impl.getContent();
 			int index = 0;
 			while (index < pool.getChildren().size()
 					&& ((BlockNode)pool.getChildren().get(index)).getBlock().getClass().getSimpleName().compareTo(block.getClass().getSimpleName()) < 0)

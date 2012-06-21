@@ -15,6 +15,7 @@ import game.configuration.Configurable.Change;
 import game.editorsystem.Editor;
 import game.editorsystem.EditorWindow;
 import game.editorsystem.Option;
+import game.plugins.Implementation;
 import game.utils.Utils;
 
 import java.util.Observable;
@@ -28,28 +29,8 @@ import javafx.scene.Node;
 import javafx.scene.control.Button;
 import javafx.scene.control.ChoiceBox;
 import javafx.scene.layout.HBox;
-import javafx.scene.layout.Priority;
 
 public class ImplementationChooserEditor extends Editor {
-	
-	public class Implementation {
-		
-		public Object content;
-		
-		public Implementation(Object content) {
-			this.content = content;
-		}
-		
-		public Object getContent() {
-			return content;
-		}
-		
-		@Override
-		public String toString() {
-			return content.getClass().getSimpleName();
-		}
-		
-	}
 	
 	private ChangeListener<Implementation> listener = new ChangeListener<Implementation>() {
 		@Override
@@ -58,7 +39,7 @@ public class ImplementationChooserEditor extends Editor {
 				Implementation oldValue, Implementation newValue) {
 			if (getModel() == null)
 				return;
-			Object selected = box.getValue() == null ? null : box.getValue().getContent();
+			Configurable selected = box.getValue().getContent();
 			if (getModel().getContent() != selected)
 				getModel().setContent(selected);
 		}
@@ -66,10 +47,11 @@ public class ImplementationChooserEditor extends Editor {
 	
 	private HBox container = new HBox();
 	
-	private ChoiceBox<Implementation> box = new ChoiceBox<>();
+	private ChoiceBox<Implementation<Configurable>> box = new ChoiceBox<>();
 	
 	public ImplementationChooserEditor() {
 		Button editButton = new Button("Edit");
+		editButton.setPrefWidth(50);
 		editButton.setOnAction(new EventHandler<ActionEvent>() {
 			@Override
 			public void handle(ActionEvent event) {
@@ -84,7 +66,7 @@ public class ImplementationChooserEditor extends Editor {
 			}
 		});
 		container.getChildren().addAll(box, editButton);
-		HBox.setHgrow(editButton, Priority.ALWAYS);
+		box.prefWidthProperty().bind(container.widthProperty().subtract(editButton.prefWidthProperty()));
 	}
 
 	@Override
@@ -93,27 +75,30 @@ public class ImplementationChooserEditor extends Editor {
 	}
 
 	@Override
-	public void connectView() {
-		Object current = getModel().getContent(); 
-		
+	public void connectView() {		
 		box.getSelectionModel().selectedItemProperty().removeListener(listener);
-		
 		box.getItems().clear();
-		box.getItems().add(null);
-		if (current == null)
-			box.getSelectionModel().select(0);
+		
 		if (getModel() != null) {
-			Set<Object> contents = getModel().getCompatibleInstances();
-			for (Object content: contents) {
-				if (current != null && current.getClass().equals(content.getClass())) {
+			Object current = getModel().getContent();
+			box.getItems().add(new Implementation(null));
+			if (current == null)
+				box.getSelectionModel().select(0);
+			
+			Set<Implementation<Configurable>> implementations = getModel().getCompatibleImplementations();
+			for (Implementation<Configurable> impl: implementations) {
+				if (current != null && current.getClass().equals(impl.getContent().getClass())) {
 					box.getItems().add(new Implementation(current));
 					box.getSelectionModel().select(box.getItems().size()-1);
 				} else
-					box.getItems().add(new Implementation(content));
+					box.getItems().add(impl);
 			}
+
+			box.getSelectionModel().selectedItemProperty().addListener(listener);
+			// I do not know why it's needed
+			box.show();
+			box.hide();
 		}
-		
-		box.getSelectionModel().selectedItemProperty().addListener(listener);
 	}
 
 	@Override

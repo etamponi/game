@@ -13,6 +13,7 @@ package testgame.tests;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 import game.plugins.Constraint;
+import game.plugins.Implementation;
 import game.plugins.PluginManager;
 
 import java.util.HashSet;
@@ -42,7 +43,7 @@ public class PluginManagerTest {
 		PluginManager manager = new PluginManager();
 		manager.setOption("packages.add", "testgame");
 		
-		Set<Class> set = classSet(manager.getInstancesOf(Parent.class));
+		Set<Class> set = classSet(manager.getImplementationsOf(Parent.class));
 		Set<Class> real = new HashSet<>();
 		real.add(ChildAA.class);
 		real.add(ChildB.class);
@@ -51,14 +52,14 @@ public class PluginManagerTest {
 		assertEquals(4, set.size());
 		assertTrue(set.containsAll(real));
 		
-		set = classSet(manager.getInstancesOf(Interface.class));
+		set = classSet(manager.getImplementationsOf(Interface.class));
 		real.clear();
 		real.add(ChildAA.class);
 		real.add(ChildC.class);
 		assertEquals(2, set.size());
 		assertTrue(set.containsAll(real));
 		
-		set = classSet(manager.getCompatibleInstancesOf(Parent.class, new Constraint() {
+		set = classSet(manager.getCompatibleImplementationsOf(Parent.class, new Constraint() {
 			@Override
 			public boolean isValid(Object o) {
 				return o.getClass().getSimpleName().length() < 8;
@@ -72,10 +73,10 @@ public class PluginManagerTest {
 		assertTrue(set.containsAll(real));
 	}
 	
-	private Set<Class> classSet(Set set) {
+	private <T> Set<Class> classSet(Set<Implementation<T>> set) {
 		Set<Class> ret = new HashSet<>();
-		for (Object o: set)
-			ret.add(o.getClass());
+		for (Implementation o: set)
+			ret.add(o.getContent().getClass());
 		return ret;
 	}
 

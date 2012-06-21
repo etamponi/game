@@ -13,11 +13,14 @@ package game.editorsystem;
 import game.configuration.Configurable;
 import game.editorsystem.constraints.CanEditConstraint;
 import game.main.Settings;
+import game.plugins.Implementation;
 import game.plugins.PluginManager;
 
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
+import java.util.SortedSet;
+import java.util.TreeSet;
 
 public class Option {
 	
@@ -64,13 +67,13 @@ public class Option {
 			return owner.getOptionType(optionName);
 	}
 	
-	public Set<Object> getCompatibleInstances() {
+	public <T> SortedSet<Implementation<T>> getCompatibleImplementations() {
 		if (owner == container) {
-			Set<Object> ret = new HashSet<>();
-			ret.add(getContent());
+			SortedSet<Implementation<T>> ret = new TreeSet<>();
+			ret.add(new Implementation(getContent()));
 			return ret;
 		} else
-			return owner.getCompatibleOptionInstances(optionName, Settings.getInstance().getPluginManager());
+			return owner.getCompatibleOptionImplementations(optionName, Settings.getInstance().getPluginManager());
 	}
 	
 	public boolean isBound() {
@@ -83,23 +86,23 @@ public class Option {
 	public Editor getBestEditor() {
 		PluginManager manager = Settings.getInstance().getPluginManager();
 		
-		Set<Editor> editors = manager.getCompatibleInstancesOf(Editor.class, new CanEditConstraint(getType()));
-		Iterator<Editor> it = editors.iterator();
+		Set<Implementation<Editor>> editors = manager.getCompatibleImplementationsOf(Editor.class, new CanEditConstraint(getType()));
+		Iterator<Implementation<Editor>> it = editors.iterator();
 		
 		if (!it.hasNext())
 			return null;
 		
-		Editor best = it.next();
+		Editor best = it.next().getContent();
 		int bestDistance = distance(best.getBaseEditableClass(), getType());
 		while (it.hasNext()) {
-			Editor current = it.next();
+			Editor current = it.next().getContent();
 			int currDistance = distance(current.getBaseEditableClass(), getType());
 			if (currDistance < bestDistance) {
 				best = current;
 				bestDistance = currDistance;
 			}
 		}
-		//best.setModel(this);
+
 		return best;
 	}
 	
