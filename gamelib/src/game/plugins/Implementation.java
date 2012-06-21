@@ -24,7 +24,7 @@ public class Implementation<T> implements Comparable<Implementation<T>> {
 	public int compareTo(Implementation o) {
 		return this.toString().compareTo(o.toString());
 	}
-
+/*
 	@Override
 	public boolean equals(Object obj) {
 		if (obj instanceof Implementation) {
@@ -38,5 +38,5 @@ public class Implementation<T> implements Comparable<Implementation<T>> {
 		} else
 			return false;
 	}
-	
+*/
 }

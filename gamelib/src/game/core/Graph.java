@@ -56,10 +56,10 @@ public class Graph extends LongTask {
 	}
 	
 	protected Dataset classifyAll(Dataset dataset) {
-		double singleIncrease = 1.0 / dataset.size();
+//		double singleIncrease = 1.0 / dataset.size();
 		for (Instance i: dataset) {
 			i.setPredictedData(
-					startAnotherTaskAndWait(getCurrentPercent()+singleIncrease, this, CLASSIFYTASK, i.getInputData())
+					classify(i.getInputData())
 					);
 		}
 		return dataset;

@@ -15,8 +15,8 @@ public abstract class Experiment extends LongTask {
 	
 	private static final String EXPERIMENT = "experimenting";
 	
-	public Object startExperiment() {
-		return startTask(EXPERIMENT);
+	public void startExperiment() {
+		startTask(EXPERIMENT);
 	}
 	
 	protected abstract void runExperiment();

@@ -22,6 +22,7 @@ import java.io.IOException;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.lang.reflect.Modifier;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -216,7 +217,8 @@ public abstract class Configurable extends Observable implements Observer {
 	public LinkedList<String> getOptionNames() {
 		LinkedList<String> ret = new LinkedList<>();
 		for (Field f: getClass().getFields())
-			ret.add(f.getName());
+			if (!Modifier.isStatic(f.getModifiers()) && !Modifier.isFinal(f.getModifiers()))
+				ret.add(f.getName());
 		return ret;
 	}
 	
@@ -259,7 +261,7 @@ public abstract class Configurable extends Observable implements Observer {
 			}
 		}
 		
-		// TODO All not respected binding and constraints.
+		// TODO All not respected binding.
 	
 		return ret;
 	}
@@ -334,7 +336,7 @@ public abstract class Configurable extends Observable implements Observer {
 	}
 	
 	public <T extends Configurable> T cloneState() {
-		Configurable clone = (Configurable)stateStream.fromXML(this.getConfiguration());
+		Configurable clone = (Configurable)stateStream.fromXML(this.getState());
 		clone.name = String.format("%s%03d", getClass().getSimpleName(), clone.hashCode() % 1000);
 		return (T)clone;
 	}

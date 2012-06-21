@@ -13,14 +13,15 @@ import game.plugins.datatemplates.SequenceTemplate;
 
 import java.util.List;
 
-public class KNNClassifier extends Classifier {
+public class RandomClassifier extends Classifier {
 	
 	public int k = 1;
 	
 	private List<EncodedSample> reference;
 	
-	public KNNClassifier() {
+	public RandomClassifier() {
 		addOptionChecks("parents", new SizeCheck(1, 1));
+		
 		addOptionChecks("k", new PositivenessCheck(false));
 	}
 
@@ -45,8 +46,9 @@ public class KNNClassifier extends Classifier {
 
 	@Override
 	protected Encoding transform(Object inputData) {
-		// FIXME KNN transform
-		return null;
+		int random = (int)(Math.random() * (reference.size()-1)); 
+		Encoding ret = new Encoding(reference.get(random).getOutput());
+		return ret;
 	}
 	
 }

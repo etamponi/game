@@ -17,6 +17,15 @@ public class Instance {
 	private Object outputData;
 	
 	private Object predictedData;
+	
+	public Instance() {
+		
+	}
+	
+	public Instance(Object inputData, Object outputData) {
+		this.inputData = inputData;
+		this.outputData = outputData;
+	}
 
 	public Object getInputData() {
 		return inputData;

@@ -10,6 +10,7 @@
  ******************************************************************************/
 package game.editorsystem;
 
+import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.layout.AnchorPane;
 import javafx.stage.Modality;
@@ -21,7 +22,15 @@ public class EditorWindow extends Stage {
 		initModality(Modality.APPLICATION_MODAL);
 		
 		AnchorPane root = new AnchorPane();
-		root.getChildren().add(editor.getView());
+		
+		Node view = editor.getView();
+		AnchorPane.setTopAnchor(view, 0.0);
+		AnchorPane.setLeftAnchor(view, 0.0);
+		AnchorPane.setRightAnchor(view, 0.0);
+		AnchorPane.setBottomAnchor(view, 0.0);
+		
+		root.getChildren().add(view);
+		root.setMinWidth(150);
 		
 		setScene(new Scene(root));
 	}

@@ -10,6 +10,8 @@ import game.core.InstanceTemplate;
 import game.core.TemplateCompatibleList;
 import game.plugins.constraints.CompatibleWith;
 
+import java.util.Map;
+
 public class SimpleExperiment extends Experiment {
 	
 	public InstanceTemplate template;
@@ -42,7 +44,9 @@ public class SimpleExperiment extends Experiment {
 		Dataset tested = (Dataset)startAnotherTaskAndWait(0.90, graph, Graph.CLASSIFYALLTASK, testingDataset.buildDataset());
 		updateStatus(0.91, "testing complete, beginning evaluation phase...");
 		for(Evaluator evaluator: evaluators.getList(Evaluator.class)) {
-			evaluator.evaluate(tested, name);
+			Map<String, Double> results = evaluator.evaluate(tested, name);
+			for (String key: results.keySet())
+				System.out.println(name + "." + evaluator.name + ": " + key + " = "+ results.get(key));
 		}
 	}
 

@@ -4,6 +4,8 @@ import game.configuration.Configurable;
 import game.configuration.errorchecks.CompatibilityCheck;
 import game.plugins.constraints.Compatible;
 
+import java.util.Map;
+
 public abstract class Evaluator extends Configurable implements Compatible<InstanceTemplate> {
 	
 	public InstanceTemplate template;
@@ -12,6 +14,6 @@ public abstract class Evaluator extends Configurable implements Compatible<Insta
 		addOptionChecks("template", new CompatibilityCheck(this));
 	}
 	
-	public abstract void evaluate(Dataset dataset, String logPrefix);
+	public abstract Map<String, Double> evaluate(Dataset dataset, String logPrefix);
 
 }

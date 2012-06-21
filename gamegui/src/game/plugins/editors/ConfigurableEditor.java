@@ -88,10 +88,10 @@ public class ConfigurableEditor extends Editor {
 				public void handle(ActionEvent event) {
 					FileChooser chooser = new FileChooser();
 					chooser.setInitialDirectory(new File(System.getProperty("user.home")));
-					chooser.setTitle("Save object configuration");
 					chooser.getExtensionFilters().add(new ExtensionFilter("GAME configuration file", "*.config.xml"));
 					
 					if (what.equals("SAVE")) {
+						chooser.setTitle("Save object configuration");
 						File out = chooser.showSaveDialog(line.getScene().getWindow());
 						if (out != null) {
 							if (!out.getName().endsWith(".config.xml"))
@@ -100,6 +100,9 @@ public class ConfigurableEditor extends Editor {
 								content.saveConfiguration(out.getPath());
 						}
 					} else {
+						// TODO Check if the loaded object is compatible with the current object.
+						// TODO Check if the loaded object is compatible with the binding.
+						chooser.setTitle("Load object configuration");
 						File out = chooser.showOpenDialog(line.getScene().getWindow());
 						if (out != null)
 							content.loadConfiguration(out.getPath());
