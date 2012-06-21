@@ -64,12 +64,16 @@ public class OuterGraphEditor extends Editor {
 
 	@Override
 	public void connectView() {
+		if (getModel() != null)
+			editorButton.setText("Edit graph: " + getModel().getContent());
 		editor.setModel(getModel());
 		editor.connectView();
 	}
 
 	@Override
 	public void updateView(Change change) {
+		if (getModel() != null)
+			editorButton.setText("Edit graph: " + getModel().getContent());
 		editor.updateView(change);
 	}
 

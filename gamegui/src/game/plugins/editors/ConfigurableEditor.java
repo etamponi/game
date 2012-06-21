@@ -178,7 +178,8 @@ public class ConfigurableEditor extends Editor {
 		AnchorPane.setBottomAnchor(pane, 0.0);
 		
 		ColumnConstraints c0 = new ColumnConstraints();
-		c0.setHgrow(Priority.NEVER);
+		c0.setMinWidth(120);
+		c0.setHgrow(Priority.SOMETIMES);
 		ColumnConstraints c1 = new ColumnConstraints();
 		c1.setHgrow(Priority.ALWAYS);
 		pane.getColumnConstraints().addAll(c0, c1);
@@ -216,6 +217,7 @@ public class ConfigurableEditor extends Editor {
 			errorList.getItems().clear();
 			errorList.getItems().addAll(content.getConfigurationErrors());
 			errorList.setPrefHeight(75);
+			errorList.setPrefWidth(75);
 			Label label = new Label("errors:");
 			pane.addRow(count, label, errorList);
 			applyRowLayout(label, errorList, true);
