@@ -212,7 +212,7 @@ public class ConfigurableEditor extends Editor {
 			
 			errorList.getItems().clear();
 			errorList.getItems().addAll(content.getConfigurationErrors());
-			errorList.setPrefHeight(50);
+			errorList.setPrefHeight(75);
 			Label label = new Label("errors:");
 			pane.addRow(count, label, errorList);
 			applyRowLayout(label, errorList, true);

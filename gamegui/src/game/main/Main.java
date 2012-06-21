@@ -13,7 +13,7 @@ package game.main;
 import game.editorsystem.Editor;
 import game.editorsystem.Option;
 import game.plugins.editors.ConfigurableEditor;
-import game.plugins.testers.SimpleExperiment;
+import game.plugins.experiments.SimpleExperiment;
 import javafx.application.Application;
 import javafx.scene.Parent;
 import javafx.scene.Scene;

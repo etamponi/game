@@ -27,7 +27,7 @@ import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.scene.Node;
 import javafx.scene.control.Button;
-import javafx.scene.control.ChoiceBox;
+import javafx.scene.control.ComboBox;
 import javafx.scene.layout.HBox;
 
 public class ImplementationChooserEditor extends Editor {
@@ -47,7 +47,7 @@ public class ImplementationChooserEditor extends Editor {
 	
 	private HBox container = new HBox();
 	
-	private ChoiceBox<Implementation<Configurable>> box = new ChoiceBox<>();
+	private ComboBox<Implementation<Configurable>> box = new ComboBox<>();
 	
 	public ImplementationChooserEditor() {
 		Button editButton = new Button("Edit");
@@ -95,9 +95,6 @@ public class ImplementationChooserEditor extends Editor {
 			}
 
 			box.getSelectionModel().selectedItemProperty().addListener(listener);
-			// I do not know why it's needed
-			box.show();
-			box.hide();
 		}
 	}
 

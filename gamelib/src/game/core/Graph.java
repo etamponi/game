@@ -10,7 +10,6 @@
  ******************************************************************************/
 package game.core;
 
-import game.configuration.Configurable;
 import game.configuration.ConfigurableList;
 import game.core.blocks.Classifier;
 import game.core.blocks.Encoder;
@@ -21,29 +20,8 @@ import java.util.LinkedList;
 
 public class Graph extends LongTask {
 	
-	public static class TemplateCompatibleList extends ConfigurableList {
-		
-		public Object constraint;
-		
-		public TemplateCompatibleList() {
-			// DO NOT NEVER EVER USE (NEVER!) Necessary for ConfigurableConverter
-			addOptionBinding("constraint", "*.template");
-			
-			setOptionConstraint("*", new CompatibleWith(this, "constraint"));
-		}
-		
-		public TemplateCompatibleList(Configurable owner, Class content) {
-			super(owner, content);
-			
-			addOptionBinding("constraint", "*.template");
-			
-			setOptionConstraint("*", new CompatibleWith(this, "constraint"));
-		}
-		
-	}
-	
-	private static final String CLASSIFY = "classify";
-	private static final String CLASSIFYALL = "classifyall";
+	public static final String CLASSIFYTASK = "classify";
+	public static final String CLASSIFYALLTASK = "classifyall";
 	
 	public InstanceTemplate template; 
 
@@ -68,9 +46,9 @@ public class Graph extends LongTask {
 
 	public <T> T startClassification(Object object) {
 		if (object instanceof Dataset)
-			return (T)startTask(CLASSIFYALL, object);
+			return (T)startTask(CLASSIFYALLTASK, object);
 		else
-			return (T)startTask(CLASSIFY, object);
+			return (T)startTask(CLASSIFYTASK, object);
 	}
 	
 	protected Object classify(Object inputData) {
@@ -81,7 +59,7 @@ public class Graph extends LongTask {
 		double singleIncrease = 1.0 / dataset.size();
 		for (Instance i: dataset) {
 			i.setPredictedData(
-					startAnotherTaskAndWait(getCurrentPercent()+singleIncrease, this, CLASSIFY, i.getInputData())
+					startAnotherTaskAndWait(getCurrentPercent()+singleIncrease, this, CLASSIFYTASK, i.getInputData())
 					);
 		}
 		return dataset;
@@ -89,9 +67,9 @@ public class Graph extends LongTask {
 
 	@Override
 	protected Object execute(Object... params) {
-		if (getTaskType().equals(CLASSIFYALL))
+		if (getTaskType().equals(CLASSIFYALLTASK))
 			return classifyAll((Dataset)params[0]);
-		else if (getTaskType().equals(CLASSIFY))
+		else if (getTaskType().equals(CLASSIFYTASK))
 			return classify(params[0]);
 		return null;
 	}

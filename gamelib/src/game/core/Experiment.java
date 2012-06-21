@@ -19,14 +19,13 @@ public abstract class Experiment extends LongTask {
 		return startTask(EXPERIMENT);
 	}
 	
-	protected abstract Object runExperiment();
+	protected abstract void runExperiment();
 
 	@Override
 	protected Object execute(Object... params) {
 		if (getTaskType().equals(EXPERIMENT))
-			return runExperiment();
-		else
-			return null;
+			runExperiment();
+		return null;
 	}
 
 }

@@ -27,8 +27,8 @@ public abstract class Block extends LongTask {
 		}
 	}
 
-	private static final String TRAIN = "training";
-	private static final String TRANSFORM = "transforming";
+	public static final String TRAININGTASK = "training";
+	public static final String TRANSFORMTASK = "transforming";
 	
 	public ConfigurableList parents = new ConfigurableList(this, Block.class);
 	
@@ -47,18 +47,18 @@ public abstract class Block extends LongTask {
 	public abstract boolean acceptsNewParents();
 	
 	public double startTraining(Dataset trainingSet) {
-		return startTask(TRAIN, trainingSet);
+		return startTask(TRAININGTASK, trainingSet);
 	}
 	
 	public Encoding startTransform(Object inputData) {
-		return startTask(TRANSFORM, inputData);
+		return startTask(TRANSFORMTASK, inputData);
 	}
 	
 	@Override
 	protected Object execute(Object... params) {
-		if (!isTrained() && getTaskType().equals(TRAIN))
+		if (!isTrained() && getTaskType().equals(TRAININGTASK))
 			return train((Dataset)params[0]);
-		else if (isTrained() && getTaskType().equals(TRANSFORM))
+		else if (isTrained() && getTaskType().equals(TRANSFORMTASK))
 			return transform(params[0]);
 		else
 			return null;
