@@ -16,7 +16,7 @@ import java.util.Arrays;
 
 public class CSVDatasetBuilder extends DatasetBuilder {
 	
-	public String fileName; // TODO Replace with File (and then write FileEditor)
+	public File file = new File("nonexistent.txt");
 	
 	public String separators = "[, +]";
 
@@ -33,7 +33,6 @@ public class CSVDatasetBuilder extends DatasetBuilder {
 	@Override
 	public Dataset buildDataset() {
 		Dataset ret = new Dataset();
-		File file = new File(fileName);
 		
 		int inputDim = getDimension(template.inputTemplate);
 		int outputDim = getDimension(template.outputTemplate);

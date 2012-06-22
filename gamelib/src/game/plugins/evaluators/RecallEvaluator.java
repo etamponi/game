@@ -23,7 +23,7 @@ public class RecallEvaluator extends Evaluator {
 	}
 
 	@Override
-	public Map<String, Double> evaluate(Dataset dataset, String logPrefix) {
+	public Map<String, Double> evaluate(Dataset dataset) {
 		List<String> labels = template.getOption("outputTemplate.labels");
 		
 		Map<String, Double> ret = new LinkedHashMap<>();

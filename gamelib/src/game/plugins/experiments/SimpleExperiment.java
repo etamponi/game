@@ -41,12 +41,13 @@ public class SimpleExperiment extends Experiment {
 		updateStatus(0.01, "start graph training...");
 		startAnotherTaskAndWait(0.50, trainer, GraphTrainer.TASKNAME, graph, trainingDataset.buildDataset());
 		updateStatus(0.51, "training complete, beginning testing phase...");
-		Dataset tested = (Dataset)startAnotherTaskAndWait(0.90, graph, Graph.CLASSIFYALLTASK, testingDataset.buildDataset());
+		Dataset testedDataset = startAnotherTaskAndWait(0.90, graph, Graph.CLASSIFYALLTASK, testingDataset.buildDataset());
 		updateStatus(0.91, "testing complete, beginning evaluation phase...");
+		double increase = 0.09 / evaluators.size();
 		for(Evaluator evaluator: evaluators.getList(Evaluator.class)) {
-			Map<String, Double> results = evaluator.evaluate(tested, name);
+			Map<String, Double> results = startAnotherTaskAndWait(getCurrentPercent()+increase, evaluator, Evaluator.TASKNAME, testedDataset);
 			for (String key: results.keySet())
-				System.out.println(name + "." + evaluator.name + ": " + key + " = "+ results.get(key));
+				System.out.println(name + "." + evaluator.name + ": " + key + " = "+ results.get(key)); // TODO Replace with log
 		}
 	}
 
