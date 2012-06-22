@@ -13,11 +13,15 @@ import java.util.List;
 import java.util.Observable;
 import java.util.ResourceBundle;
 
+import javafx.beans.property.IntegerProperty;
+import javafx.beans.property.SimpleIntegerProperty;
+import javafx.concurrent.Service;
 import javafx.concurrent.Task;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Button;
+import javafx.scene.control.Label;
 import javafx.scene.control.ProgressBar;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
@@ -35,6 +39,8 @@ public class MainController extends Configurable implements Initializable {
 	@FXML
 	private Button stopButton;
 	@FXML
+	private Label message;
+	@FXML
 	private ProgressBar overallProgress;
 	@FXML
 	private ProgressBar currentProgress;
@@ -51,26 +57,65 @@ public class MainController extends Configurable implements Initializable {
 		VBox.setVgrow(editor.getView(), Priority.ALWAYS);
 	}
 	
+	private static class ExperimentService extends Service<Void> {
+		
+		private IntegerProperty counter = new SimpleIntegerProperty(0);
+		private List<Experiment> experiments;
+		
+		public void setExperiments(ConfigurableList list) {
+			experiments = list.getList(Experiment.class);
+		}
+		
+		public int getCounter() {
+			return counter.get();
+		}
+		
+		public IntegerProperty counterProperty() {
+			return counter;
+		}
+
+		@Override
+		protected Task<Void> createTask() {
+			return new Task<Void>() {
+				@Override
+				protected Void call() throws Exception {
+					updateProgress(0, 100);
+					Thread.sleep(500);
+					updateProgress(50, 100);
+					Thread.sleep(500);
+					updateProgress(100, 100);
+					Thread.sleep(500);
+					//experiment.startExperiment();
+					return null;
+				}
+			};
+		}
+
+		@Override
+		protected void succeeded() {
+			super.succeeded();
+			counter.set(counter.get()+1);
+			if (counter.get() < experiments.size()) {
+				reset();
+				start();
+			}
+		}
+		
+	}
+	
 	@FXML
 	public void onStart(ActionEvent event) {
-		Task overallTask = new Task<Void>() {
-			@Override
-			protected Void call() throws Exception {
-				ConfigurableList experiments = model.getContent();
-				double step = 99 / experiments.size();
-				updateProgress(1, 100);
-				double progress = 1;
-				for (int i = 0; i < experiments.size(); i++) {
-					Thread.sleep(500);
-					progress += step;
-					updateProgress((long)progress, 100);
-				}
-				
-				return null;
-			}
-		};
-		overallProgress.progressProperty().bind(overallTask.progressProperty());
-		new Thread(overallTask).start();
+		ConfigurableList experiments = model.getContent();
+		
+		ExperimentService service = new ExperimentService();
+		currentProgress.progressProperty().bind(service.progressProperty());
+		
+		double step = 1.0 / experiments.size();
+		overallProgress.progressProperty().bind(
+				(service.progressProperty().divide(experiments.size())).add(service.counterProperty().multiply(step)));
+		
+		service.setExperiments(experiments);
+		service.start(); 
 	}
 	
 	@FXML
@@ -86,7 +131,8 @@ public class MainController extends Configurable implements Initializable {
 	@Override
 	public void update(Observable observedOption, Object message) {
 		if (message instanceof Change) {
-			if (((List)model.getContent()).isEmpty() || !((Configurable)model.getContent()).getConfigurationErrors().isEmpty()) {
+			ConfigurableList experiments = model.getContent();
+			if (experiments.isEmpty() || !experiments.getConfigurationErrors().isEmpty()) {
 				disableButtons(true);
 			} else {
 				disableButtons(false);

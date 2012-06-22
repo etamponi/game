@@ -18,6 +18,7 @@
             <Button fx:id="stopButton" onAction="#onStop" prefWidth="70.0" text="Stop" />
           </children>
         </HBox>
+        <Label fx:id="message" text="Label" />
         <ProgressBar fx:id="overallProgress" prefWidth="300.0" progress="0.0" />
         <ProgressBar fx:id="currentProgress" prefWidth="300.0" progress="0.0" />
       </children>

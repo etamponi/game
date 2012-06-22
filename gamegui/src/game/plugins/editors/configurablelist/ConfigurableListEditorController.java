@@ -26,7 +26,7 @@ import javafx.scene.control.ListView;
 
 public class ConfigurableListEditorController implements EditorController {
 	
-	private ConfigurableList list;
+	private Option model;
 	
 	@FXML
 	private ListView<Option> listView;
@@ -38,16 +38,13 @@ public class ConfigurableListEditorController implements EditorController {
 	
 	@Override
 	public void setModel(Option model) {
-		if (model != null)
-			this.list = model.getContent();
-		else
-			this.list = null;
+		this.model = model;
 	}
 
 	@Override
 	public void connectView() {
 		listView.getItems().clear();
-		
+		ConfigurableList list = model.getContent();
 		if (list == null)
 			return;
 		
@@ -64,6 +61,7 @@ public class ConfigurableListEditorController implements EditorController {
 	
 	@FXML
 	public void addAction(ActionEvent event) {
+		ConfigurableList list = model.getContent();
 		if (list == null)
 			return;
 		
@@ -72,6 +70,7 @@ public class ConfigurableListEditorController implements EditorController {
 	
 	@FXML
 	public void removeAction(ActionEvent event) {
+		ConfigurableList list = model.getContent();
 		if (list == null)
 			return;
 		
@@ -82,6 +81,7 @@ public class ConfigurableListEditorController implements EditorController {
 	
 	@FXML
 	public void editAction(ActionEvent event) {
+		ConfigurableList list = model.getContent();
 		if (list == null)
 			return;
 		
