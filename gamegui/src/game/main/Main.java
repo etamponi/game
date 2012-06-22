@@ -10,13 +10,13 @@
  ******************************************************************************/
 package game.main;
 
-import game.editorsystem.Editor;
-import game.editorsystem.Option;
-import game.plugins.editors.ConfigurableEditor;
-import game.plugins.experiments.SimpleExperiment;
+import java.net.URL;
+
 import javafx.application.Application;
-import javafx.scene.Parent;
+import javafx.fxml.FXMLLoader;
+import javafx.fxml.JavaFXBuilderFactory;
 import javafx.scene.Scene;
+import javafx.scene.layout.AnchorPane;
 import javafx.stage.Stage;
 
 public class Main extends Application {
@@ -30,9 +30,15 @@ public class Main extends Application {
 
 	@Override
 	public void start(Stage primaryStage) throws Exception {
-		Editor editor = new ConfigurableEditor();
-		editor.setModel(new Option(new SimpleExperiment()));
-		primaryStage.setScene(new Scene((Parent)editor.getView()));
+		primaryStage.setTitle("GAME 3.0 - The revenge (alpha)");
+		URL location = getClass().getResource("MainView.fxml");
+		
+		FXMLLoader fxmlLoader = new FXMLLoader();
+		fxmlLoader.setLocation(location);
+		fxmlLoader.setBuilderFactory(new JavaFXBuilderFactory());
+
+		AnchorPane root = (AnchorPane)fxmlLoader.load(location.openStream());
+		primaryStage.setScene(new Scene(root));
 		primaryStage.show();
 	}
 

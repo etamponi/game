@@ -30,6 +30,7 @@ import javafx.scene.control.Button;
 import javafx.scene.control.ContentDisplay;
 import javafx.scene.control.Label;
 import javafx.scene.control.ListView;
+import javafx.scene.control.Separator;
 import javafx.scene.control.ToolBar;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
@@ -67,6 +68,7 @@ public class ConfigurableEditor extends Editor {
 				line.getItems().clear();
 				line.getItems().addAll(makeSaveAndLoadConfiguration("SAVE"),
 									   makeSaveAndLoadConfiguration("LOAD"),
+									   new Separator(),
 									   makeSaveAndLoadState("SAVE"),
 									   makeSaveAndLoadState("LOAD"));
 			}
@@ -183,6 +185,8 @@ public class ConfigurableEditor extends Editor {
 		ColumnConstraints c1 = new ColumnConstraints();
 		c1.setHgrow(Priority.ALWAYS);
 		pane.getColumnConstraints().addAll(c0, c1);
+		
+		pane.setMinWidth(500);
 	}
 
 	@Override

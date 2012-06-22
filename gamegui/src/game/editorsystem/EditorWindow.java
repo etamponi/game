@@ -19,6 +19,7 @@ import javafx.stage.Stage;
 public class EditorWindow extends Stage {
 	
 	public EditorWindow(Editor editor) {
+		setTitle(editor.getClass().getSimpleName());
 		initModality(Modality.APPLICATION_MODAL);
 		
 		AnchorPane root = new AnchorPane();
@@ -30,9 +31,10 @@ public class EditorWindow extends Stage {
 		AnchorPane.setBottomAnchor(view, 0.0);
 		
 		root.getChildren().add(view);
-		root.setMinWidth(150);
+		root.setMinWidth(200);
 		
 		setScene(new Scene(root));
 	}
 
 }
+

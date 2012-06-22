@@ -65,6 +65,7 @@ public class ImplementationChooserEditor extends Editor {
 				window.show();
 			}
 		});
+		container.setSpacing(15);
 		container.getChildren().addAll(box, editButton);
 		box.prefWidthProperty().bind(container.widthProperty().subtract(editButton.prefWidthProperty()).subtract(5));
 	}
