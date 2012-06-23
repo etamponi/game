@@ -5,6 +5,7 @@
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.paint.*?>
+<?import javafx.scene.text.*?>
 
 <AnchorPane id="AnchorPane" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="300.0" prefWidth="400.0" xmlns:fx="http://javafx.com/fxml" fx:controller="game.main.MainController">
   <children>
@@ -18,8 +19,13 @@
             <Button fx:id="stopButton" onAction="#onStop" prefWidth="70.0" text="Stop" />
           </children>
         </HBox>
-        <Label fx:id="message" text="Label" />
+        <Text fx:id="overallMessage" stroke="$x1" strokeWidth="0.5">
+          <fill>
+            <Color blue="0.250" green="0.250" red="0.250" fx:id="x1" />
+          </fill>
+        </Text>
         <ProgressBar fx:id="overallProgress" prefWidth="300.0" progress="0.0" />
+        <Text id="overallMessage" fx:id="currentMessage" fill="$x1" stroke="$x1" strokeWidth="0.5" />
         <ProgressBar fx:id="currentProgress" prefWidth="300.0" progress="0.0" />
       </children>
     </VBox>

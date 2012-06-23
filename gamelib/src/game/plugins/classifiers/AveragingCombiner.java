@@ -47,6 +47,10 @@ public class AveragingCombiner extends Combiner {
 	}
 	
 	private void sumEncodings(Encoding to, Encoding from) {
+		if (to.isEmpty()) {
+			to.addAll(from);
+			return;
+		}
 		for(int k = 0; k < to.length(); k++) {
 			double[] element = to.get(k);
 			double[] other = from.get(k);

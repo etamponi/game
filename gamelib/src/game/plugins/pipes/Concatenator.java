@@ -22,6 +22,7 @@ public class Concatenator extends Pipe {
 				System.arraycopy(enc.get(i), 0, element, startIndex, enc.getElementSize());
 				startIndex += enc.getElementSize();
 			}
+			ret.add(element);
 		}
 		
 		return ret;

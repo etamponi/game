@@ -13,7 +13,7 @@ package game.core;
 
 public abstract class Experiment extends LongTask {
 	
-	private static final String EXPERIMENT = "experimenting";
+	private static final String EXPERIMENT = "experiment";
 	
 	public void startExperiment() {
 		startTask(EXPERIMENT);
