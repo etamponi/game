@@ -85,11 +85,11 @@ public class LongTaskTest {
 					else if (count > 0 && count < 4)
 						assertEquals("slept for " + count + " seconds", observed.getCurrentMessage());
 					else if (count == 4)
-						assertEquals("  0,00% of OtherTask: start task subtest", observed.getCurrentMessage());
+						assertEquals("start task subtest", observed.getCurrentMessage());
 					else if (count > 4 && count < 10)
-						assertEquals(String.format("%6.2f%%", 20.0*(count-4))+" of OtherTask: LongTaskImplB slept for " + (count-4) + " seconds", observed.getCurrentMessage());
+						assertEquals("LongTaskImplB slept for " + (count-4) + " seconds", observed.getCurrentMessage());
 					else if (count == 10)
-						assertEquals("100,00% of OtherTask: task subtest finished", observed.getCurrentMessage());
+						assertEquals("task subtest finished", observed.getCurrentMessage());
 					else if (count == 11)
 						assertEquals("slept for a lot of seconds", observed.getCurrentMessage());
 					else

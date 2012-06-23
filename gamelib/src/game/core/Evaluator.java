@@ -7,7 +7,7 @@ import java.util.Map;
 
 public abstract class Evaluator extends LongTask implements Compatible<InstanceTemplate> {
 	
-	public static final String TASKNAME = "evaluate";
+	public static final String TASKNAME = "evaluation";
 	
 	public InstanceTemplate template;
 	

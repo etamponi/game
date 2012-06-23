@@ -23,7 +23,7 @@ public class ExperimentService extends Service<Void> {
 	
 	public static final EventType<Event> FINISHED = new EventType<>();
 	
-	private static class PausableExecutor implements Executor {
+	private static class SimpleThreadExecutor implements Executor {
 		
 		private Thread thread;
 
@@ -33,48 +33,60 @@ public class ExperimentService extends Service<Void> {
 			thread.start();
 		}
 		
-		public void pause() {
-			if (thread.isAlive())
-				thread.suspend();
-		}
-		
-		public void resume() {
-			if (thread.isAlive())
-				thread.resume();
-		}
-		
-		public void stop() {
-			thread.stop();
+		public Thread getThread() {
+			return thread;			
 		}
 		
 	}
 	
-	private PausableExecutor executor = new PausableExecutor();
+	private SimpleThreadExecutor executor = new SimpleThreadExecutor();
 	
 	private IntegerProperty counter = new SimpleIntegerProperty(0);
 	private StringProperty currentExperiment = new SimpleStringProperty("");
 	private List<Experiment> experiments;
+	
+	private boolean paused = false;
+	private boolean stopped = false;
 	
 	public ExperimentService() {
 		setExecutor(executor);
 	}
 	
 	public void pause() {
-		executor.pause();
+		if (!paused) {
+			executor.getThread().suspend();
+			paused = true;
+		}
 	}
 	
 	public void resume() {
-		executor.resume();
+		if (paused) {
+			executor.getThread().resume();
+			paused = false;
+		}
 	}
 	
 	public void stop() {
-		executor.stop();
+		stopped = true;
+		executor.getThread().stop();
 	}
 	
-	public void setExperiments(ConfigurableList list) {
+	public boolean isPaused() {
+		return paused;
+	}
+	
+	public boolean isStopped() {
+		return stopped;
+	}
+	
+	public void start(ConfigurableList list) {
 		experiments = list.getList(Experiment.class);
 		counter.set(0);
 		currentExperiment.set(experiments.get(0).toString());
+		paused = false;
+		stopped = false;
+		
+		start();
 	}
 	
 	public IntegerProperty counterProperty() {
@@ -97,9 +109,9 @@ public class ExperimentService extends Service<Void> {
 						if (m instanceof LongTaskUpdate) {
 							updateMessage(e.getCurrentMessage());
 							updateProgress((long)(e.getCurrentPercent()*100), 100);
-							try {
-								Thread.sleep(100);
-							} catch (InterruptedException e) {}
+//							try {
+//								Thread.sleep(100);
+//							} catch (InterruptedException e) {}
 						}
 					}
 				};

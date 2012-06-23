@@ -4,7 +4,7 @@ import game.plugins.constraints.Compatible;
 
 public abstract class GraphTrainer extends LongTask implements Compatible<InstanceTemplate> {
 	
-	public static final String TASKNAME = "training";
+	public static final String TASKNAME = "graphtraining";
 	
 	protected abstract Object trainGraph(Graph graph, Dataset trainingSet);
 	

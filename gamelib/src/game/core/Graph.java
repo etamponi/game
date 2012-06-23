@@ -20,7 +20,7 @@ import java.util.LinkedList;
 
 public class Graph extends LongTask {
 	
-	public static final String CLASSIFYTASK = "classify";
+	public static final String CLASSIFYTASK = "classification";
 	public static final String CLASSIFYALLTASK = "classifyall";
 	
 	public InstanceTemplate template; 

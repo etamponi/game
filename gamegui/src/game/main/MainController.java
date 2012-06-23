@@ -12,17 +12,25 @@ import java.net.URL;
 import java.util.Observable;
 import java.util.ResourceBundle;
 
+import javafx.beans.property.BooleanProperty;
+import javafx.beans.property.SimpleBooleanProperty;
 import javafx.concurrent.WorkerStateEvent;
 import javafx.event.ActionEvent;
 import javafx.event.Event;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.geometry.Insets;
+import javafx.geometry.Pos;
+import javafx.scene.Scene;
 import javafx.scene.control.Button;
+import javafx.scene.control.Label;
 import javafx.scene.control.ProgressBar;
+import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Text;
+import javafx.stage.Stage;
 
 public class MainController extends Configurable implements Initializable {
 	
@@ -76,19 +84,20 @@ public class MainController extends Configurable implements Initializable {
 		service.setOnFailed(new EventHandler<WorkerStateEvent>() {
 			@Override
 			public void handle(WorkerStateEvent event) {
+				if (!service.isStopped())
+					service.getException().printStackTrace();
 				disableButtons(false, true, true);
 			}
 		});
-		EventHandler handler = new EventHandler<Event>() {
+
+		service.addEventHandler(ExperimentService.FINISHED, new EventHandler<Event>() {
 			@Override
 			public void handle(Event event) {
 				disableButtons(false, true, true);
 			}
-		};
-		service.addEventHandler(ExperimentService.FINISHED, handler);
+		});
 
-		service.setExperiments(experiments);
-		service.start();
+		service.start(experiments);
 		disableButtons(true, false, false);
 	}
 	
@@ -103,19 +112,60 @@ public class MainController extends Configurable implements Initializable {
 		}
 	}
 	
+	private boolean confirmationDialog() {
+		final BooleanProperty sure = new SimpleBooleanProperty(false);
+		final Stage stage = new Stage();
+		
+		VBox container = new VBox();
+		HBox buttons = new HBox();
+		Button yes = new Button("Yes");
+		Button no = new Button("No");
+		yes.setOnAction(new EventHandler<ActionEvent>() {
+			@Override
+			public void handle(ActionEvent event) {
+				sure.set(true);
+				stage.close();
+			}
+		});
+		no.setOnAction(new EventHandler<ActionEvent>() {
+			@Override
+			public void handle(ActionEvent event) {
+				stage.close();
+			}
+		});
+		buttons.setSpacing(15);
+		buttons.getChildren().addAll(yes, no);
+		container.setSpacing(15);
+		container.setPadding(new Insets(15));
+		container.getChildren().addAll(new Label("Do you want to stop all the experiments?"), buttons);
+		buttons.setAlignment(Pos.CENTER);
+		stage.setScene(new Scene(container));
+		stage.showAndWait();
+		return sure.get();
+	}
+	
 	@FXML
 	public void onStop(ActionEvent event) {
-		service.stop();
-		disableButtons(false, true, true);
-		pauseButton.setText("Pause");
-		overallMessage.textProperty().unbind();
-		overallMessage.setText("");
-		currentMessage.textProperty().unbind();
-		currentMessage.setText("");
-		overallProgress.progressProperty().unbind();
-		overallProgress.setProgress(0);
-		currentProgress.progressProperty().unbind();
-		currentProgress.setProgress(0);
+		boolean alreadyPaused = service.isPaused();
+		if (!alreadyPaused)
+			service.pause();
+		
+		if (confirmationDialog()) {
+			service.stop();
+			disableButtons(false, true, true);
+			pauseButton.setText("Pause");
+			overallMessage.textProperty().unbind();
+			overallMessage.setText("");
+			currentMessage.textProperty().unbind();
+			currentMessage.setText("");
+			overallProgress.progressProperty().unbind();
+			overallProgress.setProgress(0);
+			currentProgress.progressProperty().unbind();
+			currentProgress.setProgress(0);
+		} else {
+			if (!alreadyPaused)
+				service.resume();
+		}
 	}
 
 	@Override

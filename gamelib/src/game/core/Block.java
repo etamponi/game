@@ -28,7 +28,7 @@ public abstract class Block extends LongTask {
 	}
 
 	public static final String TRAININGTASK = "training";
-	public static final String TRANSFORMTASK = "transforming";
+	public static final String TRANSFORMTASK = "transformation";
 	
 	public ConfigurableList parents = new ConfigurableList(this, Block.class);
 	
