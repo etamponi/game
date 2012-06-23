@@ -3,26 +3,18 @@ package game.main;
 import game.configuration.Configurable;
 import game.configuration.ConfigurableList;
 import game.core.Experiment;
-import game.core.LongTask.LongTaskUpdate;
 import game.editorsystem.Editor;
 import game.editorsystem.Option;
 import game.plugins.editors.ConfigurableEditor.SerializationEditor;
 import game.plugins.editors.configurablelist.ConfigurableListEditor;
 
 import java.net.URL;
-import java.util.List;
 import java.util.Observable;
-import java.util.Observer;
 import java.util.ResourceBundle;
 
-import javafx.beans.property.IntegerProperty;
-import javafx.beans.property.SimpleIntegerProperty;
-import javafx.beans.property.SimpleStringProperty;
-import javafx.beans.property.StringProperty;
-import javafx.concurrent.Service;
-import javafx.concurrent.Task;
 import javafx.concurrent.WorkerStateEvent;
 import javafx.event.ActionEvent;
+import javafx.event.Event;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
@@ -35,6 +27,8 @@ import javafx.scene.text.Text;
 public class MainController extends Configurable implements Initializable {
 	
 	private Option model = new Option(new ConfigurableList(this, Experiment.class));
+	
+	ExperimentService service;
 
 	@FXML
 	private VBox root;
@@ -63,70 +57,14 @@ public class MainController extends Configurable implements Initializable {
 		root.setSpacing(10);
 		root.setStyle("-fx-border-color:-fx-color; -fx-padding: 0px 0px 5px 0px;");
 		VBox.setVgrow(editor.getView(), Priority.ALWAYS);
-		disableButtons(true);
-	}
-	
-	private static class ExperimentService extends Service<Void> {
-		
-		private IntegerProperty counter = new SimpleIntegerProperty(0);
-		private StringProperty currentExperiment = new SimpleStringProperty("");
-		private List<Experiment> experiments;
-		
-		public void setExperiments(ConfigurableList list) {
-			experiments = list.getList(Experiment.class);
-			counter.set(0);
-			currentExperiment.set(experiments.get(0).toString());
-		}
-		
-		public IntegerProperty counterProperty() {
-			return counter;
-		}
-		
-		public StringProperty currentExperimentProperty() {
-			return currentExperiment;
-		}
-
-		@Override
-		protected Task<Void> createTask() {
-			return new Task<Void>() {
-				@Override
-				protected Void call() throws Exception {
-					final Experiment e = experiments.get(counter.get());
-					Observer o = new Observer() {
-						@Override
-						public void update(Observable obs, Object m) {
-							if (m instanceof LongTaskUpdate) {
-								updateMessage(e.getCurrentMessage());
-								updateProgress((long)(e.getCurrentPercent()*100), 100);
-							}
-						}
-					};
-					e.addObserver(o);
-					e.startExperiment();
-					e.deleteObserver(o);
-					return null;
-				}
-			};
-		}
-
-		@Override
-		protected void succeeded() {
-			super.succeeded();
-			counter.set(counter.get()+1);
-			if (counter.get() < experiments.size()) {
-				reset();
-				currentExperiment.set(experiments.get(counter.get()).toString());
-				start();
-			}
-		}
-		
+		disableButtons(true, true, true);
 	}
 	
 	@FXML
 	public void onStart(ActionEvent event) {
 		ConfigurableList experiments = model.getContent();
+		service = new ExperimentService();
 		
-		final ExperimentService service = new ExperimentService();
 		currentProgress.progressProperty().bind(service.progressProperty());
 		currentMessage.textProperty().bind(service.messageProperty());
 		
@@ -135,26 +73,49 @@ public class MainController extends Configurable implements Initializable {
 				(service.progressProperty().divide(experiments.size())).add(service.counterProperty().multiply(step)));
 		overallMessage.textProperty().bind(service.currentExperimentProperty());
 		
-		service.setExperiments(experiments);
-		service.start();
-		
 		service.setOnFailed(new EventHandler<WorkerStateEvent>() {
-			
 			@Override
 			public void handle(WorkerStateEvent event) {
-				service.getException().printStackTrace();
+				disableButtons(false, true, true);
 			}
 		});
+		EventHandler handler = new EventHandler<Event>() {
+			@Override
+			public void handle(Event event) {
+				disableButtons(false, true, true);
+			}
+		};
+		service.addEventHandler(ExperimentService.FINISHED, handler);
+
+		service.setExperiments(experiments);
+		service.start();
+		disableButtons(true, false, false);
 	}
 	
 	@FXML
 	public void onPause(ActionEvent event) {
-		
+		if (pauseButton.getText().equals("Pause")) {
+			service.pause();
+			pauseButton.setText("Resume");
+		} else {
+			service.resume();
+			pauseButton.setText("Pause");
+		}
 	}
 	
 	@FXML
 	public void onStop(ActionEvent event) {
-		
+		service.stop();
+		disableButtons(false, true, true);
+		pauseButton.setText("Pause");
+		overallMessage.textProperty().unbind();
+		overallMessage.setText("");
+		currentMessage.textProperty().unbind();
+		currentMessage.setText("");
+		overallProgress.progressProperty().unbind();
+		overallProgress.setProgress(0);
+		currentProgress.progressProperty().unbind();
+		currentProgress.setProgress(0);
 	}
 
 	@Override
@@ -162,17 +123,17 @@ public class MainController extends Configurable implements Initializable {
 		if (message instanceof Change) {
 			ConfigurableList experiments = model.getContent();
 			if (experiments.isEmpty() || !experiments.getConfigurationErrors().isEmpty()) {
-				disableButtons(true);
+				disableButtons(true, true, true);
 			} else {
-				disableButtons(false);
+				disableButtons(false, true, true);
 			}
 		}
 	}
 
-	private void disableButtons(boolean disable) {
-		startButton.setDisable(disable);
-		pauseButton.setDisable(true);
-		stopButton.setDisable(true);
+	private void disableButtons(boolean start, boolean pause, boolean stop) {
+		startButton.setDisable(start);
+		pauseButton.setDisable(pause);
+		stopButton.setDisable(stop);
 	}
 
 }
