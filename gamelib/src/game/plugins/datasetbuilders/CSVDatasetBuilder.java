@@ -1,5 +1,6 @@
 package game.plugins.datasetbuilders;
 
+import game.configuration.errorchecks.FileExistsCheck;
 import game.core.DataTemplate;
 import game.core.Dataset;
 import game.core.DatasetBuilder;
@@ -19,6 +20,10 @@ public class CSVDatasetBuilder extends DatasetBuilder {
 	public File file = new File("nonexistent.txt");
 	
 	public String separators = "[, +]";
+	
+	public CSVDatasetBuilder() {
+		addOptionChecks("file", new FileExistsCheck());
+	}
 
 	@Override
 	public boolean isCompatible(InstanceTemplate template) {
@@ -61,7 +66,10 @@ public class CSVDatasetBuilder extends DatasetBuilder {
 			return ret;
 		}
 		if (template instanceof LabelTemplate) {
-			return tokens[0];
+			if (((LabelTemplate) template).labels.contains(tokens[0]))
+				return tokens[0];
+			else
+				return null;
 		}
 		return null;
 	}

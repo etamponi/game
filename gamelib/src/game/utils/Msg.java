@@ -28,6 +28,13 @@ public class Msg {
 	
 	private static String prefix = null;
 	
+	static {
+//		Handler handler = new ConsoleHandler();
+//		handler.setFormatter(formatter);
+//		infoLogger.addHandler(handler);
+//		dataLogger.addHandler(handler);
+	}
+	
 	public static void setLogsDirectory(File directory) {
 		if (directory == null)
 			return;
