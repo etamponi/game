@@ -11,7 +11,7 @@
 package game.plugins.editors.graph;
 
 
-import game.configuration.Configurable.Change;
+import game.configuration.Change;
 import game.core.Block;
 import game.editorsystem.Editor;
 import game.editorsystem.EditorWindow;

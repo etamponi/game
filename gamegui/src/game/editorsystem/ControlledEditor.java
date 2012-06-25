@@ -10,7 +10,7 @@
  ******************************************************************************/
 package game.editorsystem;
 
-import game.configuration.Configurable.Change;
+import game.configuration.Change;
 
 import java.io.IOException;
 import java.net.URL;

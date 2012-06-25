@@ -10,7 +10,7 @@
  ******************************************************************************/
 package game.editorsystem;
 
-import game.configuration.Configurable.Change;
+import game.configuration.Change;
 import javafx.fxml.Initializable;
 
 public interface EditorController extends Initializable {

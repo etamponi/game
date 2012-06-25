@@ -16,7 +16,7 @@ import com.thoughtworks.xstream.converters.UnmarshallingContext;
 import com.thoughtworks.xstream.io.HierarchicalStreamReader;
 import com.thoughtworks.xstream.io.HierarchicalStreamWriter;
 
-public class ConfigurationConverter implements Converter {
+class ConfigurationConverter implements Converter {
 
 	@Override
 	public boolean canConvert(Class type) {

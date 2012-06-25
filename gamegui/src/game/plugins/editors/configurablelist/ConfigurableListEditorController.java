@@ -10,7 +10,7 @@
  ******************************************************************************/
 package game.plugins.editors.configurablelist;
 
-import game.configuration.Configurable.Change;
+import game.configuration.Change;
 import game.configuration.ConfigurableList;
 import game.editorsystem.Editor;
 import game.editorsystem.EditorController;

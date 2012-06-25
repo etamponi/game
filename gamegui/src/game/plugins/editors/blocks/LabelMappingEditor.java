@@ -10,7 +10,7 @@
  ******************************************************************************/
 package game.plugins.editors.blocks;
 
-import game.configuration.Configurable.Change;
+import game.configuration.Change;
 import game.editorsystem.Editor;
 import game.plugins.encoders.LabelEncoder;
 import javafx.event.EventHandler;

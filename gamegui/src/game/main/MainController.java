@@ -1,5 +1,6 @@
 package game.main;
 
+import game.configuration.Change;
 import game.configuration.Configurable;
 import game.configuration.ConfigurableList;
 import game.core.Experiment;

@@ -10,6 +10,7 @@
  ******************************************************************************/
 package game.plugins;
 
+import game.configuration.Change;
 import game.configuration.Configurable;
 import game.configuration.ConfigurableList;
 import game.configuration.errorchecks.ListMustContainCheck;

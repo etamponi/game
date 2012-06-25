@@ -1,6 +1,6 @@
 package game.plugins.editors;
 
-import game.configuration.Configurable.Change;
+import game.configuration.Change;
 import game.editorsystem.Editor;
 
 import java.io.File;

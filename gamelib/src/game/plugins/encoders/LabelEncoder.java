@@ -10,6 +10,7 @@
  ******************************************************************************/
 package game.plugins.encoders;
 
+import game.configuration.Change;
 import game.core.DataTemplate;
 import game.core.Encoding;
 import game.core.blocks.Encoder;

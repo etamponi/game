@@ -10,8 +10,8 @@
  ******************************************************************************/
 package game.plugins.editors.graph;
 
+import game.configuration.Change;
 import game.configuration.Configurable;
-import game.configuration.Configurable.Change;
 import game.core.Block;
 import game.core.Graph;
 import game.editorsystem.Editor;

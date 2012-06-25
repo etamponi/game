@@ -23,11 +23,9 @@ import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedList;
-import java.util.List;
 import java.util.Map;
 import java.util.Observable;
 import java.util.Observer;
@@ -43,23 +41,6 @@ public abstract class Configurable extends Observable implements Observer {
 	@XStreamOmitField
 	protected static XStream configStream = new XStream(new DomDriver());
 	
-	public class Change {
-		private String path;
-		
-		public Change(String path) {
-			this.path = path;
-		}
-		
-		public String getPath() {
-			return path;
-		}
-		
-		public boolean pathContains(String element) {
-			List<String> tokens = Arrays.asList(path.split("\\."));
-			return tokens.contains(element);
-		}
-	}
-	
 	private class RequestForBoundOptions {
 		private LinkedList<String> boundOptions;
 		private String path;
@@ -73,75 +54,6 @@ public abstract class Configurable extends Observable implements Observer {
 		public String getPath() { return path; }
 	}
 	
-	private class RequestForOwners {
-		private LinkedList<Configurable> owners;
-		
-		public LinkedList<Configurable> getOwners() {
-			return owners;
-		}
-	}
-	
-	private class OptionBinding {
-		private String masterPath;
-		private String[] slaves;
-		
-		public OptionBinding(String masterPath, String... slaves) {
-			this.masterPath = masterPath;
-			this.slaves = slaves;
-		}
-		
-		public void updateOnChange(String changedOption) {
-			Object masterContent = Configurable.this.getOption(masterPath);
-			if (isOnPath(masterPath, changedOption)) {
-				for (String slave: slaves) {
-					Configurable.this.setOption(slave, masterContent);
-				}
-			} else {
-				for (String slave: slaves) {
-					String pathToParent = getParentPath(slave);
-					if (isOnPath(pathToParent, changedOption))
-						Configurable.this.setOption(slave, masterContent);
-				}
-			}
-		}
-		
-		public LinkedList<String> getBoundOptions(String pathToParent) {
-			LinkedList<String> ret = new LinkedList<>();
-			for (String slave: slaves) {
-				if (isOnPath(slave, pathToParent)) {
-					if (slave.split("\\.").length == pathToParent.split("\\.").length+1)
-						ret.add(slave.substring(slave.lastIndexOf('.')+1));
-				}
-			}
-			return ret;
-		}
-		
-		private boolean isOnPath(String reference, String changePath) {
-			String[] referenceTokens = reference.split("\\.");
-			String[] changePathTokens = changePath.split("\\.");
-			
-			if (changePathTokens.length > referenceTokens.length)
-				return false;
-			
-			for (int i = 0; i < changePathTokens.length; i++) {
-				if (referenceTokens[i].equals("*"))
-					continue;
-				if (!referenceTokens[i].equals(changePathTokens[i]))
-					return false;
-			}
-			
-			return true;
-		}
-		
-		private String getParentPath(String optionPath) {
-			int dotIndex = optionPath.lastIndexOf('.');
-			if (dotIndex < 0)
-				return "";
-			else
-				return optionPath.substring(0, dotIndex);
-		}
-	}
-
 	public String name;
 	
 	private LinkedList<OptionBinding> optionBindings = new LinkedList<>();
@@ -198,14 +110,6 @@ public abstract class Configurable extends Observable implements Observer {
 		}
 		
 		this.notify = true;
-	}
-	
-	public LinkedList<Configurable> getOwners() {
-		RequestForOwners request = new RequestForOwners();
-		setChanged();
-		notifyObservers(request);
-		
-		return request.getOwners();
 	}
 	
 	public LinkedList<String> getUnboundOptionNames() {
@@ -349,11 +253,15 @@ public abstract class Configurable extends Observable implements Observer {
 			notifyObservers(new RequestForBoundOptions(request.getBoundOptions(), pathToParent));
 			observedOption.addObserver(this);
 		}
-		
-		if (message instanceof RequestForOwners) {
-			RequestForOwners request = (RequestForOwners)message;
-			request.getOwners().add(this);
-		}
+	}
+
+	public boolean isOmittedFromConfiguration(String optionName) {
+		return omittedFromConfiguration.contains(optionName);
+	}
+	
+	@Override
+	public String toString() {
+		return name;
 	}
 	
 	protected void propagateUpdate(String changedOption) {
@@ -363,11 +271,6 @@ public abstract class Configurable extends Observable implements Observer {
 			setChanged();
 			notifyObservers(new Change(changedOption));
 		}
-	}
-	
-	@Override
-	public String toString() {
-		return name;
 	}
 	
 	protected void setInternalOptions(String... optionNames) {
@@ -388,7 +291,7 @@ public abstract class Configurable extends Observable implements Observer {
 	}
 
 	protected void setOptionBinding(String masterPath, String... slaves) {
-		optionBindings.add(new OptionBinding(masterPath, slaves));
+		optionBindings.add(new OptionBinding(this, masterPath, slaves));
 	}
 	
 	protected void setOptionChecks(String optionName, ErrorCheck... checks) {
@@ -455,7 +358,11 @@ public abstract class Configurable extends Observable implements Observer {
 	}
 	
 	protected LinkedList<String> getErrors() {
-		return new LinkedList<>();
+		LinkedList<String> ret = new LinkedList<>();
+		
+		
+		
+		return ret;
 	}
 	
 	private String getAccessorName(String prefix, String optionName) {
@@ -477,10 +384,6 @@ public abstract class Configurable extends Observable implements Observer {
 				return method;
 		}
 		return null;
-	}
-
-	public boolean isOmittedFromConfiguration(String optionName) {
-		return omittedFromConfiguration.contains(optionName);
 	}
 	
 }

@@ -14,7 +14,7 @@ import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.scene.Node;
 import javafx.scene.control.Button;
-import game.configuration.Configurable.Change;
+import game.configuration.Change;
 import game.core.Graph;
 import game.editorsystem.ControlledEditor;
 import game.editorsystem.Editor;

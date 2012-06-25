@@ -10,8 +10,8 @@
  ******************************************************************************/
 package game.plugins.editors;
 
+import game.configuration.Change;
 import game.configuration.Configurable;
-import game.configuration.Configurable.Change;
 import game.editorsystem.Editor;
 import game.editorsystem.Option;
 import game.utils.Utils;

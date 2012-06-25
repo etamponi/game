@@ -10,7 +10,7 @@
  ******************************************************************************/
 package game.plugins.editors;
 
-import game.configuration.Configurable.Change;
+import game.configuration.Change;
 import game.editorsystem.Editor;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;

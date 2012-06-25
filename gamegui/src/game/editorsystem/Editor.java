@@ -10,7 +10,7 @@
  ******************************************************************************/
 package game.editorsystem;
 
-import game.configuration.Configurable.Change;
+import game.configuration.Change;
 import game.utils.Utils;
 
 import java.util.Observable;
