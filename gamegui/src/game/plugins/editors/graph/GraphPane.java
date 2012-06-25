@@ -116,22 +116,12 @@ public class GraphPane extends ScrollPane {
 			}
 		});
 		
-		content.setOnDragExited(new EventHandler<DragEvent>() { // FIXME
+		content.setOnDragExited(new EventHandler<DragEvent>() {
 			@Override
 			public void handle(DragEvent event) {
 				if (event.getDragboard().hasContent(BlockNode.BLOCKDATA)) {
 					BlockNode node = Settings.getInstance().getDragging();
 					if (node != null) {
-						if (node.getBlock() instanceof Classifier) {
-							graph.setOption("classifiers.remove", node.getBlock());
-							if (graph.outputClassifier == node.getBlock())
-								graph.setOption("outputClassifier", null);
-						}
-						if (node.getBlock() instanceof Encoder)
-							graph.setOption("inputEncoders.remove", node.getBlock());
-						if (node.getBlock() instanceof Pipe)
-							graph.setOption("pipes.remove", node.getBlock());
-						
 						if (node.getWrapper() != null)
 							content.getChildren().remove(node.getWrapper());
 						else
@@ -451,6 +441,18 @@ public class GraphPane extends ScrollPane {
 			}
 			return 1+max;
 		}
+	}
+
+	public void removeBlock(Block block) {
+		if (block instanceof Classifier) {
+			graph.setOption("classifiers.remove", block);
+			if (graph.outputClassifier == block)
+				graph.setOption("outputClassifier", null);
+		}
+		if (block instanceof Encoder)
+			graph.setOption("inputEncoders.remove", block);
+		if (block instanceof Pipe)
+			graph.setOption("pipes.remove", block);
 	}
 	
 }

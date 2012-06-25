@@ -98,15 +98,25 @@ public class GraphEditorController implements EditorController {
 		root.setOnDragDropped(new EventHandler<DragEvent>() {
 			@Override
 			public void handle(DragEvent event) {
-				AnchorPane graphRoot = graphPane.getContentPane();
-				for (Node child: new LinkedList<>(graphRoot.getChildren())) {
-					if (child instanceof Connection) {
-						if (((Connection)child).invalid()) {
-							graphRoot.getChildren().remove(child);
-							((Connection)child).removeFromModel();
+				if (event.getDragboard().hasContent(BlockNode.BLOCKDATA)) {
+					BlockNode node = Settings.getInstance().getDragging();
+					node.setDragging(false);
+					
+					AnchorPane graphRoot = graphPane.getContentPane();
+					for (Node child: new LinkedList<>(graphRoot.getChildren())) {
+						if (child instanceof Connection) {
+							if (((Connection)child).isInvalid()) {
+								graphRoot.getChildren().remove(child);
+								((Connection)child).removeFromModel();
+							}
 						}
 					}
+					node.destroy();
 				}
+				
+				event.setDropCompleted(true);
+				
+				event.consume();
 			}
 		});
 	}

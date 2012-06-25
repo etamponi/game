@@ -14,18 +14,16 @@ public class SimpleTrainer extends GraphTrainer {
 	}
 
 	@Override
-	protected Object trainGraph(Graph graph, Dataset trainingSet) {
+	protected void trainGraph(Graph graph, Dataset trainingSet) {
 		recursivelyTrainGraph(graph.outputClassifier, trainingSet);
-		
-		return null;
 	}
 
 	private void recursivelyTrainGraph(Block current, Dataset trainingSet) {
 		// TODO use updateStatus and startAnotherTaskAndWait
 		
-		for (Block parent: current.parents.getList(Block.class)) {
+		for (Block parent: current.parents.getList(Block.class))
 			recursivelyTrainGraph(parent, trainingSet);
-		}
+
 		if (!current.isTrained())
 			current.startTraining(trainingSet);
 	}

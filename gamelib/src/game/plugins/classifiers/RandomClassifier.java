@@ -1,6 +1,5 @@
 package game.plugins.classifiers;
 
-import game.configuration.errorchecks.PositivenessCheck;
 import game.configuration.errorchecks.SizeCheck;
 import game.core.Block;
 import game.core.Dataset;
@@ -11,18 +10,17 @@ import game.core.blocks.Classifier;
 import game.plugins.datatemplates.LabelTemplate;
 import game.plugins.datatemplates.SequenceTemplate;
 
+import java.util.LinkedList;
 import java.util.List;
 
 public class RandomClassifier extends Classifier {
 	
-	public int k = 1;
-	
-	private List<EncodedSample> reference;
+	public List<EncodedSample> reference;
 	
 	public RandomClassifier() {
-		addOptionChecks("parents", new SizeCheck(1, 1));
+		setInternalOptions("reference");
 		
-		addOptionChecks("k", new PositivenessCheck(false));
+		addOptionChecks("parents", new SizeCheck(1, 1));
 	}
 
 	@Override
@@ -46,8 +44,16 @@ public class RandomClassifier extends Classifier {
 
 	@Override
 	protected Encoding transform(Object inputData) {
-		int random = (int)(Math.random() * (reference.size()-1)); 
-		Encoding ret = new Encoding(reference.get(random).getOutput());
+		List list = null;
+		if (!(inputData instanceof List)) {
+			list = new LinkedList();
+			list.add(inputData);
+		} else {
+			list = (List)inputData;
+		}
+		Encoding ret = new Encoding();
+		for(int i = 0; i < list.size(); i++)
+			ret = new Encoding(reference.get((int)(Math.random() * (reference.size()-1))).getOutput());
 		return ret;
 	}
 	

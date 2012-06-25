@@ -123,6 +123,11 @@ public class BlockNode extends VBox implements Observer {
 		}
 	}
 	
+	public void destroy() {
+		pane.removeBlock(block);
+		block.deleteObserver(this);
+	}
+	
 	public void disconnect() {
 		block.deleteObserver(this);
 	}

@@ -25,8 +25,8 @@ public abstract class Classifier extends Block implements Compatible<InstanceTem
 	
 	public Classifier() {
 		addOptionBinding("template.outputTemplate", "outputEncoder.template");
-		addOptionChecks("parents", new SizeCheck(1));
 		
+		addOptionChecks("parents", new SizeCheck(1));
 		addOptionChecks("template", new CompatibilityCheck(this));
 		
 		setOptionConstraint("outputEncoder", new CompatibleWith(this, "template.outputTemplate"));

@@ -28,7 +28,7 @@ public class ConfigurationConverter implements Converter {
 			MarshallingContext context) {
 		Configurable object = (Configurable)o;
 		
-		for (String optionName: object.getOptionNames()) {
+		for (String optionName: object.getAllOptionNames()) {
 			if (object.isOmittedFromConfiguration(optionName))
 				continue;
 			Object option = object.getOption(optionName);

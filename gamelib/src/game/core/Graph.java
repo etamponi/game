@@ -100,4 +100,12 @@ public class Graph extends LongTask {
 		return null;
 	}
 
+	public void setTrained() {
+		classifiers.clear();
+		inputEncoders.clear();
+		pipes.clear();
+		classifiers.setOption("add", outputClassifier, false);
+		outputClassifier.name = name;
+	}
+
 }

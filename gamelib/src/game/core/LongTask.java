@@ -41,8 +41,6 @@ public abstract class LongTask extends Configurable {
 			public void update(Observable o, Object m) {
 				if (m instanceof LongTaskUpdate) {
 					LongTask task = (LongTask)o;
-//					LongTask.this.updateStatus(percentAtStart + task.getCurrentPercent()*ratio,
-//						String.format("%6.2f%% of %s: %s", task.getCurrentPercent()*100, task, task.getCurrentMessage()));
 					LongTask.this.updateStatus(percentAtStart + task.getCurrentPercent()*ratio, task.getCurrentMessage());
 				}
 			}

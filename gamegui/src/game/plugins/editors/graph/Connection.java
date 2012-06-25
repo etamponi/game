@@ -74,7 +74,7 @@ public class Connection extends CubicCurve {
 		return this.from == node || this.to == node;
 	}
 	
-	public boolean invalid() {
+	public boolean isInvalid() {
 		int count = 0;
 		for (Node child: root.getChildren()) {
 			if (child == from.getWrapper() || child == to.getWrapper())

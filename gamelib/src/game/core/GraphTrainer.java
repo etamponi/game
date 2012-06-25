@@ -2,11 +2,15 @@ package game.core;
 
 import game.plugins.constraints.Compatible;
 
+import java.io.File;
+
 public abstract class GraphTrainer extends LongTask implements Compatible<InstanceTemplate> {
 	
 	public static final String TASKNAME = "graphtraining";
 	
-	protected abstract Object trainGraph(Graph graph, Dataset trainingSet);
+	public File graphsDir = new File("graphs/");
+	
+	protected abstract void trainGraph(Graph graph, Dataset trainingSet);
 	
 	public <T> T startGraphTraining(Graph graph, Dataset trainingSet) {
 		return startTask(TASKNAME, graph);
@@ -14,7 +18,13 @@ public abstract class GraphTrainer extends LongTask implements Compatible<Instan
 
 	@Override
 	protected Object execute(Object... params) {
-		return trainGraph((Graph)params[0], (Dataset)params[1]);
+		Graph graph = (Graph)params[0];
+		trainGraph(graph, (Dataset)params[1]);
+		graph.setTrained();
+		if (!graphsDir.exists())
+			graphsDir.mkdirs();
+		graph.saveConfiguration(graphsDir.getAbsolutePath()+"/"+graph.name+".config.xml");
+		return null;
 	}
 
 }

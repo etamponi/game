@@ -49,6 +49,9 @@ public class LabelEncoder extends Encoder<LabelTemplate> {
 	private void updateMapping(LabelTemplate template) {
 		this.template = template;
 		
+		if (template == null || template.labels == null)
+			return;
+		
 		int i = 0; int n = template.labels.size();
 		for (String label: template.labels.getList(String.class)) {
 			if (label != null) {

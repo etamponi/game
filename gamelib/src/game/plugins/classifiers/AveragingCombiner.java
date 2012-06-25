@@ -8,6 +8,12 @@ import game.core.blocks.Combiner;
 import java.util.List;
 
 public class AveragingCombiner extends Combiner {
+	
+	public boolean trained = false;
+	
+	public AveragingCombiner() {
+		setInternalOptions("trained");
+	}
 
 	@Override
 	public boolean isCompatible(InstanceTemplate object) {
@@ -16,17 +22,13 @@ public class AveragingCombiner extends Combiner {
 
 	@Override
 	public boolean isTrained() {
-		return true;
-	}
-
-	@Override
-	public boolean acceptsNewParents() {
-		return true;
+		return trained;
 	}
 
 	@Override
 	protected double train(Dataset trainingSet) {
-		throw new UnsupportedOperationException("You cannot train an AveragingCombiner");
+		trained = true;
+		return 1.0;
 	}
 
 	@Override

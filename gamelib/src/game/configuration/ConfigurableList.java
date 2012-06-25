@@ -41,15 +41,15 @@ public class ConfigurableList extends Configurable implements List {
 	}
 
 	@Override
-	public void setOption(String optionPath, Object content) {
+	public void setOption(String optionPath, Object content, boolean notify) {
 		if (optionPath.startsWith("*.")) {
 			String remainingPath = optionPath.substring(2);
 			for (Object element: internal) {
 				if (element != null)
-					((Configurable)element).setOption(remainingPath, content);
+					((Configurable)element).setOption(remainingPath, content, notify);
 			}
 		} else {
-			super.setOption(optionPath, content);
+			super.setOption(optionPath, content, notify);
 		}
 	}
 
@@ -83,7 +83,7 @@ public class ConfigurableList extends Configurable implements List {
 		add(internal.size(), e);
 		return true;
 	}
-
+	
 	@Override
 	public void add(int index, Object element) {
 		String indexString = String.valueOf(index);
@@ -94,9 +94,7 @@ public class ConfigurableList extends Configurable implements List {
 			((Configurable)element).addObserver(this);
 		}
 		
-		updateOptionBindings(indexString);
-		setChanged();
-		notifyObservers(new Change(indexString));
+		propagateUpdate(indexString);
 	}
 
 	@Override
@@ -172,8 +170,7 @@ public class ConfigurableList extends Configurable implements List {
 		
 		boolean ret = internal.remove(o); 
 		
-		setChanged();
-		notifyObservers(new Change(""));
+		propagateUpdate("");
 		
 		return ret;
 	}
@@ -185,8 +182,7 @@ public class ConfigurableList extends Configurable implements List {
 		
 		Object ret = internal.remove(index);
 		
-		setChanged();
-		notifyObservers(new Change(""));
+		propagateUpdate("");
 		
 		return ret;
 	}

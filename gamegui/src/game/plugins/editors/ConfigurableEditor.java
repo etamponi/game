@@ -30,7 +30,6 @@ import javafx.scene.control.Button;
 import javafx.scene.control.ContentDisplay;
 import javafx.scene.control.Label;
 import javafx.scene.control.ListView;
-import javafx.scene.control.Separator;
 import javafx.scene.control.ToolBar;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
@@ -47,8 +46,6 @@ public class ConfigurableEditor extends Editor {
 		
 		private final Image SAVECONFIGURATION = new Image(getClass().getResourceAsStream("saveConfiguration.png"));
 		private final Image LOADCONFIGURATION = new Image(getClass().getResourceAsStream("loadConfiguration.png"));
-		private final Image SAVESTATE = new Image(getClass().getResourceAsStream("saveState.png"));
-		private final Image LOADSTATE = new Image(getClass().getResourceAsStream("loadState.png"));
 		
 		private ToolBar line = new ToolBar();
 
@@ -67,10 +64,7 @@ public class ConfigurableEditor extends Editor {
 			if (getModel() != null) {
 				line.getItems().clear();
 				line.getItems().addAll(makeSaveAndLoadConfiguration("SAVE"),
-									   makeSaveAndLoadConfiguration("LOAD"),
-									   new Separator(),
-									   makeSaveAndLoadState("SAVE"),
-									   makeSaveAndLoadState("LOAD"));
+									   makeSaveAndLoadConfiguration("LOAD"));
 			}
 		}
 
@@ -115,46 +109,7 @@ public class ConfigurableEditor extends Editor {
 			
 			return ret;
 		}
-
-		private Button makeSaveAndLoadState(final String what) {
-			Button ret = new Button();
-			ImageView graphic = new ImageView();
-			if (what.equals("SAVE"))
-				graphic.setImage(SAVESTATE);
-			else
-				graphic.setImage(LOADSTATE);
-			ret.setGraphic(graphic);
-			ret.setContentDisplay(ContentDisplay.GRAPHIC_ONLY);
-
-			final Configurable content = getModel().getContent();
-			ret.setOnAction(new EventHandler<ActionEvent>() {
-				@Override
-				public void handle(ActionEvent event) {
-					FileChooser chooser = new FileChooser();
-					chooser.setInitialDirectory(new File(System.getProperty("user.home")));
-					chooser.setTitle("Save object state");
-					chooser.getExtensionFilters().add(new ExtensionFilter("GAME state file", "*.state.xml"));
-					
-					if (what.equals("SAVE")) {
-						File out = chooser.showSaveDialog(line.getScene().getWindow());
-						if (out != null) {
-							if (!out.getName().endsWith(".state.xml"))
-								content.saveState(out.getPath() + ".state.xml");
-							else
-								content.saveState(out.getPath());
-						}
-					} else {
-						File out = chooser.showOpenDialog(line.getScene().getWindow());
-						if (out != null)
-							content.loadState(out.getPath());
-					}
-					event.consume();
-				}
-			});
-			
-			return ret;
-		}
-
+		
 		@Override
 		public void updateView(Change change) {
 			// Nothing to update
