@@ -3,6 +3,7 @@ package game.main;
 import game.configuration.ConfigurableList;
 import game.core.Experiment;
 import game.core.LongTask.LongTaskUpdate;
+import game.utils.Msg;
 
 import java.util.List;
 import java.util.Observable;
@@ -103,6 +104,7 @@ public class ExperimentService extends Service<Void> {
 			@Override
 			protected Void call() throws Exception {
 				final Experiment e = experiments.get(counter.get());
+				Msg.setLogPrefix(e.name);
 				Observer o = new Observer() {
 					@Override
 					public void update(Observable obs, Object m) {

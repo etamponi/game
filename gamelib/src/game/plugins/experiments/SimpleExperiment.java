@@ -9,6 +9,7 @@ import game.core.GraphTrainer;
 import game.core.InstanceTemplate;
 import game.core.TemplateCompatibleList;
 import game.plugins.constraints.CompatibleWith;
+import game.utils.Msg;
 
 import java.util.Map;
 
@@ -47,7 +48,7 @@ public class SimpleExperiment extends Experiment {
 		for(Evaluator evaluator: evaluators.getList(Evaluator.class)) {
 			Map<String, Double> results = startAnotherTaskAndWait(getCurrentPercent()+increase, evaluator, Evaluator.TASKNAME, testedDataset);
 			for (String key: results.keySet())
-				System.out.println(name + "." + evaluator.name + ": " + key + " = "+ results.get(key)); // TODO Replace with log
+				Msg.data("%s.%s: %s = %6.5f", name, evaluator.name, key, results.get(key));
 		}
 	}
 
