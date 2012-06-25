@@ -26,11 +26,11 @@ public class PerAtomSequenceEncoder extends Encoder<SequenceTemplate> {
 	public int windowSize = 1;
 	
 	public PerAtomSequenceEncoder() {
-		addOptionBinding("template.atom", "atomEncoder.template");
+		setOptionBinding("template.atom", "atomEncoder.template");
 		
 		setOptionConstraint("atomEncoder", new CompatibleWith(this, "template.atom"));
 		
-		addOptionChecks("windowSize", new PositivenessCheck(false));
+		setOptionChecks("windowSize", new PositivenessCheck(false));
 	}
 
 	@Override

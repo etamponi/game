@@ -37,12 +37,12 @@ public class ConfigurableImplA extends Configurable {
 	public ConfigurableList optionList = new ConfigurableList(this, ConfigurableImplB.class);
 	
 	public ConfigurableImplA() {
-		addOptionBinding("optionA1",			"optionA4.optionB1", "optionA5.optionC1");
-		addOptionBinding("optionA2",			"optionA4.optionB2");
-		addOptionBinding("optionA4.optionB3",	"optionA5.optionC2");
-		addOptionBinding("optionA3",			"optionList.*.optionB3");
+		setOptionBinding("optionA1",			"optionA4.optionB1", "optionA5.optionC1");
+		setOptionBinding("optionA2",			"optionA4.optionB2");
+		setOptionBinding("optionA4.optionB3",	"optionA5.optionC2");
+		setOptionBinding("optionA3",			"optionList.*.optionB3");
 		
-		addOptionChecks("optionA3", new LengthCheck(20));
+		setOptionChecks("optionA3", new LengthCheck(20));
 	}
 
 }

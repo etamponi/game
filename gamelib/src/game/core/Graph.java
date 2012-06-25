@@ -33,15 +33,13 @@ public class Graph extends LongTask {
 	public Classifier outputClassifier;
 	
 	public Graph() {
-		addOptionBinding("template", 						"classifiers.constraint");
-		addOptionBinding("template.inputTemplate", 			"inputEncoders.constraint");
-		addOptionBinding("outputClassifier.outputEncoder", 	"decoder.encoder");
+		setOptionBinding("template", 						"classifiers.constraint");
+		setOptionBinding("template.inputTemplate", 			"inputEncoders.constraint");
+		setOptionBinding("outputClassifier.outputEncoder", 	"decoder.encoder");
 		
 		setOptionConstraint("decoder", new CompatibleWith(this, "outputClassifier.outputEncoder"));
 
-		omitFromErrorCheck("classifiers");
-		omitFromErrorCheck("inputEncoders");
-		omitFromErrorCheck("pipes");
+		omitFromErrorCheck("classifiers", "inputEncoders", "pipes");
 	}
 
 	public <T> T startClassification(Object object) {

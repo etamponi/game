@@ -22,8 +22,8 @@ public abstract class Encoder<DT extends DataTemplate> extends Block implements 
 	public DT template;
 	
 	public Encoder() {
-		addOptionChecks("parents", new SizeCheck(0, 0));
-		addOptionChecks("template", new CompatibilityCheck(this));
+		setOptionChecks("parents", new SizeCheck(0, 0));
+		setOptionChecks("template", new CompatibilityCheck(this));
 	}
 
 	@Override

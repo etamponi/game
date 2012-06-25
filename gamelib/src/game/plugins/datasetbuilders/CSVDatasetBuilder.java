@@ -22,7 +22,7 @@ public class CSVDatasetBuilder extends DatasetBuilder {
 	public String separators = "[, +]";
 	
 	public CSVDatasetBuilder() {
-		addOptionChecks("file", new FileExistsCheck());
+		setOptionChecks("file", new FileExistsCheck());
 	}
 
 	@Override

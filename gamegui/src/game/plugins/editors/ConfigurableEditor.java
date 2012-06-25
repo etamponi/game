@@ -211,8 +211,9 @@ public class ConfigurableEditor extends Editor {
 		return Configurable.class;
 	}
 	
-	protected void addHiddenOption(String optionName) {
-		hiddenOptions.add(optionName);
+	protected void setHiddenOptions(String... optionNames) {
+		for (String optionName: optionNames)
+			hiddenOptions.add(optionName);
 	}
 	
 	protected void setSpecificEditor(String optionName, Class<? extends Editor> editor) {

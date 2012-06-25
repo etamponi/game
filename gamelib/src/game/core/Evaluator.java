@@ -12,7 +12,7 @@ public abstract class Evaluator extends LongTask implements Compatible<InstanceT
 	public InstanceTemplate template;
 	
 	public Evaluator() {
-		addOptionChecks("template", new CompatibilityCheck(this));
+		setOptionChecks("template", new CompatibilityCheck(this));
 	}
 	
 	public Map<String, Double> startEvaluation(Dataset dataset) {

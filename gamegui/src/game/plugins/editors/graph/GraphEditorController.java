@@ -42,7 +42,7 @@ import javafx.scene.layout.FlowPane;
 
 public class GraphEditorController implements EditorController {
 
-	private Option model;
+	private Option graphModel;
 	
 	@FXML
 	private AnchorPane root;
@@ -123,12 +123,12 @@ public class GraphEditorController implements EditorController {
 
 	@Override
 	public void setModel(Option model) {
-		this.model = model;
+		this.graphModel = model;
 	}
 
 	@Override
 	public void connectView() {
-		Graph graph = model.getContent();
+		Graph graph = graphModel.getContent();
 		if (graph != null) {
 			graphPane.setGraph(graph);
 			graphPane.parseGraph();
@@ -157,10 +157,7 @@ public class GraphEditorController implements EditorController {
 	private static class GraphConfigurationEditor extends ConfigurableEditor {
 		
 		public GraphConfigurationEditor() {
-			addHiddenOption("classifiers");
-			addHiddenOption("inputEncoders");
-			addHiddenOption("pipes");
-			addHiddenOption("outputClassifier");
+			setHiddenOptions("classifiers", "inputEncoders", "pipes", "outputClassifier");
 		}
 		
 	}
@@ -168,14 +165,14 @@ public class GraphEditorController implements EditorController {
 	private void connectConfRoot() {
 		confPane.getChildren().clear();
 		Editor confEditor = new GraphConfigurationEditor();
-		confEditor.setModel(model);
+		confEditor.setModel(graphModel);
 		confPane.getChildren().add(confEditor.getView());
 	}
 	
 	private void fillPool(FlowPane pool, String optionName) {
 		pool.getChildren().clear();
 		PluginManager manager = Settings.getInstance().getPluginManager();
-		Configurable list = ((Graph)model.getContent()).getOption(optionName);
+		Configurable list = ((Graph)graphModel.getContent()).getOption(optionName);
 		if (list == null)
 			return;
 		Set<Implementation<Block>> blocks = list.getCompatibleOptionImplementations("*", manager);

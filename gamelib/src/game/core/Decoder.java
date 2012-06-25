@@ -20,7 +20,7 @@ public abstract class Decoder<E extends Encoder> extends Configurable implements
 	public E encoder;
 	
 	public Decoder() {
-		addOptionChecks("encoder", new CompatibilityCheck(this));
+		setOptionChecks("encoder", new CompatibilityCheck(this));
 	}
 	
 	public abstract Object decode(Encoding outputEncoded);

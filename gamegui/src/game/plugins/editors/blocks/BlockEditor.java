@@ -16,8 +16,7 @@ import game.plugins.editors.ConfigurableEditor;
 public class BlockEditor extends ConfigurableEditor {
 
 	public BlockEditor() {
-		addHiddenOption("parents");
-		addHiddenOption("position");
+		setHiddenOptions("parents", "position");
 	}
 
 	@Override

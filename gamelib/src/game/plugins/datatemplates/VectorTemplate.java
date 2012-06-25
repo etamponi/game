@@ -17,7 +17,7 @@ public class VectorTemplate extends AtomicTemplate {
 	public int featureNumber;
 	
 	public VectorTemplate() {
-		addOptionChecks("featureNumber", new PositivenessCheck(false));
+		setOptionChecks("featureNumber", new PositivenessCheck(false));
 	}
 	
 }

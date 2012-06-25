@@ -159,7 +159,7 @@ public abstract class Configurable extends Observable implements Observer {
 	public Configurable() {
 		this.name = String.format("%s%03d", getClass().getSimpleName(), hashCode() % 1000);
 		
-		addOptionChecks("name", new LengthCheck(1));
+		setOptionChecks("name", new LengthCheck(1));
 	}
 	
 	public <T> T getOption(String optionPath) {
@@ -375,20 +375,23 @@ public abstract class Configurable extends Observable implements Observer {
 			internalOptions.add(optionName);
 	}
 	
-	protected void omitFromErrorCheck(String optionName) {
-		omittedFromErrorCheck.add(optionName);
+	protected void omitFromErrorCheck(String... optionNames) {
+		for (String optionName: optionNames)
+			omittedFromErrorCheck.add(optionName);
 	}
 	
-	protected void omitFromConfiguration(String optionName) {
-		omittedFromConfiguration.add(optionName);
-		omittedFromErrorCheck.add(optionName);
+	protected void omitFromConfiguration(String... optionNames) {
+		for (String optionName: optionNames) {
+			omittedFromConfiguration.add(optionName);
+			omittedFromErrorCheck.add(optionName);
+		}
 	}
 
-	protected void addOptionBinding(String masterPath, String... slaves) {
+	protected void setOptionBinding(String masterPath, String... slaves) {
 		optionBindings.add(new OptionBinding(masterPath, slaves));
 	}
 	
-	protected void addOptionChecks(String optionName, ErrorCheck... checks) {
+	protected void setOptionChecks(String optionName, ErrorCheck... checks) {
 		if (!optionChecks.containsKey(optionName))
 			optionChecks.put(optionName, new LinkedList<ErrorCheck>());
 		for (ErrorCheck check: checks)

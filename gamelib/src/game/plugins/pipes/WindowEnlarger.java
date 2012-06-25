@@ -11,9 +11,9 @@ public class WindowEnlarger extends Pipe {
 	public int windowSize = 1;
 	
 	public WindowEnlarger() {
-		addOptionChecks("parents", new SizeCheck(1, 1));
+		setOptionChecks("parents", new SizeCheck(1, 1));
 		
-		addOptionChecks("windowSize", new PositivenessCheck(false));
+		setOptionChecks("windowSize", new PositivenessCheck(false));
 	}
 
 	@Override

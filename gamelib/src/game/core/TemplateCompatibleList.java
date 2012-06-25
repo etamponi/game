@@ -10,15 +10,15 @@ public class TemplateCompatibleList extends ConfigurableList {
 	
 	public TemplateCompatibleList() {
 		// DO NOT NEVER EVER USE (NEVER!) Necessary for ConfigurableConverter
-		addOptionBinding("constraint", "*.template");
 		
+		setOptionBinding("constraint", "*.template");
 		setOptionConstraint("*", new CompatibleWith(this, "constraint"));
 	}
 	
 	public TemplateCompatibleList(Configurable owner, Class content) {
 		super(owner, content);
 		
-		addOptionBinding("constraint", "*.template");
+		setOptionBinding("constraint", "*.template");
 		setOptionConstraint("*", new CompatibleWith(this, "constraint"));
 	}
 	

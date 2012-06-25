@@ -7,7 +7,7 @@ import game.core.Dataset;
 public abstract class Pipe extends Block {
 	
 	public Pipe() {
-		addOptionChecks("parents", new SizeCheck(1));
+		setOptionChecks("parents", new SizeCheck(1));
 	}
 	
 	@Override

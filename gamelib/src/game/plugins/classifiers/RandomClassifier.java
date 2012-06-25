@@ -20,7 +20,7 @@ public class RandomClassifier extends Classifier {
 	public RandomClassifier() {
 		setInternalOptions("reference");
 		
-		addOptionChecks("parents", new SizeCheck(1, 1));
+		setOptionChecks("parents", new SizeCheck(1, 1));
 	}
 
 	@Override

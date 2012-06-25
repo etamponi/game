@@ -19,7 +19,7 @@ public abstract class DatasetBuilder extends Configurable implements Compatible<
 	public InstanceTemplate template;
 	
 	public DatasetBuilder() {
-		addOptionChecks("template", new CompatibilityCheck(this));
+		setOptionChecks("template", new CompatibilityCheck(this));
 	}
 	
 	public abstract Dataset buildDataset();

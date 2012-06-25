@@ -40,7 +40,7 @@ public class PluginManager extends Configurable {
 	public ConfigurableList paths = new ConfigurableList(this, String.class);
 	
 	public PluginManager() {
-		addOptionChecks("packages", new ListMustContainCheck("game"));
+		setOptionChecks("packages", new ListMustContainCheck("game"));
 		
 		this.addObserver(new Observer() {
 			@Override

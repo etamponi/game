@@ -25,7 +25,7 @@ public class SequenceCSVDatasetBuilder extends DatasetBuilder {
 	public String separators = "[, +]";
 	
 	public SequenceCSVDatasetBuilder() {
-		addOptionChecks("file", new FileExistsCheck());
+		setOptionChecks("file", new FileExistsCheck());
 	}
 
 	@Override

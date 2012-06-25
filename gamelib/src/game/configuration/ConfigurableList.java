@@ -28,11 +28,15 @@ public class ConfigurableList extends Configurable implements List {
 	public ConfigurableList() {
 		// DO NOT USE NEVER NEVER NEVER
 		elementType = Object.class;
+		
+		setInternalOptions("elementType", "internal");
 	}
 	
 	public ConfigurableList(Configurable owner, Class elementType) {
 		super();
 		this.elementType = elementType;
+		
+		setInternalOptions("elementType", "internal");
 		addObserver(owner);
 	}
 	
@@ -54,8 +58,8 @@ public class ConfigurableList extends Configurable implements List {
 	}
 
 	@Override
-	public LinkedList<String> getOptionNames() {
-		LinkedList<String> ret = super.getOptionNames();
+	public LinkedList<String> getAllOptionNames() {
+		LinkedList<String> ret = super.getAllOptionNames();
 		for(int i = 0; i < internal.size(); i++)
 			ret.add(String.valueOf(i));
 		return ret;
@@ -109,12 +113,12 @@ public class ConfigurableList extends Configurable implements List {
 
 	@Override
 	public void clear() {
-		/*
-		for (E element: internal) {
+
+		for (Object element: internal) {
 			if (element instanceof Configurable)
 				((Configurable)element).deleteObserver(this);
 		}
-		*/
+
 		internal.clear();
 	}
 
@@ -212,9 +216,8 @@ public class ConfigurableList extends Configurable implements List {
 		}
 		
 		String indexString = String.valueOf(index);
-		updateOptionBindings(indexString);
-		setChanged();
-		notifyObservers(new Change(indexString));
+
+		propagateUpdate(indexString);
 		
 		return ret;
 	}

@@ -54,7 +54,7 @@ public class EditorSystemTest extends Application {
 		public ConfigurableAbstract optionA5;
 		
 		public ConfigurableImplA() {
-			addOptionBinding("optionA3", "optionA5.optionK1");
+			setOptionBinding("optionA3", "optionA5.optionK1");
 			
 			setOptionConstraint("optionA5", new Constraint<ConfigurableAbstract>() {
 				@Override

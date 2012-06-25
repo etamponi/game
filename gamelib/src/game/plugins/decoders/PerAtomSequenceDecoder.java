@@ -26,7 +26,7 @@ public class PerAtomSequenceDecoder extends Decoder<PerAtomSequenceEncoder> {
 	public boolean interpolate = false;
 	
 	public PerAtomSequenceDecoder() {
-		addOptionBinding("encoder.atomEncoder", "atomDecoder.encoder");
+		setOptionBinding("encoder.atomEncoder", "atomDecoder.encoder");
 		
 		setOptionConstraint("atomDecoder", new CompatibleWith(this, "encoder.atomEncoder"));
 	}

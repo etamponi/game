@@ -28,7 +28,7 @@ public class SimpleExperiment extends Experiment {
 	public TemplateCompatibleList evaluators = new TemplateCompatibleList(this, Evaluator.class);
 	
 	public SimpleExperiment() {
-		addOptionBinding("template", "graph.template",
+		setOptionBinding("template", "graph.template",
 									 "trainingDataset.template",
 									 "testingDataset.template",
 									 "evaluators.constraint");

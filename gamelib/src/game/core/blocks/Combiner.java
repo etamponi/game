@@ -23,9 +23,9 @@ public abstract class Combiner extends Classifier {
 	}
 	
 	public Combiner() {
-		addOptionBinding("outputEncoder", "parents.*.outputEncoder");
+		setOptionBinding("outputEncoder", "parents.*.outputEncoder");
 		
-		addOptionChecks("parents", new ClassifiersOnlyListCheck());
+		setOptionChecks("parents", new ClassifiersOnlyListCheck());
 	}
 
 }
