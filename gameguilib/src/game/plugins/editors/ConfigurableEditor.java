@@ -83,7 +83,7 @@ public class ConfigurableEditor extends Editor {
 				@Override
 				public void handle(ActionEvent event) {
 					FileChooser chooser = new FileChooser();
-					chooser.setInitialDirectory(new File(System.getProperty("user.home")));
+					chooser.setInitialDirectory(new File(System.getProperty("user.dir")));
 					chooser.getExtensionFilters().add(new ExtensionFilter("GAME configuration file", "*.config.xml"));
 					
 					if (what.equals("SAVE")) {

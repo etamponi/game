@@ -33,7 +33,7 @@ public class FileEditor extends Editor {
 			public void handle(ActionEvent event) {
 				FileChooser chooser = new FileChooser();
 				chooser.setTitle("Open file");
-				chooser.setInitialDirectory(new File(System.getProperty("user.home")));
+				chooser.setInitialDirectory(new File(System.getProperty("user.dir")));
 				File file = chooser.showOpenDialog(browseButton.getScene().getWindow());
 				if (file != null) {
 					pathField.setText(file.getAbsolutePath());
@@ -61,6 +61,8 @@ public class FileEditor extends Editor {
 
 	@Override
 	public void connectView() {
+		if (getModel().getContent() == null)
+			getModel().setContent(new File("nonexistent.txt"));
 		pathField.setText(((File)getModel().getContent()).getAbsolutePath());
 	}
 
