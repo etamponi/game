@@ -1,0 +1,16 @@
+<game.plugins.PluginManager>
+  <packages>
+    <elementType>java.lang.String</elementType>
+    <internal>
+      <string>game</string>
+    </internal>
+    <name>ConfigurableList753</name>
+    <____0>game</____0>
+  </packages>
+  <paths>
+    <elementType>java.lang.String</elementType>
+    <internal/>
+    <name>ConfigurableList316</name>
+  </paths>
+  <name>PluginManager210</name>
+</game.plugins.PluginManager>

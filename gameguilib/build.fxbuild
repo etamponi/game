@@ -1,0 +1,5 @@
+jfx.build.stagingdir = ${workspace}/gamegui/build
+jfx.build.apptitle = gamegui
+jfx.build.applicationClass = game.main.Main
+jfx.build.appversion = 0.9
+jfx.build.vendorname = IASC Group
