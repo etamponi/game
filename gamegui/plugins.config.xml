@@ -9,8 +9,11 @@
   </packages>
   <paths>
     <elementType>java.io.File</elementType>
-    <internal/>
+    <internal>
+      <file>nonexistent.txt</file>
+    </internal>
     <name>ConfigurableList999</name>
+    <____0>nonexistent.txt</____0>
   </paths>
   <name>PluginManager851</name>
 </game.plugins.PluginManager>
