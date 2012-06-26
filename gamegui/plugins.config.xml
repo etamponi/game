@@ -4,13 +4,13 @@
     <internal>
       <string>game</string>
     </internal>
-    <name>ConfigurableList753</name>
+    <name>ConfigurableList824</name>
     <____0>game</____0>
   </packages>
   <paths>
-    <elementType>java.lang.String</elementType>
+    <elementType>java.io.File</elementType>
     <internal/>
-    <name>ConfigurableList316</name>
+    <name>ConfigurableList999</name>
   </paths>
-  <name>PluginManager210</name>
+  <name>PluginManager851</name>
 </game.plugins.PluginManager>
