@@ -97,7 +97,7 @@ public class ConfigurableEditor extends Editor {
 						}
 					} else {
 						// TODO Check if the loaded object is compatible with the current object.
-						// TODO Check if the loaded object is compatible with the binding.
+						// TODO Check if the loaded object is compatible with the constraints.
 						chooser.setTitle("Load object configuration");
 						File out = chooser.showOpenDialog(line.getScene().getWindow());
 						if (out != null)
