@@ -33,6 +33,7 @@ public class Main extends Application {
 
 	@Override
 	public void start(Stage primaryStage) throws Exception {
+		Settings.getInstance();
 		Msg.setLogsDirectory(new File("logs"));
 		
 		primaryStage.setTitle("GAME 3.0 - The revenge (alpha)");

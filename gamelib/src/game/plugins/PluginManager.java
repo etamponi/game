@@ -17,10 +17,8 @@ import game.configuration.errorchecks.ListMustContainCheck;
 import game.utils.Utils;
 
 import java.io.File;
+import java.io.IOException;
 import java.lang.reflect.Modifier;
-import java.net.MalformedURLException;
-import java.net.URI;
-import java.net.URISyntaxException;
 import java.net.URL;
 import java.net.URLClassLoader;
 import java.util.LinkedList;
@@ -71,12 +69,12 @@ public class PluginManager extends Configurable {
 				URL[] urls = new URL[paths.size()];
 				int i = 0;
 				for(File path: paths)
-					urls[i++] = new URI(path.getAbsolutePath()).toURL();
+					urls[i++] = new URL("file", "localhost", path.getAbsolutePath());
 				loader = new URLClassLoader(urls, getClass().getClassLoader());
-			} catch (MalformedURLException | URISyntaxException e) {
+				conf.addUrls(urls);
+			} catch (IOException e) {
 				e.printStackTrace();
 			}
-			
 			conf.addClassLoader(loader);
 		}
 		
