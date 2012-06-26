@@ -8,7 +8,7 @@ import game.core.Experiment;
 import game.core.Graph;
 import game.core.GraphTrainer;
 import game.core.InstanceTemplate;
-import game.core.TemplateCompatibleList;
+import game.core.TemplateConstrainedList;
 import game.plugins.constraints.CompatibleWith;
 import game.utils.Msg;
 
@@ -26,7 +26,7 @@ public class SimpleExperiment extends Experiment {
 	
 	public DatasetBuilder testingDataset;
 	
-	public TemplateCompatibleList evaluators = new TemplateCompatibleList(this, Evaluator.class);
+	public TemplateConstrainedList evaluators = new TemplateConstrainedList(this, Evaluator.class);
 	
 	public SimpleExperiment() {
 		setOptionChecks("evaluators", new SizeCheck(1));

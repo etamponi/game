@@ -12,7 +12,8 @@ public class ProteinHECStructure extends SequenceTemplate {
 	
 	public ProteinHECStructure() {
 		atom = new LabelTemplate();
-		atom.setOption("labels", types);
+		for (String type: types)
+			atom.setOption("labels.add", type);
 		
 		setInternalOptions("atom");
 	}

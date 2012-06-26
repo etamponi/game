@@ -13,7 +13,8 @@ public class ProteinPrimaryStructure extends SequenceTemplate {
 	
 	public ProteinPrimaryStructure() {
 		atom = new LabelTemplate();
-		atom.setOption("labels", aminoacids);
+		for (String aminoacid: aminoacids)
+			atom.setOption("labels.add", aminoacid);
 		
 		setInternalOptions("atom");
 	}

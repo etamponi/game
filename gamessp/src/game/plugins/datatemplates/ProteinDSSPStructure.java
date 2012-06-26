@@ -13,7 +13,8 @@ public class ProteinDSSPStructure extends SequenceTemplate {
 	
 	public ProteinDSSPStructure() {
 		atom = new LabelTemplate();
-		atom.setOption("labels", types);
+		for (String type: types)
+			atom.setOption("labels.add", type);
 		
 		setInternalOptions("atom");
 	}

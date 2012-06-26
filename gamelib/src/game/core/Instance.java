@@ -16,6 +16,8 @@ public class Instance {
 	
 	private Object outputData;
 	
+	private Encoding predictionEncoding;
+	
 	private Object predictedData;
 	
 	public Instance() {
@@ -49,6 +51,14 @@ public class Instance {
 
 	public void setPredictedData(Object predictedData) {
 		this.predictedData = predictedData;
+	}
+
+	public Encoding getPredictionEncoding() {
+		return predictionEncoding;
+	}
+
+	public void setPredictionEncoding(Encoding predictionEncoding) {
+		this.predictionEncoding = predictionEncoding;
 	}
 
 }

@@ -4,18 +4,18 @@ import game.configuration.Configurable;
 import game.configuration.ConfigurableList;
 import game.plugins.constraints.CompatibleWith;
 
-public class TemplateCompatibleList extends ConfigurableList {
+public class TemplateConstrainedList extends ConfigurableList {
 	
 	public Object constraint;
 	
-	public TemplateCompatibleList() {
+	public TemplateConstrainedList() {
 		// DO NOT NEVER EVER USE (NEVER!) Necessary for ConfigurableConverter
 		
 		setOptionBinding("constraint", "*.template");
 		setOptionConstraint("*", new CompatibleWith(this, "constraint"));
 	}
 	
-	public TemplateCompatibleList(Configurable owner, Class content) {
+	public TemplateConstrainedList(Configurable owner, Class content) {
 		super(owner, content);
 		
 		setOptionBinding("constraint", "*.template");

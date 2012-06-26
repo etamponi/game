@@ -1,12 +1,12 @@
 package game.plugins.experiments;
 
-import game.configuration.ConfigurableList;
 import game.configuration.errorchecks.PositivenessCheck;
 import game.core.DatasetBuilder;
 import game.core.Evaluator;
 import game.core.Experiment;
 import game.core.Graph;
 import game.core.InstanceTemplate;
+import game.core.TemplateConstrainedList;
 import game.plugins.constraints.CompatibleWith;
 
 public class KFoldCrossValidation extends Experiment {
@@ -19,10 +19,12 @@ public class KFoldCrossValidation extends Experiment {
 	
 	public DatasetBuilder dataset;
 	
-	public ConfigurableList evaluators = new ConfigurableList(this, Evaluator.class);
+	public TemplateConstrainedList evaluators = new TemplateConstrainedList(this, Evaluator.class);
 	
 	public KFoldCrossValidation() {
-		setOptionBinding("template", "graph.template", "dataset.template");
+		setOptionBinding("template", "graph.template", 
+									 "dataset.template",
+									 "evaluators.constraint");
 		
 		setOptionConstraint("dataset", new CompatibleWith(this, "template"));
 		

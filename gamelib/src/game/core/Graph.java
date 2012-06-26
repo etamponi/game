@@ -25,8 +25,8 @@ public class Graph extends LongTask {
 	
 	public InstanceTemplate template; 
 
-	public TemplateCompatibleList classifiers = new TemplateCompatibleList(this, Classifier.class);
-	public TemplateCompatibleList inputEncoders = new TemplateCompatibleList(this, Encoder.class);
+	public TemplateConstrainedList classifiers = new TemplateConstrainedList(this, Classifier.class);
+	public TemplateConstrainedList inputEncoders = new TemplateConstrainedList(this, Encoder.class);
 	public ConfigurableList pipes = new ConfigurableList(this, Pipe.class);
 	
 	public Decoder decoder;
@@ -56,9 +56,9 @@ public class Graph extends LongTask {
 	protected Dataset classifyAll(Dataset dataset) {
 //		double singleIncrease = 1.0 / dataset.size();
 		for (Instance i: dataset) {
-			i.setPredictedData(
-					classify(i.getInputData())
-					);
+			Encoding encoding = outputClassifier.startTransform(i.getInputData());
+			i.setPredictionEncoding(encoding);
+			i.setPredictedData(decoder.decode(encoding));
 		}
 		return dataset;
 	}
