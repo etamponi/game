@@ -3,6 +3,7 @@ package game.plugins.datatemplates;
 import java.util.LinkedList;
 
 public class ProteinDSSPStructure extends SequenceTemplate {
+	
 	private static final LinkedList<String> types = new LinkedList<>();
 	
 	static {
