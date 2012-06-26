@@ -1,5 +1,6 @@
 package game.plugins.experiments;
 
+import game.configuration.errorchecks.SizeCheck;
 import game.core.Dataset;
 import game.core.DatasetBuilder;
 import game.core.Evaluator;
@@ -28,6 +29,8 @@ public class SimpleExperiment extends Experiment {
 	public TemplateCompatibleList evaluators = new TemplateCompatibleList(this, Evaluator.class);
 	
 	public SimpleExperiment() {
+		setOptionChecks("evaluators", new SizeCheck(1));
+		
 		setOptionBinding("template", "graph.template",
 									 "trainingDataset.template",
 									 "testingDataset.template",

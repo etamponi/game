@@ -16,12 +16,15 @@ import game.configuration.ConfigurableList;
 import game.configuration.errorchecks.ListMustContainCheck;
 import game.utils.Utils;
 
+import java.io.File;
 import java.lang.reflect.Modifier;
 import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.net.URLClassLoader;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Observable;
 import java.util.Observer;
 import java.util.Set;
@@ -38,7 +41,7 @@ public class PluginManager extends Configurable {
 	private Reflections internal;
 	
 	public ConfigurableList packages = new ConfigurableList(this, String.class);
-	public ConfigurableList paths = new ConfigurableList(this, String.class);
+	public ConfigurableList paths = new ConfigurableList(this, File.class);
 	
 	public PluginManager() {
 		setOptionChecks("packages", new ListMustContainCheck("game"));
@@ -48,7 +51,7 @@ public class PluginManager extends Configurable {
 			public void update(Observable o, Object m) {
 				if (m instanceof Change) {
 					Change change = (Change)m;
-					if (change.getPath().startsWith("packages.") || change.getPath().startsWith("paths.")) {
+					if (change.getPath().startsWith("packages") || change.getPath().startsWith("paths")) {
 						reset();	
 					}
 				}
@@ -61,13 +64,14 @@ public class PluginManager extends Configurable {
 	private void reset() {
 		ConfigurationBuilder conf = new ConfigurationBuilder();
 		
+		List<File> paths = getExistentPaths(this.paths.getList(File.class));
 		if (!paths.isEmpty()) {
 			ClassLoader loader = null;
 			try {
 				URL[] urls = new URL[paths.size()];
 				int i = 0;
-				for(String path: paths.getList(String.class))
-					urls[i++] = new URI(path).toURL();
+				for(File path: paths)
+					urls[i++] = new URI(path.getAbsolutePath()).toURL();
 				loader = new URLClassLoader(urls, getClass().getClassLoader());
 			} catch (MalformedURLException | URISyntaxException e) {
 				e.printStackTrace();
@@ -78,13 +82,25 @@ public class PluginManager extends Configurable {
 		
 		FilterBuilder filter = new FilterBuilder();
 		for (String p: packages.getList(String.class)) {
-			filter.include(FilterBuilder.prefix(p));
+			if (p != null && !p.isEmpty())
+				filter.include(FilterBuilder.prefix(p));
 		}
 		conf.filterInputsBy(filter);
 		
 		conf.addUrls(ClasspathHelper.forClassLoader());
 		
 		internal = new Reflections(conf);
+	}
+	
+	private List<File> getExistentPaths(List<File> paths) {
+		List<File> ret = new LinkedList<>();
+		
+		for (File file: paths) {
+			if (file != null && file.exists())
+				ret.add(file);
+		}
+		
+		return ret;
 	}
 	
 	public <T> SortedSet<Implementation<T>> getImplementationsOf(Class<T> base) {
