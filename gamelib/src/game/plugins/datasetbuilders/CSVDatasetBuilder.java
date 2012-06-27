@@ -61,7 +61,11 @@ public class CSVDatasetBuilder extends DatasetBuilder {
 		if (template instanceof VectorTemplate) {
 			double[] ret = new double[tokens.length];
 			for (int i = 0; i < ret.length; i++) {
-				ret[i] = Double.parseDouble(tokens[i]);
+				try {
+					ret[i] = Double.parseDouble(tokens[i]);
+				} catch (NumberFormatException e) {
+					e.printStackTrace();
+				}
 			}
 			return ret;
 		}

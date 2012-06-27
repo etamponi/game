@@ -10,14 +10,15 @@
  ******************************************************************************/
 package game.plugins.decoders;
 
-import java.util.Map.Entry;
-
 import game.core.Decoder;
 import game.core.Encoding;
 import game.core.blocks.Encoder;
 import game.plugins.encoders.LabelEncoder;
+import game.utils.Utils;
 
-public class LabelDecoder extends Decoder<LabelEncoder> {
+import java.util.Map.Entry;
+
+public class DistanceLabelDecoder extends Decoder<LabelEncoder> {
 
 	@Override
 	public Object decode(Encoding outputEncoded) {
@@ -26,7 +27,7 @@ public class LabelDecoder extends Decoder<LabelEncoder> {
 		double minDistance = Double.MAX_VALUE;
 		
 		for (Entry<String, double[]> entry: encoder.labelMapping.entrySet()) {
-			double distance = getDistance(enc, entry.getValue());
+			double distance = Utils.getDistance(enc, entry.getValue());
 			if (distance < minDistance) {
 				minDistance = distance;
 				ret = entry.getKey();
@@ -34,13 +35,6 @@ public class LabelDecoder extends Decoder<LabelEncoder> {
 		}
 		
 		return ret;
-	}
-	
-	private double getDistance(double[] v1, double[] v2) {
-		double ret = 0;
-		for (int i = 0; i < v1.length; i++)
-			ret += Math.pow(v1[i]-v2[i], 2);
-		return Math.sqrt(ret);
 	}
 
 	@Override

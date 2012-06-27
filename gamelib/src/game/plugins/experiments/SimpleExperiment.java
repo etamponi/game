@@ -1,22 +1,15 @@
 package game.plugins.experiments;
 
-import game.configuration.errorchecks.SizeCheck;
 import game.core.Dataset;
 import game.core.DatasetBuilder;
-import game.core.Evaluator;
+import game.core.Evaluation;
 import game.core.Experiment;
 import game.core.Graph;
 import game.core.GraphTrainer;
-import game.core.InstanceTemplate;
-import game.core.TemplateConstrainedList;
 import game.plugins.constraints.CompatibleWith;
 import game.utils.Msg;
 
-import java.util.Map;
-
 public class SimpleExperiment extends Experiment {
-	
-	public InstanceTemplate template;
 	
 	public Graph graph;
 	
@@ -25,16 +18,11 @@ public class SimpleExperiment extends Experiment {
 	public DatasetBuilder trainingDataset;
 	
 	public DatasetBuilder testingDataset;
-	
-	public TemplateConstrainedList evaluators = new TemplateConstrainedList(this, Evaluator.class);
-	
-	public SimpleExperiment() {
-		setOptionChecks("evaluators", new SizeCheck(1));
 		
+	public SimpleExperiment() {
 		setOptionBinding("template", "graph.template",
 									 "trainingDataset.template",
-									 "testingDataset.template",
-									 "evaluators.constraint");
+									 "testingDataset.template");
 		
 		setOptionConstraint("trainingDataset", new CompatibleWith(this, "template"));
 		setOptionConstraint("testingDataset", new CompatibleWith(this, "template"));
@@ -47,12 +35,11 @@ public class SimpleExperiment extends Experiment {
 		updateStatus(0.51, "training complete, beginning testing phase...");
 		Dataset testedDataset = startAnotherTaskAndWait(0.90, graph, Graph.CLASSIFYALLTASK, testingDataset.buildDataset());
 		updateStatus(0.91, "testing complete, beginning evaluation phase...");
-		double increase = 0.09 / evaluators.size();
-		for(Evaluator evaluator: evaluators.getList(Evaluator.class)) {
-			Map<String, Double> results = startAnotherTaskAndWait(getCurrentPercent()+increase, evaluator, Evaluator.TASKNAME, testedDataset);
-			for (String key: results.keySet())
-				Msg.data("%s.%s: %s = %6.5f", name, evaluator.name, key, results.get(key));
+		for(Evaluation evaluation: evaluations.getList(Evaluation.class)) {
+			evaluation.evaluate(this, testedDataset);
+			Msg.data(evaluation.prettyPrint());
 		}
+		updateStatus(1.00, "experiment completed.");
 	}
 
 }

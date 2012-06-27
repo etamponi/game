@@ -90,7 +90,7 @@ public class Msg {
 	}
 	
 	private static String writeLog(Logger logger, String format, Object... args) {
-		String ret = String.format(format, args);
+		String ret = args.length == 0 ? format : String.format(format, args);
 		logger.info(ret);
 		return ret;
 	}

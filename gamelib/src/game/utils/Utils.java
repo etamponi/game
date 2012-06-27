@@ -23,9 +23,22 @@ public class Utils {
 		return isConcrete(type) && base.isAssignableFrom(type);
 	}
 	
+	
+	public static double getDistance(double[] v1, double[] v2) {
+		double ret = 0;
+		for (int i = 0; i < v1.length; i++)
+			ret += Math.pow(v1[i]-v2[i], 2);
+		return Math.sqrt(ret);
+	}
+	
 	public static void sumTo(double[] to, double[] from) {
 		for (int i = 0; i < to.length; i++)
 			to[i] += from[i];
+	}
+	
+	public static void subtractTo(double[] to, double[] from) {
+		for (int i = 0; i < to.length; i++)
+			to[i] -= from[i];
 	}
 	
 	public static void scale(double[] v, double factor) {
