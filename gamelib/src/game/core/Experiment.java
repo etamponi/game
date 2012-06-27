@@ -52,6 +52,7 @@ public abstract class Experiment extends LongTask {
 	protected Object execute(Object... params) {
 		if (getTaskType().equals(TASKNAME)) {
 			Experiment clone = cloneConfiguration();
+			clone.name = name;
 			clone.runExperiment();
 			return clone;
 		} else {
