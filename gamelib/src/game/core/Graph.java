@@ -11,7 +11,7 @@
 package game.core;
 
 import game.configuration.ConfigurableList;
-import game.core.blocks.Classifier;
+import game.core.blocks.Transducer;
 import game.core.blocks.Encoder;
 import game.core.blocks.Pipe;
 import game.plugins.constraints.CompatibleWith;
@@ -25,12 +25,12 @@ public class Graph extends LongTask {
 	
 	public InstanceTemplate template; 
 
-	public TemplateConstrainedList classifiers = new TemplateConstrainedList(this, Classifier.class);
+	public TemplateConstrainedList classifiers = new TemplateConstrainedList(this, Transducer.class);
 	public TemplateConstrainedList inputEncoders = new TemplateConstrainedList(this, Encoder.class);
 	public ConfigurableList pipes = new ConfigurableList(this, Pipe.class);
 	
 	public Decoder decoder;
-	public Classifier outputClassifier;
+	public Transducer outputClassifier;
 	
 	public Graph() {
 		setOptionBinding("template", 						"classifiers.constraint");

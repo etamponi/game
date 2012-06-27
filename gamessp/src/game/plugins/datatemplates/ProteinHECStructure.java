@@ -1,14 +1,9 @@
 package game.plugins.datatemplates;
 
-import java.util.LinkedList;
 
 public class ProteinHECStructure extends SequenceTemplate {
-	private static final LinkedList<String> types = new LinkedList<>();
 	
-	static {
-		for (String type: "H E C".split(" "))
-			types.add(type);
-	}
+	private static final String[] types = "H E C".split(" ");
 	
 	public ProteinHECStructure() {
 		atom = new LabelTemplate();

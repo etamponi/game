@@ -12,7 +12,7 @@ package game.plugins.editors.graph;
 
 import game.core.Block;
 import game.core.Graph;
-import game.core.blocks.Classifier;
+import game.core.blocks.Transducer;
 import game.core.blocks.Encoder;
 import game.core.blocks.Pipe;
 import game.main.Settings;
@@ -147,7 +147,7 @@ public class GraphPane extends ScrollPane {
 					fixPosition(node);
 					
 					Block block = node.getBlock();
-					if (block instanceof Classifier && !graph.classifiers.contains(block))
+					if (block instanceof Transducer && !graph.classifiers.contains(block))
 						graph.setOption("classifiers.add", block);
 					if (block instanceof Encoder && !graph.inputEncoders.contains(block))
 						graph.setOption("inputEncoders.add", block);
@@ -352,7 +352,7 @@ public class GraphPane extends ScrollPane {
 			});
 		}
 		
-		if (node.getBlock() instanceof Classifier) {
+		if (node.getBlock() instanceof Transducer) {
 			node.addEventHandler(MouseEvent.MOUSE_CLICKED, new EventHandler<MouseEvent>() {
 				@Override
 				public void handle(MouseEvent event) {
@@ -444,7 +444,7 @@ public class GraphPane extends ScrollPane {
 	}
 
 	public void removeBlock(Block block) {
-		if (block instanceof Classifier) {
+		if (block instanceof Transducer) {
 			graph.setOption("classifiers.remove", block);
 			if (graph.outputClassifier == block)
 				graph.setOption("outputClassifier", null);

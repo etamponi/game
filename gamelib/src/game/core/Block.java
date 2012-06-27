@@ -40,14 +40,14 @@ public abstract class Block extends LongTask {
 	
 	public abstract boolean isTrained();
 	
-	protected abstract double train(Dataset trainingSet);
+	protected abstract void train(Dataset trainingSet);
 	
 	protected abstract Encoding transform(Object inputData);
 	
 	public abstract boolean acceptsNewParents();
 	
-	public double startTraining(Dataset trainingSet) {
-		return startTask(TRAININGTASK, trainingSet);
+	public void startTraining(Dataset trainingSet) {
+		startTask(TRAININGTASK, trainingSet);
 	}
 	
 	public Encoding startTransform(Object inputData) {
@@ -56,9 +56,10 @@ public abstract class Block extends LongTask {
 	
 	@Override
 	protected Object execute(Object... params) {
-		if (!isTrained() && getTaskType().equals(TRAININGTASK))
-			return train((Dataset)params[0]);
-		else if (isTrained() && getTaskType().equals(TRANSFORMTASK))
+		if (!isTrained() && getTaskType().equals(TRAININGTASK)) {
+			train((Dataset)params[0]);
+			return null;
+		} else if (isTrained() && getTaskType().equals(TRANSFORMTASK))
 			return transform(params[0]);
 		else
 			return null;

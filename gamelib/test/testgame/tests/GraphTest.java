@@ -19,7 +19,7 @@ import game.core.Decoder;
 import game.core.Encoding;
 import game.core.Graph;
 import game.core.InstanceTemplate;
-import game.core.blocks.Classifier;
+import game.core.blocks.Transducer;
 import game.core.blocks.Encoder;
 import game.plugins.Implementation;
 import game.plugins.PluginManager;
@@ -85,14 +85,14 @@ public class GraphTest {
 		}
 	}
 	
-	public static class ClassifierImplA extends Classifier {
+	public static class ClassifierImplA extends Transducer {
 		@Override
 		public boolean isTrained() {
 			return false;
 		}
 		@Override
-		protected double train(Dataset trainingSet) {
-			return 0;
+		protected void train(Dataset trainingSet) {
+			
 		}
 		@Override
 		protected Encoding transform(Object inputData) {
@@ -104,14 +104,14 @@ public class GraphTest {
 		}
 	}
 	
-	public static class ClassifierImplB extends Classifier {
+	public static class ClassifierImplB extends Transducer {
 		@Override
 		public boolean isTrained() {
 			return false;
 		}
 		@Override
-		protected double train(Dataset trainingSet) {
-			return 0;
+		protected void train(Dataset trainingSet) {
+			
 		}
 		@Override
 		protected Encoding transform(Object inputData) {

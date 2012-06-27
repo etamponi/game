@@ -16,7 +16,7 @@ public abstract class Pipe extends Block {
 	}
 
 	@Override
-	protected double train(Dataset trainingSet) {
+	protected void train(Dataset trainingSet) {
 		throw new UnsupportedOperationException("You cannot train a Pipe!");
 	}
 

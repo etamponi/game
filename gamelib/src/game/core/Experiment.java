@@ -43,9 +43,5 @@ public abstract class Experiment extends LongTask {
 			runExperiment();
 		return null;
 	}
-	
-	public void println(String msg, Object... args) {
-		
-	}
 
 }

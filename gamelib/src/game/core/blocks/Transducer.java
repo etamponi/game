@@ -11,34 +11,28 @@
 package game.core.blocks;
 
 import game.configuration.errorchecks.CompatibilityCheck;
-import game.configuration.errorchecks.SizeCheck;
 import game.core.Block;
-import game.core.DataTemplate;
-import game.core.Dataset;
+import game.core.InstanceTemplate;
 import game.plugins.constraints.Compatible;
+import game.plugins.constraints.CompatibleWith;
 
-public abstract class Encoder<DT extends DataTemplate> extends Block implements Compatible<DataTemplate> {
+public abstract class Transducer extends Block implements Compatible<InstanceTemplate> {
 	
-	public DT template;
+	public InstanceTemplate template;
 	
-	public Encoder() {
-		setOptionChecks("parents", new SizeCheck(0, 0));
+	public Encoder outputEncoder;
+	
+	public Transducer() {
+		setOptionBinding("template.outputTemplate", "outputEncoder.template");
+		
 		setOptionChecks("template", new CompatibilityCheck(this));
+		
+		setOptionConstraint("outputEncoder", new CompatibleWith(this, "template.outputTemplate"));
 	}
 
-	@Override
-	public boolean isTrained() {
-		return true;
-	}
-
-	@Override
-	protected void train(Dataset trainingSet) {
-		throw new UnsupportedOperationException("You cannot train an Encoder!");
-	}
-	
 	@Override
 	public boolean acceptsNewParents() {
-		return false;
+		return !isTrained();
 	}
 
 }

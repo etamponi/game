@@ -26,9 +26,8 @@ public class AveragingCombiner extends Combiner {
 	}
 
 	@Override
-	protected double train(Dataset trainingSet) {
+	protected void train(Dataset trainingSet) {
 		trained = true;
-		return 1.0;
 	}
 
 	@Override

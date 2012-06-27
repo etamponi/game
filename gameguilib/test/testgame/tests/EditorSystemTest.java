@@ -17,7 +17,7 @@ import game.core.Dataset;
 import game.core.Encoding;
 import game.core.Graph;
 import game.core.InstanceTemplate;
-import game.core.blocks.Classifier;
+import game.core.blocks.Transducer;
 import game.core.blocks.Encoder;
 import game.editorsystem.Editor;
 import game.editorsystem.Option;
@@ -91,7 +91,7 @@ public class EditorSystemTest extends Application {
 		
 	}
 	
-	public static class ClassifierA extends Classifier {
+	public static class ClassifierA extends Transducer {
 
 		@Override
 		public boolean isTrained() {
@@ -99,8 +99,8 @@ public class EditorSystemTest extends Application {
 		}
 
 		@Override
-		protected double train(Dataset trainingSet) {
-			return 0;
+		protected void train(Dataset trainingSet) {
+			
 		}
 
 		@Override
@@ -115,7 +115,7 @@ public class EditorSystemTest extends Application {
 		
 	}
 	
-	public static class ClassifierB extends Classifier {
+	public static class ClassifierB extends Transducer {
 
 		@Override
 		public boolean isTrained() {
@@ -123,8 +123,8 @@ public class EditorSystemTest extends Application {
 		}
 
 		@Override
-		protected double train(Dataset trainingSet) {
-			return 0;
+		protected void train(Dataset trainingSet) {
+			
 		}
 
 		@Override

@@ -23,4 +23,14 @@ public class Utils {
 		return isConcrete(type) && base.isAssignableFrom(type);
 	}
 	
+	public static void sumTo(double[] to, double[] from) {
+		for (int i = 0; i < to.length; i++)
+			to[i] += from[i];
+	}
+	
+	public static void scale(double[] v, double factor) {
+		for (int i = 0; i < v.length; i++)
+			v[i] *= factor;
+	}
+	
 }
