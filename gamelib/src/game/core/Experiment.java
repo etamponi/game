@@ -13,7 +13,6 @@ package game.core;
 import game.configuration.errorchecks.SizeCheck;
 import game.utils.Msg;
 
-import java.util.List;
 import java.util.Observable;
 import java.util.Observer;
 
@@ -43,7 +42,7 @@ public abstract class Experiment extends LongTask {
 		setInternalOptions("resultsReady");
 	}
 	
-	public List<Evaluation> startExperiment() {
+	public Experiment startExperiment() {
 		return startTask(TASKNAME);
 	}
 	
@@ -54,7 +53,7 @@ public abstract class Experiment extends LongTask {
 		if (getTaskType().equals(TASKNAME)) {
 			Experiment clone = cloneConfiguration();
 			clone.runExperiment();
-			return clone.evaluations.getList(Evaluation.class);
+			return clone;
 		} else {
 			return null;
 		}

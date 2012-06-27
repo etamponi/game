@@ -20,7 +20,7 @@ import javafx.event.Event;
 import javafx.event.EventType;
 
 @SuppressWarnings("deprecation")
-public class ExperimentService extends Service<Void> {
+public class ExperimentService extends Service<Experiment> {
 	
 	public static final EventType<Event> FINISHED = new EventType<>();
 	
@@ -102,10 +102,10 @@ public class ExperimentService extends Service<Void> {
 	}
 
 	@Override
-	protected Task<Void> createTask() {
-		return new Task<Void>() {
+	protected Task<Experiment> createTask() {
+		return new Task<Experiment>() {
 			@Override
-			protected Void call() throws Exception {
+			protected Experiment call() throws Exception {
 				final Experiment e = experiments.get(counter.get());
 				Msg.setLogPrefix(e.name);
 				Observer o = new Observer() {
@@ -121,9 +121,9 @@ public class ExperimentService extends Service<Void> {
 					}
 				};
 				e.addObserver(o);
-				e.startExperiment();
+				Experiment ret = e.startExperiment();
 				e.deleteObserver(o);
-				return null;
+				return ret;
 			}
 		};
 	}
@@ -131,6 +131,7 @@ public class ExperimentService extends Service<Void> {
 	@Override
 	protected void succeeded() {
 		super.succeeded();
+		controller.addCompletedExperiment(getValue());
 		counter.set(counter.get()+1);
 		if (counter.get() < experiments.size()) {
 			reset();

@@ -1,5 +1,7 @@
 package game.main;
 
+import game.core.Experiment;
+
 import java.net.URL;
 import java.util.ResourceBundle;
 
@@ -17,6 +19,10 @@ public class ResultListController implements Initializable {
 	public void initialize(URL location, ResourceBundle resources) {
 		// TODO Auto-generated method stub
 
+	}
+	
+	public void addCompletedExperiment(Experiment e) {
+		
 	}
 	
 	@FXML
