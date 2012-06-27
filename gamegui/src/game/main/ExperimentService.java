@@ -44,7 +44,9 @@ public class ExperimentService extends Service<Void> {
 	
 	private IntegerProperty counter = new SimpleIntegerProperty(0);
 	private StringProperty currentExperiment = new SimpleStringProperty("");
+	
 	private List<Experiment> experiments;
+	private ResultListController controller;
 	
 	private boolean paused = false;
 	private boolean stopped = false;
@@ -80,7 +82,8 @@ public class ExperimentService extends Service<Void> {
 		return stopped;
 	}
 	
-	public void start(ConfigurableList list) {
+	public void start(ConfigurableList list, ResultListController controller) {
+		this.controller = controller; 
 		experiments = list.getList(Experiment.class);
 		counter.set(0);
 		currentExperiment.set(experiments.get(0).toString());

@@ -36,7 +36,7 @@ public class SimpleExperiment extends Experiment {
 		Dataset testedDataset = startAnotherTaskAndWait(0.90, graph, Graph.CLASSIFYALLTASK, testingDataset.buildDataset());
 		updateStatus(0.91, "testing complete, beginning evaluation phase...");
 		for(Evaluation evaluation: evaluations.getList(Evaluation.class)) {
-			evaluation.evaluate(this, testedDataset);
+			evaluation.evaluate(testedDataset);
 			Msg.data(evaluation.prettyPrint());
 		}
 		updateStatus(1.00, "experiment completed.");

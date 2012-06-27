@@ -1,8 +1,7 @@
-package game.plugins.evaluators;
+package game.plugins.evaluations;
 
 import game.core.Dataset;
 import game.core.Evaluation;
-import game.core.Experiment;
 import game.core.Instance;
 import game.core.InstanceTemplate;
 import game.plugins.datatemplates.LabelTemplate;
@@ -16,10 +15,10 @@ public class Precision extends Evaluation {
 	
 	public double overallPrecision = 0;
 	
-	public Experiment experiment;
+	public boolean ready = false;
 	
 	public Precision() {
-		setInternalOptions("precisionPerLabel", "overallPrecision", "experiment");
+		setInternalOptions("precisionPerLabel", "overallPrecision", "ready");
 	}
 	
 	@Override
@@ -28,7 +27,7 @@ public class Precision extends Evaluation {
 	}
 
 	@Override
-	public void evaluate(Experiment e, Dataset dataset) {
+	public void evaluate(Dataset dataset) {
 		List<String> labels = template.getOption("outputTemplate.labels");
 		
 		List<Double> singleTP = new LinkedList<>();
@@ -56,19 +55,18 @@ public class Precision extends Evaluation {
 		}
 		overallPrecision = TP / dataset.size();
 		
-		experiment = e;
+		ready = true;
 	}
 
 	@Override
 	public boolean isReady() {
-		return experiment != null;
+		return ready;
 	}
 
 	@Override
 	public String prettyPrint() {
 		StringBuilder ret = new StringBuilder();
 		
-		ret.append("Precision for experiment: " + experiment + "\n");
 		ret.append("Per label precision: ");
 		for (String label: (List<String>)template.getOption("outputTemplate.labels"))
 			ret.append(String.format("%20s", label));

@@ -7,11 +7,11 @@
 <?import javafx.scene.paint.*?>
 <?import javafx.scene.text.*?>
 
-<AnchorPane id="AnchorPane" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="300.0" prefWidth="400.0" xmlns:fx="http://javafx.com/fxml" fx:controller="game.main.MainController">
+<AnchorPane id="AnchorPane" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="450.0" prefWidth="400.0" xmlns:fx="http://javafx.com/fxml" fx:controller="game.main.MainController">
   <children>
-    <VBox id="VBox" alignment="CENTER" spacing="5.0" AnchorPane.bottomAnchor="14.0" AnchorPane.leftAnchor="14.0" AnchorPane.rightAnchor="14.0" AnchorPane.topAnchor="14.0">
+    <VBox id="VBox" fx:id="root" alignment="CENTER" spacing="5.0" AnchorPane.bottomAnchor="14.0" AnchorPane.leftAnchor="14.0" AnchorPane.rightAnchor="14.0" AnchorPane.topAnchor="14.0">
       <children>
-        <VBox fx:id="root" VBox.vgrow="ALWAYS" />
+        <VBox id="root" fx:id="experimentsRoot" VBox.vgrow="ALWAYS" />
         <HBox id="HBox" alignment="CENTER" prefWidth="372.0" spacing="5.0">
           <children>
             <Button fx:id="startButton" onAction="#onStart" prefWidth="70.0" text="Start" />

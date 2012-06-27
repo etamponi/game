@@ -13,6 +13,7 @@ package game.core;
 import game.configuration.errorchecks.SizeCheck;
 import game.utils.Msg;
 
+import java.util.List;
 import java.util.Observable;
 import java.util.Observer;
 
@@ -22,8 +23,6 @@ public abstract class Experiment extends LongTask {
 	public static final String TASKNAME = "experiment";
 	
 	public InstanceTemplate template;
-	
-	public boolean resultsReady = false;
 	
 	public TemplateConstrainedList evaluations = new TemplateConstrainedList(this, Evaluation.class);
 	
@@ -44,8 +43,8 @@ public abstract class Experiment extends LongTask {
 		setInternalOptions("resultsReady");
 	}
 	
-	public void startExperiment() {
-		startTask(TASKNAME);
+	public List<Evaluation> startExperiment() {
+		return startTask(TASKNAME);
 	}
 	
 	protected abstract void runExperiment();
@@ -53,10 +52,12 @@ public abstract class Experiment extends LongTask {
 	@Override
 	protected Object execute(Object... params) {
 		if (getTaskType().equals(TASKNAME)) {
-			runExperiment();
-			resultsReady = true;
+			Experiment clone = cloneConfiguration();
+			clone.runExperiment();
+			return clone.evaluations.getList(Evaluation.class);
+		} else {
+			return null;
 		}
-		return null;
 	}
 
 }

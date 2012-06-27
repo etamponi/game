@@ -11,6 +11,7 @@ import game.plugins.editors.ConfigurableEditor;
 import game.plugins.editors.ConfigurableEditor.SerializationEditor;
 import game.plugins.editors.configurablelist.ConfigurableListEditor;
 
+import java.io.IOException;
 import java.net.URL;
 import java.util.Observable;
 import java.util.ResourceBundle;
@@ -22,9 +23,12 @@ import javafx.event.ActionEvent;
 import javafx.event.Event;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
+import javafx.fxml.JavaFXBuilderFactory;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
+import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
@@ -41,10 +45,14 @@ public class MainController extends Configurable implements Initializable {
 	
 	private Option model = new Option(new ConfigurableList(this, Experiment.class));
 	
-	ExperimentService service;
+	private ExperimentService service;
+	
+	private ResultListController resultListController;
 
 	@FXML
 	private VBox root;
+	@FXML
+	private VBox experimentsRoot;
 	@FXML
 	private Button startButton;
 	@FXML
@@ -69,11 +77,25 @@ public class MainController extends Configurable implements Initializable {
 		
 		Editor editor = new ConfigurableListEditor();
 		editor.setModel(model);
-		root.getChildren().addAll(serialization.getView(), editor.getView());
-		root.setSpacing(10);
-		root.setStyle("-fx-border-color:-fx-color; -fx-padding: 0px 0px 5px 0px;");
+		experimentsRoot.getChildren().addAll(serialization.getView(), editor.getView());
+		experimentsRoot.setSpacing(10);
+		experimentsRoot.setStyle("-fx-border-color:-fx-color; -fx-padding: 0px 0px 5px 0px;");
 		VBox.setVgrow(editor.getView(), Priority.ALWAYS);
 		disableButtons(true, true, true);
+		
+		try {
+			location = getClass().getResource("ResultListView.fxml");
+	
+			FXMLLoader fxmlLoader = new FXMLLoader();
+			fxmlLoader.setLocation(location);
+			fxmlLoader.setBuilderFactory(new JavaFXBuilderFactory());
+
+			Parent parent = (Parent)fxmlLoader.load(location.openStream());
+			resultListController = fxmlLoader.getController();
+			root.getChildren().add(parent);
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 	}
 	
 	private void addPluginManagerEditorToToolBar(ToolBar toolbar) {
@@ -119,7 +141,7 @@ public class MainController extends Configurable implements Initializable {
 			}
 		});
 
-		service.start(experiments);
+		service.start(experiments, resultListController);
 		disableButtons(true, false, false);
 	}
 	

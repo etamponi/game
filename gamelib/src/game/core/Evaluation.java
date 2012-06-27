@@ -15,7 +15,7 @@ public abstract class Evaluation extends Configurable implements Compatible<Inst
 	
 	public abstract boolean isReady();
 	
-	public abstract void evaluate(Experiment e, Dataset dataset);
+	public abstract void evaluate(Dataset dataset);
 	
 	public abstract String prettyPrint();
 	
