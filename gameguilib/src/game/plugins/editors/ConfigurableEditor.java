@@ -48,6 +48,10 @@ public class ConfigurableEditor extends Editor {
 		private final Image LOADCONFIGURATION = new Image(getClass().getResourceAsStream("loadConfiguration.png"));
 		
 		private ToolBar line = new ToolBar();
+		
+		public SerializationEditor() {
+			line.getItems().addAll(new Button(), new Button());
+		}
 
 		@Override
 		public Node getView() {
@@ -62,9 +66,8 @@ public class ConfigurableEditor extends Editor {
 		@Override
 		public void connectView() {
 			if (getModel() != null) {
-				line.getItems().clear();
-				line.getItems().addAll(makeSaveAndLoadConfiguration("SAVE"),
-									   makeSaveAndLoadConfiguration("LOAD"));
+				line.getItems().set(0, makeSaveAndLoadConfiguration("SAVE"));
+				line.getItems().set(1, makeSaveAndLoadConfiguration("LOAD"));
 			}
 		}
 
@@ -112,7 +115,7 @@ public class ConfigurableEditor extends Editor {
 		
 		@Override
 		public void updateView(Change change) {
-			// Nothing to update
+			
 		}
 
 		@Override

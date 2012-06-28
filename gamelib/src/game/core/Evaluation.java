@@ -4,9 +4,9 @@ import game.configuration.Configurable;
 import game.configuration.errorchecks.CompatibilityCheck;
 import game.plugins.constraints.Compatible;
 
-public abstract class Evaluation extends Configurable implements Compatible<InstanceTemplate> {
+public abstract class Evaluation extends Configurable implements Compatible<Experiment> {
 	
-	public InstanceTemplate template;
+	public Experiment experiment;
 	
 	public Evaluation() {
 		name = getClass().getSimpleName();

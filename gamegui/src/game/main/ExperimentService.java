@@ -114,9 +114,9 @@ public class ExperimentService extends Service<Experiment> {
 						if (m instanceof LongTaskUpdate) {
 							updateMessage(e.getCurrentMessage());
 							updateProgress((long)(e.getCurrentPercent()*100), 100);
-//							try {
-//								Thread.sleep(100);
-//							} catch (InterruptedException e) {}
+							try {
+								Thread.sleep(100);
+							} catch (InterruptedException e) {}
 						}
 					}
 				};

@@ -2,8 +2,9 @@ package game.plugins.evaluations;
 
 import game.core.Dataset;
 import game.core.Evaluation;
+import game.core.Experiment;
 import game.core.Instance;
-import game.core.InstanceTemplate;
+import game.core.experiments.FullExperiment;
 import game.plugins.datatemplates.LabelTemplate;
 
 import java.util.LinkedList;
@@ -22,13 +23,14 @@ public class Precision extends Evaluation {
 	}
 	
 	@Override
-	public boolean isCompatible(InstanceTemplate template) {
-		return template.outputTemplate instanceof LabelTemplate;
+	public boolean isCompatible(Experiment experiment) {
+		return experiment instanceof FullExperiment &&
+				experiment.template.outputTemplate instanceof LabelTemplate;
 	}
 
 	@Override
 	public void evaluate(Dataset dataset) {
-		List<String> labels = template.getOption("outputTemplate.labels");
+		List<String> labels = experiment.template.getOption("outputTemplate.labels");
 		
 		List<Double> singleTP = new LinkedList<>();
 		List<Double> singleP = new LinkedList<>();
@@ -68,7 +70,7 @@ public class Precision extends Evaluation {
 		StringBuilder ret = new StringBuilder();
 		
 		ret.append("Per label precision: ");
-		for (String label: (List<String>)template.getOption("outputTemplate.labels"))
+		for (String label: (List<String>)experiment.template.getOption("outputTemplate.labels"))
 			ret.append(String.format("%20s", label));
 		ret.append("    -----    Overall\n");
 		ret.append("                     ");

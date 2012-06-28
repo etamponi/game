@@ -3,25 +3,20 @@ package game.plugins.experiments;
 import game.core.Dataset;
 import game.core.DatasetBuilder;
 import game.core.Evaluation;
-import game.core.Experiment;
 import game.core.Graph;
 import game.core.GraphTrainer;
+import game.core.experiments.FullExperiment;
 import game.plugins.constraints.CompatibleWith;
 import game.utils.Msg;
 
-public class SimpleExperiment extends Experiment {
-	
-	public Graph graph;
-	
-	public GraphTrainer trainer;
+public class SimpleExperiment extends FullExperiment {
 
 	public DatasetBuilder trainingDataset;
 	
 	public DatasetBuilder testingDataset;
 		
 	public SimpleExperiment() {
-		setOptionBinding("template", "graph.template",
-									 "trainingDataset.template",
+		setOptionBinding("template", "trainingDataset.template",
 									 "testingDataset.template");
 		
 		setOptionConstraint("trainingDataset", new CompatibleWith(this, "template"));
