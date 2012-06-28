@@ -1,3 +1,13 @@
+/*******************************************************************************
+ * Copyright (c) 2012 Emanuele Tamponi.
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the GNU Public License v3.0
+ * which accompanies this distribution, and is available at
+ * http://www.gnu.org/licenses/gpl.html
+ * 
+ * Contributors:
+ *     Emanuele Tamponi - initial API and implementation
+ ******************************************************************************/
 package game.plugins.evaluations;
 
 import game.core.Dataset;
@@ -29,7 +39,8 @@ public class Recall extends Evaluation {
 	}
 
 	@Override
-	public void evaluate(Dataset dataset) {
+	public void evaluate(Dataset... folds) { // FIXME Use folds instead of only one dataset
+		Dataset dataset = folds[0];
 		List<String> labels = experiment.template.getOption("outputTemplate.labels");
 		
 		List<Double> singleTP = new LinkedList<>();

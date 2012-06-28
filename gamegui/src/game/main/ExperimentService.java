@@ -1,3 +1,13 @@
+/*******************************************************************************
+ * Copyright (c) 2012 Emanuele Tamponi.
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the GNU Public License v3.0
+ * which accompanies this distribution, and is available at
+ * http://www.gnu.org/licenses/gpl.html
+ * 
+ * Contributors:
+ *     Emanuele Tamponi - initial API and implementation
+ ******************************************************************************/
 package game.main;
 
 import game.configuration.ConfigurableList;
@@ -114,9 +124,9 @@ public class ExperimentService extends Service<Experiment> {
 						if (m instanceof LongTaskUpdate) {
 							updateMessage(e.getCurrentMessage());
 							updateProgress((long)(e.getCurrentPercent()*100), 100);
-							try {
-								Thread.sleep(100);
-							} catch (InterruptedException e) {}
+//							try {
+//								Thread.sleep(100);
+//							} catch (InterruptedException e) {}
 						}
 					}
 				};

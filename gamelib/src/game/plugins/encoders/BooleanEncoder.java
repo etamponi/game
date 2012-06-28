@@ -8,23 +8,33 @@
  * Contributors:
  *     Emanuele Tamponi - initial API and implementation
  ******************************************************************************/
-package game.core.blocks;
+package game.plugins.encoders;
 
-import game.configuration.errorchecks.SizeCheck;
+import game.core.DataTemplate;
 import game.core.Encoding;
+import game.core.blocks.Encoder;
+import game.plugins.datatemplates.LabelTemplate;
 
+public class BooleanEncoder extends Encoder<LabelTemplate> {
 
-public abstract class Classifier extends Transducer {
-	
-	public Classifier() {
-		setOptionChecks("parents", new SizeCheck(1, 1));
+	@Override
+	public boolean isCompatible(DataTemplate template) {
+		return template instanceof LabelTemplate &&
+				((LabelTemplate)template).labels.size() == 2;
 	}
-	
-	protected abstract Encoding classify(Encoding inputEncoded);
 
 	@Override
 	protected Encoding transform(Object inputData) {
-		return classify(getParentEncoding(0, inputData));
+		Encoding ret = new Encoding();
+		
+		double[] element = new double[1];
+		if (inputData.equals(template.labels.get(0)))
+			element[0] = 1;
+		else
+			element[0] = 0;
+		ret.add(element);
+		
+		return ret;
 	}
 
 }

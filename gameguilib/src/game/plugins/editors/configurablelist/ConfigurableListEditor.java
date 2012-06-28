@@ -10,10 +10,20 @@
  ******************************************************************************/
 package game.plugins.editors.configurablelist;
 
+import javafx.scene.Node;
+import javafx.scene.layout.GridPane;
+import javafx.scene.layout.Priority;
 import game.configuration.ConfigurableList;
 import game.editorsystem.ControlledEditor;
 
 public class ConfigurableListEditor extends ControlledEditor {
+	
+	@Override
+	public Node getView() {
+		Node view = super.getView();
+		GridPane.setVgrow(view, Priority.SOMETIMES);
+		return view;
+	}
 
 	@Override
 	public Class getBaseEditableClass() {

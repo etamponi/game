@@ -1,3 +1,13 @@
+/*******************************************************************************
+ * Copyright (c) 2012 Emanuele Tamponi.
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the GNU Public License v3.0
+ * which accompanies this distribution, and is available at
+ * http://www.gnu.org/licenses/gpl.html
+ * 
+ * Contributors:
+ *     Emanuele Tamponi - initial API and implementation
+ ******************************************************************************/
 package game.main;
 
 import game.core.Evaluation;
@@ -20,6 +30,7 @@ public class ResultListController implements Initializable {
 	@Override
 	public void initialize(URL location, ResourceBundle resources) {
 		resultsView.setRoot(new TreeItem("Results"));
+		resultsView.getRoot().setExpanded(true);
 	}
 	
 	public void addCompletedExperiment(Experiment e) {
@@ -33,12 +44,19 @@ public class ResultListController implements Initializable {
 	
 	@FXML
 	public void onShow(ActionEvent event) {
-		
+		TreeItem selected = (TreeItem)resultsView.getSelectionModel().getSelectedItem();
+		if (selected.getValue() instanceof Evaluation) {
+			TextViewer viewer = new TextViewer((Evaluation)selected.getValue());
+			viewer.show();
+		}
 	}
 	
 	@FXML
 	public void onRemove(ActionEvent event) {
-		
+		TreeItem selected = (TreeItem)resultsView.getSelectionModel().getSelectedItem();
+		if (selected.getValue() instanceof Experiment) {
+			resultsView.getRoot().getChildren().remove(selected);
+		}
 	}
 	
 	@FXML

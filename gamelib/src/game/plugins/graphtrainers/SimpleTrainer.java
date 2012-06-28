@@ -1,3 +1,13 @@
+/*******************************************************************************
+ * Copyright (c) 2012 Emanuele Tamponi.
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the GNU Public License v3.0
+ * which accompanies this distribution, and is available at
+ * http://www.gnu.org/licenses/gpl.html
+ * 
+ * Contributors:
+ *     Emanuele Tamponi - initial API and implementation
+ ******************************************************************************/
 package game.plugins.graphtrainers;
 
 import game.core.Block;
@@ -25,8 +35,6 @@ public class SimpleTrainer extends GraphTrainer {
 	}
 
 	private void recursivelyTrainGraph(Block current, Dataset trainingSet) {
-		// TODO use updateStatus and startAnotherTaskAndWait
-		
 		for (Block parent: current.parents.getList(Block.class))
 			recursivelyTrainGraph(parent, trainingSet);
 
