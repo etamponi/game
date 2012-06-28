@@ -17,10 +17,16 @@ import com.thoughtworks.xstream.io.HierarchicalStreamReader;
 import com.thoughtworks.xstream.io.HierarchicalStreamWriter;
 
 class ConfigurationConverter implements Converter {
+	
+	private ClassLoader classLoader = getClass().getClassLoader();
 
 	@Override
 	public boolean canConvert(Class type) {
 		return Configurable.class.isAssignableFrom(type);
+	}
+	
+	public void setClassLoader(ClassLoader loader) {
+		this.classLoader = loader;
 	}
 
 	@Override
@@ -49,6 +55,7 @@ class ConfigurationConverter implements Converter {
 	public Object unmarshal(HierarchicalStreamReader reader,
 			UnmarshallingContext context) {
 		Configurable object = null;
+		
 		try {
 			object = (Configurable)(context.currentObject() != null ? context.currentObject() 
 																	: context.getRequiredType().newInstance());
@@ -58,7 +65,7 @@ class ConfigurationConverter implements Converter {
 				if (optionName.startsWith("__"))
 					optionName = optionName.substring(2);
 				String className = reader.getAttribute("class");
-				Class optionType = className != null ? Class.forName(className) : object.getOptionType(optionName);
+				Class optionType = className != null ? classLoader.loadClass(className) : object.getOptionType(optionName);
 				object.setOption(optionName, context.convertAnother(object, optionType));
 				reader.moveUp();
 			}

@@ -49,15 +49,6 @@ public abstract class Experiment extends LongTask {
 	public ExperimentConstrainedList evaluations = new ExperimentConstrainedList(this, Evaluation.class);
 	
 	public Experiment() {
-		addObserver(new Observer() {
-			@Override
-			public void update(Observable observedOption, Object message) {
-				if (message instanceof LongTaskUpdate) {
-					Msg.info("%6.2f%%: %s", getCurrentPercent()*100, getCurrentMessage());
-				}
-			}
-		});
-		
 		setOptionChecks("evaluations", new SizeCheck(1));
 	}
 	
@@ -75,6 +66,7 @@ public abstract class Experiment extends LongTask {
 				@Override
 				public void update(Observable o, Object arg) {
 					if (arg instanceof LongTaskUpdate) {
+						Msg.info("%6.2f%%: %s", clone.getCurrentPercent()*100, clone.getCurrentMessage());
 						updateStatus(clone.getCurrentPercent(), clone.getCurrentMessage());
 					}
 				}

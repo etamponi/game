@@ -65,10 +65,6 @@ public abstract class Block extends LongTask {
 			return null;
 	}
 	
-	public ConfigurableList getParents() {
-		return parents;
-	}
-	
 	protected List<Encoding> getParentsEncodings(Object inputData) {
 		List<Encoding> ret = new LinkedList<>();
 		
@@ -77,6 +73,10 @@ public abstract class Block extends LongTask {
 		}
 		
 		return ret;
+	}
+	
+	public Block getParent(int i) {
+		return (Block)parents.get(i);
 	}
 	
 	public Encoding getParentEncoding(int i, Object inputData) {

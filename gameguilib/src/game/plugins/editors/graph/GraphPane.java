@@ -241,7 +241,7 @@ public class GraphPane extends ScrollPane {
 				BlockNode A = allNodes.get(i);
 				BlockNode B = allNodes.get(j);
 				
-				if (A.getBlock().getParents().contains(B.getBlock()))
+				if (A.getBlock().parents.contains(B.getBlock()))
 					addConnection(B, A);
 			}
 		}
@@ -388,7 +388,7 @@ public class GraphPane extends ScrollPane {
 				continue;
 			final BlockNode other = (BlockNode)((HBox)child).getChildren().get(1);
 			
-			if (node.getBlock().getParents().contains(other.getBlock()))
+			if (node.getBlock().parents.contains(other.getBlock()))
 				other.setStyle("-fx-border-style: solid; -fx-border-color:red");
 			else
 				other.setStyle("-fx-border-style: solid; -fx-border-color:green");
@@ -397,7 +397,7 @@ public class GraphPane extends ScrollPane {
 			other.setOnMouseClicked(new EventHandler<MouseEvent>() {
 				@Override
 				public void handle(MouseEvent event) {
-					if (node.getBlock().getParents().contains(other.getBlock())) {
+					if (node.getBlock().parents.contains(other.getBlock())) {
 						node.getBlock().setOption("parents.remove", other.getBlock());
 						removeConnection(other, node);
 					} else {
@@ -430,11 +430,11 @@ public class GraphPane extends ScrollPane {
 		if (seen.contains(current))
 			return 0;
 		seen.add(current);
-		if (current.getParents().isEmpty())
+		if (current.parents.isEmpty())
 			return 1;
 		else {
 			int max = 0;
-			for (Block parent: current.getParents().getList(Block.class)) {
+			for (Block parent: current.parents.getList(Block.class)) {
 				int count = levelOf(parent, seen);
 				if (count > max)
 					max = count;

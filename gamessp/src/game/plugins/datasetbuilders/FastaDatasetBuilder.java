@@ -43,25 +43,24 @@ public class FastaDatasetBuilder extends DatasetBuilder {
 		if (datasetFile.exists()) {
 			try {
 				BufferedReader reader = new BufferedReader(new FileReader(datasetFile));
-				boolean primary = false;
+				boolean primary = true;
 				List<String> sequence = null;
 				Instance instance = null;
 				for (String line = reader.readLine(); line != null; line = reader.readLine()) {
 					if (line.startsWith(">")) {
-						if (sequence != null) {
-							if (primary) {
-								instance = new Instance();
-								instance.setInputData(sequence);
-							} else {
-								instance.setOutputData(sequence);
-								ret.add(instance);
-							}
-						}
-						primary = !primary;
 						sequence = new LinkedList<>();
+						instance = new Instance();
 					} else {
 						for (int i = 0; i < line.length(); i++)
 							sequence.add(String.valueOf(line.charAt(i)));
+						if (primary) {
+							instance.setInputData(sequence);
+							sequence = new LinkedList<>();
+						} else {
+							instance.setOutputData(sequence);
+							ret.add(instance);
+						}
+						primary = !primary;
 					}
 				}
 			} catch (IOException e) {}

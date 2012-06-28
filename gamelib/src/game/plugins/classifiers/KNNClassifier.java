@@ -67,6 +67,7 @@ public class KNNClassifier extends Classifier {
 	protected Encoding classify(Encoding inputEncoded) {
 		Encoding ret = new Encoding();
 		
+		// TODO Move this to training
 		List<DistancedOutput> list = new ArrayList<>(reference.size());
 		for (int i = 0; i < reference.size(); i++)
 			list.add(new DistancedOutput());
@@ -74,7 +75,7 @@ public class KNNClassifier extends Classifier {
 		for (double[] currentInput: inputEncoded) {
 			for(int i = 0; i < reference.size(); i++) {
 				EncodedSample sample = reference.get(i);
-				list.get(i).setData(getDistance(currentInput, sample.getInput()), sample.getOutput());
+				list.get(i).setData(Utils.getDistance(currentInput, sample.getInput()), sample.getOutput());
 			}
 			Collections.sort(list);
 			double[] currentOutput = list.get(0).getOutput();
@@ -88,14 +89,6 @@ public class KNNClassifier extends Classifier {
 		
 		return ret;
 	}
-	
-	private double getDistance(double[] a, double[] b) {
-		double ret = 0;
-		for (int i = 0; i < a.length; i++) {
-			ret += (a[i]-b[i])*(a[i]-b[i]);
-		}
-		return ret;
-	}
 
 	@Override
 	public boolean isTrained() {
@@ -104,7 +97,7 @@ public class KNNClassifier extends Classifier {
 
 	@Override
 	protected void train(Dataset trainingSet) {
-		reference = trainingSet.encode((Block)getParents().get(0), outputEncoder);
+		reference = trainingSet.encode((Block)parents.get(0), outputEncoder);
 	}
 
 }

@@ -54,11 +54,14 @@ public class Graph extends LongTask {
 	}
 	
 	protected Dataset classifyAll(Dataset dataset) {
-//		double singleIncrease = 1.0 / dataset.size();
+		double singleIncrease = 1.0 / dataset.size();
+		int count = 1;
 		for (Instance i: dataset) {
 			Encoding encoding = outputClassifier.startTransform(i.getInputData());
 			i.setPredictionEncoding(encoding);
 			i.setPredictedData(decoder.decode(encoding));
+			updateStatus(getCurrentPercent()+singleIncrease, "instance predicted " + count + "/" + dataset.size());
+			count++;
 		}
 		return dataset;
 	}
@@ -90,7 +93,7 @@ public class Graph extends LongTask {
 		if (path.contains(current))
 			return "graph cannot have directed cycles.";
 		path.add(current);
-		for (Block parent: current.getParents().getList(Block.class)) {
+		for (Block parent: current.parents.getList(Block.class)) {
 			String ret = recursivelyAddAll(parent, new LinkedList(path));
 			if (ret != null)
 				return ret;

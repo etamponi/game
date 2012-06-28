@@ -11,6 +11,7 @@
 package game.core.blocks;
 
 import game.configuration.errorchecks.SizeCheck;
+import game.core.Block;
 import game.core.Encoding;
 
 
@@ -25,6 +26,10 @@ public abstract class Classifier extends Transducer {
 	@Override
 	protected Encoding transform(Object inputData) {
 		return classify(getParentEncoding(0, inputData));
+	}
+	
+	protected Block getParent() {
+		return (Block)parents.get(0);
 	}
 
 }

@@ -10,12 +10,14 @@
  ******************************************************************************/
 package game.plugins.evaluations;
 
+import game.core.DataTemplate;
 import game.core.Dataset;
 import game.core.Evaluation;
 import game.core.Experiment;
 import game.core.Instance;
 import game.core.experiments.FullExperiment;
 import game.plugins.datatemplates.LabelTemplate;
+import game.plugins.datatemplates.SequenceTemplate;
 
 import java.util.LinkedList;
 import java.util.List;
@@ -35,13 +37,18 @@ public class Precision extends Evaluation {
 	@Override
 	public boolean isCompatible(Experiment experiment) {
 		return experiment instanceof FullExperiment &&
-				experiment.template.outputTemplate instanceof LabelTemplate;
+				isCompatible(experiment.template.outputTemplate);
+	}
+	
+	private boolean isCompatible(DataTemplate template) {
+		return template instanceof LabelTemplate ||
+				(template instanceof SequenceTemplate && template.getOption("atom") instanceof LabelTemplate);
 	}
 
 	@Override
 	public void evaluate(Dataset... folds) { // FIXME Use folds instead of only one dataset
 		Dataset dataset = folds[0];
-		List<String> labels = experiment.template.getOption("outputTemplate.labels");
+		List<String> labels = getLabels(experiment.template.outputTemplate);
 		
 		List<Double> singleTP = new LinkedList<>();
 		List<Double> singleP = new LinkedList<>();
@@ -51,24 +58,47 @@ public class Precision extends Evaluation {
 		}
 		
 		double TP = 0;
+		int count = 0;
 		
 		for(Instance i: dataset) {
-			String trueLabel = (String)i.getOutputData();
-			String predLabel = (String)i.getPredictedData();
-			int k = labels.indexOf(predLabel);
-			singleP.set(k, singleP.get(k)+1);
-			if (predLabel.equals(trueLabel)) {
-				singleTP.set(k, singleTP.get(k)+1);
-				TP++;
+			List<String> trueLabels = getData(i.getOutputData());
+			List<String> predLabels = getData(i.getPredictedData());
+			for (int index = 0; index < trueLabels.size(); index++) {
+				String trueLabel = trueLabels.get(index);
+				String predLabel = predLabels.get(index);
+				int k = labels.indexOf(predLabel);
+				singleP.set(k, singleP.get(k)+1);
+				if (predLabel.equals(trueLabel)) {
+					singleTP.set(k, singleTP.get(k)+1);
+					TP++;
+				}
 			}
+			count += trueLabels.size();
 		}
 		
 		for(int k = 0; k < labels.size(); k++) {
 			precisionPerLabel.add(singleTP.get(k)/singleP.get(k));
 		}
-		overallPrecision = TP / dataset.size();
+		overallPrecision = TP / count;
 		
 		ready = true;
+	}
+	
+	private List<String> getLabels(DataTemplate template) {
+		if (template instanceof SequenceTemplate)
+			return template.getOption("atom.labels");
+		else
+			return template.getOption("labels");
+	}
+	
+	private List<String> getData(Object data) {
+		if (data instanceof List)
+			return (List<String>)data;
+		else {
+			List<String> ret = new LinkedList<>();
+			ret.add((String)data);
+			return ret;
+		}
 	}
 
 	@Override
@@ -81,7 +111,7 @@ public class Precision extends Evaluation {
 		StringBuilder ret = new StringBuilder();
 		
 		ret.append("Per label precision: ");
-		for (String label: (List<String>)experiment.template.getOption("outputTemplate.labels"))
+		for (String label: getLabels(experiment.template.outputTemplate))
 			ret.append(String.format("%20s", label));
 		ret.append("    -----    Overall\n");
 		ret.append("                     ");

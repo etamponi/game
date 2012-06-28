@@ -21,24 +21,25 @@ import java.util.HashSet;
 import java.util.Observable;
 import java.util.Observer;
 
-public class LabelEncoder extends Encoder<LabelTemplate> {
+public abstract class LabelEncoder extends Encoder<LabelTemplate> {
 	
 	public HashMap<String, double[]> labelMapping = new HashMap<>();
 	
 	public LabelEncoder() {
 		
 		addObserver(new Observer() {
-			
 			@Override
 			public void update(Observable observed, Object message) {
 				if (message instanceof Change) {
-					if (((Change)message).pathContains("template"))
+					if (((Change)message).getPath().startsWith("template"))
 						updateMapping((LabelTemplate)template);
 				}
 			}
 		});
 		
 	}
+	
+	protected abstract void updateSingleMapping();
 
 	@Override
 	protected Encoding transform(Object inputData) {
@@ -50,21 +51,19 @@ public class LabelEncoder extends Encoder<LabelTemplate> {
 	private void updateMapping(LabelTemplate template) {
 		this.template = template;
 		
-		if (template == null || template.labels == null)
+		if (template == null || template.labels == null || !isCompatible(template))
 			return;
 		
-		int i = 0; int n = template.labels.size();
 		for (String label: template.labels.getList(String.class)) {
-			if (label != null) {
-				double[] enc = new double[n]; enc[i] = 1;
-				labelMapping.put(label, enc);
-			}
-			i++;
+			if (label != null && !labelMapping.containsKey(label))
+				labelMapping.put(label, new double[]{});
 		}
 		for (String key: new HashSet<String>(labelMapping.keySet())) {
 			if (!template.labels.contains(key))
 				labelMapping.remove(key);
 		}
+		
+		updateSingleMapping();
 	}
 
 	@Override

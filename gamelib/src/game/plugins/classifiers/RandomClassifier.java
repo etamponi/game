@@ -43,7 +43,7 @@ public class RandomClassifier extends Classifier {
 
 	@Override
 	protected void train(Dataset trainingSet) {
-		reference = trainingSet.encode((Block)getParents().get(0), outputEncoder);
+		reference = trainingSet.encode((Block)parents.get(0), outputEncoder);
 	}
 
 	@Override

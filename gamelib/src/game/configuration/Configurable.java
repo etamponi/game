@@ -39,7 +39,9 @@ import com.thoughtworks.xstream.io.xml.DomDriver;
 public abstract class Configurable extends Observable implements Observer {
 	
 	@XStreamOmitField
-	protected static XStream configStream = new XStream(new DomDriver());
+	private static XStream configStream = new XStream(new DomDriver());
+	@XStreamOmitField
+	private static ConfigurationConverter converter = new ConfigurationConverter();
 	
 	private class RequestForBoundOptions {
 		private LinkedList<String> boundOptions;
@@ -65,13 +67,18 @@ public abstract class Configurable extends Observable implements Observer {
 	private boolean notify = true;
 	
 	static {
-		configStream.registerConverter(new ConfigurationConverter());
+		configStream.registerConverter(converter);
 	}
 	
 	public Configurable() {
 		this.name = String.format("%s%03d", getClass().getSimpleName(), hashCode() % 1000);
 		
 		setOptionChecks("name", new LengthCheck(1));
+	}
+	
+	public static void setClassLoader(ClassLoader loader) {
+		configStream.setClassLoader(loader);
+		converter.setClassLoader(loader);
 	}
 	
 	public <T> T getOption(String optionPath) {

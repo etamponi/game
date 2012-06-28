@@ -12,10 +12,13 @@ package game.plugins.encoders;
 
 import game.core.DataTemplate;
 import game.core.Encoding;
-import game.core.blocks.Encoder;
 import game.plugins.datatemplates.LabelTemplate;
 
-public class BooleanEncoder extends Encoder<LabelTemplate> {
+public class BooleanEncoder extends LabelEncoder {
+	
+	public BooleanEncoder() {
+		setInternalOptions("labelMapping");
+	}
 
 	@Override
 	public boolean isCompatible(DataTemplate template) {
@@ -35,6 +38,12 @@ public class BooleanEncoder extends Encoder<LabelTemplate> {
 		ret.add(element);
 		
 		return ret;
+	}
+
+	@Override
+	protected void updateSingleMapping() {
+		labelMapping.put((String)template.labels.get(0), new double[]{1});
+		labelMapping.put((String)template.labels.get(1), new double[]{0});
 	}
 
 }

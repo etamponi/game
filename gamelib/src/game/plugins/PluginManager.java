@@ -70,12 +70,13 @@ public class PluginManager extends Configurable {
 				int i = 0;
 				for(File path: paths)
 					urls[i++] = new URL("file", "localhost", path.getAbsolutePath());
-				loader = new URLClassLoader(urls, getClass().getClassLoader());
+				loader = new URLClassLoader(urls, ClassLoader.getSystemClassLoader());
 				conf.addUrls(urls);
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
 			conf.addClassLoader(loader);
+			Configurable.setClassLoader(loader);
 		}
 		
 		FilterBuilder filter = new FilterBuilder();

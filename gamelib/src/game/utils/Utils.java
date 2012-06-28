@@ -27,7 +27,7 @@ public class Utils {
 	public static double getDistance(double[] v1, double[] v2) {
 		double ret = 0;
 		for (int i = 0; i < v1.length; i++)
-			ret += Math.pow(v1[i]-v2[i], 2);
+			ret += (v1[i]-v2[i])*(v1[i]-v2[i]);
 		return Math.sqrt(ret);
 	}
 	
