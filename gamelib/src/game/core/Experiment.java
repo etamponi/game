@@ -46,7 +46,7 @@ public abstract class Experiment extends LongTask {
 	
 	public InstanceTemplate template;
 	
-	public ExperimentConstrainedList evaluations = new ExperimentConstrainedList(this, Result.class);
+	public ExperimentConstrainedList results = new ExperimentConstrainedList(this, Result.class);
 	
 	public Experiment() {
 		setOptionChecks("evaluations", new SizeCheck(1));

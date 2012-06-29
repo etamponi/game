@@ -22,16 +22,16 @@ import game.plugins.datatemplates.SequenceTemplate;
 import java.util.LinkedList;
 import java.util.List;
 
-public class Precision extends Result {
+public class PrecisionAndRecall extends Result {
 	
-	public List<Double> precisionPerLabel = new LinkedList<>();
-	
-	public double overallPrecision = 0;
+	public List<Double> singleTP = new LinkedList<>();
+	public List<Double> singleT = new LinkedList<>();
+	public List<Double> singleP = new LinkedList<>();
 	
 	public boolean ready = false;
 	
-	public Precision() {
-		setInternalOptions("precisionPerLabel", "overallPrecision", "ready");
+	public PrecisionAndRecall() {
+		setInternalOptions("singleTP", "singleT", "singleP", "ready");
 	}
 	
 	@Override
@@ -47,18 +47,17 @@ public class Precision extends Result {
 
 	@Override
 	public void evaluate(Dataset... folds) { // FIXME Use folds instead of only one dataset
-		Dataset dataset = folds[0];
+		if (isReady())
+			return;
+		
+		Dataset dataset = mergeFolds(folds);
 		List<String> labels = getLabels(experiment.template.outputTemplate);
 		
-		List<Double> singleTP = new LinkedList<>();
-		List<Double> singleP = new LinkedList<>();
 		for(int k = 0; k < labels.size(); k++) {
 			singleTP.add(0.0);
 			singleP.add(0.0);
+			singleT.add(0.0);
 		}
-		
-		double TP = 0;
-		int count = 0;
 		
 		for(Instance i: dataset) {
 			List<String> trueLabels = getData(i.getOutputData());
@@ -68,20 +67,21 @@ public class Precision extends Result {
 				String predLabel = predLabels.get(index);
 				int k = labels.indexOf(predLabel);
 				singleP.set(k, singleP.get(k)+1);
-				if (predLabel.equals(trueLabel)) {
+				if (predLabel.equals(trueLabel))
 					singleTP.set(k, singleTP.get(k)+1);
-					TP++;
-				}
+				k = labels.indexOf(trueLabel);
+				singleT.set(k, singleT.get(k)+1);
 			}
-			count += trueLabels.size();
 		}
-		
-		for(int k = 0; k < labels.size(); k++) {
-			precisionPerLabel.add(singleTP.get(k)/singleP.get(k));
-		}
-		overallPrecision = TP / count;
 		
 		ready = true;
+	}
+	
+	private Dataset mergeFolds(Dataset[] folds) {
+		Dataset ret = new Dataset();
+		for (Dataset fold: folds)
+			ret.addAll(fold);
+		return ret;
 	}
 	
 	private List<String> getLabels(DataTemplate template) {
@@ -110,14 +110,22 @@ public class Precision extends Result {
 	public String prettyPrint() {
 		StringBuilder ret = new StringBuilder();
 		
-		ret.append("Per label precision: ");
-		for (String label: getLabels(experiment.template.outputTemplate))
-			ret.append(String.format("%20s", label));
-		ret.append("    -----    Overall\n");
-		ret.append("                     ");
-		for (double p: precisionPerLabel)
-			ret.append(String.format("%19.2f%%", 100*p));
-		ret.append(String.format("%19.2f%%", 100*overallPrecision));
+		ret.append(String.format("%20s%15s%15s%15s%15s%15s\n", "", "Observed", "Classified", "Correct", "Precision", "Recall"));
+		List<String> labels = getLabels(experiment.template.outputTemplate);
+		double totalT = 0;
+		double totalTP = 0;
+		for(int i = 0; i < labels.size(); i++) {
+			ret.append(String.format("%20s%15.0f%15.0f%15.0f%15.2f%15.2f\n", labels.get(i),
+																	   		 singleT.get(i),
+																	   		 singleP.get(i),
+																	   		 singleTP.get(i),
+																	   		 singleTP.get(i)/singleP.get(i)*100,
+																	   		 singleTP.get(i)/singleT.get(i)*100));
+			totalT += singleT.get(i);
+			totalTP += singleTP.get(i);
+		}
+		ret.append(String.format("\n%20s%15.0f%15.0f%15.0f%15.2f\n", "Overall",
+																	 totalT, totalT, totalTP, 100*totalTP/totalT));
 		
 		return ret.toString();
 	}

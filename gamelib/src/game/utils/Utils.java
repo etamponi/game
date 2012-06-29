@@ -12,7 +12,12 @@ package game.utils;
 
 import java.lang.reflect.Modifier;
 
+import com.thoughtworks.xstream.XStream;
+import com.thoughtworks.xstream.io.xml.DomDriver;
+
 public class Utils {
+	
+	private static final XStream stream = new XStream(new DomDriver());
 
 	public static boolean isConcrete(Class type) {
 		return type.isPrimitive() ||
@@ -44,6 +49,29 @@ public class Utils {
 	public static void scale(double[] v, double factor) {
 		for (int i = 0; i < v.length; i++)
 			v[i] *= factor;
+	}
+	
+	public static double[] normalize(double[] in) {
+		double[] ret = new double[in.length];
+		
+		double sum = sum(in);
+		for(int i = 0; i < ret.length; i++)
+			ret[i] = in[i]/sum;
+		
+		return ret;
+	}
+	
+	public static double sum(double[] v) {
+		double sum = 0;
+		
+		for(double e: v)
+			sum += e;
+		
+		return sum;
+	}
+	
+	public static <T> T deepClone(T object) {
+		return (T)stream.fromXML(stream.toXML(object));
 	}
 	
 }

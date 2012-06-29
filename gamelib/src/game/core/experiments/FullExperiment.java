@@ -13,6 +13,7 @@ package game.core.experiments;
 import game.core.Experiment;
 import game.core.Graph;
 import game.core.GraphTrainer;
+import game.plugins.constraints.CompatibleWith;
 
 public abstract class FullExperiment extends Experiment {
 	
@@ -22,6 +23,8 @@ public abstract class FullExperiment extends Experiment {
 	
 	public FullExperiment() {
 		setOptionBinding("template", "graph.template");
+		
+		setOptionConstraint("trainer", new CompatibleWith(this, "graph"));
 	}
 
 }

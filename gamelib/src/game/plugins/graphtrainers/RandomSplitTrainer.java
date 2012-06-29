@@ -10,21 +10,27 @@
  ******************************************************************************/
 package game.plugins.graphtrainers;
 
+import game.configuration.errorchecks.RangeCheck;
 import game.core.Block;
 import game.core.Dataset;
 import game.core.Graph;
 import game.core.GraphTrainer;
-import game.core.InstanceTemplate;
 
 import java.util.HashSet;
 import java.util.Set;
 
-public class SimpleTrainer extends GraphTrainer {
+public class RandomSplitTrainer extends GraphTrainer {
 	
 	private int total;
+	
+	public double splitPercent = 0.10;
+	
+	public RandomSplitTrainer() {
+		setOptionChecks("splitPercent", new RangeCheck(0.05, 1.00));
+	}
 
 	@Override
-	public boolean isCompatible(InstanceTemplate object) {
+	public boolean isCompatible(Graph graph) {
 		return true;
 	}
 
@@ -40,7 +46,7 @@ public class SimpleTrainer extends GraphTrainer {
 
 		if (!current.isTrained()) {
 			double increase = 1.0 / total;
-			startAnotherTaskAndWait(getCurrentPercent()+increase, current, Block.TRAININGTASK, trainingSet);
+			startAnotherTaskAndWait(getCurrentPercent()+increase, current, Block.TRAININGTASK, trainingSet.getRandomSubset(splitPercent));
 		}
 	}
 	

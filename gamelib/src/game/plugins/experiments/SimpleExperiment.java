@@ -40,7 +40,7 @@ public class SimpleExperiment extends FullExperiment {
 		updateStatus(0.51, "training complete, beginning testing phase...");
 		Dataset testedDataset = startAnotherTaskAndWait(0.90, graph, Graph.CLASSIFYALLTASK, testingDataset.buildDataset());
 		updateStatus(0.91, "testing complete, beginning evaluation phase...");
-		for(Result evaluation: evaluations.getList(Result.class)) {
+		for(Result evaluation: results.getList(Result.class)) {
 			evaluation.evaluate(testedDataset);
 			Msg.data(evaluation.prettyPrint());
 		}

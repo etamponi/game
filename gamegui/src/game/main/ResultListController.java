@@ -35,11 +35,14 @@ public class ResultListController implements Initializable {
 	
 	public void addCompletedExperiment(Experiment e) {
 		TreeItem expItem = new TreeItem(e);
-		for(Result eva: e.evaluations.getList(Result.class)) {
+		for(Result eva: e.results.getList(Result.class)) {
+			if (!eva.isReady())
+				continue;
 			TreeItem evaItem = new TreeItem(eva);
 			expItem.getChildren().add(evaItem);
 		}
-		resultsView.getRoot().getChildren().add(expItem);
+		if (!expItem.getChildren().isEmpty())
+			resultsView.getRoot().getChildren().add(expItem);
 	}
 	
 	@FXML

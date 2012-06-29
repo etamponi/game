@@ -12,7 +12,7 @@ package game.core;
 
 import game.plugins.constraints.Compatible;
 
-public abstract class GraphTrainer extends LongTask implements Compatible<InstanceTemplate> {
+public abstract class GraphTrainer extends LongTask implements Compatible<Graph> {
 	
 	public static final String TASKNAME = "graphtraining";
 	

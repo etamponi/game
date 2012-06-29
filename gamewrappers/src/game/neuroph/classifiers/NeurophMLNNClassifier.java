@@ -22,16 +22,19 @@ import java.util.List;
 import java.util.Observable;
 import java.util.Observer;
 
-import org.neuroph.core.learning.SupervisedLearning;
 import org.neuroph.core.learning.SupervisedTrainingElement;
 import org.neuroph.core.learning.TrainingSet;
 import org.neuroph.nnet.MultiLayerPerceptron;
+import org.neuroph.nnet.learning.ResilientPropagation;
+import org.neuroph.util.TransferFunctionType;
 
 public class NeurophMLNNClassifier extends Classifier {
 	
 	public int hiddenNeurons = 1;
 	public int maxIterations = 1000;
 	public double maxError = 0.001;
+	public double learningRate = 0.001;
+	public double momentum = 0.1;
 	
 	public MultiLayerPerceptron nn;
 	
@@ -56,6 +59,12 @@ public class NeurophMLNNClassifier extends Classifier {
 			nn.setInput(input);
 			nn.calculate();
 			ret.add(nn.getOutput());
+			for(double d: input)
+				System.out.print(d + " ");
+			System.out.print(": ");
+			for(double d: nn.getOutput())
+				System.out.print(d + " ");
+			System.out.println();
 		}
 		
 		return ret;
@@ -75,22 +84,34 @@ public class NeurophMLNNClassifier extends Classifier {
 		
 		updateStatus(0.01, "converting the dataset to Neuroph format");
 		TrainingSet<SupervisedTrainingElement> training = new TrainingSet<>(inputVectorSize, outputVectorSize);
-		for(EncodedSample sample: samples)
-			training.addElement(new SupervisedTrainingElement(sample.getInput(), sample.getOutput()));
+		for(EncodedSample sample: samples) {
+			for(double d: sample.getOutput())
+				System.out.print(d + " ");
+			System.out.println();
+			training.addElement(new SupervisedTrainingElement(sample.getInput().clone(), sample.getOutput().clone()));
+		}
+		
 		updateStatus(0.10, "conversion completed. Begin training of neural network");
 		
-		nn = new MultiLayerPerceptron(inputVectorSize, hiddenNeurons, outputVectorSize);
+		nn = new MultiLayerPerceptron(TransferFunctionType.TANH, inputVectorSize, hiddenNeurons, outputVectorSize);
 		
-		final SupervisedLearning sl = (SupervisedLearning)nn.getLearningRule();
+		/*
+		final MomentumBackpropagation sl = new MomentumBackpropagation();
+		sl.setMomentum(momentum);
+		sl.setLearningRate(learningRate);
+		*/
+		final ResilientPropagation sl = new ResilientPropagation();
 		sl.setMaxIterations(maxIterations);
 		sl.setMaxError(maxError);
 		sl.addObserver(new Observer() {
 			@Override
 			public void update(Observable o, Object arg) {
-				SupervisedLearning sl = (SupervisedLearning)o;
-				updateStatus(getCurrentPercent() + 0.90/maxIterations, "iteration " + sl.getCurrentIteration() + "; net error " + sl.getTotalNetworkError());
+				if (sl.getCurrentIteration() % 100 != 0)
+					return;
+				updateStatus(getCurrentPercent() + 0.90*sl.getCurrentIteration()/maxIterations, "iteration " + sl.getCurrentIteration() + "; net error " + sl.getTotalNetworkError());
 			}
 		});
+		nn.setLearningRule(sl);
 		
 		nn.learn(training);
 		updateStatus(1.00, "training completed.");
