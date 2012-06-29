@@ -1,7 +1,7 @@
-package game.plugins.evaluations;
+package game.plugins.results;
 
 import game.core.Dataset;
-import game.core.Evaluation;
+import game.core.Result;
 import game.core.Experiment;
 import game.core.Instance;
 import game.plugins.datatemplates.ProteinDSSPStructure;
@@ -11,7 +11,7 @@ import game.plugins.datatemplates.ProteinPrimaryStructure;
 import java.util.LinkedList;
 import java.util.List;
 
-public class DetailedFastaEvaluation extends Evaluation {
+public class PerProteinResult extends Result {
 	
 	List<Dataset> folds;
 

@@ -23,23 +23,23 @@
           <children>
             <Accordion minWidth="176.0" prefHeight="598.0" prefWidth="341.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
               <expandedPane>
+                <TitledPane fx:id="x1" animated="false" text="Classifiers pool">
+                  <content>
+                    <AnchorPane id="Content" minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
+                      <children>
+                        <FlowPane fx:id="classifiersPane" hgap="5.0" prefHeight="328.0" prefWidth="172.0" vgap="5.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
+                      </children>
+                    </AnchorPane>
+                  </content>
+                </TitledPane>
+              </expandedPane>
+              <panes>
                 <TitledPane id="x1" fx:id="x4" animated="false" text="Configuration &amp; errors">
                   <content>
                     <AnchorPane id="Content" fx:id="confPane" minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0" />
                   </content>
                 </TitledPane>
-              </expandedPane>
-              <panes>
-                <fx:reference source="x4" />
-                <TitledPane fx:id="x1" animated="false" text="Classifiers pool">
-                  <content>
-                    <AnchorPane id="Content" minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
-                      <children>
-                        <FlowPane fx:id="classifiersPane" prefHeight="328.0" prefWidth="172.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
-                      </children>
-                    </AnchorPane>
-                  </content>
-                </TitledPane>
+                <fx:reference source="x1" />
                 <TitledPane fx:id="x2" animated="false" text="Input encoders pool">
                   <content>
                     <AnchorPane id="Content" minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">

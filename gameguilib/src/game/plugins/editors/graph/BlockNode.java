@@ -70,7 +70,7 @@ public class BlockNode extends VBox implements Observer {
 		setPadding(new Insets(5));
 		
 		AnchorPane imagePane = new AnchorPane();
-		Rectangle rect = new Rectangle(60, 60);
+		Rectangle rect = new Rectangle(60, 42);
 		rect.setFill(Color.INDIGO);
 		imagePane.getChildren().addAll(rect, status);
 		

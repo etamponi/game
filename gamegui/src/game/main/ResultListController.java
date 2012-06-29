@@ -10,7 +10,7 @@
  ******************************************************************************/
 package game.main;
 
-import game.core.Evaluation;
+import game.core.Result;
 import game.core.Experiment;
 
 import java.net.URL;
@@ -35,7 +35,7 @@ public class ResultListController implements Initializable {
 	
 	public void addCompletedExperiment(Experiment e) {
 		TreeItem expItem = new TreeItem(e);
-		for(Evaluation eva: e.evaluations.getList(Evaluation.class)) {
+		for(Result eva: e.evaluations.getList(Result.class)) {
 			TreeItem evaItem = new TreeItem(eva);
 			expItem.getChildren().add(evaItem);
 		}
@@ -45,8 +45,8 @@ public class ResultListController implements Initializable {
 	@FXML
 	public void onShow(ActionEvent event) {
 		TreeItem selected = (TreeItem)resultsView.getSelectionModel().getSelectedItem();
-		if (selected.getValue() instanceof Evaluation) {
-			TextViewer viewer = new TextViewer((Evaluation)selected.getValue());
+		if (selected.getValue() instanceof Result) {
+			TextViewer viewer = new TextViewer((Result)selected.getValue());
 			viewer.show();
 		}
 	}

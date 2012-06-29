@@ -14,11 +14,11 @@ import game.configuration.Configurable;
 import game.configuration.errorchecks.CompatibilityCheck;
 import game.plugins.constraints.Compatible;
 
-public abstract class Evaluation extends Configurable implements Compatible<Experiment> {
+public abstract class Result extends Configurable implements Compatible<Experiment> {
 	
 	public Experiment experiment;
 	
-	public Evaluation() {
+	public Result() {
 		name = getClass().getSimpleName();
 		setOptionChecks("template", new CompatibilityCheck(this));
 	}

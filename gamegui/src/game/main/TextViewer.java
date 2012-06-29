@@ -10,7 +10,7 @@
  ******************************************************************************/
 package game.main;
 
-import game.core.Evaluation;
+import game.core.Result;
 import javafx.scene.Scene;
 import javafx.scene.control.TextArea;
 import javafx.scene.layout.AnchorPane;
@@ -18,7 +18,7 @@ import javafx.stage.Stage;
 
 public class TextViewer extends Stage {
 	
-	public TextViewer(Evaluation evaluation) {
+	public TextViewer(Result evaluation) {
 		AnchorPane pane = new AnchorPane();
 		TextArea content = new TextArea(evaluation.prettyPrint());
 		content.setStyle("-fx-font-family: monospace;");

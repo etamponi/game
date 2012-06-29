@@ -8,11 +8,11 @@
  * Contributors:
  *     Emanuele Tamponi - initial API and implementation
  ******************************************************************************/
-package game.plugins.evaluations;
+package game.plugins.results;
 
 import game.core.DataTemplate;
 import game.core.Dataset;
-import game.core.Evaluation;
+import game.core.Result;
 import game.core.Experiment;
 import game.core.Instance;
 import game.core.experiments.FullExperiment;
@@ -22,7 +22,7 @@ import game.plugins.datatemplates.SequenceTemplate;
 import java.util.LinkedList;
 import java.util.List;
 
-public class Precision extends Evaluation {
+public class Precision extends Result {
 	
 	public List<Double> precisionPerLabel = new LinkedList<>();
 	
