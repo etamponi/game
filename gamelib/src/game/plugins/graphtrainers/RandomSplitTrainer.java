@@ -52,15 +52,18 @@ public class RandomSplitTrainer extends GraphTrainer {
 	
 	private int blocksToTrain(Graph graph) {
 		Set<Block> blocks = new HashSet<>();
-		countUntrainedBlocks(graph.outputClassifier, blocks);
-		return blocks.size();
+		countBlocks(graph.outputClassifier, blocks);
+		int count = 0;
+		for(Block block: blocks)
+			if (!block.isTrained()) count++;
+		return count;
 	}
 	
-	private void countUntrainedBlocks(Block current, Set<Block> blocks) {
+	private void countBlocks(Block current, Set<Block> blocks) {
 		if (!blocks.contains(current)) {
 			blocks.add(current);
 			for(Block parent: current.parents.getList(Block.class))
-				countUntrainedBlocks(parent, blocks);
+				countBlocks(parent, blocks);
 		}
 	}
 

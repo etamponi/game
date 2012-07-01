@@ -24,12 +24,15 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.Arrays;
+import java.util.Collections;
 
 public class CSVDatasetBuilder extends DatasetBuilder {
 	
 	public File file = new File("nonexistent.txt");
 	
 	public String separators = "[, +]";
+	
+	public boolean shuffle = true;
 	
 	public CSVDatasetBuilder() {
 		setOptionChecks("file", new FileExistsCheck());
@@ -63,6 +66,9 @@ public class CSVDatasetBuilder extends DatasetBuilder {
 				}
 			} catch (IOException e) {}
 		}
+		
+		if (shuffle)
+			Collections.shuffle(ret);
 		
 		return ret;
 	}
