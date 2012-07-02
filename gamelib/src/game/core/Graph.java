@@ -105,7 +105,7 @@ public class Graph extends LongTask {
 		classifiers.clear();
 		inputEncoders.clear();
 		pipes.clear();
-		classifiers.setOption("add", outputClassifier, false);
+		classifiers.setOption("add", outputClassifier, false, null);
 		outputClassifier.name = name;
 	}
 

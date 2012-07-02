@@ -12,7 +12,6 @@ package game.editorsystem;
 
 import game.configuration.Configurable;
 import game.editorsystem.constraints.CanEditConstraint;
-import game.main.Settings;
 import game.plugins.Implementation;
 import game.plugins.PluginManager;
 
@@ -20,25 +19,17 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
 import java.util.SortedSet;
-import java.util.TreeSet;
 
 public class Option {
 	
-	public static class Container extends Configurable {
-		public Object content;
-	}
-	
-	private Container container = new Container();
-	
 	private Configurable owner;
 	private String optionName;
-	
+	/*
 	public Option(Object content) {
-		container.setOption("content", content);
-		this.owner = container;
+		this.owner = new Root(content);
 		this.optionName = "content";
 	}
-	
+	*/
 	public Option(Configurable owner, String optionName) {
 		this.owner = owner;
 		this.optionName = optionName;
@@ -60,19 +51,27 @@ public class Option {
 		owner.setOption(optionName, content);
 	}
 	
+	public void setContent(Object content, Object setter) {
+		owner.setOption(optionName, content, true, setter);
+	}
+	
 	public Class getType() {
-		if (owner == container && getContent() != null)
+		return getType(false);
+	}
+	
+	public Class getType(boolean runtimeClass) {
+		if (runtimeClass && getContent() != null)
 			return getContent().getClass();
 		else
 			return owner.getOptionType(optionName);
 	}
 	
 	public <T> SortedSet<Implementation<T>> getCompatibleImplementations() {
-		if (owner == container) {
+		/*if (owner instanceof Root) {
 			SortedSet<Implementation<T>> ret = new TreeSet<>();
 			ret.add(new Implementation(getContent()));
 			return ret;
-		} else
+		} else*/
 			return owner.getCompatibleOptionImplementations(optionName, Settings.getInstance().getPluginManager());
 	}
 	
@@ -83,20 +82,21 @@ public class Option {
 			return !owner.getUnboundOptionNames().contains(optionName);
 	}
 	
-	public Editor getBestEditor() {
+	public OptionEditor getBestEditor(boolean runtimeClass) {
 		PluginManager manager = Settings.getInstance().getPluginManager();
 		
-		Set<Implementation<Editor>> editors = manager.getCompatibleImplementationsOf(Editor.class, new CanEditConstraint(getType()));
-		Iterator<Implementation<Editor>> it = editors.iterator();
+		Class type = getType(runtimeClass);
+		Set<Implementation<OptionEditor>> editors = manager.getCompatibleImplementationsOf(OptionEditor.class, new CanEditConstraint(type));
+		Iterator<Implementation<OptionEditor>> it = editors.iterator();
 		
 		if (!it.hasNext())
 			return null;
 		
-		Editor best = it.next().getContent();
-		int bestDistance = distance(best.getBaseEditableClass(), getType());
+		OptionEditor best = it.next().getContent();
+		int bestDistance = distance(best.getBaseEditableClass(), type);
 		while (it.hasNext()) {
-			Editor current = it.next().getContent();
-			int currDistance = distance(current.getBaseEditableClass(), getType());
+			OptionEditor current = it.next().getContent();
+			int currDistance = distance(current.getBaseEditableClass(), type);
 			if (currDistance < bestDistance) {
 				best = current;
 				bestDistance = currDistance;

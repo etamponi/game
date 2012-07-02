@@ -10,6 +10,7 @@
  ******************************************************************************/
 package game.main;
 
+import game.editorsystem.Settings;
 import game.utils.Msg;
 
 import java.io.File;

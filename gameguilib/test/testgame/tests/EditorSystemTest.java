@@ -17,11 +17,11 @@ import game.core.Dataset;
 import game.core.Encoding;
 import game.core.Graph;
 import game.core.InstanceTemplate;
-import game.core.blocks.Transducer;
 import game.core.blocks.Encoder;
-import game.editorsystem.Editor;
+import game.core.blocks.Transducer;
 import game.editorsystem.Option;
-import game.main.Settings;
+import game.editorsystem.OptionEditor;
+import game.editorsystem.Settings;
 import game.plugins.Constraint;
 import game.plugins.Implementation;
 import game.plugins.datatemplates.LabelTemplate;
@@ -32,7 +32,7 @@ import game.plugins.editors.NumberEditor;
 import game.plugins.editors.graph.OuterGraphEditor;
 import javafx.application.Application;
 import javafx.application.Platform;
-import javafx.scene.control.ChoiceBox;
+import javafx.scene.control.ComboBox;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.HBox;
 import javafx.stage.Stage;
@@ -52,6 +52,8 @@ public class EditorSystemTest extends Application {
 		public byte optionA4;
 		
 		public ConfigurableAbstract optionA5;
+		
+		public Configurable graph;
 		
 		public ConfigurableImplA() {
 			setOptionBinding("optionA3", "optionA5.optionK1");
@@ -193,9 +195,9 @@ public class EditorSystemTest extends Application {
 		
 		Option option = new Option(object, "optionA3");
 		
-		Editor best = option.getBestEditor();
+		OptionEditor best = option.getBestEditor(false);
 		assertEquals(NumberEditor.class, best.getClass());
-		best.setModel(option);
+		best.connect(option);
 		
 		TextField tf = (TextField)best.getView();
 		tf.setText("3.14");
@@ -206,15 +208,16 @@ public class EditorSystemTest extends Application {
 		
 		tf.setText("notworking");
 		assertEquals(2.71, option.getContent());
+		best.disconnect();
 		
 		object.setOption("optionA2", 0);
 		option = new Option(object, "optionA5");
-		best = option.getBestEditor();
+		best = option.getBestEditor(false);
 		assertEquals(ImplementationChooserEditor.class, best.getClass());
-		best.setModel(option);
+		best.connect(option);
 		
-		ChoiceBox<Implementation> cb = (ChoiceBox<Implementation>)((HBox)best.getView()).getChildren().get(0);
-		assertEquals(null, cb.getValue());
+		ComboBox<Implementation> cb = (ComboBox<Implementation>)((HBox)best.getView()).getChildren().get(0);
+		assertEquals("<null>", cb.getValue().toString());
 		assertEquals(3, cb.getItems().size());
 		
 		object.setOption("optionA2", 1);
@@ -222,6 +225,7 @@ public class EditorSystemTest extends Application {
 		
 		option.setContent(new ConfigurableImplB());
 		assertEquals(option.getContent(), cb.getValue().getContent());
+		best.disconnect();
 		
 		final Graph graph = new Graph();
 		graph.setOption("classifiers.add", new ClassifierA());
@@ -246,8 +250,10 @@ public class EditorSystemTest extends Application {
 		graph.setOption("classifiers.5.parents.add", graph.getOption("inputEncoders.0"));
 		graph.setOption("classifiers.4.parents.add", graph.getOption("classifiers.2"));
 		
-		option = new Option(graph);
-		Editor graphEditor = option.getBestEditor();
+		object = new ConfigurableImplA();
+		object.setOption("graph", graph);
+		option = new Option(object, "graph");
+		OptionEditor graphEditor = option.getBestEditor(true);
 		assertEquals(OuterGraphEditor.class, graphEditor.getClass());
 		
 		Platform.exit();

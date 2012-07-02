@@ -12,11 +12,12 @@ package game.plugins.editors.graph;
 
 
 import game.configuration.Change;
+import game.configuration.Configurable;
 import game.core.Block;
-import game.editorsystem.Editor;
+import game.editorsystem.OptionEditor;
 import game.editorsystem.EditorWindow;
 import game.editorsystem.Option;
-import game.main.Settings;
+import game.editorsystem.Settings;
 
 import java.util.Observable;
 import java.util.Observer;
@@ -46,8 +47,6 @@ public class BlockNode extends VBox implements Observer {
 	
 	public static final DataFormat BLOCKDATA = new DataFormat("game/block");
 	
-	private Block block;
-	
 	private boolean isTemplate;
 	
 	private ImageView status = new ImageView();
@@ -57,14 +56,26 @@ public class BlockNode extends VBox implements Observer {
 	private HBox wrapper;
 	
 	private GraphPane pane;
+	
+	public static class Root extends Configurable {
+		
+		public Object content;
+		
+		public Root(Object content) {
+			this.setOption("content", content);
+		}
+	}
+	
+	private Option model;
 
-	public BlockNode(Block b, boolean isTpl, GraphPane p) {
-		this.block = b;
+	public BlockNode(final Block b, boolean isTpl, GraphPane p) {
+		Root root = new Root(b); 
+		this.model = new Option(root, "content");
 		this.isTemplate = isTpl;
 		this.pane = p;
 		
 		if (isTemplate)
-			block.setOption("name", block.getClass().getSimpleName());
+			b.setOption("name", b.getClass().getSimpleName());
 		
 		setStyle("-fx-border-style: solid; -fx-border-color:gray;");
 		setPadding(new Insets(5));
@@ -74,7 +85,7 @@ public class BlockNode extends VBox implements Observer {
 		rect.setFill(Color.INDIGO);
 		imagePane.getChildren().addAll(rect, status);
 		
-		blockName = new Text((String)block.getOption("name"));
+		blockName = new Text(b.name);
 		blockName.setTextAlignment(TextAlignment.CENTER);
 		blockName.setWrappingWidth(60.0);
 		
@@ -87,7 +98,7 @@ public class BlockNode extends VBox implements Observer {
 				
 				ClipboardContent content = new ClipboardContent();
 				Settings.getInstance().setDragging( isTemplate ?
-						new BlockNode((Block)block.cloneConfiguration(), false, pane) : BlockNode.this);
+						new BlockNode((Block)b.cloneConfiguration(), false, pane) : BlockNode.this);
 				content.put(BLOCKDATA, new HandlePosition(event.getX(), event.getY()));
 				
 				db.setContent(content);
@@ -105,18 +116,16 @@ public class BlockNode extends VBox implements Observer {
 		});
 	
 		if (!isTemplate) {
-			status.setImage(block.getConfigurationErrors().isEmpty() ? STATUSOK : STATUSERRORS);
+			status.setImage(b.getConfigurationErrors().isEmpty() ? STATUSOK : STATUSERRORS);
 			
-			block.addObserver(this);
+			model.getOwner().addObserver(this);
 			
 			setOnMouseClicked(new EventHandler<MouseEvent>() {
 				@Override
 				public void handle(MouseEvent event) {
 					if (event.getClickCount() > 1) {
-						Option option = new Option(block);
-						Editor editor = option.getBestEditor();
-						editor.setModel(option);
-						new EditorWindow(editor).show();
+						OptionEditor editor = model.getBestEditor(true);
+						new EditorWindow(editor).startEdit(model);
 					}
 				}
 			});
@@ -124,16 +133,17 @@ public class BlockNode extends VBox implements Observer {
 	}
 	
 	public void destroy() {
-		pane.removeBlock(block);
-		block.deleteObserver(this);
+		pane.removeBlock((Block)model.getContent());
+		disconnect();
 	}
 	
 	public void disconnect() {
-		block.deleteObserver(this);
+		model.getOwner().deleteObserver(this);
+		model.setContent(null);
 	}
 	
 	public Block getBlock() {
-		return block;
+		return model.getContent();
 	}
 	
 	public void setWrapper(HBox wrapper) {
@@ -165,14 +175,14 @@ public class BlockNode extends VBox implements Observer {
 	public void update(Observable o, Object arg) {
 		if (arg instanceof Change) {
 			Change change = (Change)arg;
-			if (change.getPath().equals("name")) {
-				if (!blockName.getText().equals(block.name)) {
-					blockName.setText((String)block.getOption("name"));
+			if (change.getPath().equals("content.name")) {
+				if (!blockName.getText().equals(getBlock().name)) {
+					blockName.setText(getBlock().name);
 					pane.fixPosition(BlockNode.this);
 				}
 			}
 			
-			status.setImage(block.getConfigurationErrors().isEmpty() ? STATUSOK : STATUSERRORS);
+			status.setImage(getBlock().getConfigurationErrors().isEmpty() ? STATUSOK : STATUSERRORS);
 		}
 	}
 	

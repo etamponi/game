@@ -15,7 +15,7 @@ import game.core.Graph;
 import game.core.blocks.Transducer;
 import game.core.blocks.Encoder;
 import game.core.blocks.Pipe;
-import game.main.Settings;
+import game.editorsystem.Settings;
 
 import java.util.HashMap;
 import java.util.HashSet;

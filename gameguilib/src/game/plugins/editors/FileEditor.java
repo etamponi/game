@@ -10,8 +10,7 @@
  ******************************************************************************/
 package game.plugins.editors;
 
-import game.configuration.Change;
-import game.editorsystem.Editor;
+import game.editorsystem.OptionEditor;
 
 import java.io.File;
 
@@ -25,7 +24,7 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
 import javafx.stage.FileChooser;
 
-public class FileEditor extends Editor {
+public class FileEditor extends OptionEditor {
 	
 	HBox line = new HBox();
 	
@@ -48,7 +47,7 @@ public class FileEditor extends Editor {
 				if (file != null) {
 					pathField.setText(file.getAbsolutePath());
 					if (getModel() != null) {
-						getModel().setContent(file);
+						setModelContent(file);
 					}
 				}
 			}
@@ -58,7 +57,7 @@ public class FileEditor extends Editor {
 			@Override
 			public void handle(KeyEvent event) {
 				if (getModel() != null) {
-					getModel().setContent(new File(pathField.getText()));
+					setModelContent(new File(pathField.getText()));
 				}
 			}
 		});
@@ -70,15 +69,10 @@ public class FileEditor extends Editor {
 	}
 
 	@Override
-	public void connectView() {
+	public void updateView() {
 		if (getModel().getContent() == null)
-			getModel().setContent(new File("nonexistent.txt"));
+			setModelContent(new File("nonexistent.txt"));
 		pathField.setText(((File)getModel().getContent()).getAbsolutePath());
-	}
-
-	@Override
-	public void updateView(Change change) {
-		connectView();
 	}
 
 	@Override

@@ -10,14 +10,13 @@
  ******************************************************************************/
 package game.plugins.editors;
 
-import game.configuration.Change;
-import game.editorsystem.Editor;
+import game.editorsystem.OptionEditor;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.scene.Node;
 import javafx.scene.control.CheckBox;
 
-public class BooleanEditor extends Editor {
+public class BooleanEditor extends OptionEditor {
 	
 	private CheckBox box = new CheckBox();
 	
@@ -27,7 +26,7 @@ public class BooleanEditor extends Editor {
 			public void changed(ObservableValue<? extends Boolean> observable,
 					Boolean oldValue, Boolean newValue) {
 				if (getModel() != null) {
-					getModel().setContent(newValue);
+					setModelContent(newValue);
 				}
 			}
 		});
@@ -44,16 +43,8 @@ public class BooleanEditor extends Editor {
 	}
 
 	@Override
-	public void connectView() {
-		
-	}
-
-	@Override
-	public void updateView(Change change) {
-		if (getModel() != null)
-			box.setSelected((boolean)getModel().getContent());
-		else
-			box.setSelected(false);
+	public void updateView() {
+		box.setSelected((boolean)getModel().getContent());
 	}
 
 	@Override

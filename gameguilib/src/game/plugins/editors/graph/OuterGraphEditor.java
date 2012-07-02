@@ -10,17 +10,16 @@
  ******************************************************************************/
 package game.plugins.editors.graph;
 
+import game.core.Graph;
+import game.editorsystem.ControlledEditor;
+import game.editorsystem.EditorWindow;
+import game.editorsystem.OptionEditor;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.scene.Node;
 import javafx.scene.control.Button;
-import game.configuration.Change;
-import game.core.Graph;
-import game.editorsystem.ControlledEditor;
-import game.editorsystem.Editor;
-import game.editorsystem.EditorWindow;
 
-public class OuterGraphEditor extends Editor {
+public class OuterGraphEditor extends OptionEditor {
 	
 	private static class GraphEditor extends ControlledEditor {
 		
@@ -42,7 +41,7 @@ public class OuterGraphEditor extends Editor {
 		editorButton.setOnAction(new EventHandler<ActionEvent>() {
 			@Override
 			public void handle(ActionEvent event) {
-				new EditorWindow(editor).showAndWait();
+				new EditorWindow(editor).startEdit(getModel());
 			}
 		});
 	}
@@ -63,18 +62,9 @@ public class OuterGraphEditor extends Editor {
 	}
 
 	@Override
-	public void connectView() {
+	public void updateView() {
 		if (getModel() != null)
 			editorButton.setText("Edit graph: " + getModel().getContent());
-		editor.setModel(getModel());
-		editor.connectView();
-	}
-
-	@Override
-	public void updateView(Change change) {
-		if (getModel() != null)
-			editorButton.setText("Edit graph: " + getModel().getContent());
-		editor.updateView(change);
 	}
 
 }

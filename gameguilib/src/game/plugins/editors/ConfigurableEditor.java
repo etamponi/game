@@ -12,124 +12,36 @@ package game.plugins.editors;
 
 import game.configuration.Change;
 import game.configuration.Configurable;
-import game.editorsystem.Editor;
 import game.editorsystem.Option;
+import game.editorsystem.OptionEditor;
 import game.utils.Utils;
 
-import java.io.File;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Observable;
 
-import javafx.event.ActionEvent;
-import javafx.event.EventHandler;
 import javafx.geometry.HPos;
 import javafx.geometry.Insets;
 import javafx.geometry.VPos;
 import javafx.scene.Node;
-import javafx.scene.control.Button;
-import javafx.scene.control.ContentDisplay;
 import javafx.scene.control.Label;
 import javafx.scene.control.ListView;
-import javafx.scene.control.ToolBar;
-import javafx.scene.image.Image;
-import javafx.scene.image.ImageView;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.ColumnConstraints;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Priority;
-import javafx.stage.FileChooser;
-import javafx.stage.FileChooser.ExtensionFilter;
 
-public class ConfigurableEditor extends Editor {
-	
-	public static class SerializationEditor extends Editor {
-		
-		private final Image SAVECONFIGURATION = new Image(getClass().getResourceAsStream("saveConfiguration.png"));
-		private final Image LOADCONFIGURATION = new Image(getClass().getResourceAsStream("loadConfiguration.png"));
-		
-		private ToolBar line = new ToolBar();
-		
-		public SerializationEditor() {
-			line.getItems().addAll(new Button(), new Button());
-		}
-
-		@Override
-		public Node getView() {
-			return line;
-		}
-
-		@Override
-		public boolean isInline() {
-			return true;
-		}
-
-		@Override
-		public void connectView() {
-			if (getModel() != null) {
-				line.getItems().set(0, makeSaveAndLoadConfiguration("SAVE"));
-				line.getItems().set(1, makeSaveAndLoadConfiguration("LOAD"));
-			}
-		}
-
-		private Button makeSaveAndLoadConfiguration(final String what) {
-			Button ret = new Button();
-			ImageView graphic = new ImageView();
-			if (what.equals("SAVE"))
-				graphic.setImage(SAVECONFIGURATION);
-			else
-				graphic.setImage(LOADCONFIGURATION);
-			ret.setGraphic(graphic);
-			ret.setContentDisplay(ContentDisplay.GRAPHIC_ONLY);
-			
-			final Configurable content = getModel().getContent();
-			ret.setOnAction(new EventHandler<ActionEvent>() {
-				@Override
-				public void handle(ActionEvent event) {
-					FileChooser chooser = new FileChooser();
-					chooser.setInitialDirectory(new File(System.getProperty("user.dir")));
-					chooser.getExtensionFilters().add(new ExtensionFilter("GAME configuration file", "*.config.xml"));
-					
-					if (what.equals("SAVE")) {
-						chooser.setTitle("Save object configuration");
-						File out = chooser.showSaveDialog(line.getScene().getWindow());
-						if (out != null) {
-							if (!out.getName().endsWith(".config.xml"))
-								content.saveConfiguration(out.getPath() + ".config.xml");
-							else
-								content.saveConfiguration(out.getPath());
-						}
-					} else {
-						// TODO Check if the loaded object is compatible with the current object.
-						// TODO Check if the loaded object is compatible with the constraints.
-						chooser.setTitle("Load object configuration");
-						File out = chooser.showOpenDialog(line.getScene().getWindow());
-						if (out != null)
-							content.loadConfiguration(out.getPath());
-					}
-					event.consume();
-				}
-			});
-			
-			return ret;
-		}
-		
-		@Override
-		public void updateView(Change change) {
-			
-		}
-
-		@Override
-		public Class getBaseEditableClass() {
-			return getClass();
-		}
-		
-	}
+public class ConfigurableEditor extends OptionEditor {
 	
 	private GridPane pane = new GridPane();
 	private ListView<String> errorList = new ListView<>();
 	
 	private HashSet<String> hiddenOptions = new HashSet<>();
-	private HashMap<String, Class<? extends Editor>> specificEditors = new HashMap<>();
+	private HashMap<String, Class<? extends OptionEditor>> specificEditors = new HashMap<>();
+	
+	private List<OptionEditor> subEditors = new LinkedList<>();
 	
 	public ConfigurableEditor() {
 		AnchorPane.setTopAnchor(pane, 0.0);
@@ -153,14 +65,20 @@ public class ConfigurableEditor extends Editor {
 	}
 
 	@Override
-	public void connectView() {
+	public void updateView() {
 		pane.getChildren().clear();
+		for (OptionEditor editor: subEditors)
+			editor.disconnect();
+		subEditors.clear();
+		
 		int count = 2;
 		if (getModel() != null && getModel().getContent() != null) {
 			Configurable content = getModel().getContent();
 			
-			Editor serializationEditor = new SerializationEditor();
-			serializationEditor.setModel(getModel());
+			OptionEditor serializationEditor = new SerializationEditor();
+			serializationEditor.connect(getModel());
+			subEditors.add(serializationEditor);
+			
 			pane.add(serializationEditor.getView(), 0, 0, 2, 1);
 			for (String optionName: content.getUnboundOptionNames()) {
 				if (hiddenOptions.contains(optionName))
@@ -169,7 +87,7 @@ public class ConfigurableEditor extends Editor {
 				Option option = new Option(content, optionName);
 				Label label = new Label(optionName+": ");
 				
-				Editor editor = prepareEditor(option);
+				OptionEditor editor = prepareEditor(option);
 				if (editor == null)
 					continue;
 				pane.addRow(optionName.equals("name") ? 1 : count++, label, editor.getView());
@@ -203,38 +121,42 @@ public class ConfigurableEditor extends Editor {
 	}
 
 	@Override
-	public void updateView(Change change) {
-		errorList.getItems().clear();
-		if (getModel() != null && getModel().getContent() != null)
-			errorList.getItems().addAll(((Configurable)getModel().getContent()).getConfigurationErrors());
-	}
-
-	@Override
 	public Class getBaseEditableClass() {
 		return Configurable.class;
 	}
 	
+	@Override
+	public void update(Observable observed, Object m) {
+		super.update(observed, m);
+		if (m instanceof Change) {
+			errorList.getItems().clear();
+			if (getModel() != null && getModel().getContent() != null)
+				errorList.getItems().addAll(((Configurable)getModel().getContent()).getConfigurationErrors());
+		}
+	}
+
 	protected void setHiddenOptions(String... optionNames) {
 		for (String optionName: optionNames)
 			hiddenOptions.add(optionName);
 	}
 	
-	protected void setSpecificEditor(String optionName, Class<? extends Editor> editor) {
+	protected void setSpecificEditor(String optionName, Class<? extends OptionEditor> editor) {
 		specificEditors.put(optionName, editor);
 	}
 	
-	private Editor prepareEditor(Option option) {
-		Editor editor = null;
+	private OptionEditor prepareEditor(Option option) {
+		OptionEditor editor = null;
 		try {
 			if (specificEditors.containsKey(option.getOptionName()))
 				editor = specificEditors.get(option.getOptionName()).newInstance();
 			else
-				editor = option.getBestEditor();
+				editor = option.getBestEditor(false);
 			if (editor == null)
 				return null;
 			if (option.getContent() == null && Utils.isConcrete(option.getType()))
 				option.setContent(option.getType().newInstance());
-			editor.setModel(option);
+			editor.connect(option);
+			subEditors.add(editor);
 		} catch (InstantiationException | IllegalAccessException e) {
 			e.printStackTrace();
 		}

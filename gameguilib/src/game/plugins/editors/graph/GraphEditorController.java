@@ -10,14 +10,13 @@
  ******************************************************************************/
 package game.plugins.editors.graph;
 
-import game.configuration.Change;
 import game.configuration.Configurable;
 import game.core.Block;
 import game.core.Graph;
-import game.editorsystem.Editor;
 import game.editorsystem.EditorController;
 import game.editorsystem.Option;
-import game.main.Settings;
+import game.editorsystem.OptionEditor;
+import game.editorsystem.Settings;
 import game.plugins.Implementation;
 import game.plugins.PluginManager;
 import game.plugins.editors.ConfigurableEditor;
@@ -60,6 +59,8 @@ public class GraphEditorController implements EditorController {
 	private Slider zoom;
 
 	private GraphPane graphPane;
+	
+	private OptionEditor confEditor;
 	
 	@Override
 	public void initialize(URL location, ResourceBundle resources) {
@@ -127,7 +128,7 @@ public class GraphEditorController implements EditorController {
 	}
 
 	@Override
-	public void connectView() {
+	public void updateView() {
 		Graph graph = graphModel.getContent();
 		if (graph != null) {
 			graphPane.setGraph(graph);
@@ -136,7 +137,7 @@ public class GraphEditorController implements EditorController {
 			connectConfRoot();
 		}
 	}
-
+/*
 	@Override
 	public void updateView(Change change) {
 		if (change.getPath().matches(".+\\.template.*"))
@@ -147,7 +148,7 @@ public class GraphEditorController implements EditorController {
 				|| change.getPath().matches(".+\\.outputClassifier"))
 			graphPane.parseGraph();
 	}
-	
+*/	
 	private void fillPools() {
 		fillPool(classifiersPane, "classifiers");
 		fillPool(inputEncodersPane, "inputEncoders");
@@ -164,15 +165,15 @@ public class GraphEditorController implements EditorController {
 	
 	private void connectConfRoot() {
 		confPane.getChildren().clear();
-		Editor confEditor = new GraphConfigurationEditor();
-		confEditor.setModel(graphModel);
+		confEditor = new GraphConfigurationEditor();
+		confEditor.connect(graphModel);
 		confPane.getChildren().add(confEditor.getView());
 	}
 	
-	private void fillPool(FlowPane pool, String optionName) {
+	private void fillPool(FlowPane pool, String listOptionName) {
 		pool.getChildren().clear();
 		PluginManager manager = Settings.getInstance().getPluginManager();
-		Configurable list = ((Graph)graphModel.getContent()).getOption(optionName);
+		Configurable list = ((Graph)graphModel.getContent()).getOption(listOptionName);
 		if (list == null)
 			return;
 		Set<Implementation<Block>> blocks = list.getCompatibleOptionImplementations("*", manager);
@@ -191,6 +192,11 @@ public class GraphEditorController implements EditorController {
 		double value = zoom.getValue()/100;
 		
 		graphPane.setZoomLevel(value);
+	}
+
+	@Override
+	protected void finalize() throws Throwable {
+		confEditor.disconnect();
 	}
 
 }

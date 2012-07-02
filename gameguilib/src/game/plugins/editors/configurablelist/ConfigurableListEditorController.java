@@ -10,12 +10,11 @@
  ******************************************************************************/
 package game.plugins.editors.configurablelist;
 
-import game.configuration.Change;
 import game.configuration.ConfigurableList;
-import game.editorsystem.Editor;
 import game.editorsystem.EditorController;
 import game.editorsystem.EditorWindow;
 import game.editorsystem.Option;
+import game.editorsystem.OptionEditor;
 
 import java.net.URL;
 import java.util.ResourceBundle;
@@ -42,7 +41,7 @@ public class ConfigurableListEditorController implements EditorController {
 	}
 
 	@Override
-	public void connectView() {
+	public void updateView() {
 		listView.getItems().clear();
 		ConfigurableList list = model.getContent();
 		if (list == null)
@@ -53,11 +52,6 @@ public class ConfigurableListEditorController implements EditorController {
 			listView.getItems().add(option);
 		}
 	}
-
-	@Override
-	public void updateView(Change change) {
-		connectView();
-	}
 	
 	@FXML
 	public void addAction(ActionEvent event) {
@@ -66,6 +60,7 @@ public class ConfigurableListEditorController implements EditorController {
 			return;
 		
 		list.add(null);
+		updateView();
 	}
 	
 	@FXML
@@ -75,8 +70,10 @@ public class ConfigurableListEditorController implements EditorController {
 			return;
 		
 		int index = listView.getSelectionModel().getSelectedIndex();
-		if (index >= 0)
+		if (index >= 0) {
 			list.remove(index);
+			updateView();
+		}
 	}
 	
 	@FXML
@@ -87,9 +84,9 @@ public class ConfigurableListEditorController implements EditorController {
 		
 		int index = listView.getSelectionModel().getSelectedIndex();
 		if (index >= 0) {
-			Editor editor = listView.getItems().get(index).getBestEditor();
-			editor.setModel(listView.getItems().get(index));
-			new EditorWindow(editor).show();
+			OptionEditor editor = listView.getItems().get(index).getBestEditor(true);
+			new EditorWindow(editor).startEdit(listView.getItems().get(index));
+			updateView();
 		}
 	}
 	

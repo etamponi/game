@@ -25,6 +25,8 @@ public class ConfigurableList extends Configurable implements List {
 	
 	public ArrayList internal = new ArrayList();
 	
+	private Object setter = null;
+	
 	public ConfigurableList() {
 		// DO NOT USE NEVER NEVER NEVER
 		elementType = Object.class;
@@ -45,15 +47,15 @@ public class ConfigurableList extends Configurable implements List {
 	}
 
 	@Override
-	public void setOption(String optionPath, Object content, boolean notify) {
+	public void setOption(String optionPath, Object content, boolean notify, Object setter) {
 		if (optionPath.startsWith("*.")) {
 			String remainingPath = optionPath.substring(2);
 			for (Object element: internal) {
 				if (element != null)
-					((Configurable)element).setOption(remainingPath, content, notify);
+					((Configurable)element).setOption(remainingPath, content, notify, setter);
 			}
 		} else {
-			super.setOption(optionPath, content, notify);
+			super.setOption(optionPath, content, notify, setter);
 		}
 	}
 
@@ -98,7 +100,7 @@ public class ConfigurableList extends Configurable implements List {
 			((Configurable)element).addObserver(this);
 		}
 		
-		propagateUpdate(indexString);
+		propagateUpdate(indexString, setter);
 	}
 
 	@Override
@@ -174,7 +176,7 @@ public class ConfigurableList extends Configurable implements List {
 		
 		boolean ret = internal.remove(o); 
 		
-		propagateUpdate("");
+		propagateUpdate("", setter);
 		
 		return ret;
 	}
@@ -186,7 +188,7 @@ public class ConfigurableList extends Configurable implements List {
 		
 		Object ret = internal.remove(index);
 		
-		propagateUpdate("");
+		propagateUpdate("", setter);
 		
 		return ret;
 	}
@@ -217,7 +219,7 @@ public class ConfigurableList extends Configurable implements List {
 		
 		String indexString = String.valueOf(index);
 
-		propagateUpdate(indexString);
+		propagateUpdate(indexString, setter);
 		
 		return ret;
 	}
@@ -257,7 +259,9 @@ public class ConfigurableList extends Configurable implements List {
 	}
 
 	@Override
-	protected void setLocalOption(String optionName, Object content) {
+	protected void setLocalOption(String optionName, Object content, Object setter) {
+		this.setter = setter;
+		
 		if (optionName.matches("\\d+")) {
 			int index = Integer.parseInt(optionName);
 			if (index < size())
@@ -274,9 +278,11 @@ public class ConfigurableList extends Configurable implements List {
 					remove(content);
 				break;
 			default:
-				super.setLocalOption(optionName, content);
+				super.setLocalOption(optionName, content, setter);
 			}
 		}
+		
+		this.setter = null;
 	}
 
 	@Override

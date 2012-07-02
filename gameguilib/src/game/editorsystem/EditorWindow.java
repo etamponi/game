@@ -18,7 +18,13 @@ import javafx.stage.Stage;
 
 public class EditorWindow extends Stage {
 	
-	public EditorWindow(Editor editor) {
+	private OptionEditor editor;
+	
+	public EditorWindow(OptionEditor editor) {
+		assert(editor != null);
+		
+		this.editor = editor;
+		
 		setTitle(editor.getClass().getSimpleName());
 		initModality(Modality.APPLICATION_MODAL);
 		
@@ -34,6 +40,12 @@ public class EditorWindow extends Stage {
 		root.setMinWidth(200);
 		
 		setScene(new Scene(root));
+	}
+	
+	public void startEdit(Option model) {
+		editor.connect(model);
+		showAndWait();
+		editor.disconnect();
 	}
 
 }

@@ -96,10 +96,10 @@ public abstract class Configurable extends Observable implements Observer {
 	}
 	
 	public void setOption(String optionPath, Object content) {
-		setOption(optionPath, content, true);
+		setOption(optionPath, content, true, null);
 	}
 	
-	public void setOption(String optionPath, Object content, boolean notify) {
+	public void setOption(String optionPath, Object content, boolean notify, Object setter) {
 		if (optionPath.isEmpty())
 			return;
 		
@@ -109,11 +109,11 @@ public abstract class Configurable extends Observable implements Observer {
 		int firstOptionIndex = dotIndex < 0 ? optionPath.length() : dotIndex;
 		
 		if (dotIndex < 0) {
-			setLocalOption(optionPath, content);
+			setLocalOption(optionPath, content, setter);
 		} else {
 			Configurable object = (Configurable)getLocalOption(optionPath.substring(0, firstOptionIndex));
 			if (object != null)
-				object.setOption(optionPath.substring(firstOptionIndex+1), content, notify);
+				object.setOption(optionPath.substring(firstOptionIndex+1), content, notify, setter);
 		}
 		
 		this.notify = true;
@@ -244,7 +244,7 @@ public abstract class Configurable extends Observable implements Observer {
 				   changedOption += change.getPath().isEmpty() ? "" : "." + change.getPath();
 
 			observedOption.deleteObserver(this);
-			propagateUpdate(changedOption);
+			propagateUpdate(changedOption, change.getSetter());
 			observedOption.addObserver(this);
 		}
 		
@@ -271,12 +271,12 @@ public abstract class Configurable extends Observable implements Observer {
 		return name;
 	}
 	
-	protected void propagateUpdate(String changedOption) {
+	protected void propagateUpdate(String changedOption, Object setter) {
 		if (notify) {
 			if (!changedOption.isEmpty())
 				updateOptionBindings(changedOption);
 			setChanged();
-			notifyObservers(new Change(changedOption));
+			notifyObservers(new Change(changedOption, setter));
 		}
 	}
 	
@@ -334,16 +334,16 @@ public abstract class Configurable extends Observable implements Observer {
 		}
 	}
 	
-	protected void setLocalOption(String optionName, Object content) {
+	protected void setLocalOption(String optionName, Object content, Object setter) {
 		try {
 			Object oldContent = getLocalOption(optionName);
 			if (oldContent instanceof Configurable) {
 				((Configurable)oldContent).deleteObserver(this);
 			}
 			
-			Method setter = getMethodByName(getAccessorName("set", optionName));
-			if (setter != null) {
-				setter.invoke(this, content);
+			Method setterMethod = getMethodByName(getAccessorName("set", optionName));
+			if (setterMethod != null) {
+				setterMethod.invoke(this, content);
 			} else {
 				getClass().getField(optionName).set(this, content);
 			}
@@ -352,7 +352,7 @@ public abstract class Configurable extends Observable implements Observer {
 				((Configurable)content).addObserver(this);
 			}
 			
-			propagateUpdate(optionName);
+			propagateUpdate(optionName, setter);
 		} catch (IllegalAccessException | IllegalArgumentException
 				| InvocationTargetException | NoSuchFieldException | SecurityException e) {
 			//e.printStackTrace();

@@ -10,8 +10,7 @@
  ******************************************************************************/
 package game.plugins.editors.blocks;
 
-import game.configuration.Change;
-import game.editorsystem.Editor;
+import game.editorsystem.OptionEditor;
 import game.plugins.encoders.LabelEncoder;
 import javafx.event.EventHandler;
 import javafx.scene.Node;
@@ -20,7 +19,7 @@ import javafx.scene.control.TextField;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.GridPane;
 
-public class LabelMappingEditor extends Editor {
+public class LabelMappingEditor extends OptionEditor {
 	
 	GridPane root = new GridPane();
 
@@ -35,7 +34,7 @@ public class LabelMappingEditor extends Editor {
 	}
 
 	@Override
-	public void connectView() {
+	public void updateView() {
 		if (getModel() == null || getModel().getContent() == null) {
 			root.getChildren().clear();
 			return;
@@ -89,11 +88,6 @@ public class LabelMappingEditor extends Editor {
 			i++;
 		}
 		return ret;
-	}
-
-	@Override
-	public void updateView(Change change) {
-		connectView();
 	}
 
 	@Override

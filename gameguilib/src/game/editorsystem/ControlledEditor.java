@@ -10,8 +10,6 @@
  ******************************************************************************/
 package game.editorsystem;
 
-import game.configuration.Change;
-
 import java.io.IOException;
 import java.net.URL;
 
@@ -21,7 +19,7 @@ import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.layout.AnchorPane;
 
-public abstract class ControlledEditor extends Editor {
+public abstract class ControlledEditor extends OptionEditor {
 	
 	private Node root;
 	
@@ -48,24 +46,19 @@ public abstract class ControlledEditor extends Editor {
 	}
 
 	@Override
-	public void setModel(Option model) {
-		controller.setModel(model);
-		super.setModel(model);
-	}
-
-	@Override
 	public Node getView() {
 		return root;
 	}
 
 	@Override
-	public void connectView() {
-		controller.connectView();
+	public void connect(Option model) {
+		controller.setModel(model);
+		super.connect(model);
 	}
 
 	@Override
-	public void updateView(Change change) {
-		controller.updateView(change);
+	public void updateView() {
+		controller.updateView();
 	}
 	
 	protected String getFXML() {

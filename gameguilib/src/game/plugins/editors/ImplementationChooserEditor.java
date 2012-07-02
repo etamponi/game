@@ -12,9 +12,8 @@ package game.plugins.editors;
 
 import game.configuration.Change;
 import game.configuration.Configurable;
-import game.editorsystem.Editor;
 import game.editorsystem.EditorWindow;
-import game.editorsystem.Option;
+import game.editorsystem.OptionEditor;
 import game.plugins.Implementation;
 import game.utils.Utils;
 
@@ -30,7 +29,7 @@ import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
 import javafx.scene.layout.HBox;
 
-public class ImplementationChooserEditor extends Editor {
+public class ImplementationChooserEditor extends OptionEditor {
 	
 	private ChangeListener<Implementation> listener = new ChangeListener<Implementation>() {
 		@Override
@@ -41,7 +40,7 @@ public class ImplementationChooserEditor extends Editor {
 				return;
 			Configurable selected = box.getValue().getContent();
 			if (getModel().getContent() != selected)
-				getModel().setContent(selected);
+				setModelContent(selected);
 		}
 	};
 	
@@ -58,11 +57,9 @@ public class ImplementationChooserEditor extends Editor {
 				if (getModel().getContent() == null)
 					return;
 				
-				Option option = new Option((Configurable)getModel().getContent());
-				Editor editor = option.getBestEditor();
-				editor.setModel(option);
+				OptionEditor editor = getModel().getBestEditor(true);
 				EditorWindow window = new EditorWindow(editor);
-				window.show();
+				window.startEdit(getModel());
 			}
 		});
 		container.setSpacing(15);
@@ -76,7 +73,7 @@ public class ImplementationChooserEditor extends Editor {
 	}
 
 	@Override
-	public void connectView() {		
+	public void updateView() {
 		box.getSelectionModel().selectedItemProperty().removeListener(listener);
 		box.getItems().clear();
 		
@@ -102,13 +99,9 @@ public class ImplementationChooserEditor extends Editor {
 	@Override
 	public void update(Observable observed, Object message) {
 		if (message instanceof Change) {
-			updateView((Change)message);
+			if (((Change)message).getSetter() != this)
+				updateView();
 		}
-	}
-
-	@Override
-	public void updateView(Change change) {
-		connectView();
 	}
 
 	@Override

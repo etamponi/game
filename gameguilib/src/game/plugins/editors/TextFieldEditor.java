@@ -10,14 +10,13 @@
  ******************************************************************************/
 package game.plugins.editors;
 
-import game.configuration.Change;
-import game.editorsystem.Editor;
+import game.editorsystem.OptionEditor;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.scene.Node;
 import javafx.scene.control.TextField;
 
-public abstract class TextFieldEditor extends Editor {
+public abstract class TextFieldEditor extends OptionEditor {
 	
 	protected TextField textField = new TextField();
 	
@@ -30,7 +29,7 @@ public abstract class TextFieldEditor extends Editor {
 				if (getModel() != null) {
 					Object content = parseText();
 					if (content != null)
-						getModel().setContent(content);
+						setModelContent(content);
 				}
 			}
 		});
@@ -49,16 +48,11 @@ public abstract class TextFieldEditor extends Editor {
 	}
 
 	@Override
-	public void updateView(Change change) {
+	public void updateView() {
 		if (getModel() != null && getModel().getContent() != null)
 			textField.setText(getModel().getContent().toString());
 		else
 			textField.setText("");
-	}
-
-	@Override
-	public void connectView() {
-		updateView(null);
 	}
 
 }

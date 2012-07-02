@@ -17,12 +17,19 @@ public class Change {
 	
 	private String path;
 	
-	public Change(String path) {
+	private Object setter;
+	
+	public Change(String path, Object setter) {
 		this.path = path;
+		this.setter = setter;
 	}
 	
 	public String getPath() {
 		return path;
+	}
+	
+	public Object getSetter() {
+		return setter;
 	}
 	
 	public boolean pathContains(String element) {

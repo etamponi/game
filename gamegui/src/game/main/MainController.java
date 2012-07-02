@@ -14,11 +14,13 @@ import game.configuration.Change;
 import game.configuration.Configurable;
 import game.configuration.ConfigurableList;
 import game.core.Experiment;
-import game.editorsystem.Editor;
 import game.editorsystem.EditorWindow;
 import game.editorsystem.Option;
+import game.editorsystem.OptionEditor;
+import game.editorsystem.Settings;
+import game.plugins.PluginManager;
 import game.plugins.editors.ConfigurableEditor;
-import game.plugins.editors.ConfigurableEditor.SerializationEditor;
+import game.plugins.editors.SerializationEditor;
 import game.plugins.editors.configurablelist.ConfigurableListEditor;
 
 import java.io.IOException;
@@ -54,7 +56,11 @@ import javafx.stage.Stage;
 
 public class MainController extends Configurable implements Initializable {
 	
-	private Option model = new Option(new ConfigurableList(this, Experiment.class));
+	public ConfigurableList experimentList = new ConfigurableList(this, Experiment.class);
+	
+	public final PluginManager manager = Settings.getInstance().getPluginManager();
+	
+	private Option model = new Option(this, "experimentList");
 	
 	private ExperimentService service;
 	
@@ -81,13 +87,13 @@ public class MainController extends Configurable implements Initializable {
 
 	@Override
 	public void initialize(URL location, ResourceBundle resources) {
-		Editor serialization = new SerializationEditor();
-		serialization.setModel(model);
+		OptionEditor serialization = new SerializationEditor();
+		serialization.connect(model);
 		
 		addPluginManagerEditorToToolBar((ToolBar)serialization.getView());
 		
-		Editor editor = new ConfigurableListEditor();
-		editor.setModel(model);
+		OptionEditor editor = new ConfigurableListEditor();
+		editor.connect(model);
 		experimentsRoot.getChildren().addAll(serialization.getView(), editor.getView());
 		experimentsRoot.setSpacing(10);
 		experimentsRoot.setStyle("-fx-border-color:-fx-color; -fx-padding: 0px 0px 5px 0px;");
@@ -118,9 +124,7 @@ public class MainController extends Configurable implements Initializable {
 		pmButton.setOnAction(new EventHandler<ActionEvent>() {
 			@Override
 			public void handle(ActionEvent event) {
-				Editor editor = new ConfigurableEditor();
-				editor.setModel(new Option(Settings.getInstance().getPluginManager()));
-				new EditorWindow(editor).showAndWait();
+				new EditorWindow(new ConfigurableEditor()).startEdit(new Option(MainController.this, "manager"));
 				Settings.getInstance().getPluginManager().saveConfiguration(Settings.CONFIGFILE);
 			}
 		});
