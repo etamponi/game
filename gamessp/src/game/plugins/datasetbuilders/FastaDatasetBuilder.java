@@ -42,11 +42,12 @@ public class FastaDatasetBuilder extends DatasetBuilder {
 		
 		if (datasetFile.exists()) {
 			try {
+				int index = 0, count = 0;
 				BufferedReader reader = new BufferedReader(new FileReader(datasetFile));
 				boolean primary = true;
 				List<String> sequence = null;
 				Instance instance = null;
-				for (String line = reader.readLine(); line != null; line = reader.readLine()) {
+				for (String line = reader.readLine(); line != null && count < instanceNumber; line = reader.readLine()) {
 					if (line.startsWith(">")) {
 						sequence = new LinkedList<>();
 						instance = new Instance();
@@ -58,11 +59,15 @@ public class FastaDatasetBuilder extends DatasetBuilder {
 							sequence = new LinkedList<>();
 						} else {
 							instance.setOutputData(sequence);
-							ret.add(instance);
+							if (index++ >= startIndex) {
+								ret.add(instance);
+								count++;
+							}
 						}
 						primary = !primary;
 					}
 				}
+				reader.close();
 			} catch (IOException e) {}
 		}
 		

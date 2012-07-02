@@ -21,6 +21,7 @@ import java.util.Observable;
 import java.util.Observer;
 import java.util.concurrent.Executor;
 
+import javafx.application.Platform;
 import javafx.beans.property.IntegerProperty;
 import javafx.beans.property.SimpleIntegerProperty;
 import javafx.beans.property.SimpleStringProperty;
@@ -41,8 +42,13 @@ public class ExperimentService extends Service<Experiment> {
 
 		@Override
 		public void execute(Runnable command) {
-			thread = new Thread(command);
-			thread.start();
+			if (thread == null || !thread.isAlive()) {
+				thread = new Thread(command);
+				thread.start();
+			} else {
+				new Exception().printStackTrace();
+				Platform.exit();
+			}
 		}
 		
 		public Thread getThread() {

@@ -89,7 +89,6 @@ public class MainController extends Configurable implements Initializable {
 	public void initialize(URL location, ResourceBundle resources) {
 		OptionEditor serialization = new SerializationEditor();
 		serialization.connect(model);
-		
 		addPluginManagerEditorToToolBar((ToolBar)serialization.getView());
 		
 		OptionEditor editor = new ConfigurableListEditor();
@@ -233,6 +232,7 @@ public class MainController extends Configurable implements Initializable {
 
 	@Override
 	public void update(Observable observedOption, Object message) {
+		super.update(observedOption, message);
 		if (message instanceof Change) {
 			ConfigurableList experiments = model.getContent();
 			if (experiments.isEmpty() || !experiments.getConfigurationErrors().isEmpty()) {

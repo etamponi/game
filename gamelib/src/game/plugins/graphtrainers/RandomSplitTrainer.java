@@ -21,9 +21,7 @@ import java.util.Set;
 
 public class RandomSplitTrainer extends GraphTrainer {
 	
-	private int total;
-	
-	public double splitPercent = 0.10;
+	public double splitPercent = 1.0;
 	
 	public RandomSplitTrainer() {
 		setOptionChecks("splitPercent", new RangeCheck(0.05, 1.00));
@@ -36,16 +34,14 @@ public class RandomSplitTrainer extends GraphTrainer {
 
 	@Override
 	protected void trainGraph(Graph graph, Dataset trainingSet) {
-		total = blocksToTrain(graph);
-		recursivelyTrainGraph(graph.outputClassifier, trainingSet);
+		recursivelyTrainGraph(graph.outputClassifier, trainingSet, 1.0/blocksToTrain(graph));
 	}
 
-	private void recursivelyTrainGraph(Block current, Dataset trainingSet) {
+	private void recursivelyTrainGraph(Block current, Dataset trainingSet, double increase) {
 		for (Block parent: current.parents.getList(Block.class))
-			recursivelyTrainGraph(parent, trainingSet);
+			recursivelyTrainGraph(parent, trainingSet, increase);
 
 		if (!current.isTrained()) {
-			double increase = 1.0 / total;
 			startAnotherTaskAndWait(getCurrentPercent()+increase, current, Block.TRAININGTASK, trainingSet.getRandomSubset(splitPercent));
 		}
 	}

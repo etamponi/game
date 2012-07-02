@@ -60,7 +60,7 @@ public class ConfigurableListEditorController implements EditorController {
 			return;
 		
 		list.add(null);
-		updateView();
+//		updateView();
 	}
 	
 	@FXML
@@ -72,7 +72,7 @@ public class ConfigurableListEditorController implements EditorController {
 		int index = listView.getSelectionModel().getSelectedIndex();
 		if (index >= 0) {
 			list.remove(index);
-			updateView();
+//			updateView();
 		}
 	}
 	
@@ -86,7 +86,7 @@ public class ConfigurableListEditorController implements EditorController {
 		if (index >= 0) {
 			OptionEditor editor = listView.getItems().get(index).getBestEditor(true);
 			new EditorWindow(editor).startEdit(listView.getItems().get(index));
-			updateView();
+//			updateView();
 		}
 	}
 	

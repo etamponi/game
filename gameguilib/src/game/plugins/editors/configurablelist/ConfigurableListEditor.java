@@ -10,11 +10,16 @@
  ******************************************************************************/
 package game.plugins.editors.configurablelist;
 
+import game.configuration.Change;
+import game.configuration.ConfigurableList;
+import game.editorsystem.ControlledEditor;
+import game.editorsystem.Option;
+
+import java.util.Observable;
+
 import javafx.scene.Node;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Priority;
-import game.configuration.ConfigurableList;
-import game.editorsystem.ControlledEditor;
 
 public class ConfigurableListEditor extends ControlledEditor {
 	
@@ -33,6 +38,19 @@ public class ConfigurableListEditor extends ControlledEditor {
 	@Override
 	public boolean isInline() {
 		return false;
+	}
+
+	@Override
+	public void connect(Option model) {
+		// TODO Auto-generated method stub
+		super.connect(model);
+	}
+
+	@Override
+	public void update(Observable observed, Object m) {
+		if (m instanceof Change) {
+			updateView();
+		}
 	}
 
 }

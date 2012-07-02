@@ -20,7 +20,8 @@ public abstract class Result extends Configurable implements Compatible<Experime
 	
 	public Result() {
 		name = getClass().getSimpleName();
-		setOptionChecks("template", new CompatibilityCheck(this));
+		
+		setOptionChecks("experiment", new CompatibilityCheck(this));
 	}
 	
 	public abstract boolean isReady();

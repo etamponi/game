@@ -12,14 +12,21 @@ package game.core;
 
 import game.configuration.Configurable;
 import game.configuration.errorchecks.CompatibilityCheck;
+import game.configuration.errorchecks.PositivenessCheck;
 import game.plugins.constraints.Compatible;
 
 public abstract class DatasetBuilder extends Configurable implements Compatible<InstanceTemplate> {
 	
 	public InstanceTemplate template;
 	
+	public int startIndex = 0;
+	
+	public int instanceNumber = 1000;
+	
 	public DatasetBuilder() {
 		setOptionChecks("template", new CompatibilityCheck(this));
+		setOptionChecks("instanceNumber", new PositivenessCheck(false));
+		setOptionChecks("startIndex", new PositivenessCheck(true));
 	}
 	
 	public abstract Dataset buildDataset();

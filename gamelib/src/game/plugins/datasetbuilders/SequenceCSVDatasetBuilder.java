@@ -69,8 +69,9 @@ public class SequenceCSVDatasetBuilder extends DatasetBuilder {
 		
 		if (file.exists()) {
 			try {
+				int count = 0, index = 0;
 				BufferedReader reader = new BufferedReader(new FileReader(file));
-				for(String line = reader.readLine(); line != null; line = reader.readLine()) {
+				for(String line = reader.readLine(); line != null && count < instanceNumber; line = reader.readLine(), index++) {
 					List<Object> inputSequence = new LinkedList<>();
 					List<Object> outputSequence = new LinkedList<>();
 					while (!line.matches("^$") && line != null) {
@@ -79,7 +80,10 @@ public class SequenceCSVDatasetBuilder extends DatasetBuilder {
 						outputSequence.add(getData(Arrays.copyOfRange(tokens, inputDim, inputDim+outputDim), atom.outputTemplate));
 						line = reader.readLine();
 					}
+					if (index < startIndex)
+						continue;
 					ret.add(new Instance(inputSequence, outputSequence));
+					count++;
 				}
 			} catch (IOException e) {}
 		}

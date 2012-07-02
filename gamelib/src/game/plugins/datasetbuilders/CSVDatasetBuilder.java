@@ -57,12 +57,16 @@ public class CSVDatasetBuilder extends DatasetBuilder {
 		
 		if (file.exists()) {
 			try {
+				int index = 0, count = 0;
 				BufferedReader reader = new BufferedReader(new FileReader(file));
-				for(String line = reader.readLine(); line != null; line = reader.readLine()) {
+				for(String line = reader.readLine(); line != null && count < instanceNumber; line = reader.readLine(), index++) {
+					if (index < startIndex)
+						continue;
 					String[] tokens = line.split(separators);
 					Object input = getData(Arrays.copyOfRange(tokens, 0, inputDim), template.inputTemplate);
 					Object output = getData(Arrays.copyOfRange(tokens, inputDim, inputDim+outputDim), template.outputTemplate);
 					ret.add(new Instance(input, output));
+					count++;
 				}
 			} catch (IOException e) {}
 		}
