@@ -8,8 +8,8 @@ public class OneValueEncoder extends LabelEncoder {
 
 	@Override
 	protected void updateSingleMapping() {
-		// TODO Auto-generated method stub
-		
+		for(int i = 0; i < template.labels.size(); i++)
+			labelMapping.put((String)template.labels.get(i), new double[]{i});
 	}
 
 }

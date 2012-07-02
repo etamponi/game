@@ -1,12 +1,17 @@
 package game.plugins.weka.classifiers;
 
+import game.configuration.ErrorCheck;
+import game.core.DataTemplate;
 import game.core.Dataset;
 import game.core.EncodedSample;
 import game.core.Encoding;
 import game.core.InstanceTemplate;
 import game.core.blocks.Classifier;
+import game.core.blocks.Encoder;
 import game.plugins.datatemplates.LabelTemplate;
-import game.plugins.encoders.BooleanEncoder;
+import game.plugins.datatemplates.SequenceTemplate;
+import game.plugins.encoders.OneValueEncoder;
+import game.plugins.encoders.PerAtomSequenceEncoder;
 
 import java.util.List;
 
@@ -32,15 +37,44 @@ public class WekaMultilayerPerceptron extends Classifier {
 	
 	public MultilayerPerceptron nn;
 	
+	private OneValueEncoder atomicEncoder = new OneValueEncoder();
+	private PerAtomSequenceEncoder sequenceEncoder = new PerAtomSequenceEncoder();
+	
 	public WekaMultilayerPerceptron() {
-		outputEncoder = new BooleanEncoder();
+		sequenceEncoder.setOption("atomEncoder", atomicEncoder);
+		
+		outputEncoder = new Encoder<DataTemplate>() {
+			@Override
+			public boolean isCompatible(DataTemplate object) {
+				return true;
+			}
+			@Override
+			protected Encoding transform(Object inputData) {
+				if (template instanceof SequenceTemplate)
+					return sequenceEncoder.startTransform(inputData);
+				else
+					return atomicEncoder.startTransform(inputData);
+			}
+		};
+		
+		setOptionChecks("outputEncoder", new ErrorCheck<Encoder>() {
+			@Override
+			public String getError(Encoder value) {
+				if (!(value instanceof OneValueEncoder))
+					return "should be an OneValueEncoder";
+				else
+					return null;
+			}
+		});
+		
 		setInternalOptions("nn", "outputEncoder");
 	}
 
 	@Override
 	public boolean isCompatible(InstanceTemplate template) {
-		return template.outputTemplate instanceof LabelTemplate &&
-				((LabelTemplate)template.outputTemplate).labels.size() == 2;
+		return template.outputTemplate instanceof LabelTemplate ||
+				(template.outputTemplate instanceof SequenceTemplate &&
+						template.outputTemplate.getOption("atom") instanceof LabelTemplate);
 	}
 
 	@Override
@@ -69,8 +103,10 @@ public class WekaMultilayerPerceptron extends Classifier {
 		nn.setAutoBuild(true);
 		nn.setMomentum(momentum);
 		nn.setLearningRate(learningRate);
+		nn.setTrainingTime(maxIterations);
 		nn.setHiddenLayers(String.valueOf(hiddenNeurons));
 		nn.setValidationSetSize((int)(validationPercent*trainingSet.size()));
+		nn.setValidationThreshold((int)(nn.getValidationSetSize()*maxError));
 		
 		List<EncodedSample> samples = trainingSet.encode(getParent(), outputEncoder);
 		int inputSize = samples.get(0).getInput().length;
