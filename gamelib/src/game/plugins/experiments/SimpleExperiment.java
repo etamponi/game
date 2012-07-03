@@ -12,8 +12,8 @@ package game.plugins.experiments;
 
 import game.core.Dataset;
 import game.core.DatasetBuilder;
-import game.core.Result;
 import game.core.experiments.FullExperiment;
+import game.core.results.FullResult;
 import game.plugins.constraints.CompatibleWith;
 import game.utils.Msg;
 
@@ -38,9 +38,9 @@ public class SimpleExperiment extends FullExperiment {
 		updateStatus(0.51, "training complete, beginning testing phase...");
 		Dataset testedDataset = startAnotherTaskAndWait(0.90, graph, testingDataset.buildDataset());
 		updateStatus(0.91, "testing complete, beginning evaluation phase...");
-		for(Result evaluation: results.getList(Result.class)) {
-			evaluation.evaluate(testedDataset);
-			Msg.data(evaluation.prettyPrint());
+		for(FullResult result: results.getList(FullResult.class)) {
+			result.evaluate(testedDataset);
+			Msg.data(result.prettyPrint());
 		}
 		updateStatus(1.00, "experiment completed.");
 	}

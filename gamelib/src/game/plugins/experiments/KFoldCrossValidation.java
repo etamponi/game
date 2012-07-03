@@ -4,8 +4,8 @@ import game.configuration.errorchecks.RangeCheck;
 import game.core.Dataset;
 import game.core.DatasetBuilder;
 import game.core.Graph;
-import game.core.Result;
 import game.core.experiments.FullExperiment;
+import game.core.results.FullResult;
 import game.plugins.constraints.CompatibleWith;
 import game.utils.Msg;
 
@@ -39,7 +39,7 @@ public class KFoldCrossValidation extends FullExperiment {
 			updateStatus(getOverallStatus(1.00, i), "finished fold " + (i+1) + "/" + folds);
 		}
 		updateStatus(0.91, "fold training/testing finished, begin evaluation");
-		for(Result result: results.getList(Result.class)) {
+		for(FullResult result: results.getList(FullResult.class)) {
 			result.evaluate(testings);
 			Msg.data(result.prettyPrint());
 		}

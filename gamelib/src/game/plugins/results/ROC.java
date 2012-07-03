@@ -4,15 +4,14 @@ import game.configuration.errorchecks.RangeCheck;
 import game.core.Dataset;
 import game.core.Experiment;
 import game.core.Instance;
-import game.core.Result;
-import game.core.experiments.FullExperiment;
+import game.core.results.FullResult;
 import game.plugins.encoders.BooleanEncoder;
 import game.utils.Utils;
 
 import java.util.LinkedList;
 import java.util.List;
 
-public class ROC extends Result {
+public class ROC extends FullResult {
 
 	public List<Double> TPs = new LinkedList<>();
 	public List<Double> FPs = new LinkedList<>();
@@ -31,9 +30,9 @@ public class ROC extends Result {
 	}
 
 	@Override
-	public boolean isCompatible(Experiment object) {
-		return object instanceof FullExperiment &&
-				object.getOption("graph.outputClassifier.outputEncoder") instanceof BooleanEncoder;
+	public boolean isCompatible(Experiment exp) {
+		return super.isCompatible(exp) &&
+				exp.getOption("graph.outputClassifier.outputEncoder") instanceof BooleanEncoder;
 	}
 
 	@Override

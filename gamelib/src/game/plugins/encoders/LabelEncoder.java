@@ -44,8 +44,17 @@ public abstract class LabelEncoder extends Encoder<LabelTemplate> {
 	@Override
 	public Encoding transform(Object inputData) {
 		Encoding ret = new Encoding();
-		ret.add(labelMapping.get(inputData).clone());
+		double[] enc;
+		if (labelMapping.containsKey(inputData))
+			enc = labelMapping.get(inputData).clone();
+		else
+			enc = new double[getElementSize()];
+		ret.add(enc);
 		return ret;
+	}
+	
+	private int getElementSize() {
+		return labelMapping.values().iterator().next().length;
 	}
 	
 	private void updateMapping(LabelTemplate template) {

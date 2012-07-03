@@ -1,12 +1,15 @@
 package game.plugins.weka.classifiers;
 
+import game.configuration.ErrorCheck;
 import game.core.Dataset;
 import game.core.EncodedSample;
 import game.core.Encoding;
 import game.core.InstanceTemplate;
 import game.core.blocks.Classifier;
+import game.core.blocks.Encoder;
 import game.plugins.datatemplates.LabelTemplate;
 import game.plugins.datatemplates.SequenceTemplate;
+import game.plugins.encoders.BooleanEncoder;
 import game.plugins.encoders.OneHotEncoder;
 import game.plugins.encoders.PerAtomSequenceEncoder;
 
@@ -28,27 +31,34 @@ public class WekaMultilayerPerceptron extends Classifier {
 	
 	public int maxIterations = 1000;
 	
-	public double maxError = 0.01;
-	
 	public double validationPercent = 0.1;
 	
 	public int validationThreshold = 20;
 	
+	public boolean showGUI = false;
+	
 	public MultilayerPerceptron nn;
 
 	public WekaMultilayerPerceptron() {
-		setInternalOptions("nn", "outputEncoder");
-	}
-	
-	public void setTemplate(InstanceTemplate template) {
-		if (template.outputTemplate instanceof SequenceTemplate) {
-			outputEncoder = new PerAtomSequenceEncoder();
-			outputEncoder.setOption("atomEncoder", new OneHotEncoder());
-		}
-		if (template.outputTemplate instanceof LabelTemplate) {
-			outputEncoder = new OneHotEncoder();
-		}
-		this.template = template; 
+		setInternalOptions("nn");
+		
+		setOptionChecks("outputEncoder", new ErrorCheck<Encoder>(){
+			@Override
+			public String getError(Encoder value) {
+				if (value instanceof PerAtomSequenceEncoder) {
+					Encoder atomEncoder = ((PerAtomSequenceEncoder) value).atomEncoder;
+					if (atomEncoder instanceof OneHotEncoder)
+						return null;
+					if (atomEncoder instanceof BooleanEncoder)
+						return null;
+				}
+				if (value instanceof OneHotEncoder)
+					return null;
+				if (value instanceof BooleanEncoder)
+					return null;
+				return "only OneHotEncoder and BooleanEncoder are allowed";
+			}
+		});
 	}
 
 	@Override
@@ -61,11 +71,15 @@ public class WekaMultilayerPerceptron extends Classifier {
 	@Override
 	protected Encoding classify(Encoding inputEncoded) {
 		Encoding ret = new Encoding();
+		Encoder atomEncoder = outputEncoder instanceof PerAtomSequenceEncoder ? (Encoder)outputEncoder.getOption("atomEncoder") : outputEncoder;
 		for(double[] input: inputEncoded) {
 			Instance i = new Instance(1.0, input);
 			try {
 				double[] element = nn.distributionForInstance(i);
-				ret.add(element);
+				if (atomEncoder instanceof BooleanEncoder)
+					ret.add(new double[]{element[0]});
+				else
+					ret.add(element);
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
@@ -89,6 +103,7 @@ public class WekaMultilayerPerceptron extends Classifier {
 		nn.setHiddenLayers(String.valueOf(hiddenNeurons));
 		nn.setValidationSetSize((int)(validationPercent*trainingSet.size()));
 		nn.setValidationThreshold(validationThreshold);
+		nn.setGUI(showGUI);
 		
 		List<EncodedSample> samples = trainingSet.encode(getParent(), outputEncoder);
 		int inputSize = samples.get(0).getInput().length;

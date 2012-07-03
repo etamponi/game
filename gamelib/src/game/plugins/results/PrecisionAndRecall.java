@@ -12,17 +12,16 @@ package game.plugins.results;
 
 import game.core.DataTemplate;
 import game.core.Dataset;
-import game.core.Result;
 import game.core.Experiment;
 import game.core.Instance;
-import game.core.experiments.FullExperiment;
+import game.core.results.FullResult;
 import game.plugins.datatemplates.LabelTemplate;
 import game.plugins.datatemplates.SequenceTemplate;
 
 import java.util.LinkedList;
 import java.util.List;
 
-public class PrecisionAndRecall extends Result {
+public class PrecisionAndRecall extends FullResult {
 	
 	public List<Double> singleTP = new LinkedList<>();
 	public List<Double> singleT = new LinkedList<>();
@@ -35,9 +34,9 @@ public class PrecisionAndRecall extends Result {
 	}
 	
 	@Override
-	public boolean isCompatible(Experiment experiment) {
-		return experiment instanceof FullExperiment &&
-				isCompatible(experiment.template.outputTemplate);
+	public boolean isCompatible(Experiment exp) {
+		return super.isCompatible(exp) &&
+				isCompatible(exp.template.outputTemplate);
 	}
 	
 	private boolean isCompatible(DataTemplate template) {

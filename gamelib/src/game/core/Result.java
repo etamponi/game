@@ -14,7 +14,7 @@ import game.configuration.Configurable;
 import game.configuration.errorchecks.CompatibilityCheck;
 import game.plugins.constraints.Compatible;
 
-public abstract class Result extends Configurable implements Compatible<Experiment> {
+public abstract class Result<T> extends Configurable implements Compatible<Experiment> {
 	
 	public Experiment experiment;
 	
@@ -26,7 +26,7 @@ public abstract class Result extends Configurable implements Compatible<Experime
 	
 	public abstract boolean isReady();
 	
-	public abstract void evaluate(Dataset... folds);
+	public abstract void evaluate(T... params);
 	
 	public abstract String prettyPrint();
 	

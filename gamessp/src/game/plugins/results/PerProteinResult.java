@@ -11,9 +11,9 @@
 package game.plugins.results;
 
 import game.core.Dataset;
-import game.core.Result;
 import game.core.Experiment;
 import game.core.Instance;
+import game.core.results.FullResult;
 import game.plugins.datatemplates.ProteinDSSPStructure;
 import game.plugins.datatemplates.ProteinHECStructure;
 import game.plugins.datatemplates.ProteinPrimaryStructure;
@@ -21,7 +21,7 @@ import game.plugins.datatemplates.ProteinPrimaryStructure;
 import java.util.LinkedList;
 import java.util.List;
 
-public class PerProteinResult extends Result {
+public class PerProteinResult extends FullResult {
 	
 	List<Dataset> folds;
 

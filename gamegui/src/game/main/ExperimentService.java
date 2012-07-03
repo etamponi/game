@@ -89,6 +89,9 @@ public class ExperimentService extends Service<Experiment> {
 	public void stop() {
 		stopped = true;
 		executor.getThread().stop();
+		try {
+			executor.getThread().join();
+		} catch (InterruptedException e) {}
 	}
 	
 	public boolean isPaused() {

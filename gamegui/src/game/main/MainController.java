@@ -148,14 +148,16 @@ public class MainController extends Configurable implements Initializable {
 			public void handle(WorkerStateEvent event) {
 				if (!service.isStopped())
 					service.getException().printStackTrace();
-				disableButtons(false, true, true);
+				System.out.println("Failed!");
+				controlButtons();
 			}
 		});
 
 		service.addEventHandler(ExperimentService.FINISHED, new EventHandler<Event>() {
 			@Override
 			public void handle(Event event) {
-				disableButtons(false, true, true);
+				System.out.println("Finished!");
+				controlButtons();
 			}
 		});
 
@@ -234,12 +236,18 @@ public class MainController extends Configurable implements Initializable {
 	public void update(Observable observedOption, Object message) {
 		super.update(observedOption, message);
 		if (message instanceof Change) {
-			ConfigurableList experiments = model.getContent();
-			if (experiments.isEmpty() || !experiments.getConfigurationErrors().isEmpty()) {
-				disableButtons(true, true, true);
-			} else {
-				disableButtons(false, true, true);
-			}
+			controlButtons();
+		}
+	}
+	
+	private void controlButtons() {
+		if (service != null && service.isRunning())
+			return;
+		ConfigurableList experiments = model.getContent();
+		if (experiments.isEmpty() || !experiments.getConfigurationErrors().isEmpty()) {
+			disableButtons(true, true, true);
+		} else {
+			disableButtons(false, true, true);
 		}
 	}
 
@@ -247,6 +255,12 @@ public class MainController extends Configurable implements Initializable {
 		startButton.setDisable(start);
 		pauseButton.setDisable(pause);
 		stopButton.setDisable(stop);
+	}
+
+	@Override
+	protected void finalize() throws Throwable {
+		if (service != null && service.isRunning())
+			service.stop();
 	}
 
 }

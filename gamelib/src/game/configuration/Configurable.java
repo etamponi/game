@@ -164,7 +164,7 @@ public abstract class Configurable extends Observable implements Observer {
 		LinkedList<String> ret = new LinkedList<>();
 		seen.add(this);
 		for (Map.Entry<String, Object> entry: getOptionsMap().entrySet()) {
-			if (entry.getValue() == null) {
+			if (entry.getValue() == null && !internalOptions.contains(entry.getKey())) {
 				ret.add(entry.getKey() + ": is null");
 			} else {
 				if (optionChecks.containsKey(entry.getKey())) {

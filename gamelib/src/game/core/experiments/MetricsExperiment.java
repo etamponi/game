@@ -10,6 +10,7 @@
  ******************************************************************************/
 package game.core.experiments;
 
+import game.core.DatasetBuilder;
 import game.core.Experiment;
 import game.core.blocks.Encoder;
 import game.plugins.constraints.CompatibleWith;
@@ -18,10 +19,18 @@ public abstract class MetricsExperiment extends Experiment {
 	
 	public Encoder inputEncoder;
 	
+	public Encoder outputEncoder;
+	
+	public DatasetBuilder dataset;
+	
 	public MetricsExperiment() {
 		setOptionBinding("template.inputTemplate", "inputEncoder.template");
-		
-		setOptionConstraint("inputEncoder", new CompatibleWith(template, "inputTemplate"));
+		setOptionBinding("template.outputTemplate", "outputEncoder.template");
+		setOptionBinding("template", "dataset.template");
+
+		setOptionConstraint("inputEncoder", new CompatibleWith(this, "template.inputTemplate"));
+		setOptionConstraint("outputEncoder", new CompatibleWith(this, "template.outputTemplate"));
+		setOptionConstraint("dataset", new CompatibleWith(this, "template"));
 	}
 
 }
