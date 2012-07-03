@@ -106,7 +106,7 @@ public class EditorSystemTest extends Application {
 		}
 
 		@Override
-		protected Encoding transform(Object inputData) {
+		public Encoding transform(Object inputData) {
 			return null;
 		}
 
@@ -130,7 +130,7 @@ public class EditorSystemTest extends Application {
 		}
 
 		@Override
-		protected Encoding transform(Object inputData) {
+		public Encoding transform(Object inputData) {
 			return null;
 		}
 
@@ -144,7 +144,7 @@ public class EditorSystemTest extends Application {
 	public static class EncoderA extends Encoder<VectorTemplate> {
 
 		@Override
-		protected Encoding transform(Object inputData) {
+		public Encoding transform(Object inputData) {
 			return null;
 		}
 
@@ -158,7 +158,7 @@ public class EditorSystemTest extends Application {
 	public static class EncoderB extends Encoder<LabelTemplate> {
 
 		@Override
-		protected Encoding transform(Object inputData) {
+		public Encoding transform(Object inputData) {
 			return null;
 		}
 
@@ -172,7 +172,7 @@ public class EditorSystemTest extends Application {
 	public static class EncoderC extends Encoder<SequenceTemplate> {
 
 		@Override
-		protected Encoding transform(Object inputData) {
+		public Encoding transform(Object inputData) {
 			return null;
 		}
 

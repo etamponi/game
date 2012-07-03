@@ -34,12 +34,12 @@ public class PerAtomSequenceEncoder extends Encoder<SequenceTemplate> {
 	}
 
 	@Override
-	protected Encoding transform(Object inputData) {
+	public Encoding transform(Object inputData) {
 		Encoding ret = new Encoding();
 		
 		List input = (List)inputData;
 		for(Object atom: input)
-			ret.addAll(atomEncoder.startTransform(atom));
+			ret.addAll(atomEncoder.transform(atom));
 		
 		return ret.makeWindowedEncoding(windowSize);
 	}

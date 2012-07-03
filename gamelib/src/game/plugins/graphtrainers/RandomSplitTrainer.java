@@ -42,7 +42,7 @@ public class RandomSplitTrainer extends GraphTrainer {
 			recursivelyTrainGraph(parent, trainingSet, increase);
 
 		if (!current.isTrained()) {
-			startAnotherTaskAndWait(getCurrentPercent()+increase, current, Block.TRAININGTASK, trainingSet.getRandomSubset(splitPercent));
+			startAnotherTaskAndWait(getCurrentPercent()+increase, current, trainingSet.getRandomSubset(splitPercent));
 		}
 	}
 	
@@ -61,6 +61,11 @@ public class RandomSplitTrainer extends GraphTrainer {
 			for(Block parent: current.parents.getList(Block.class))
 				countBlocks(parent, blocks);
 		}
+	}
+
+	@Override
+	public String getTaskDescription() {
+		return String.format("graph training with random split %.2f%%", splitPercent*100); 
 	}
 
 }

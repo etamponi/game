@@ -24,7 +24,7 @@ public abstract class Classifier extends Transducer {
 	protected abstract Encoding classify(Encoding inputEncoded);
 
 	@Override
-	protected Encoding transform(Object inputData) {
+	public Encoding transform(Object inputData) {
 		return classify(getParentEncoding(0, inputData));
 	}
 	

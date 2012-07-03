@@ -18,7 +18,7 @@ import java.util.List;
 public class Concatenator extends Pipe {
 
 	@Override
-	protected Encoding transform(Object inputData) {
+	public Encoding transform(Object inputData) {
 		List<Encoding> encs = getParentsEncodings(inputData);
 		
 		Encoding ret = new Encoding();

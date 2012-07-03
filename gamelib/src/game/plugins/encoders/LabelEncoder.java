@@ -42,7 +42,7 @@ public abstract class LabelEncoder extends Encoder<LabelTemplate> {
 	protected abstract void updateSingleMapping();
 
 	@Override
-	protected Encoding transform(Object inputData) {
+	public Encoding transform(Object inputData) {
 		Encoding ret = new Encoding();
 		ret.add(labelMapping.get(inputData).clone());
 		return ret;

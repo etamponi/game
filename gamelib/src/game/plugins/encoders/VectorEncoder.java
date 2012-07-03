@@ -18,7 +18,7 @@ import game.plugins.datatemplates.VectorTemplate;
 public class VectorEncoder extends Encoder<VectorTemplate> {
 
 	@Override
-	protected Encoding transform(Object inputData) {
+	public Encoding transform(Object inputData) {
 		Encoding ret = new Encoding();
 		ret.add((double[])inputData);
 		return ret;

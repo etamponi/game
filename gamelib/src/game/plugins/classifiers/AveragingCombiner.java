@@ -41,7 +41,7 @@ public class AveragingCombiner extends Combiner {
 	}
 
 	@Override
-	protected Encoding transform(Object inputData) {
+	public Encoding transform(Object inputData) {
 		List<Encoding> encs = getParentsEncodings(inputData);
 		
 		if (encs.size() == 1)

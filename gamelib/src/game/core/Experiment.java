@@ -42,43 +42,37 @@ public abstract class Experiment extends LongTask {
 		
 	}
 	
-	public static final String TASKNAME = "experiment";
-	
 	public InstanceTemplate template;
 	
 	public ExperimentConstrainedList results = new ExperimentConstrainedList(this, Result.class);
 	
 	public Experiment() {
-		setOptionChecks("evaluations", new SizeCheck(1));
+		setOptionChecks("results", new SizeCheck(1));
 	}
 	
 	public Experiment startExperiment() {
-		return startTask(TASKNAME);
+		return startTask();
 	}
 	
 	protected abstract void runExperiment();
 
 	@Override
 	protected Object execute(Object... params) {
-		if (getTaskType().equals(TASKNAME)) {
-			final Experiment clone = cloneConfiguration();
-			Observer o = new Observer() {
-				@Override
-				public void update(Observable o, Object arg) {
-					if (arg instanceof LongTaskUpdate) {
-						Msg.info("%6.2f%%: %s", clone.getCurrentPercent()*100, clone.getCurrentMessage());
-						updateStatus(clone.getCurrentPercent(), clone.getCurrentMessage());
-					}
+		final Experiment clone = cloneConfiguration();
+		Observer o = new Observer() {
+			@Override
+			public void update(Observable o, Object arg) {
+				if (arg instanceof LongTaskUpdate) {
+					Msg.info("%6.2f%%: %s", clone.getCurrentPercent()*100, clone.getCurrentMessage());
+					updateStatus(clone.getCurrentPercent(), clone.getCurrentMessage());
 				}
-			};
-			clone.name = name;
-			clone.addObserver(o);
-			clone.runExperiment();
-			clone.deleteObserver(o);
-			return clone;
-		} else {
-			return null;
-		}
+			}
+		};
+		clone.name = name;
+		clone.addObserver(o);
+		clone.runExperiment();
+		clone.deleteObserver(o);
+		return clone;
 	}
 
 }

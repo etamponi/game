@@ -20,9 +20,6 @@ import java.util.LinkedList;
 
 public class Graph extends LongTask {
 	
-	public static final String CLASSIFYTASK = "classification";
-	public static final String CLASSIFYALLTASK = "classifyall";
-	
 	public InstanceTemplate template; 
 
 	public TemplateConstrainedList classifiers = new TemplateConstrainedList(this, Transducer.class);
@@ -42,22 +39,24 @@ public class Graph extends LongTask {
 		omitFromErrorCheck("classifiers", "inputEncoders", "pipes");
 	}
 
-	public <T> T startClassification(Object object) {
-		if (object instanceof Dataset)
-			return (T)startTask(CLASSIFYALLTASK, object);
-		else
-			return (T)startTask(CLASSIFYTASK, object);
+	@Override
+	public String getTaskDescription() {
+		return "dataset classification using " + name;
 	}
 	
-	protected Object classify(Object inputData) {
-		return decoder.decode(outputClassifier.startTransform(inputData));
+	public Dataset startDatasetClassification(Dataset dataset) {
+		return startTask(dataset);
+	}
+	
+	public Object classify(Object inputData) {
+		return decoder.decode(outputClassifier.transform(inputData));
 	}
 	
 	protected Dataset classifyAll(Dataset dataset) {
 		double singleIncrease = 1.0 / dataset.size();
 		int count = 1;
 		for (Instance i: dataset) {
-			Encoding encoding = outputClassifier.startTransform(i.getInputData());
+			Encoding encoding = outputClassifier.transform(i.getInputData());
 			i.setPredictionEncoding(encoding);
 			i.setPredictedData(decoder.decode(encoding));
 			updateStatus(getCurrentPercent()+singleIncrease, "instance predicted " + count + "/" + dataset.size());
@@ -68,11 +67,7 @@ public class Graph extends LongTask {
 
 	@Override
 	protected Object execute(Object... params) {
-		if (getTaskType().equals(CLASSIFYALLTASK))
-			return classifyAll((Dataset)params[0]);
-		else if (getTaskType().equals(CLASSIFYTASK))
-			return classify(params[0]);
-		return null;
+		return classifyAll((Dataset)params[0]);
 	}
 
 	@Override

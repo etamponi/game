@@ -77,8 +77,8 @@ public class Dataset extends ArrayList<Instance> {
 		List<EncodedSample> ret = new LinkedList<>();
 		
 		for(Instance i: this) {
-			Encoding inputEncoding = inputEncoder.startTransform(i.getInputData());
-			Encoding outputEncoding = outputEncoder.startTransform(i.getOutputData());
+			Encoding inputEncoding = inputEncoder.transform(i.getInputData());
+			Encoding outputEncoding = outputEncoder.transform(i.getOutputData());
 			
 			for(int k = 0; k < inputEncoding.length(); k++) {
 				int outputK = outputEncoding.length() == inputEncoding.length() ? k : 1;

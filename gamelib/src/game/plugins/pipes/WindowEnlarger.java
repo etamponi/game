@@ -27,8 +27,8 @@ public class WindowEnlarger extends Pipe {
 	}
 
 	@Override
-	protected Encoding transform(Object inputData) {
-		return parents.getList(Block.class).get(0).startTransform(inputData).makeWindowedEncoding(windowSize);
+	public Encoding transform(Object inputData) {
+		return parents.getList(Block.class).get(0).transform(inputData).makeWindowedEncoding(windowSize);
 	}
 
 }

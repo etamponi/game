@@ -40,6 +40,11 @@ public class LongTaskTest {
 			} catch (InterruptedException e) {}
 			return null;
 		}
+
+		@Override
+		public String getTaskDescription() {
+			return "test task B";
+		}
 		
 	}
 	
@@ -56,7 +61,7 @@ public class LongTaskTest {
 				updateStatus(0.3, "slept for 3 seconds");
 				LongTask other = new LongTaskImplB();
 				other.setOption("name", "OtherTask");
-				startAnotherTaskAndWait(0.8, other, "subtest");
+				startAnotherTaskAndWait(0.8, other);
 				Thread.sleep(100);
 				updateStatus(1.0, "slept for a lot of seconds");
 			} catch (InterruptedException e) {}
@@ -64,7 +69,12 @@ public class LongTaskTest {
 		}
 		
 		public Object startTest() {
-			return startTask("test");
+			return startTask();
+		}
+
+		@Override
+		public String getTaskDescription() {
+			return "test task A";
 		}
 		
 	}
@@ -72,7 +82,6 @@ public class LongTaskTest {
 	@Test
 	public void test() {
 		LongTaskImplA task = new LongTaskImplA();
-		task.setOption("name", "MainTask");
 		task.addObserver(new Observer() {
 			private int count = 0;
 			@Override
@@ -81,19 +90,19 @@ public class LongTaskTest {
 					LongTask observed = (LongTask)o;
 					System.out.println(String.format("%6.2f%% of %s: %s", observed.getCurrentPercent()*100, observed, observed.getCurrentMessage()));
 					if (count == 0)
-						assertEquals("start task test", observed.getCurrentMessage());
+						assertEquals("start task test task A", observed.getCurrentMessage());
 					else if (count > 0 && count < 4)
 						assertEquals("slept for " + count + " seconds", observed.getCurrentMessage());
 					else if (count == 4)
-						assertEquals("start task subtest", observed.getCurrentMessage());
+						assertEquals("start task test task B", observed.getCurrentMessage());
 					else if (count > 4 && count < 10)
 						assertEquals("LongTaskImplB slept for " + (count-4) + " seconds", observed.getCurrentMessage());
 					else if (count == 10)
-						assertEquals("task subtest finished", observed.getCurrentMessage());
+						assertEquals("task finished", observed.getCurrentMessage());
 					else if (count == 11)
 						assertEquals("slept for a lot of seconds", observed.getCurrentMessage());
 					else
-						assertEquals("task test finished", observed.getCurrentMessage());
+						assertEquals("task finished", observed.getCurrentMessage());
 					count++;
 				}
 			}

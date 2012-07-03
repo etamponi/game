@@ -4,7 +4,6 @@ import game.configuration.errorchecks.RangeCheck;
 import game.core.Dataset;
 import game.core.DatasetBuilder;
 import game.core.Graph;
-import game.core.GraphTrainer;
 import game.core.Result;
 import game.core.experiments.FullExperiment;
 import game.plugins.constraints.CompatibleWith;
@@ -34,9 +33,9 @@ public class KFoldCrossValidation extends FullExperiment {
 		for(int i = 0; i < folds; i++) {
 			Graph graphClone = graph.cloneConfiguration();
 			updateStatus(getOverallStatus(0.01, i), "start training for fold " + (i+1) + "/" + folds);
-			startAnotherTaskAndWait(getOverallStatus(0.50, i), trainer, GraphTrainer.TASKNAME, graphClone, trainings[i]);
+			startAnotherTaskAndWait(getOverallStatus(0.50, i), trainer, graphClone, trainings[i]);
 			updateStatus(getOverallStatus(0.51, i), "training complete, beginning testing phase...");
-			testings[i] = startAnotherTaskAndWait(getOverallStatus(0.99, i), graphClone, Graph.CLASSIFYALLTASK, testings[i]);
+			testings[i] = startAnotherTaskAndWait(getOverallStatus(0.99, i), graphClone, testings[i]);
 			updateStatus(getOverallStatus(1.00, i), "finished fold " + (i+1) + "/" + folds);
 		}
 		updateStatus(0.91, "fold training/testing finished, begin evaluation");
@@ -49,6 +48,11 @@ public class KFoldCrossValidation extends FullExperiment {
 	
 	private double getOverallStatus(double foldStatus, int fold) {
 		return 0.90*(foldStatus + fold) / folds;
+	}
+
+	@Override
+	public String getTaskDescription() {
+		return "k-fold cross-validation using " + folds + " folds";
 	}
 
 }

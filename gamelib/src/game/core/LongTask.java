@@ -19,21 +19,21 @@ public abstract class LongTask extends Configurable {
 	
 	public static class LongTaskUpdate {}
 
-	private String taskType;
 	private double currentPercent;
 	private String currentMessage;
+
+	public abstract String getTaskDescription();
 	
 	protected abstract Object execute(Object... params);
 	
-	protected <T> T startTask(String taskType, Object... params) {
-		this.taskType = taskType;
-		updateStatus(0.0, "start task " + taskType);
+	protected <T> T startTask(Object... params) {
+		updateStatus(0.0, "start task " + getTaskDescription());
 		Object ret = execute(params);
-		updateStatus(1.0, "task " + taskType + " finished");
+		updateStatus(1.0, "task finished");
 		return (T)ret;
 	}
 	
-	protected <T> T startAnotherTaskAndWait(double percentAtEnd, LongTask task, String taskName, Object... params) {
+	protected <T> T startAnotherTaskAndWait(double percentAtEnd, LongTask task, Object... params) {
 		final double percentAtStart = currentPercent;
 		final double ratio = percentAtEnd - percentAtStart;
 		Observer temp = new Observer() {
@@ -46,13 +46,9 @@ public abstract class LongTask extends Configurable {
 			}
 		};
 		task.addObserver(temp);
-		T ret = task.startTask(taskName, params);
+		T ret = task.startTask(params);
 		task.deleteObserver(temp);
 		return ret;
-	}
-	
-	public String getTaskType() {
-		return taskType;
 	}
 	
 	public double getCurrentPercent() {

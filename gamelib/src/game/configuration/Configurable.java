@@ -146,7 +146,7 @@ public abstract class Configurable extends Observable implements Observer {
 	public HashMap<String, Object> getOptionsMap() {
 		HashMap<String, Object> ret = new HashMap<>();
 		
-		for (String name: getOptionNames())
+		for (String name: getAllOptionNames())
 			ret.put(name, getLocalOption(name));
 		
 		return ret;

@@ -26,9 +26,6 @@ public abstract class Block extends LongTask {
 			return x >= 0 && y >= 0;
 		}
 	}
-
-	public static final String TRAININGTASK = "training";
-	public static final String TRANSFORMTASK = "transformation";
 	
 	public ConfigurableList parents = new ConfigurableList(this, Block.class);
 	
@@ -36,40 +33,38 @@ public abstract class Block extends LongTask {
 	
 	public Block() {
 		omitFromErrorCheck("parents");
+		
+		setInternalOptions("parents", "position");
 	}
 	
 	public abstract boolean isTrained();
 	
 	protected abstract void train(Dataset trainingSet);
 	
-	protected abstract Encoding transform(Object inputData);
+	public abstract Encoding transform(Object inputData);
 	
 	public abstract boolean acceptsNewParents();
 	
-	public void startTraining(Dataset trainingSet) {
-		startTask(TRAININGTASK, trainingSet);
+	@Override
+	public String getTaskDescription() {
+		return "training of " + name;
 	}
-	
-	public Encoding startTransform(Object inputData) {
-		return startTask(TRANSFORMTASK, inputData);
+
+	public void startTraining(Dataset trainingSet) {
+		startTask(trainingSet);
 	}
 	
 	@Override
 	protected Object execute(Object... params) {
-		if (!isTrained() && getTaskType().equals(TRAININGTASK)) {
-			train((Dataset)params[0]);
-			return null;
-		} else if (isTrained() && getTaskType().equals(TRANSFORMTASK))
-			return transform(params[0]);
-		else
-			return null;
+		train((Dataset)params[0]);
+		return null;
 	}
 	
 	protected List<Encoding> getParentsEncodings(Object inputData) {
 		List<Encoding> ret = new LinkedList<>();
 		
 		for (Block parent: parents.getList(Block.class)) {
-			ret.add(parent.startTransform(inputData));
+			ret.add(parent.transform(inputData));
 		}
 		
 		return ret;
@@ -80,10 +75,8 @@ public abstract class Block extends LongTask {
 	}
 	
 	public Encoding getParentEncoding(int i, Object inputData) {
-		if (i < parents.size())
-			return ((Block)parents.get(i)).startTransform(inputData);
-		else
-			return null;
+		assert(i >= 0 && i < parents.size());
+		return ((Block)parents.get(i)).transform(inputData);
 	}
 
 }
