@@ -27,9 +27,8 @@ public class PerProteinResult extends FullResult {
 
 	@Override
 	public boolean isCompatible(Experiment object) {
-		return object.template.inputTemplate instanceof ProteinPrimaryStructure &&
-				(object.template.outputTemplate instanceof ProteinHECStructure ||
-				 object.template.outputTemplate instanceof ProteinDSSPStructure);
+		return object.template.outputTemplate instanceof ProteinHECStructure ||
+				object.template.outputTemplate instanceof ProteinDSSPStructure;
 	}
 
 	@Override
@@ -48,7 +47,8 @@ public class PerProteinResult extends FullResult {
 	public String prettyPrint() {
 		StringBuilder ret = new StringBuilder();
 		for(Instance i: folds.get(0)) {
-			ret.append("Primary:          ").append(getFasta(i.getInputData())).append("\n");
+			if (experiment.template.inputTemplate instanceof ProteinPrimaryStructure)
+				ret.append("Primary:          ").append(getFasta(i.getInputData())).append("\n");
 			ret.append("Secondary (obs):  ").append(getFasta(i.getOutputData())).append("\n");
 			ret.append("Secondary (pred): ").append(getFasta(i.getPredictedData())).append("\n\n");
 		}

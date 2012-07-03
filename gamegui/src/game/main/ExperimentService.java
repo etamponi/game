@@ -67,6 +67,7 @@ public class ExperimentService extends Service<Experiment> {
 	
 	private boolean paused = false;
 	private boolean stopped = false;
+	private boolean finished = true;
 	
 	public ExperimentService() {
 		setExecutor(executor);
@@ -109,6 +110,7 @@ public class ExperimentService extends Service<Experiment> {
 		currentExperiment.set(experiments.get(0).toString());
 		paused = false;
 		stopped = false;
+		finished = false;
 		
 		start();
 	}
@@ -119,6 +121,10 @@ public class ExperimentService extends Service<Experiment> {
 	
 	public StringProperty currentExperimentProperty() {
 		return currentExperiment;
+	}
+	
+	public boolean hasFinished() {
+		return finished;
 	}
 
 	@Override
@@ -162,6 +168,7 @@ public class ExperimentService extends Service<Experiment> {
 			currentExperiment.set(experiments.get(counter.get()).toString());
 			start();
 		} else {
+			finished = true;
 			fireEvent(new Event(FINISHED));
 		}
 	}

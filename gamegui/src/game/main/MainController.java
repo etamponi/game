@@ -148,7 +148,6 @@ public class MainController extends Configurable implements Initializable {
 			public void handle(WorkerStateEvent event) {
 				if (!service.isStopped())
 					service.getException().printStackTrace();
-				System.out.println("Failed!");
 				controlButtons();
 			}
 		});
@@ -156,7 +155,6 @@ public class MainController extends Configurable implements Initializable {
 		service.addEventHandler(ExperimentService.FINISHED, new EventHandler<Event>() {
 			@Override
 			public void handle(Event event) {
-				System.out.println("Finished!");
 				controlButtons();
 			}
 		});
@@ -204,6 +202,7 @@ public class MainController extends Configurable implements Initializable {
 		container.getChildren().addAll(new Label("Do you want to stop all the experiments?"), buttons);
 		buttons.setAlignment(Pos.CENTER);
 		stage.setScene(new Scene(container));
+		stage.setResizable(false);
 		stage.showAndWait();
 		return sure.get();
 	}
@@ -241,7 +240,7 @@ public class MainController extends Configurable implements Initializable {
 	}
 	
 	private void controlButtons() {
-		if (service != null && service.isRunning())
+		if (service != null && service.hasFinished())
 			return;
 		ConfigurableList experiments = model.getContent();
 		if (experiments.isEmpty() || !experiments.getConfigurationErrors().isEmpty()) {
