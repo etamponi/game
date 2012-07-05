@@ -13,8 +13,6 @@ package game.core;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.LinkedList;
-import java.util.List;
 
 public class Dataset extends ArrayList<Instance> {
 
@@ -47,8 +45,7 @@ public class Dataset extends ArrayList<Instance> {
 	}
 	
 	public Dataset getFoldComplement(int i, int folds) {
-		Dataset ret = new Dataset();
-		ret.addAll(this);
+		Dataset ret = new Dataset(this);
 		ret.removeAll(getFold(i, folds));
 		return ret;
 	}
@@ -73,8 +70,31 @@ public class Dataset extends ArrayList<Instance> {
 		return ret;
 	}
 	
-	public List<EncodedSample> encode(Block inputEncoder, Block outputEncoder) {
-		List<EncodedSample> ret = new LinkedList<>();
+	public static class EncodedSamples extends ArrayList<EncodedSample> {
+		
+		private static final long serialVersionUID = 2130556043598496819L;
+
+		public EncodedSamples() {
+			
+		}
+		
+		public EncodedSamples(int initialCapacity) {
+			super(initialCapacity);
+		}
+		
+		public EncodedSamples(Collection<EncodedSample> other) {
+			super(other);
+		}
+		
+		@Override
+		protected void finalize() throws Throwable {
+			System.out.println("Finalizing EncodedSamples (size = " + size() + ")");
+			super.finalize();
+		}
+	}
+	
+	public EncodedSamples encode(Block inputEncoder, Block outputEncoder) {
+		EncodedSamples ret = new EncodedSamples(size());
 		
 		for(Instance i: this) {
 			Encoding inputEncoding = inputEncoder.transform(i.getInputData());
@@ -82,12 +102,18 @@ public class Dataset extends ArrayList<Instance> {
 			
 			for(int k = 0; k < inputEncoding.length(); k++) {
 				int outputK = outputEncoding.length() == inputEncoding.length() ? k : 1;
-				EncodedSample sample = new EncodedSample(inputEncoding.get(k).clone(), outputEncoding.get(outputK).clone());
+				EncodedSample sample = new EncodedSample(inputEncoding.get(k), outputEncoding.get(outputK));
 				ret.add(sample);
 			}
 		}
 		
 		return ret;
 	}
-
+	
+	@Override
+	protected void finalize() throws Throwable {
+		System.out.println("Clearing dataset " + this.hashCode() + " (size = " + size() + ")");
+		super.finalize();
+	}
+	
 }

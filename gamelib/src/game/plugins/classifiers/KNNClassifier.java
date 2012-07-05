@@ -13,6 +13,7 @@ package game.plugins.classifiers;
 import game.configuration.errorchecks.PositivenessCheck;
 import game.core.Block;
 import game.core.Dataset;
+import game.core.Dataset.EncodedSamples;
 import game.core.EncodedSample;
 import game.core.Encoding;
 import game.core.InstanceTemplate;
@@ -48,7 +49,7 @@ public class KNNClassifier extends Classifier {
 	
 	public int k;
 	
-	public List<EncodedSample> reference;
+	public EncodedSamples reference;
 	
 	public KNNClassifier() {
 		setOptionChecks("k", new PositivenessCheck(false));

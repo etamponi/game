@@ -13,7 +13,6 @@ package game.core;
 import game.configuration.ConfigurableList;
 import game.configuration.errorchecks.SizeCheck;
 import game.plugins.constraints.CompatibleWith;
-import game.utils.Msg;
 
 import java.util.Observable;
 import java.util.Observer;
@@ -63,7 +62,6 @@ public abstract class Experiment extends LongTask {
 			@Override
 			public void update(Observable o, Object arg) {
 				if (arg instanceof LongTaskUpdate) {
-					Msg.info("%6.2f%%: %s", clone.getCurrentPercent()*100, clone.getCurrentMessage());
 					updateStatus(clone.getCurrentPercent(), clone.getCurrentMessage());
 				}
 			}

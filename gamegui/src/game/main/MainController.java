@@ -240,7 +240,7 @@ public class MainController extends Configurable implements Initializable {
 	}
 	
 	private void controlButtons() {
-		if (service != null && service.hasFinished())
+		if (service != null && !service.hasFinished())
 			return;
 		ConfigurableList experiments = model.getContent();
 		if (experiments.isEmpty() || !experiments.getConfigurationErrors().isEmpty()) {
@@ -260,6 +260,7 @@ public class MainController extends Configurable implements Initializable {
 	protected void finalize() throws Throwable {
 		if (service != null && service.isRunning())
 			service.stop();
+		super.finalize();
 	}
 
 }

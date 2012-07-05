@@ -2,6 +2,7 @@ package game.plugins.weka.classifiers;
 
 import game.configuration.ErrorCheck;
 import game.core.Dataset;
+import game.core.Dataset.EncodedSamples;
 import game.core.EncodedSample;
 import game.core.Encoding;
 import game.core.InstanceTemplate;
@@ -31,7 +32,7 @@ public class WekaMultilayerPerceptron extends Classifier {
 	
 	public int maxIterations = 1000;
 	
-	public double validationPercent = 0.1;
+	public int validationPercent = 10;
 	
 	public int validationThreshold = 20;
 	
@@ -101,11 +102,12 @@ public class WekaMultilayerPerceptron extends Classifier {
 		nn.setLearningRate(learningRate);
 		nn.setTrainingTime(maxIterations);
 		nn.setHiddenLayers(String.valueOf(hiddenNeurons));
-		nn.setValidationSetSize((int)(validationPercent*trainingSet.size()));
+		nn.setValidationSetSize(validationPercent);
 		nn.setValidationThreshold(validationThreshold);
 		nn.setGUI(showGUI);
 		
-		List<EncodedSample> samples = trainingSet.encode(getParent(), outputEncoder);
+		updateStatus(0.01, "calculating samples...");
+		EncodedSamples samples = trainingSet.encode(getParent(), outputEncoder);
 		int inputSize = samples.get(0).getInput().length;
 		FastVector attributes = new FastVector();
 		for(int i = 0; i < inputSize; i++) {
@@ -116,6 +118,8 @@ public class WekaMultilayerPerceptron extends Classifier {
 			classes.addElement(label);
 		attributes.addElement(new Attribute("class", classes));
 		Instances ts = new Instances("training", attributes, 0);
+		
+		updateStatus(0.05, "porting samples to Weka format...");
 		for(EncodedSample sample: samples) {
 			Instance i = new Instance(inputSize+1);
 			for(int index = 0; index < sample.getInput().length; index++)
@@ -124,7 +128,8 @@ public class WekaMultilayerPerceptron extends Classifier {
 			ts.add(i);
 		}
 		ts.setClassIndex(samples.get(0).getInput().length);
-		
+		samples = null;
+		System.gc();
 		updateStatus(0.50, "starting Weka training, please wait...");
 		try {
 			nn.buildClassifier(ts);

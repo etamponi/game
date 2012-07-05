@@ -132,12 +132,17 @@ public class ExperimentService extends Service<Experiment> {
 		return new Task<Experiment>() {
 			@Override
 			protected Experiment call() throws Exception {
+				System.gc();
+				System.out.println("Total memory: " + Runtime.getRuntime().totalMemory());
+				System.out.println(" Free memory: " + Runtime.getRuntime().freeMemory());
+				
 				final Experiment e = experiments.get(counter.get());
 				Msg.setLogPrefix(e.name);
 				Observer o = new Observer() {
 					@Override
 					public void update(Observable obs, Object m) {
 						if (m instanceof LongTaskUpdate) {
+							Msg.info("%6.2f%%: %s", e.getCurrentPercent()*100, e.getCurrentMessage());
 							updateMessage(e.getCurrentMessage());
 							updateProgress((long)(e.getCurrentPercent()*100), 100);
 //							try {

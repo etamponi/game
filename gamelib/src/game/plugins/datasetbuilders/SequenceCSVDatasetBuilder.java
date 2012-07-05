@@ -74,7 +74,7 @@ public class SequenceCSVDatasetBuilder extends DatasetBuilder {
 				for(String line = reader.readLine(); line != null && count < instanceNumber; line = reader.readLine(), index++) {
 					List<Object> inputSequence = new LinkedList<>();
 					List<Object> outputSequence = new LinkedList<>();
-					while (!line.matches("^$") && line != null) {
+					while (line != null && !line.matches("^$")) {
 						String[] tokens = line.split(separators);
 						inputSequence.add(getData(Arrays.copyOfRange(tokens, 0, inputDim), atom.inputTemplate));
 						outputSequence.add(getData(Arrays.copyOfRange(tokens, inputDim, inputDim+outputDim), atom.outputTemplate));

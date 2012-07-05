@@ -31,5 +31,9 @@ public abstract class Classifier extends Transducer {
 	protected Block getParent() {
 		return (Block)parents.get(0);
 	}
+	
+	protected Encoding getParentEncoding(Object inputData) {
+		return getParent().transform(inputData);
+	}
 
 }

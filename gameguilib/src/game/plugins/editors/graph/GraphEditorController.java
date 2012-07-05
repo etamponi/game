@@ -197,6 +197,7 @@ public class GraphEditorController implements EditorController {
 	@Override
 	protected void finalize() throws Throwable {
 		confEditor.disconnect();
+		super.finalize();
 	}
 
 }

@@ -1,6 +1,7 @@
 package game.plugins.experiments;
 
 import game.core.Dataset;
+import game.core.Dataset.EncodedSamples;
 import game.core.EncodedSample;
 import game.core.experiments.MetricsExperiment;
 import game.core.results.MetricResult;
@@ -15,9 +16,9 @@ public class NRunMetricsExperiment extends MetricsExperiment {
 	@Override
 	protected void runExperiment() {
 		Dataset ds = dataset.buildDataset();
-		List<EncodedSample> samples = ds.encode(inputEncoder, outputEncoder);
+		EncodedSamples samples = ds.encode(inputEncoder, outputEncoder);
 		
-		List<EncodedSample>[] folds = split(samples);
+		EncodedSamples[] folds = split(samples);
 		
 		for(MetricResult result: results.getList(MetricResult.class)) {
 			result.evaluate(folds);
@@ -25,12 +26,12 @@ public class NRunMetricsExperiment extends MetricsExperiment {
 		}
 	}
 	
-	private List<EncodedSample>[] split(List<EncodedSample> samples) {
-		List<EncodedSample>[] folds = new List[runs];
+	private EncodedSamples[] split(List<EncodedSample> samples) {
+		EncodedSamples[] folds = new EncodedSamples[runs];
 		
 		int foldSize = samples.size()/runs;
 		for(int i = 0; i < runs; i++) {
-			folds[i] = samples.subList(0, foldSize);
+			folds[i] = new EncodedSamples(samples.subList(0, foldSize));
 			samples.removeAll(folds[i]);
 		}
 		

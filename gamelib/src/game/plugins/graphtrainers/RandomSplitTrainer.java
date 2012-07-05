@@ -65,7 +65,7 @@ public class RandomSplitTrainer extends GraphTrainer {
 
 	@Override
 	public String getTaskDescription() {
-		return String.format("graph training with random split %.2f%%", splitPercent*100); 
+		return String.format("graph training with random splits (dataset percent per split: %.2f%%)", splitPercent*100); 
 	}
 
 }
