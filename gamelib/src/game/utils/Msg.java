@@ -12,6 +12,8 @@ package game.utils;
 
 import java.io.File;
 import java.io.IOException;
+import java.text.DateFormat;
+import java.util.Date;
 import java.util.logging.FileHandler;
 import java.util.logging.Formatter;
 import java.util.logging.Handler;
@@ -24,7 +26,8 @@ public class Msg {
 
 		@Override
 		public String format(LogRecord record) {
-			return record.getMessage() + System.lineSeparator();
+			return DateFormat.getDateTimeInstance().format(new Date()) + ": "
+					+ record.getMessage() + System.lineSeparator();
 		}
 		
 	};

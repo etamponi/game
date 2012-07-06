@@ -7,6 +7,7 @@ import game.core.Graph;
 import game.core.experiments.FullExperiment;
 import game.core.results.FullResult;
 import game.plugins.constraints.CompatibleWith;
+import game.plugins.results.TrainedGraphList;
 import game.utils.Msg;
 
 public class KFoldCrossValidation extends FullExperiment {
@@ -30,6 +31,7 @@ public class KFoldCrossValidation extends FullExperiment {
 		Dataset[] testings = complete.getFolds(folds);
 		Dataset[] trainings = complete.getFoldComplements(folds);
 		
+		TrainedGraphList trainedGraphs = new TrainedGraphList();
 		for(int i = 0; i < folds; i++) {
 			Graph graphClone = graph.cloneConfiguration();
 			updateStatus(getOverallStatus(0.01, i), "start training for fold " + (i+1) + "/" + folds);
@@ -37,12 +39,14 @@ public class KFoldCrossValidation extends FullExperiment {
 			updateStatus(getOverallStatus(0.51, i), "training complete, beginning testing phase...");
 			testings[i] = startAnotherTaskAndWait(getOverallStatus(0.99, i), graphClone, testings[i]);
 			updateStatus(getOverallStatus(1.00, i), "finished fold " + (i+1) + "/" + folds);
+			trainedGraphs.graphs.add(graphClone);
 		}
 		updateStatus(0.91, "fold training/testing finished, begin evaluation");
 		for(FullResult result: results.getList(FullResult.class)) {
 			result.evaluate(testings);
 			Msg.data(result.prettyPrint());
 		}
+		results.add(trainedGraphs);
 		updateStatus(1.00, "experiment completed.");
 	}
 	

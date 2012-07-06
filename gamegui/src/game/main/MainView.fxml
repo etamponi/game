@@ -23,6 +23,12 @@
                     <Button fx:id="stopButton" onAction="#onStop" prefWidth="70.0" text="Stop" />
                   </children>
                 </HBox>
+                <HBox id="HBox" alignment="CENTER" spacing="5.0">
+                  <children>
+                    <CheckBox selected="true" text="Add to results" />
+                    <CheckBox selected="true" text="Keep in list" />
+                  </children>
+                </HBox>
                 <Text fx:id="overallMessage" strokeWidth="0.1">
                   <fill>
                     <Color blue="0.098" green="0.098" red="0.098" fx:id="x1" />

@@ -46,6 +46,11 @@ public class ResultListController implements Initializable {
 	}
 	
 	@FXML
+	public void onLoad(ActionEvent event) {
+		
+	}
+	
+	@FXML
 	public void onShow(ActionEvent event) {
 		TreeItem selected = (TreeItem)resultsView.getSelectionModel().getSelectedItem();
 		if (selected.getValue() instanceof Result) {

@@ -166,7 +166,8 @@ public class ExperimentService extends Service<Experiment> {
 		if (!new File("results/").exists())
 			new File("results/").mkdir();
 		completed.saveConfiguration("results/completed_"+completed.name+".config.xml");
-		controller.addCompletedExperiment(completed);
+		if (controller != null)
+			controller.addCompletedExperiment(completed);
 		counter.set(counter.get()+1);
 		if (counter.get() < experiments.size()) {
 			reset();

@@ -43,6 +43,7 @@ import javafx.geometry.Pos;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
+import javafx.scene.control.CheckBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.ProgressBar;
 import javafx.scene.control.Separator;
@@ -84,6 +85,10 @@ public class MainController extends Configurable implements Initializable {
 	private Text currentMessage;
 	@FXML
 	private ProgressBar currentProgress;
+	@FXML
+	private CheckBox keepInList;
+	@FXML
+	private CheckBox addToResults;
 
 	@Override
 	public void initialize(URL location, ResourceBundle resources) {
@@ -159,7 +164,7 @@ public class MainController extends Configurable implements Initializable {
 			}
 		});
 
-		service.start(experiments, resultListController);
+		service.start(experiments, addToResults.isSelected() ? resultListController : null);
 		disableButtons(true, false, false);
 	}
 	
