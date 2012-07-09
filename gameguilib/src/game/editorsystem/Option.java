@@ -22,14 +22,23 @@ import java.util.SortedSet;
 
 public class Option {
 	
+	public static class Temporary extends Configurable {
+		
+		public Object content;
+		
+		public Temporary(Object content) {
+			this.setOption("content", content);
+		}
+	}
+	
 	private Configurable owner;
 	private String optionName;
-	/*
+	
 	public Option(Object content) {
-		this.owner = new Root(content);
+		this.owner = new Temporary(content);
 		this.optionName = "content";
 	}
-	*/
+	
 	public Option(Configurable owner, String optionName) {
 		this.owner = owner;
 		this.optionName = optionName;

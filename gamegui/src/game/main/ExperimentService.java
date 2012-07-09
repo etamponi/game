@@ -10,13 +10,11 @@
  ******************************************************************************/
 package game.main;
 
-import game.configuration.ConfigurableList;
 import game.core.Experiment;
 import game.core.LongTask.LongTaskUpdate;
 import game.utils.Msg;
 
 import java.io.File;
-import java.util.List;
 import java.util.Observable;
 import java.util.Observer;
 import java.util.concurrent.Executor;
@@ -62,15 +60,16 @@ public class ExperimentService extends Service<Experiment> {
 	private IntegerProperty counter = new SimpleIntegerProperty(0);
 	private StringProperty currentExperiment = new SimpleStringProperty("");
 	
-	private List<Experiment> experiments;
-	private ResultListController controller;
+	private MainController controller;
 	
 	private boolean paused = false;
 	private boolean stopped = false;
 	private boolean finished = true;
 	
-	public ExperimentService() {
+	public ExperimentService(MainController controller) {
+		super();
 		setExecutor(executor);
+		this.controller = controller;
 	}
 	
 	public void pause() {
@@ -103,11 +102,9 @@ public class ExperimentService extends Service<Experiment> {
 		return stopped;
 	}
 	
-	public void start(ConfigurableList list, ResultListController controller) {
-		this.controller = controller; 
-		experiments = list.getList(Experiment.class);
+	public void start() { 
 		counter.set(0);
-		currentExperiment.set(experiments.get(0).toString());
+		currentExperiment.set(controller.experimentList.get(0).toString());
 		paused = false;
 		stopped = false;
 		finished = false;
@@ -136,7 +133,7 @@ public class ExperimentService extends Service<Experiment> {
 				System.out.println("Total memory: " + Runtime.getRuntime().totalMemory());
 				System.out.println(" Free memory: " + Runtime.getRuntime().freeMemory());
 				
-				final Experiment e = experiments.get(counter.get());
+				final Experiment e = (Experiment)controller.experimentList.get(counter.get());
 				Msg.setLogPrefix(e.name);
 				Observer o = new Observer() {
 					@Override
@@ -166,12 +163,12 @@ public class ExperimentService extends Service<Experiment> {
 		if (!new File("results/").exists())
 			new File("results/").mkdir();
 		completed.saveConfiguration("results/completed_"+completed.name+".config.xml");
-		if (controller != null)
-			controller.addCompletedExperiment(completed);
+		if (controller.addToResultList())
+			controller.getResultListController().addCompletedExperiment(completed);
 		counter.set(counter.get()+1);
-		if (counter.get() < experiments.size()) {
+		if (counter.get() < controller.experimentList.size()) {
 			reset();
-			currentExperiment.set(experiments.get(counter.get()).toString());
+			currentExperiment.set(controller.experimentList.get(counter.get()).toString());
 			start();
 		} else {
 			finished = true;

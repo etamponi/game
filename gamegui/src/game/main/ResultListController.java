@@ -10,9 +10,13 @@
  ******************************************************************************/
 package game.main;
 
-import game.core.Result;
+import game.configuration.Configurable;
 import game.core.Experiment;
+import game.core.Result;
+import game.editorsystem.EditorWindow;
+import game.editorsystem.Option;
 
+import java.io.File;
 import java.net.URL;
 import java.util.ResourceBundle;
 
@@ -21,6 +25,7 @@ import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.TreeItem;
 import javafx.scene.control.TreeView;
+import javafx.stage.FileChooser;
 
 public class ResultListController implements Initializable {
 	
@@ -47,7 +52,12 @@ public class ResultListController implements Initializable {
 	
 	@FXML
 	public void onLoad(ActionEvent event) {
-		
+		FileChooser chooser = new FileChooser();
+		chooser.setInitialDirectory(new File(System.getProperty("user.dir")));
+		chooser.setTitle("Load completed experiment");
+		File file = chooser.showOpenDialog(resultsView.getScene().getWindow());
+		if (file != null)
+			addCompletedExperiment((Experiment)Configurable.createFromConfiguration(file));
 	}
 	
 	@FXML
@@ -56,6 +66,10 @@ public class ResultListController implements Initializable {
 		if (selected.getValue() instanceof Result) {
 			TextViewer viewer = new TextViewer((Result)selected.getValue());
 			viewer.show();
+		}
+		if (selected.getValue() instanceof Experiment) {
+			Option option = new Option(selected.getValue());
+			new EditorWindow(option.getBestEditor(true)).startEdit(option);
 		}
 	}
 	

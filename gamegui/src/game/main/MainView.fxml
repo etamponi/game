@@ -21,12 +21,7 @@
                     <Button fx:id="startButton" onAction="#onStart" prefWidth="70.0" text="Start" />
                     <Button fx:id="pauseButton" onAction="#onPause" prefWidth="70.0" text="Pause" />
                     <Button fx:id="stopButton" onAction="#onStop" prefWidth="70.0" text="Stop" />
-                  </children>
-                </HBox>
-                <HBox id="HBox" alignment="CENTER" spacing="5.0">
-                  <children>
                     <CheckBox fx:id="addToResults" selected="true" text="Add to results" />
-                    <CheckBox fx:id="keepInList" selected="true" text="Keep in list" />
                   </children>
                 </HBox>
                 <Text fx:id="overallMessage" strokeWidth="0.1">

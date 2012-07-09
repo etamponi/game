@@ -12,11 +12,10 @@ package game.plugins.editors.graph;
 
 
 import game.configuration.Change;
-import game.configuration.Configurable;
 import game.core.Block;
-import game.editorsystem.OptionEditor;
 import game.editorsystem.EditorWindow;
 import game.editorsystem.Option;
+import game.editorsystem.OptionEditor;
 import game.editorsystem.Settings;
 
 import java.util.Observable;
@@ -57,20 +56,10 @@ public class BlockNode extends VBox implements Observer {
 	
 	private GraphPane pane;
 	
-	public static class Root extends Configurable {
-		
-		public Object content;
-		
-		public Root(Object content) {
-			this.setOption("content", content);
-		}
-	}
-	
 	private Option model;
 
-	public BlockNode(final Block b, boolean isTpl, GraphPane p) {
-		Root root = new Root(b); 
-		this.model = new Option(root, "content");
+	public BlockNode(final Block b, boolean isTpl, GraphPane p) { 
+		this.model = new Option(b);
 		this.isTemplate = isTpl;
 		this.pane = p;
 		

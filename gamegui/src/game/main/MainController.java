@@ -86,8 +86,6 @@ public class MainController extends Configurable implements Initializable {
 	@FXML
 	private ProgressBar currentProgress;
 	@FXML
-	private CheckBox keepInList;
-	@FXML
 	private CheckBox addToResults;
 
 	@Override
@@ -138,7 +136,7 @@ public class MainController extends Configurable implements Initializable {
 	@FXML
 	public void onStart(ActionEvent event) {
 		ConfigurableList experiments = model.getContent();
-		service = new ExperimentService();
+		service = new ExperimentService(this);
 		
 		currentProgress.progressProperty().bind(service.progressProperty());
 		currentMessage.textProperty().bind(service.messageProperty());
@@ -164,7 +162,7 @@ public class MainController extends Configurable implements Initializable {
 			}
 		});
 
-		service.start(experiments, addToResults.isSelected() ? resultListController : null);
+		service.start();
 		disableButtons(true, false, false);
 	}
 	
@@ -266,6 +264,14 @@ public class MainController extends Configurable implements Initializable {
 		if (service != null && service.isRunning())
 			service.stop();
 		super.finalize();
+	}
+	
+	public ResultListController getResultListController() {
+		return resultListController;
+	}
+	
+	public boolean addToResultList() {
+		return addToResults.isSelected();
 	}
 
 }

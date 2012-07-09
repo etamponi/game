@@ -76,6 +76,10 @@ public abstract class Configurable extends Observable implements Observer {
 		setOptionChecks("name", new LengthCheck(1));
 	}
 	
+	public static <T> T createFromConfiguration(File configFile) {
+		return (T)configStream.fromXML(configFile);
+	}
+	
 	public static void setClassLoader(ClassLoader loader) {
 		configStream.setClassLoader(loader);
 		converter.setClassLoader(loader);
