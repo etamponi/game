@@ -13,6 +13,8 @@ package game.core;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Iterator;
+import java.util.List;
 
 public class Dataset extends ArrayList<Instance> {
 
@@ -108,6 +110,77 @@ public class Dataset extends ArrayList<Instance> {
 		}
 		
 		return ret;
+	}
+	
+	public class OutputPair {
+		Object predicted, observed;
+		public OutputPair(Object observed, Object predicted) {
+			this.observed = observed;
+			this.predicted = predicted;
+		}
+		public <T> T getPredicted() {
+			return (T)predicted;
+		}
+		public <T> T getObserved() {
+			return (T)observed;
+		}
+	}
+	
+	public class OutputPairIterator implements Iterator<OutputPair> {
+		
+		private Iterator<Instance> instanceIterator = Dataset.this.iterator();
+		private List<Object> currentPredictedSequence;
+		private List<Object> currentObservedSequence;
+		private int indexInInstance;
+		
+		public OutputPairIterator() {
+			Instance first = instanceIterator.next();
+			currentPredictedSequence = getSequence(first.getPredictedData());
+			currentObservedSequence = getSequence(first.getOutputData());
+			indexInInstance = 0;
+		}
+		
+		private List<Object> getSequence(Object data) {
+			if (data instanceof List) {
+				return (List)data;
+			} else {
+				List<Object> ret = new ArrayList<>(1);
+				ret.add(data);
+				return ret;
+			}
+		}
+
+		@Override
+		public boolean hasNext() {
+			return instanceIterator.hasNext() ||
+					indexInInstance < currentObservedSequence.size();
+		}
+
+		@Override
+		public OutputPair next() {
+			if (!hasNext())
+				return null;
+			
+			if (indexInInstance == currentObservedSequence.size()) {
+				Instance next = instanceIterator.next();
+				currentObservedSequence = getSequence(next.getOutputData());
+				currentPredictedSequence = getSequence(next.getPredictedData());
+				indexInInstance = 0;
+			}
+			OutputPair ret = new OutputPair(currentObservedSequence.get(indexInInstance),
+					currentPredictedSequence.get(indexInInstance));
+			indexInInstance++;
+			return ret;
+		}
+
+		@Override
+		public void remove() {
+			throw new UnsupportedOperationException("Cannot remove elements using OutputPairIterator");
+		}
+	}
+	
+	public OutputPairIterator outputPairIterator() {
+		return new OutputPairIterator();
 	}
 	
 	@Override

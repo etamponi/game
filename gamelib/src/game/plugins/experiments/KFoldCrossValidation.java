@@ -5,10 +5,7 @@ import game.core.Dataset;
 import game.core.DatasetBuilder;
 import game.core.Graph;
 import game.core.experiments.FullExperiment;
-import game.core.results.FullResult;
 import game.plugins.constraints.CompatibleWith;
-import game.plugins.results.TrainedGraphList;
-import game.utils.Msg;
 
 public class KFoldCrossValidation extends FullExperiment {
 	
@@ -22,6 +19,8 @@ public class KFoldCrossValidation extends FullExperiment {
 		setOptionChecks("folds", new RangeCheck(RangeCheck.LOWER, 2));
 		
 		setOptionConstraint("dataset", new CompatibleWith(this, "template"));
+		
+		setInternalOptions("trainedGraphs");
 	}
 
 	@Override
@@ -31,27 +30,20 @@ public class KFoldCrossValidation extends FullExperiment {
 		Dataset[] testings = complete.getFolds(folds);
 		Dataset[] trainings = complete.getFoldComplements(folds);
 		
-		TrainedGraphList trainedGraphs = new TrainedGraphList();
 		for(int i = 0; i < folds; i++) {
 			Graph graphClone = graph.cloneConfiguration();
 			updateStatus(getOverallStatus(0.01, i), "start training for fold " + (i+1) + "/" + folds);
 			startAnotherTaskAndWait(getOverallStatus(0.50, i), trainer, graphClone, trainings[i]);
 			updateStatus(getOverallStatus(0.51, i), "training complete, beginning testing phase...");
-			testings[i] = startAnotherTaskAndWait(getOverallStatus(0.99, i), graphClone, testings[i]);
+			testedDatasets.add((Dataset)startAnotherTaskAndWait(getOverallStatus(0.99, i), graphClone, testings[i]));
 			updateStatus(getOverallStatus(1.00, i), "finished fold " + (i+1) + "/" + folds);
-			trainedGraphs.graphs.add(graphClone);
+			trainedGraphs.add(graphClone);
 		}
-		updateStatus(0.91, "fold training/testing finished, begin evaluation");
-		for(FullResult result: results.getList(FullResult.class)) {
-			result.evaluate(testings);
-			Msg.data(result.prettyPrint());
-		}
-		results.add(trainedGraphs);
 		updateStatus(1.00, "experiment completed.");
 	}
 	
 	private double getOverallStatus(double foldStatus, int fold) {
-		return 0.90*(foldStatus + fold) / folds;
+		return (foldStatus + fold) / folds;
 	}
 
 	@Override

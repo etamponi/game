@@ -19,13 +19,13 @@ import game.plugins.datatemplates.SequenceTemplate;
 
 import java.util.List;
 
-public class PerAtomSequenceEncoder extends Encoder<SequenceTemplate> {
+public class BaseSequenceEncoder extends Encoder<SequenceTemplate> {
 	
 	public Encoder atomEncoder;
 	
 	public int windowSize = 1;
 	
-	public PerAtomSequenceEncoder() {
+	public BaseSequenceEncoder() {
 		setOptionBinding("template.atom", "atomEncoder.template");
 		
 		setOptionConstraint("atomEncoder", new CompatibleWith(this, "template.atom"));

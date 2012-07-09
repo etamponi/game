@@ -14,11 +14,11 @@ import game.configuration.Configurable;
 import game.configuration.errorchecks.CompatibilityCheck;
 import game.plugins.constraints.Compatible;
 
-public abstract class Result<T> extends Configurable implements Compatible<Experiment> {
+public abstract class Metric<T> extends Configurable implements Compatible<Experiment> {
 	
 	public Experiment experiment;
 	
-	public Result() {
+	public Metric() {
 		name = getClass().getSimpleName();
 		
 		setOptionChecks("experiment", new CompatibilityCheck(this));

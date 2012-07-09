@@ -11,8 +11,8 @@ import game.core.blocks.Encoder;
 import game.plugins.datatemplates.LabelTemplate;
 import game.plugins.datatemplates.SequenceTemplate;
 import game.plugins.encoders.BooleanEncoder;
-import game.plugins.encoders.OneHotEncoder;
-import game.plugins.encoders.PerAtomSequenceEncoder;
+import game.plugins.encoders.BaseSequenceEncoder;
+import game.plugins.encoders.ProbabilityEncoder;
 
 import java.util.List;
 
@@ -46,16 +46,12 @@ public class WekaMultilayerPerceptron extends Classifier {
 		setOptionChecks("outputEncoder", new ErrorCheck<Encoder>(){
 			@Override
 			public String getError(Encoder value) {
-				if (value instanceof PerAtomSequenceEncoder) {
-					Encoder atomEncoder = ((PerAtomSequenceEncoder) value).atomEncoder;
-					if (atomEncoder instanceof OneHotEncoder)
-						return null;
-					if (atomEncoder instanceof BooleanEncoder)
+				if (value instanceof BaseSequenceEncoder) {
+					Encoder atomEncoder = ((BaseSequenceEncoder) value).atomEncoder;
+					if (atomEncoder instanceof ProbabilityEncoder)
 						return null;
 				}
-				if (value instanceof OneHotEncoder)
-					return null;
-				if (value instanceof BooleanEncoder)
+				if (value instanceof ProbabilityEncoder)
 					return null;
 				return "only OneHotEncoder and BooleanEncoder are allowed";
 			}
@@ -72,7 +68,7 @@ public class WekaMultilayerPerceptron extends Classifier {
 	@Override
 	protected Encoding classify(Encoding inputEncoded) {
 		Encoding ret = new Encoding();
-		Encoder atomEncoder = outputEncoder instanceof PerAtomSequenceEncoder ? (Encoder)outputEncoder.getOption("atomEncoder") : outputEncoder;
+		Encoder atomEncoder = outputEncoder instanceof BaseSequenceEncoder ? (Encoder)outputEncoder.getOption("atomEncoder") : outputEncoder;
 		for(double[] input: inputEncoded) {
 			Instance i = new Instance(1.0, input);
 			try {

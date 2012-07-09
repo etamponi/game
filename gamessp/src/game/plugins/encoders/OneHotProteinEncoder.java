@@ -13,7 +13,7 @@ package game.plugins.encoders;
 import game.core.DataTemplate;
 import game.plugins.datatemplates.ProteinStructureTemplate;
 
-public class OneHotProteinEncoder extends PerAtomSequenceEncoder {
+public class OneHotProteinEncoder extends BaseSequenceEncoder {
 	
 	public OneHotProteinEncoder() {
 		setOption("atomEncoder", new OneHotEncoder());

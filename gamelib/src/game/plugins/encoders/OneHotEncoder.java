@@ -11,7 +11,7 @@
 package game.plugins.encoders;
 
 
-public class OneHotEncoder extends LabelEncoder {
+public class OneHotEncoder extends ProbabilityEncoder {
 
 	public OneHotEncoder() {
 		setInternalOptions("labelMapping");

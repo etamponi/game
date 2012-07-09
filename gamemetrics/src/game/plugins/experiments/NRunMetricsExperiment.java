@@ -2,14 +2,9 @@ package game.plugins.experiments;
 
 import game.core.Dataset;
 import game.core.Dataset.EncodedSamples;
-import game.core.EncodedSample;
-import game.core.experiments.MetricsExperiment;
-import game.core.results.MetricResult;
-import game.utils.Msg;
+import game.core.experiments.EncoderExperiment;
 
-import java.util.List;
-
-public class NRunMetricsExperiment extends MetricsExperiment {
+public class NRunMetricsExperiment extends EncoderExperiment {
 	
 	public int runs = 5;
 
@@ -18,30 +13,17 @@ public class NRunMetricsExperiment extends MetricsExperiment {
 		Dataset ds = dataset.buildDataset();
 		EncodedSamples samples = ds.encode(inputEncoder, outputEncoder);
 		
-		EncodedSamples[] folds = split(samples);
-		
-		for(MetricResult result: results.getList(MetricResult.class)) {
-			result.evaluate(folds);
-			Msg.data(result.prettyPrint());
-		}
-	}
-	
-	private EncodedSamples[] split(List<EncodedSample> samples) {
-		EncodedSamples[] folds = new EncodedSamples[runs];
-		
 		int foldSize = samples.size()/runs;
 		for(int i = 0; i < runs; i++) {
-			folds[i] = new EncodedSamples(samples.subList(0, foldSize));
-			samples.removeAll(folds[i]);
+			EncodedSamples run = new EncodedSamples(samples.subList(0, foldSize));
+			encodedDatasets.add(run);
+			samples.removeAll(run);
 		}
-		
-		return folds;
 	}
 
 	@Override
 	public String getTaskDescription() {
-		// TODO Auto-generated method stub
-		return null;
+		return "generate " + runs + " encoded folds";
 	}
 
 }

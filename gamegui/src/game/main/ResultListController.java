@@ -12,7 +12,7 @@ package game.main;
 
 import game.configuration.Configurable;
 import game.core.Experiment;
-import game.core.Result;
+import game.core.Metric;
 import game.editorsystem.EditorWindow;
 import game.editorsystem.Option;
 
@@ -40,7 +40,7 @@ public class ResultListController implements Initializable {
 	
 	public void addCompletedExperiment(Experiment e) {
 		TreeItem expItem = new TreeItem(e);
-		for(Result eva: e.results.getList(Result.class)) {
+		for(Metric eva: e.results.getList(Metric.class)) {
 			if (!eva.isReady())
 				continue;
 			TreeItem evaItem = new TreeItem(eva);
@@ -63,8 +63,8 @@ public class ResultListController implements Initializable {
 	@FXML
 	public void onShow(ActionEvent event) {
 		TreeItem selected = (TreeItem)resultsView.getSelectionModel().getSelectedItem();
-		if (selected.getValue() instanceof Result) {
-			TextViewer viewer = new TextViewer((Result)selected.getValue());
+		if (selected.getValue() instanceof Metric) {
+			TextViewer viewer = new TextViewer((Metric)selected.getValue());
 			viewer.show();
 		}
 		if (selected.getValue() instanceof Experiment) {

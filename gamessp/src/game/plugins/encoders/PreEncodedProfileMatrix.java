@@ -14,9 +14,9 @@ import game.core.DataTemplate;
 import game.plugins.datatemplates.PreEncodedPrimaryStructure;
 
 
-public class PreEncodedProfileMatrixEncoder extends PerAtomSequenceEncoder {
+public class PreEncodedProfileMatrix extends BaseSequenceEncoder {
 	
-	public PreEncodedProfileMatrixEncoder() {
+	public PreEncodedProfileMatrix() {
 		setOption("atomEncoder", new VectorEncoder());
 		
 		setInternalOptions("atomEncoder");

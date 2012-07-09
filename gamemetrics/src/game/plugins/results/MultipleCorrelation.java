@@ -1,11 +1,9 @@
 package game.plugins.results;
 
-import java.util.List;
+import game.core.Dataset.EncodedSamples;
+import game.core.metrics.EncoderMetric;
 
-import game.core.EncodedSample;
-import game.core.results.MetricResult;
-
-public class MultipleCorrelation extends MetricResult {
+public class MultipleCorrelation extends EncoderMetric {
 
 	@Override
 	public boolean isReady() {
@@ -14,7 +12,7 @@ public class MultipleCorrelation extends MetricResult {
 	}
 
 	@Override
-	public void evaluate(List<EncodedSample>... folds) {
+	public void evaluate(EncodedSamples... folds) {
 		
 	}
 

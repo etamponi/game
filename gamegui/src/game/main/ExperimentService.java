@@ -109,7 +109,7 @@ public class ExperimentService extends Service<Experiment> {
 		stopped = false;
 		finished = false;
 		
-		start();
+		super.start();
 	}
 	
 	public IntegerProperty counterProperty() {

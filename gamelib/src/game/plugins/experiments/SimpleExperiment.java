@@ -14,10 +14,7 @@ import game.core.Dataset;
 import game.core.DatasetBuilder;
 import game.core.Graph;
 import game.core.experiments.FullExperiment;
-import game.core.results.FullResult;
 import game.plugins.constraints.CompatibleWith;
-import game.plugins.results.TrainedGraphList;
-import game.utils.Msg;
 
 public class SimpleExperiment extends FullExperiment {
 
@@ -38,16 +35,9 @@ public class SimpleExperiment extends FullExperiment {
 		Graph graphClone = graph.cloneConfiguration();
 		updateStatus(0.01, "start graph training...");
 		startAnotherTaskAndWait(0.50, trainer, graphClone, trainingDataset.buildDataset());
-		updateStatus(0.51, "training complete, beginning testing phase...");
-		Dataset testedDataset = startAnotherTaskAndWait(0.90, graphClone, testingDataset.buildDataset());
-		updateStatus(0.91, "testing complete, beginning evaluation phase...");
-		for(FullResult result: results.getList(FullResult.class)) {
-			result.evaluate(testedDataset);
-			Msg.data(result.prettyPrint());
-		}
-		TrainedGraphList trainedGraph = new TrainedGraphList();
-		trainedGraph.graphs.add(graphClone);
-		results.add(trainedGraph);
+		updateStatus(0.71, "training complete, beginning testing phase...");
+		testedDatasets.add((Dataset)startAnotherTaskAndWait(0.90, graphClone, testingDataset.buildDataset()));
+		trainedGraphs.add(graphClone);
 		updateStatus(1.00, "experiment completed.");
 	}
 

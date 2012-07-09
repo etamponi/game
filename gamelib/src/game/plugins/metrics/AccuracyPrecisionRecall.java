@@ -8,20 +8,20 @@
  * Contributors:
  *     Emanuele Tamponi - initial API and implementation
  ******************************************************************************/
-package game.plugins.results;
+package game.plugins.metrics;
 
 import game.core.DataTemplate;
 import game.core.Dataset;
 import game.core.Experiment;
 import game.core.Instance;
-import game.core.results.FullResult;
+import game.core.metrics.FullMetric;
 import game.plugins.datatemplates.LabelTemplate;
 import game.plugins.datatemplates.SequenceTemplate;
 
 import java.util.LinkedList;
 import java.util.List;
 
-public class PrecisionAndRecall extends FullResult {
+public class AccuracyPrecisionRecall extends FullMetric {
 	
 	public List<Double> singleTP = new LinkedList<>();
 	public List<Double> singleT = new LinkedList<>();
@@ -29,7 +29,7 @@ public class PrecisionAndRecall extends FullResult {
 	
 	public boolean ready = false;
 	
-	public PrecisionAndRecall() {
+	public AccuracyPrecisionRecall() {
 		setInternalOptions("singleTP", "singleT", "singleP", "ready");
 	}
 	
@@ -76,13 +76,6 @@ public class PrecisionAndRecall extends FullResult {
 		ready = true;
 	}
 	
-	private Dataset mergeFolds(Dataset[] folds) {
-		Dataset ret = new Dataset();
-		for (Dataset fold: folds)
-			ret.addAll(fold);
-		return ret;
-	}
-	
 	private List<String> getLabels(DataTemplate template) {
 		if (template instanceof SequenceTemplate)
 			return template.getOption("atom.labels");
@@ -123,8 +116,9 @@ public class PrecisionAndRecall extends FullResult {
 			totalT += singleT.get(i);
 			totalTP += singleTP.get(i);
 		}
-		ret.append(String.format("\n%20s%15.0f%15.0f%15.0f%15.2f\n", "Overall",
-																	 totalT, totalT, totalTP, 100*totalTP/totalT));
+		ret.append(String.format("\n%20s%15.0f%15.0f%15.0f%15s%15.2f\n", "Overall",
+																	 totalT, totalT, totalTP,
+																	 "Accuracy", 100*totalTP/totalT));
 		
 		return ret.toString();
 	}

@@ -1,17 +1,17 @@
-package game.plugins.results;
+package game.plugins.metrics;
 
 import game.configuration.errorchecks.RangeCheck;
 import game.core.Dataset;
 import game.core.Experiment;
 import game.core.Instance;
-import game.core.results.FullResult;
+import game.core.metrics.FullMetric;
 import game.plugins.encoders.BooleanEncoder;
 import game.utils.Utils;
 
 import java.util.LinkedList;
 import java.util.List;
 
-public class ROC extends FullResult {
+public class ROC extends FullMetric {
 
 	public List<Double> TPs = new LinkedList<>();
 	public List<Double> FPs = new LinkedList<>();
@@ -45,8 +45,8 @@ public class ROC extends FullResult {
 		if (isReady())
 			return;
 		
-		String positiveLabel = experiment.template.outputTemplate.getOption("labels.0");
-		String negativeLabel = experiment.template.outputTemplate.getOption("labels.1");
+		String positiveLabel = experiment.getOption("graph.outputClassifier.outputEncoder.positiveLabel");
+		String negativeLabel = experiment.getOption("graph.outputClassifier.outputEncoder.negativeLabel");
 		
 		Dataset dataset = Utils.deepClone(mergeFolds(folds));
 		P = getCount(dataset, positiveLabel);
@@ -124,13 +124,6 @@ public class ROC extends FullResult {
 		double FPR2 = FPs.get(i+1) / N;
 		
 		return Math.abs((TPR1+TPR2)*(FPR1-FPR2)/2);
-	}
-	
-	private Dataset mergeFolds(Dataset[] folds) {
-		Dataset ret = new Dataset();
-		for (Dataset fold: folds)
-			ret.addAll(fold);
-		return ret;
 	}
 
 }

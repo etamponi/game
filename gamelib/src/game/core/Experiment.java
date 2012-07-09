@@ -10,16 +10,14 @@
  ******************************************************************************/
 package game.core;
 
-import game.configuration.ConfigurableList;
 import game.configuration.errorchecks.SizeCheck;
-import game.plugins.constraints.CompatibleWith;
 
 import java.util.Observable;
 import java.util.Observer;
 
 
 public abstract class Experiment extends LongTask {
-	
+	/*
 	public static class ExperimentConstrainedList extends ConfigurableList {
 		
 		public Experiment constraint;
@@ -40,13 +38,16 @@ public abstract class Experiment extends LongTask {
 		}
 		
 	}
-	
+	*/
 	public InstanceTemplate template;
 	
-	public ExperimentConstrainedList results = new ExperimentConstrainedList(this, Result.class);
-	
+	public boolean completed = false;
+	/*
+	public ExperimentConstrainedList results = new ExperimentConstrainedList(this, Metric.class);
+	*/
 	public Experiment() {
 		setOptionChecks("results", new SizeCheck(1));
+		setInternalOptions("completed");
 	}
 	
 	public Experiment startExperiment() {
@@ -58,6 +59,8 @@ public abstract class Experiment extends LongTask {
 	@Override
 	protected Object execute(Object... params) {
 		final Experiment clone = cloneConfiguration();
+		if (clone.completed)
+			return clone;
 		Observer o = new Observer() {
 			@Override
 			public void update(Observable o, Object arg) {
@@ -69,6 +72,7 @@ public abstract class Experiment extends LongTask {
 		clone.name = name;
 		clone.addObserver(o);
 		clone.runExperiment();
+		clone.setOption("completed", true);
 		clone.deleteObserver(o);
 		return clone;
 	}

@@ -1,15 +1,16 @@
-package game.plugins.results;
+package game.plugins.metrics;
 
 import game.core.Experiment;
 import game.core.Graph;
-import game.core.Result;
+import game.core.Metric;
+import game.core.experiments.FullExperiment;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class TrainedGraphList extends Result<Graph> {
+public class TrainedGraphList extends Metric<Graph> {
 	
-	public List<Graph> graphs;
+	public List<Graph> graphs = new ArrayList<>();
 	
 	public TrainedGraphList() {
 		setInternalOptions("graphs");
@@ -17,12 +18,12 @@ public class TrainedGraphList extends Result<Graph> {
 
 	@Override
 	public boolean isCompatible(Experiment object) {
-		return false;
+		return object instanceof FullExperiment;
 	}
 
 	@Override
 	public boolean isReady() {
-		return graphs != null;
+		return !graphs.isEmpty();
 	}
 
 	@Override

@@ -10,12 +10,15 @@
  ******************************************************************************/
 package game.core.experiments;
 
+import game.core.Dataset.EncodedSamples;
 import game.core.DatasetBuilder;
 import game.core.Experiment;
 import game.core.blocks.Encoder;
 import game.plugins.constraints.CompatibleWith;
 
-public abstract class MetricsExperiment extends Experiment {
+import java.util.List;
+
+public abstract class EncoderExperiment extends Experiment {
 	
 	public Encoder inputEncoder;
 	
@@ -23,7 +26,9 @@ public abstract class MetricsExperiment extends Experiment {
 	
 	public DatasetBuilder dataset;
 	
-	public MetricsExperiment() {
+	public List<EncodedSamples> encodedDatasets;
+	
+	public EncoderExperiment() {
 		setOptionBinding("template.inputTemplate", "inputEncoder.template");
 		setOptionBinding("template.outputTemplate", "outputEncoder.template");
 		setOptionBinding("template", "dataset.template");
@@ -31,6 +36,8 @@ public abstract class MetricsExperiment extends Experiment {
 		setOptionConstraint("inputEncoder", new CompatibleWith(this, "template.inputTemplate"));
 		setOptionConstraint("outputEncoder", new CompatibleWith(this, "template.outputTemplate"));
 		setOptionConstraint("dataset", new CompatibleWith(this, "template"));
+		
+		setInternalOptions("encodedDatasets");
 	}
 
 }

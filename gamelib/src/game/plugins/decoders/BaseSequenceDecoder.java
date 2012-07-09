@@ -14,18 +14,18 @@ import game.core.Decoder;
 import game.core.Encoding;
 import game.core.blocks.Encoder;
 import game.plugins.constraints.CompatibleWith;
-import game.plugins.encoders.PerAtomSequenceEncoder;
+import game.plugins.encoders.BaseSequenceEncoder;
 
 import java.util.LinkedList;
 import java.util.List;
 
-public class PerAtomSequenceDecoder extends Decoder<PerAtomSequenceEncoder> {
+public class BaseSequenceDecoder extends Decoder<BaseSequenceEncoder> {
 	
 	public Decoder atomDecoder;
 	
 	public boolean interpolate = false;
 	
-	public PerAtomSequenceDecoder() {
+	public BaseSequenceDecoder() {
 		setOptionBinding("encoder.atomEncoder", "atomDecoder.encoder");
 		
 		setOptionConstraint("atomDecoder", new CompatibleWith(this, "encoder.atomEncoder"));
@@ -43,7 +43,7 @@ public class PerAtomSequenceDecoder extends Decoder<PerAtomSequenceEncoder> {
 
 	@Override
 	public boolean isCompatible(Encoder object) {
-		return object instanceof PerAtomSequenceEncoder;
+		return object instanceof BaseSequenceEncoder;
 	}
 
 }
