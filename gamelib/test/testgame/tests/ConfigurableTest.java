@@ -61,8 +61,7 @@ public class ConfigurableTest {
 		object2 = object.getOption("optionA4");
 		LinkedList<String> unbound = new LinkedList<>();
 		unbound.add("optionB3");
-		unbound.add("name");
-		assertEquals(2, object2.getUnboundOptionNames().size());
+		assertEquals(unbound.size(), object2.getUnboundOptionNames().size());
 		assertTrue(object2.getUnboundOptionNames().containsAll(unbound));
 		assertEquals("This is optionA1", object2.getOption("optionB1"));
 		assertEquals("This is optionA1", object.getOption("optionA4.optionB1"));
@@ -72,7 +71,7 @@ public class ConfigurableTest {
 		object2 = object.getOption("optionA5");
 		unbound.remove(0);
 		unbound.add("optionC3");
-		assertEquals(2, object2.getUnboundOptionNames().size());
+		assertEquals(unbound.size(), object2.getUnboundOptionNames().size());
 		assertTrue(object2.getUnboundOptionNames().containsAll(unbound));
 		assertEquals("This is optionA1", object2.getOption("optionC1"));
 		assertEquals("This is optionA1", object.getOption("optionA5.optionC1"));
@@ -82,16 +81,16 @@ public class ConfigurableTest {
 		object.setOption("optionA5", new ConfigurableImplC());
 		object.setOption("optionA5.optionC3", "This is the new optionC3");
 		
-		assertEquals(4, object2.getUnboundOptionNames().size());
 		unbound.add("optionC1");
 		unbound.add("optionC2");
+		assertEquals(unbound.size(), object2.getUnboundOptionNames().size());
 		assertTrue(object2.getUnboundOptionNames().containsAll(unbound));
 		assertEquals("This is optionC3", object2.getOption("optionC3"));
 		
 		object2 = object.getOption("optionA5");
-		unbound.remove(2);
-		unbound.remove(2);
-		assertEquals(2, object2.getUnboundOptionNames().size());
+		unbound.remove(1);
+		unbound.remove(1);
+		assertEquals(unbound.size(), object2.getUnboundOptionNames().size());
 		assertTrue(object2.getUnboundOptionNames().containsAll(unbound));
 		assertEquals("This is optionA1", object2.getOption("optionC1"));
 		assertEquals("This is optionA1", object.getOption("optionA5.optionC1"));
@@ -100,10 +99,9 @@ public class ConfigurableTest {
 		
 		object2 = object.getOption("optionList.0");
 		unbound.clear();
-		unbound.add("name");
 		unbound.add("optionB1");
 		unbound.add("optionB2");
-		assertEquals(3, object2.getUnboundOptionNames().size());
+		assertEquals(unbound.size(), object2.getUnboundOptionNames().size());
 		assertTrue(object2.getUnboundOptionNames().containsAll(unbound));
 	}
 	

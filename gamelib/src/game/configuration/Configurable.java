@@ -307,8 +307,8 @@ public abstract class Configurable extends Observable implements Observer {
 			Change change = (Change)message;
 			String changedOption = getOptionNameFromContent(observedOption);
 			changedOption += change.getPath().isEmpty() ? "" : "." + change.getPath();
-			if (!change.getPropagators().contains(this))
-				propagateUpdate(changedOption, change.getSetter(), change.getPropagators());
+
+			propagateUpdate(changedOption, change.getSetter(), change.getPropagators());
 		}
 		
 		if (message instanceof RequestForBoundOptions) {
@@ -347,8 +347,10 @@ public abstract class Configurable extends Observable implements Observer {
 			if (!changedOption.isEmpty())
 				updateOptionBindings(changedOption);
 			setChanged();
-			propagators.add(this);
-			notifyObservers(new Change(changedOption, setter, propagators));
+			if (!propagators.contains(this)) {
+				propagators.add(this);
+				notifyObservers(new Change(changedOption, setter, propagators));
+			}
 		}
 	}
 	
@@ -424,7 +426,7 @@ public abstract class Configurable extends Observable implements Observer {
 				((Configurable)content).addObserver(this);
 			}
 			
-			propagateUpdate(optionName, setter, new HashSet<Configurable>());
+			propagateUpdate(optionName, setter);
 		} catch (IllegalAccessException | IllegalArgumentException
 				| InvocationTargetException | NoSuchFieldException | SecurityException e) {
 			//e.printStackTrace();
