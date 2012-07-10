@@ -40,9 +40,12 @@ import javafx.scene.text.Text;
 import javafx.scene.text.TextAlignment;
 
 public class BlockNode extends VBox implements Observer {
+	
+	private static final double BLOCKWIDTH = 80;
+	private static final double BLOCKHEIGHT = 42;
 
-	private final Image STATUSOK = new Image(getClass().getResourceAsStream("blockOk.png"));
-	private final Image STATUSERRORS = new Image(getClass().getResourceAsStream("blockErrors.png"));
+	private static final Image STATUSOK = new Image(BlockNode.class.getResourceAsStream("blockOk.png"));
+	private static final Image STATUSERRORS = new Image(BlockNode.class.getResourceAsStream("blockErrors.png"));
 	
 	public static final DataFormat BLOCKDATA = new DataFormat("game/block");
 	
@@ -70,13 +73,13 @@ public class BlockNode extends VBox implements Observer {
 		setPadding(new Insets(5));
 		
 		AnchorPane imagePane = new AnchorPane();
-		Rectangle rect = new Rectangle(60, 42);
+		Rectangle rect = new Rectangle(BLOCKWIDTH, BLOCKHEIGHT);
 		rect.setFill(Color.INDIGO);
 		imagePane.getChildren().addAll(rect, status);
 		
 		blockName = new Text(b.name);
 		blockName.setTextAlignment(TextAlignment.CENTER);
-		blockName.setWrappingWidth(60.0);
+		blockName.setWrappingWidth(BLOCKWIDTH);
 		
 		getChildren().addAll(imagePane, blockName);
 		

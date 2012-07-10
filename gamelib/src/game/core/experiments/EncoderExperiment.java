@@ -37,7 +37,7 @@ public abstract class EncoderExperiment extends Experiment {
 		setOptionConstraint("outputEncoder", new CompatibleWith(this, "template.outputTemplate"));
 		setOptionConstraint("dataset", new CompatibleWith(this, "template"));
 		
-		setInternalOptions("encodedDatasets");
+		setPrivateOptions("encodedDatasets");
 	}
 
 }

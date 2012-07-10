@@ -18,7 +18,7 @@ public class OneHotProteinEncoder extends BaseSequenceEncoder {
 	public OneHotProteinEncoder() {
 		setOption("atomEncoder", new OneHotEncoder());
 		
-		setInternalOptions("atomEncoder");
+		setPrivateOptions("atomEncoder");
 	}
 
 	@Override

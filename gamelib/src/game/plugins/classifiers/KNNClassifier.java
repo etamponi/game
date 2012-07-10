@@ -54,7 +54,7 @@ public class KNNClassifier extends Classifier {
 	public KNNClassifier() {
 		setOptionChecks("k", new PositivenessCheck(false));
 		
-		setInternalOptions("reference");
+		setPrivateOptions("reference");
 	}
 
 	@Override

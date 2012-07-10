@@ -14,7 +14,7 @@ package game.plugins.encoders;
 public class OneHotEncoder extends ProbabilityEncoder {
 
 	public OneHotEncoder() {
-		setInternalOptions("labelMapping");
+		setPrivateOptions("labelMapping");
 	}
 
 	@Override

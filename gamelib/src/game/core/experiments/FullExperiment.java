@@ -33,7 +33,7 @@ public abstract class FullExperiment extends Experiment {
 		
 		setOptionConstraint("trainer", new CompatibleWith(this, "graph"));
 		
-		setInternalOptions("testedDatasets", "trainedGraphs");
+		setPrivateOptions("testedDatasets", "trainedGraphs");
 	}
 
 }

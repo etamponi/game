@@ -4,9 +4,9 @@ import game.core.Dataset;
 import game.core.Dataset.EncodedSamples;
 import game.core.experiments.EncoderExperiment;
 
-public class NRunMetricsExperiment extends EncoderExperiment {
+public class NRunEncoderExperiment extends EncoderExperiment {
 	
-	public int runs = 5;
+	public int runs = 10;
 
 	@Override
 	protected void runExperiment() {

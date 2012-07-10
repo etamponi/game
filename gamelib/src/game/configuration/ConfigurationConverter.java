@@ -66,7 +66,7 @@ class ConfigurationConverter implements Converter {
 					optionName = optionName.substring(2);
 				String className = reader.getAttribute("class");
 				Class optionType = className != null ? classLoader.loadClass(className) : object.getOptionType(optionName);
-				object.setOption(optionName, context.convertAnother(object, optionType));
+				object.setOption(optionName, context.convertAnother(object, optionType)/*, false, null*/);
 				reader.moveUp();
 			}
 		} catch (ClassNotFoundException | InstantiationException | IllegalAccessException e) {

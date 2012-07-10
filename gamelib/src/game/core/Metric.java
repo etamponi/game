@@ -15,10 +15,6 @@ import game.plugins.constraints.Compatible;
 
 public abstract class Metric<E extends Experiment> extends Configurable implements Compatible<Experiment> {
 	
-	public Metric() {
-		name = getClass().getSimpleName();
-	}
-	
 	public abstract boolean isReady();
 	
 	public abstract void evaluate(E e);

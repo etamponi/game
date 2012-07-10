@@ -33,17 +33,17 @@ public class SimpleExperiment extends FullExperiment {
 	@Override
 	protected void runExperiment() {
 		Graph graphClone = graph.cloneConfiguration();
-		updateStatus(0.01, "start graph training...");
+		updateStatus(0.01, "training graph...");
 		startAnotherTaskAndWait(0.50, trainer, graphClone, trainingDataset.buildDataset());
-		updateStatus(0.71, "training complete, beginning testing phase...");
+		updateStatus(0.71, "training complete, testing phase...");
 		testedDatasets.add((Dataset)startAnotherTaskAndWait(0.90, graphClone, testingDataset.buildDataset()));
 		trainedGraphs.add(graphClone);
-		updateStatus(1.00, "experiment completed.");
+		updateStatus(1.00, "experiment completed");
 	}
 
 	@Override
 	public String getTaskDescription() {
-		return "simple experiment " + name;
+		return "simple experiment " + this;
 	}
 
 }

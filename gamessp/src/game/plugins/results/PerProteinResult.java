@@ -28,7 +28,7 @@ public class PerProteinResult extends FullMetric {
 	public Dataset dataset;
 	
 	public PerProteinResult() {
-		setInternalOptions("inputTemplate", "dataset");
+		setPrivateOptions("inputTemplate", "dataset");
 	}
 
 	@Override

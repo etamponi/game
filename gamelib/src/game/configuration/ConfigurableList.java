@@ -31,14 +31,14 @@ public class ConfigurableList extends Configurable implements List {
 		// DO NOT USE NEVER NEVER NEVER
 		elementType = Object.class;
 		
-		setInternalOptions("elementType", "internal");
+		setPrivateOptions("elementType", "internal");
 	}
 	
 	public ConfigurableList(Configurable owner, Class elementType) {
 		super();
 		this.elementType = elementType;
 		
-		setInternalOptions("elementType", "internal");
+		setPrivateOptions("elementType", "internal");
 		addObserver(owner);
 	}
 	

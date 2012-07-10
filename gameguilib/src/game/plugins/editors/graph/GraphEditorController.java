@@ -60,11 +60,11 @@ public class GraphEditorController implements EditorController {
 
 	private GraphPane graphPane;
 	
-	private OptionEditor confEditor;
+	private OptionEditor confEditor = new GraphConfigurationEditor();
 	
 	@Override
 	public void initialize(URL location, ResourceBundle resources) {
-		
+		confPane.getChildren().add(confEditor.getView());
 		graphPane = new GraphPane(50, 50, getClass().getResource("background.png").toExternalForm());
 		leftSide.getChildren().add(graphPane);
 		AnchorPane.setTopAnchor(graphPane, 0.0);
@@ -125,6 +125,7 @@ public class GraphEditorController implements EditorController {
 	@Override
 	public void setModel(Option model) {
 		this.graphModel = model;
+		confEditor.connect(graphModel);
 	}
 
 	@Override
@@ -134,21 +135,10 @@ public class GraphEditorController implements EditorController {
 			graphPane.setGraph(graph);
 			graphPane.parseGraph();
 			fillPools();
-			connectConfRoot();
+			//connectConfRoot();
 		}
 	}
-/*
-	@Override
-	public void updateView(Change change) {
-		if (change.getPath().matches(".+\\.template.*"))
-			fillPools();
-		if (change.getPath().matches(".+\\.classifiers")
-				|| change.getPath().matches(".+\\.inputEncoders")
-				|| change.getPath().matches(".+\\.pipes")
-				|| change.getPath().matches(".+\\.outputClassifier"))
-			graphPane.parseGraph();
-	}
-*/	
+
 	private void fillPools() {
 		fillPool(classifiersPane, "classifiers");
 		fillPool(inputEncodersPane, "inputEncoders");
@@ -161,13 +151,6 @@ public class GraphEditorController implements EditorController {
 			setHiddenOptions("classifiers", "inputEncoders", "pipes", "outputClassifier");
 		}
 		
-	}
-	
-	private void connectConfRoot() {
-		confPane.getChildren().clear();
-		confEditor = new GraphConfigurationEditor();
-		confEditor.connect(graphModel);
-		confPane.getChildren().add(confEditor.getView());
 	}
 	
 	private void fillPool(FlowPane pool, String listOptionName) {

@@ -7,14 +7,21 @@ import java.io.File;
 
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
+import javafx.geometry.Insets;
+import javafx.geometry.Pos;
 import javafx.scene.Node;
+import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.ContentDisplay;
 import javafx.scene.control.ToolBar;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.layout.VBox;
+import javafx.scene.text.Text;
 import javafx.stage.FileChooser;
 import javafx.stage.FileChooser.ExtensionFilter;
+import javafx.stage.Modality;
+import javafx.stage.Stage;
 
 public class SerializationEditor extends OptionEditor {
 	
@@ -43,6 +50,28 @@ public class SerializationEditor extends OptionEditor {
 			line.getItems().set(0, makeSaveAndLoadConfiguration("SAVE"));
 			line.getItems().set(1, makeSaveAndLoadConfiguration("LOAD"));
 		}
+	}
+	
+	private void messageDialog(String title, String message) {
+		final Stage stage = new Stage();
+		stage.setTitle(title);
+		stage.initModality(Modality.APPLICATION_MODAL);
+		VBox container = new VBox();
+		Button ok = new Button("Ok");
+		ok.setPrefWidth(70);
+		ok.setOnAction(new EventHandler<ActionEvent>() {
+			@Override
+			public void handle(ActionEvent event) {
+				stage.close();
+			}
+		});
+		container.setAlignment(Pos.CENTER);
+		container.setSpacing(15);
+		container.setPadding(new Insets(15));
+		container.getChildren().addAll(new Text(message), ok);
+		stage.setScene(new Scene(container));
+		stage.setResizable(false);
+		stage.show();
 	}
 
 	private Button makeSaveAndLoadConfiguration(final String what) {
@@ -73,12 +102,14 @@ public class SerializationEditor extends OptionEditor {
 							content.saveConfiguration(out.getPath());
 					}
 				} else {
-					// TODO Check if the loaded object is compatible with the current object.
-					// TODO Check if the loaded object is compatible with the constraints.
 					chooser.setTitle("Load object configuration");
 					File out = chooser.showOpenDialog(line.getScene().getWindow());
-					if (out != null)
-						content.loadConfiguration(out.getPath());
+					if (out != null) {
+						boolean loaded = content.loadConfiguration(out);
+						if (!loaded) {
+							messageDialog("Cannot load object configuration", "Object could not be loaded. Check for type and constraints.");
+						}
+					}
 				}
 				event.consume();
 			}

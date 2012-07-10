@@ -104,6 +104,13 @@ public class ConfigurableEditor extends OptionEditor {
 		}
 	}
 	
+	@Override
+	public void disconnect() {
+		for(OptionEditor editor: subEditors)
+			editor.disconnect();
+		super.disconnect();
+	}
+
 	private void applyRowLayout(Node label, Node view, boolean inline) {
 		GridPane.setValignment(label, VPos.TOP);
 		GridPane.setHalignment(label, HPos.RIGHT);

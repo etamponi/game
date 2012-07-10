@@ -15,7 +15,7 @@ public abstract class ProteinStructureTemplate extends SequenceTemplate {
 	public ProteinStructureTemplate() {
 		setOption("atom", new LabelTemplate());
 		
-		setInternalOptions("atom");
+		setPrivateOptions("atom");
 	}
 
 }

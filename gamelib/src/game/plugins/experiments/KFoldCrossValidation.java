@@ -20,7 +20,7 @@ public class KFoldCrossValidation extends FullExperiment {
 		
 		setOptionConstraint("dataset", new CompatibleWith(this, "template"));
 		
-		setInternalOptions("trainedGraphs");
+		setPrivateOptions("trainedGraphs");
 	}
 
 	@Override
@@ -32,14 +32,14 @@ public class KFoldCrossValidation extends FullExperiment {
 		
 		for(int i = 0; i < folds; i++) {
 			Graph graphClone = graph.cloneConfiguration();
-			updateStatus(getOverallStatus(0.01, i), "start training for fold " + (i+1) + "/" + folds);
-			startAnotherTaskAndWait(getOverallStatus(0.50, i), trainer, graphClone, trainings[i]);
-			updateStatus(getOverallStatus(0.51, i), "training complete, beginning testing phase...");
+			updateStatus(getOverallStatus(0.01, i), "training graph for fold " + (i+1) + "/" + folds);
+			startAnotherTaskAndWait(getOverallStatus(0.70, i), trainer, graphClone, trainings[i]);
+			updateStatus(getOverallStatus(0.70, i), "training complete, testing phase...");
 			testedDatasets.add((Dataset)startAnotherTaskAndWait(getOverallStatus(0.99, i), graphClone, testings[i]));
-			updateStatus(getOverallStatus(1.00, i), "finished fold " + (i+1) + "/" + folds);
 			trainedGraphs.add(graphClone);
+			updateStatus(getOverallStatus(1.00, i), "finished fold " + (i+1) + "/" + folds);
 		}
-		updateStatus(1.00, "experiment completed.");
+		updateStatus(1.00, "experiment completed");
 	}
 	
 	private double getOverallStatus(double foldStatus, int fold) {

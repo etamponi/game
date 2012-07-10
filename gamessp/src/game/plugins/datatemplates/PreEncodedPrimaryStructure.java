@@ -16,7 +16,7 @@ public class PreEncodedPrimaryStructure extends SequenceTemplate {
 		setOption("atom", new VectorTemplate());
 		setOption("atom.featureNumber", 20);
 		
-		setInternalOptions("atom");
+		setPrivateOptions("atom");
 	}
 	
 }

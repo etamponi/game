@@ -88,11 +88,6 @@ public class Dataset extends ArrayList<Instance> {
 			super(other);
 		}
 		
-		@Override
-		protected void finalize() throws Throwable {
-			System.out.println("Finalizing EncodedSamples (size = " + size() + ")");
-			super.finalize();
-		}
 	}
 	
 	public EncodedSamples encode(Block inputEncoder, Block outputEncoder) {
@@ -181,12 +176,6 @@ public class Dataset extends ArrayList<Instance> {
 	
 	public OutputPairIterator outputPairIterator() {
 		return new OutputPairIterator();
-	}
-	
-	@Override
-	protected void finalize() throws Throwable {
-		System.out.println("Clearing dataset " + this.hashCode() + " (size = " + size() + ")");
-		super.finalize();
 	}
 	
 }

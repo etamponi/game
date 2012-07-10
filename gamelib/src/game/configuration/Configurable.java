@@ -56,14 +56,14 @@ public abstract class Configurable extends Observable implements Observer {
 		public String getPath() { return path; }
 	}
 	
-	public String name;
+//	public String name;
 	
 	private LinkedList<OptionBinding> optionBindings = new LinkedList<>();
 	private HashMap<String, LinkedList<ErrorCheck>> optionChecks = new HashMap<>();
 	protected HashMap<String, Constraint> optionConstraints = new HashMap<>();
 	private LinkedList<String> omittedFromErrorCheck = new LinkedList<>();
 	private LinkedList<String> omittedFromConfiguration = new LinkedList<>();
-	private LinkedList<String> internalOptions = new LinkedList<>();
+	private LinkedList<String> privateOptions = new LinkedList<>();
 	private boolean notify = true;
 	
 	static {
@@ -71,7 +71,7 @@ public abstract class Configurable extends Observable implements Observer {
 	}
 	
 	public Configurable() {
-		this.name = String.format("%s%03d", getClass().getSimpleName(), hashCode() % 1000);
+		setOption("name", String.format("%s%03d", getClass().getSimpleName(), hashCode() % 1000));
 		
 		setOptionChecks("name", new LengthCheck(1));
 	}
@@ -123,13 +123,16 @@ public abstract class Configurable extends Observable implements Observer {
 		this.notify = true;
 	}
 	
-	public LinkedList<String> getUnboundOptionNames() {
+	public LinkedList<String> getBoundOptionNames() {
 		LinkedList<String> bound = new LinkedList<>();
 		setChanged();
 		notifyObservers(new RequestForBoundOptions(bound, ""));
-		
-		LinkedList<String> ret = getOptionNames();
-		ret.removeAll(bound);
+		return bound;
+	}
+	
+	public LinkedList<String> getUnboundOptionNames() {
+		LinkedList<String> ret = getPublicOptionNames();
+		ret.removeAll(getBoundOptionNames());
 		return ret;
 	}
 	
@@ -141,9 +144,9 @@ public abstract class Configurable extends Observable implements Observer {
 		return ret;
 	}
 	
-	public LinkedList<String> getOptionNames() {
+	public LinkedList<String> getPublicOptionNames() {
 		LinkedList<String> ret = getAllOptionNames();
-		ret.removeAll(internalOptions);
+		ret.removeAll(privateOptions);
 		return ret;
 	}
 	
@@ -168,7 +171,7 @@ public abstract class Configurable extends Observable implements Observer {
 		LinkedList<String> ret = new LinkedList<>();
 		seen.add(this);
 		for (Map.Entry<String, Object> entry: getOptionsMap().entrySet()) {
-			if (entry.getValue() == null && !internalOptions.contains(entry.getKey())) {
+			if (entry.getValue() == null && !privateOptions.contains(entry.getKey())) {
 				ret.add(entry.getKey() + ": is null");
 			} else {
 				if (optionChecks.containsKey(entry.getKey())) {
@@ -220,13 +223,71 @@ public abstract class Configurable extends Observable implements Observer {
 		return configStream.toXML(this);
 	}
 	
-	public void loadConfiguration(String fileName) {
-		configStream.fromXML(new File(fileName), this);
+	public boolean loadConfiguration(String fileName) {
+		return loadConfiguration(new File(fileName));
+	}
+	
+	public boolean loadConfiguration(File file) {
+		boolean ret = true;
+		
+		Configurable temporary = Configurable.createFromConfiguration(file);
+		if (temporary.getClass().equals(this.getClass())) {
+			for(String boundOption: getBoundOptionNames()) {
+				if (!temporary.getOption(boundOption).equals(this.getOption(boundOption))) {
+					ret = false;
+					break;
+				}
+			}
+		} else {
+			ret = false;
+		}
+		temporary = null;
+		System.gc();
+		
+		if (ret == true) {
+			configStream.fromXML(file, this);
+			setChanged();
+			notifyObservers(new Change("", null, new HashSet<Configurable>()));
+		}
+		return ret;
+	}
+	
+	@Override
+	public boolean equals(Object object) {
+		if (object == this)
+			return true;
+		if (object == null)
+			return false;
+		if (!object.getClass().equals(this.getClass()))
+			return false;
+		Configurable other = (Configurable)object;
+		for(String option: getAllOptionNames()) {
+			if (option.equals("name"))
+				continue;
+			
+			Object otherOption = other.getOption(option);
+			Object myOption = this.getOption(option);
+			
+			if (otherOption == null && myOption == null)
+				continue;
+			
+			if (otherOption == null && myOption != null ||
+					myOption == null && otherOption != null)
+				return false;
+			
+			if (!otherOption.equals(myOption))
+				return false;
+		}
+		return true;
 	}
 
 	public void saveConfiguration(String fileName) {
+		saveConfiguration(new File(fileName));
+	}
+	
+	public void saveConfiguration(File file) {
 		try {
-			FileOutputStream stream = new FileOutputStream(new File(fileName));
+			FileOutputStream stream = new FileOutputStream(file);
 			configStream.toXML(this, stream);
 			stream.close();
 		} catch (IOException e) {
@@ -236,7 +297,7 @@ public abstract class Configurable extends Observable implements Observer {
 	
 	public <T extends Configurable> T cloneConfiguration() {
 		Configurable clone = (Configurable)configStream.fromXML(this.getConfiguration());
-		clone.name = String.format("%s%03d", getClass().getSimpleName(), clone.hashCode() % 1000);
+//		clone.name = String.format("%s%03d", getClass().getSimpleName(), clone.hashCode() % 1000);
 		return (T)clone;
 	}
 	
@@ -245,11 +306,9 @@ public abstract class Configurable extends Observable implements Observer {
 		if (message instanceof Change) {
 			Change change = (Change)message;
 			String changedOption = getOptionNameFromContent(observedOption);
-				   changedOption += change.getPath().isEmpty() ? "" : "." + change.getPath();
-
-			observedOption.deleteObserver(this);
-			propagateUpdate(changedOption, change.getSetter());
-			observedOption.addObserver(this);
+			changedOption += change.getPath().isEmpty() ? "" : "." + change.getPath();
+			if (!change.getPropagators().contains(this))
+				propagateUpdate(changedOption, change.getSetter(), change.getPropagators());
 		}
 		
 		if (message instanceof RequestForBoundOptions) {
@@ -272,21 +331,30 @@ public abstract class Configurable extends Observable implements Observer {
 	
 	@Override
 	public String toString() {
-		return name;
+		String name = getOption("name");
+		if (name != null)
+			return name;
+		else
+			return String.format("%s%03d", getClass().getSimpleName(), hashCode() % 1000);
 	}
 	
 	protected void propagateUpdate(String changedOption, Object setter) {
+		propagateUpdate(changedOption, setter, new HashSet<Configurable>());
+	}
+	
+	protected void propagateUpdate(String changedOption, Object setter, Set<Configurable> propagators) {
 		if (notify) {
 			if (!changedOption.isEmpty())
 				updateOptionBindings(changedOption);
 			setChanged();
-			notifyObservers(new Change(changedOption, setter));
+			propagators.add(this);
+			notifyObservers(new Change(changedOption, setter, propagators));
 		}
 	}
 	
-	protected void setInternalOptions(String... optionNames) {
+	protected void setPrivateOptions(String... optionNames) {
 		for (String optionName: optionNames)
-			internalOptions.add(optionName);
+			privateOptions.add(optionName);
 	}
 	
 	protected void omitFromErrorCheck(String... optionNames) {
@@ -356,7 +424,7 @@ public abstract class Configurable extends Observable implements Observer {
 				((Configurable)content).addObserver(this);
 			}
 			
-			propagateUpdate(optionName, setter);
+			propagateUpdate(optionName, setter, new HashSet<Configurable>());
 		} catch (IllegalAccessException | IllegalArgumentException
 				| InvocationTargetException | NoSuchFieldException | SecurityException e) {
 			//e.printStackTrace();

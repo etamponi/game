@@ -22,7 +22,7 @@ public class AveragingCombiner extends Combiner {
 	public boolean trained = false;
 	
 	public AveragingCombiner() {
-		setInternalOptions("trained");
+		setPrivateOptions("trained");
 	}
 
 	@Override

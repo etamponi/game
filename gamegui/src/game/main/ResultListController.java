@@ -43,6 +43,9 @@ public class ResultListController implements Initializable {
 	}
 	
 	public void addCompletedExperiment(Experiment e) {
+		if (!e.completed)
+			return;
+		
 		TreeItem expItem = new TreeItem(e);
 		
 		SortedSet<Implementation<Metric>> metrics = Settings.getInstance().getPluginManager().

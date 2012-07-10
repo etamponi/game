@@ -20,6 +20,8 @@ import java.util.LinkedList;
 
 public class Graph extends LongTask {
 	
+	public String name;
+	
 	public InstanceTemplate template; 
 
 	public TemplateConstrainedList classifiers = new TemplateConstrainedList(this, Transducer.class);

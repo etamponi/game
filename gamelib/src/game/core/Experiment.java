@@ -16,12 +16,14 @@ import java.util.Observer;
 
 public abstract class Experiment extends LongTask {
 	
+	public String name;
+	
 	public InstanceTemplate template;
 	
 	public boolean completed = false;
 
 	public Experiment() {
-		setInternalOptions("completed");
+		setPrivateOptions("completed");
 	}
 	
 	public Experiment startExperiment() {

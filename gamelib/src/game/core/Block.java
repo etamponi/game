@@ -27,6 +27,8 @@ public abstract class Block extends LongTask {
 		}
 	}
 	
+	public String name;
+	
 	public ConfigurableList parents = new ConfigurableList(this, Block.class);
 	
 	public Position position = new Position();
@@ -34,7 +36,7 @@ public abstract class Block extends LongTask {
 	public Block() {
 		omitFromErrorCheck("parents");
 		
-		setInternalOptions("position");
+		setPrivateOptions("position");
 	}
 	
 	public abstract boolean isTrained();
@@ -47,7 +49,7 @@ public abstract class Block extends LongTask {
 	
 	@Override
 	public String getTaskDescription() {
-		return "training of " + name;
+		return "training of " + this;
 	}
 
 	public void startTraining(Dataset trainingSet) {

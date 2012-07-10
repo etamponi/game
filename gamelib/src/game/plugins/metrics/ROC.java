@@ -27,7 +27,7 @@ public class ROC extends FullMetric {
 	public ROC() {
 		setOptionChecks("steps", new RangeCheck(RangeCheck.LOWER, 2));
 		
-		setInternalOptions("TPs", "FPs", "P", "N", "ready");
+		setPrivateOptions("TPs", "FPs", "P", "N", "ready");
 	}
 
 	@Override

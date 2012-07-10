@@ -41,7 +41,7 @@ public class WekaMultilayerPerceptron extends Classifier {
 	public MultilayerPerceptron nn;
 
 	public WekaMultilayerPerceptron() {
-		setInternalOptions("nn");
+		setPrivateOptions("nn");
 		
 		setOptionChecks("outputEncoder", new ErrorCheck<Encoder>(){
 			@Override
@@ -53,7 +53,7 @@ public class WekaMultilayerPerceptron extends Classifier {
 				}
 				if (value instanceof ProbabilityEncoder)
 					return null;
-				return "only OneHotEncoder and BooleanEncoder are allowed";
+				return "only ProbabilityEncoders are allowed";
 			}
 		});
 	}
@@ -126,7 +126,7 @@ public class WekaMultilayerPerceptron extends Classifier {
 		ts.setClassIndex(samples.get(0).getInput().length);
 		samples = null;
 		System.gc();
-		updateStatus(0.50, "starting Weka training, please wait...");
+		updateStatus(0.50, "running Weka training, please wait...");
 		try {
 			nn.buildClassifier(ts);
 		} catch (Exception e) {

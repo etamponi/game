@@ -19,7 +19,7 @@ public class PreEncodedProfileMatrix extends BaseSequenceEncoder {
 	public PreEncodedProfileMatrix() {
 		setOption("atomEncoder", new VectorEncoder());
 		
-		setInternalOptions("atomEncoder");
+		setPrivateOptions("atomEncoder");
 	}
 
 	@Override

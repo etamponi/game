@@ -16,7 +16,7 @@ import game.plugins.datatemplates.LabelTemplate;
 public class BooleanEncoder extends ProbabilityEncoder {
 	
 	public BooleanEncoder() {
-		setInternalOptions("labelMapping");
+		setPrivateOptions("labelMapping");
 	}
 
 	@Override

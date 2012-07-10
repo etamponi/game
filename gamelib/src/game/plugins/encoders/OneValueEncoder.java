@@ -3,7 +3,7 @@ package game.plugins.encoders;
 public class OneValueEncoder extends LabelEncoder {
 	
 	public OneValueEncoder() {
-		setInternalOptions("labelMapping");
+		setPrivateOptions("labelMapping");
 	}
 
 	@Override
