@@ -1,6 +1,6 @@
 package game.plugins.results;
 
-import game.core.Dataset.EncodedSamples;
+import game.core.experiments.EncoderExperiment;
 import game.core.metrics.EncoderMetric;
 
 public class MultipleCorrelation extends EncoderMetric {
@@ -12,7 +12,7 @@ public class MultipleCorrelation extends EncoderMetric {
 	}
 
 	@Override
-	public void evaluate(EncodedSamples... folds) {
+	public void evaluate(EncoderExperiment e) {
 		
 	}
 

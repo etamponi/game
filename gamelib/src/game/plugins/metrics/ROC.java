@@ -4,6 +4,7 @@ import game.configuration.errorchecks.RangeCheck;
 import game.core.Dataset;
 import game.core.Experiment;
 import game.core.Instance;
+import game.core.experiments.FullExperiment;
 import game.core.metrics.FullMetric;
 import game.plugins.encoders.BooleanEncoder;
 import game.utils.Utils;
@@ -41,14 +42,14 @@ public class ROC extends FullMetric {
 	}
 
 	@Override
-	public void evaluate(Dataset... folds) {
+	public void evaluate(FullExperiment experiment) {
 		if (isReady())
 			return;
 		
 		String positiveLabel = experiment.getOption("graph.outputClassifier.outputEncoder.positiveLabel");
 		String negativeLabel = experiment.getOption("graph.outputClassifier.outputEncoder.negativeLabel");
 		
-		Dataset dataset = Utils.deepClone(mergeFolds(folds));
+		Dataset dataset = Utils.deepClone(mergeFolds(experiment.testedDatasets));
 		P = getCount(dataset, positiveLabel);
 		N = getCount(dataset, negativeLabel);
 		

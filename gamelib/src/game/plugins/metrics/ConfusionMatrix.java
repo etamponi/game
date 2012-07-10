@@ -5,6 +5,7 @@ import game.core.Dataset;
 import game.core.Dataset.OutputPair;
 import game.core.Dataset.OutputPairIterator;
 import game.core.Experiment;
+import game.core.experiments.FullExperiment;
 import game.core.metrics.FullMetric;
 import game.plugins.datatemplates.LabelTemplate;
 import game.plugins.datatemplates.SequenceTemplate;
@@ -17,9 +18,10 @@ import org.apache.commons.math3.linear.RealMatrix;
 public class ConfusionMatrix extends FullMetric {
 	
 	public RealMatrix matrix;
+	public List<String> labels;
 	
 	public ConfusionMatrix() {
-		setInternalOptions("matrix");
+		setInternalOptions("matrix", "labels");
 	}
 	
 	@Override
@@ -39,11 +41,11 @@ public class ConfusionMatrix extends FullMetric {
 	}
 
 	@Override
-	public void evaluate(Dataset... params) {
-		List<String> labels = experiment.template.outputTemplate.getOption("labels");
+	public void evaluate(FullExperiment experiment) {
+		labels = experiment.template.outputTemplate.getOption("labels");
 		
 		matrix = new Array2DRowRealMatrix(labels.size(), labels.size());
-		Dataset dataset = mergeFolds(params);
+		Dataset dataset = mergeFolds(experiment.testedDatasets);
 		
 		OutputPairIterator it = dataset.outputPairIterator();
 		while(it.hasNext()) {
@@ -57,7 +59,6 @@ public class ConfusionMatrix extends FullMetric {
 	@Override
 	public String prettyPrint() {
 		StringBuilder ret = new StringBuilder();
-		List<String> labels = experiment.template.outputTemplate.getOption("labels");
 		
 		ret.append(String.format("%20s|", ""));
 		for(String label: labels)

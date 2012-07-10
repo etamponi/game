@@ -10,20 +10,26 @@
  ******************************************************************************/
 package game.plugins.results;
 
+import game.core.DataTemplate;
 import game.core.Dataset;
 import game.core.Experiment;
 import game.core.Instance;
+import game.core.experiments.FullExperiment;
 import game.core.metrics.FullMetric;
 import game.plugins.datatemplates.ProteinDSSPStructure;
 import game.plugins.datatemplates.ProteinHECStructure;
 import game.plugins.datatemplates.ProteinPrimaryStructure;
 
-import java.util.LinkedList;
 import java.util.List;
 
 public class PerProteinResult extends FullMetric {
 	
-	List<Dataset> folds;
+	public DataTemplate inputTemplate;
+	public Dataset dataset;
+	
+	public PerProteinResult() {
+		setInternalOptions("inputTemplate", "dataset");
+	}
 
 	@Override
 	public boolean isCompatible(Experiment object) {
@@ -33,21 +39,20 @@ public class PerProteinResult extends FullMetric {
 
 	@Override
 	public boolean isReady() {
-		return folds != null;
+		return dataset != null;
 	}
 
 	@Override
-	public void evaluate(Dataset... folds) {
-		this.folds = new LinkedList<>();
-		for(Dataset fold: folds)
-			this.folds.add(fold);
+	public void evaluate(FullExperiment experiment) {
+		dataset = mergeFolds(experiment.testedDatasets);
+		inputTemplate = experiment.template.inputTemplate;
 	}
 
 	@Override
 	public String prettyPrint() {
 		StringBuilder ret = new StringBuilder();
-		for(Instance i: folds.get(0)) {
-			if (experiment.template.inputTemplate instanceof ProteinPrimaryStructure)
+		for(Instance i: dataset) {
+			if (inputTemplate instanceof ProteinPrimaryStructure)
 				ret.append("Primary:          ").append(getFasta(i.getInputData())).append("\n");
 			ret.append("Secondary (obs):  ").append(getFasta(i.getOutputData())).append("\n");
 			ret.append("Secondary (pred): ").append(getFasta(i.getPredictedData())).append("\n\n");

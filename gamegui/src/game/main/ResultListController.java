@@ -15,10 +15,14 @@ import game.core.Experiment;
 import game.core.Metric;
 import game.editorsystem.EditorWindow;
 import game.editorsystem.Option;
+import game.editorsystem.Option.Temporary;
+import game.plugins.Implementation;
+import game.plugins.constraints.CompatibleWith;
 
 import java.io.File;
 import java.net.URL;
 import java.util.ResourceBundle;
+import java.util.SortedSet;
 
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -40,10 +44,12 @@ public class ResultListController implements Initializable {
 	
 	public void addCompletedExperiment(Experiment e) {
 		TreeItem expItem = new TreeItem(e);
-		for(Metric eva: e.results.getList(Metric.class)) {
-			if (!eva.isReady())
-				continue;
-			TreeItem evaItem = new TreeItem(eva);
+		
+		SortedSet<Implementation<Metric>> metrics = Settings.getInstance().getPluginManager().
+				getCompatibleImplementationsOf(Metric.class, new CompatibleWith(new Temporary(e), "content"));
+		
+		for(Implementation<Metric> impl: metrics) {
+			TreeItem evaItem = new TreeItem(impl.getContent());
 			expItem.getChildren().add(evaItem);
 		}
 		if (!expItem.getChildren().isEmpty())
@@ -64,6 +70,9 @@ public class ResultListController implements Initializable {
 	public void onShow(ActionEvent event) {
 		TreeItem selected = (TreeItem)resultsView.getSelectionModel().getSelectedItem();
 		if (selected.getValue() instanceof Metric) {
+			Experiment e = (Experiment)selected.getParent().getValue();
+			Metric m = (Metric)selected.getValue();
+			m.evaluate(e);
 			TextViewer viewer = new TextViewer((Metric)selected.getValue());
 			viewer.show();
 		}

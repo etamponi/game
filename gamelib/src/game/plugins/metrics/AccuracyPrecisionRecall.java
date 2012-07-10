@@ -14,6 +14,7 @@ import game.core.DataTemplate;
 import game.core.Dataset;
 import game.core.Experiment;
 import game.core.Instance;
+import game.core.experiments.FullExperiment;
 import game.core.metrics.FullMetric;
 import game.plugins.datatemplates.LabelTemplate;
 import game.plugins.datatemplates.SequenceTemplate;
@@ -29,8 +30,10 @@ public class AccuracyPrecisionRecall extends FullMetric {
 	
 	public boolean ready = false;
 	
+	public List<String> labels;
+	
 	public AccuracyPrecisionRecall() {
-		setInternalOptions("singleTP", "singleT", "singleP", "ready");
+		setInternalOptions("singleTP", "singleT", "singleP", "ready", "labels");
 	}
 	
 	@Override
@@ -45,12 +48,12 @@ public class AccuracyPrecisionRecall extends FullMetric {
 	}
 
 	@Override
-	public void evaluate(Dataset... folds) { // FIXME Use folds instead of only one dataset
+	public void evaluate(FullExperiment e) { // FIXME Use folds instead of only one dataset
 		if (isReady())
 			return;
 		
-		Dataset dataset = mergeFolds(folds);
-		List<String> labels = getLabels(experiment.template.outputTemplate);
+		Dataset dataset = mergeFolds(e.testedDatasets);
+		labels = getLabels(e.template.outputTemplate);
 		
 		for(int k = 0; k < labels.size(); k++) {
 			singleTP.add(0.0);
@@ -103,7 +106,6 @@ public class AccuracyPrecisionRecall extends FullMetric {
 		StringBuilder ret = new StringBuilder();
 		
 		ret.append(String.format("%20s%15s%15s%15s%15s%15s\n", "", "Observed", "Classified", "Correct", "Precision", "Recall"));
-		List<String> labels = getLabels(experiment.template.outputTemplate);
 		double totalT = 0;
 		double totalTP = 0;
 		for(int i = 0; i < labels.size(); i++) {

@@ -11,22 +11,17 @@
 package game.core;
 
 import game.configuration.Configurable;
-import game.configuration.errorchecks.CompatibilityCheck;
 import game.plugins.constraints.Compatible;
 
-public abstract class Metric<T> extends Configurable implements Compatible<Experiment> {
-	
-	public Experiment experiment;
+public abstract class Metric<E extends Experiment> extends Configurable implements Compatible<Experiment> {
 	
 	public Metric() {
 		name = getClass().getSimpleName();
-		
-		setOptionChecks("experiment", new CompatibilityCheck(this));
 	}
 	
 	public abstract boolean isReady();
 	
-	public abstract void evaluate(T... params);
+	public abstract void evaluate(E e);
 	
 	public abstract String prettyPrint();
 	

@@ -5,14 +5,16 @@ import game.core.Experiment;
 import game.core.Metric;
 import game.core.experiments.FullExperiment;
 
-public abstract class FullMetric extends Metric<Dataset> {
+import java.util.List;
+
+public abstract class FullMetric extends Metric<FullExperiment> {
 
 	@Override
 	public boolean isCompatible(Experiment exp) {
 		return exp instanceof FullExperiment;
 	}
 	
-	protected Dataset mergeFolds(Dataset[] folds) {
+	protected Dataset mergeFolds(List<Dataset> folds) {
 		Dataset ret = new Dataset();
 		for (Dataset fold: folds)
 			ret.addAll(fold);
