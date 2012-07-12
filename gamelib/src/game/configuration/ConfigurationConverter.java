@@ -40,8 +40,9 @@ class ConfigurationConverter implements Converter {
 			Object option = object.getOption(optionName);
 			if (option != null) {
 				if (optionName.matches("^\\d+$"))
-					continue;
-				writer.startNode(optionName);
+					writer.startNode("cl_el_"+optionName);
+				else
+					writer.startNode(optionName);
 				if (option.getClass() != object.getOptionType(optionName))
 					writer.addAttribute("class", option.getClass().getName());
 				context.convertAnother(option);
@@ -61,9 +62,10 @@ class ConfigurationConverter implements Converter {
 			while(reader.hasMoreChildren()) {
 				reader.moveDown();
 				String optionName = reader.getNodeName();
+				if (optionName.matches("^cl_el_\\d+$"))
+					optionName = optionName.substring(6);
 				String className = reader.getAttribute("class");
 				Class optionType = className != null ? classLoader.loadClass(className) : object.getOptionType(optionName);
-//				System.out.println(optionName + ": " + optionType);
 				object.setOption(optionName, context.convertAnother(object, optionType)/*, false, null*/);
 				reader.moveUp();
 			}
