@@ -17,11 +17,15 @@ import game.plugins.constraints.Compatible;
 
 public abstract class DatasetBuilder extends Configurable implements Compatible<InstanceTemplate> {
 	
+	public static final String DATASETDIRECTORY = "datasets/";
+	
 	public InstanceTemplate template;
 	
 	public int startIndex = 0;
 	
 	public int instanceNumber = 1000;
+	
+	public boolean shuffle = true;
 	
 	public DatasetBuilder() {
 		setOptionChecks("template", new CompatibilityCheck(this));
@@ -29,6 +33,6 @@ public abstract class DatasetBuilder extends Configurable implements Compatible<
 		setOptionChecks("startIndex", new PositivenessCheck(true));
 	}
 	
-	public abstract Dataset buildDataset();
+	public abstract DBDataset buildDataset();
 
 }

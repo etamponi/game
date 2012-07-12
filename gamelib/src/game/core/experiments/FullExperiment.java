@@ -10,13 +10,13 @@
  ******************************************************************************/
 package game.core.experiments;
 
-import game.core.Dataset;
+import game.core.DBDataset;
 import game.core.Experiment;
 import game.core.Graph;
 import game.core.GraphTrainer;
 import game.plugins.constraints.CompatibleWith;
 
-import java.util.LinkedList;
+import java.util.ArrayList;
 import java.util.List;
 
 public abstract class FullExperiment extends Experiment {
@@ -25,8 +25,8 @@ public abstract class FullExperiment extends Experiment {
 	
 	public GraphTrainer trainer;
 	
-	public List<Dataset> testedDatasets = new LinkedList<>();
-	public List<Graph> trainedGraphs = new LinkedList<>();
+	public List<DBDataset> testedDatasets = new ArrayList<>();
+	public List<Graph> trainedGraphs = new ArrayList<>();
 	
 	public FullExperiment() {
 		setOptionBinding("template", "graph.template");

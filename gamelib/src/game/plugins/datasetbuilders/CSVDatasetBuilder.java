@@ -11,8 +11,8 @@
 package game.plugins.datasetbuilders;
 
 import game.configuration.errorchecks.FileExistsCheck;
+import game.core.DBDataset;
 import game.core.DataTemplate;
-import game.core.Dataset;
 import game.core.DatasetBuilder;
 import game.core.Instance;
 import game.core.InstanceTemplate;
@@ -24,15 +24,12 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.Arrays;
-import java.util.Collections;
 
 public class CSVDatasetBuilder extends DatasetBuilder {
 	
 	public File file = new File("nonexistent.txt");
 	
 	public String separators = "[, +]";
-	
-	public boolean shuffle = true;
 	
 	public CSVDatasetBuilder() {
 		setOptionChecks("file", new FileExistsCheck());
@@ -49,8 +46,8 @@ public class CSVDatasetBuilder extends DatasetBuilder {
 	}
 
 	@Override
-	public Dataset buildDataset() {
-		Dataset ret = new Dataset();
+	public DBDataset buildDataset() {
+		DBDataset ret = new DBDataset(DATASETDIRECTORY, shuffle);
 		
 		int inputDim = getDimension(template.inputTemplate);
 		int outputDim = getDimension(template.outputTemplate);
@@ -68,11 +65,9 @@ public class CSVDatasetBuilder extends DatasetBuilder {
 					ret.add(new Instance(input, output));
 					count++;
 				}
+				ret.setReadOnly();
 			} catch (IOException e) {}
 		}
-		
-		if (shuffle)
-			Collections.shuffle(ret);
 		
 		return ret;
 	}

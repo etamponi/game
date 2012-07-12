@@ -13,8 +13,8 @@ package game.core.blocks;
 import game.configuration.errorchecks.CompatibilityCheck;
 import game.configuration.errorchecks.SizeCheck;
 import game.core.Block;
+import game.core.DBDataset;
 import game.core.DataTemplate;
-import game.core.Dataset;
 import game.plugins.constraints.Compatible;
 
 public abstract class Encoder<DT extends DataTemplate> extends Block implements Compatible<DataTemplate> {
@@ -32,7 +32,7 @@ public abstract class Encoder<DT extends DataTemplate> extends Block implements 
 	}
 
 	@Override
-	protected void train(Dataset trainingSet) {
+	protected void train(DBDataset trainingSet) {
 		throw new UnsupportedOperationException("You cannot train an Encoder!");
 	}
 	

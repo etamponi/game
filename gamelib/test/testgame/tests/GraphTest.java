@@ -13,14 +13,14 @@ package testgame.tests;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 import game.configuration.Configurable;
+import game.core.DBDataset;
 import game.core.DataTemplate;
-import game.core.Dataset;
 import game.core.Decoder;
 import game.core.Encoding;
 import game.core.Graph;
 import game.core.InstanceTemplate;
-import game.core.blocks.Transducer;
 import game.core.blocks.Encoder;
+import game.core.blocks.Transducer;
 import game.plugins.Implementation;
 import game.plugins.PluginManager;
 import game.plugins.datatemplates.LabelTemplate;
@@ -91,7 +91,7 @@ public class GraphTest {
 			return false;
 		}
 		@Override
-		protected void train(Dataset trainingSet) {
+		protected void train(DBDataset trainingSet) {
 			
 		}
 		@Override
@@ -110,7 +110,7 @@ public class GraphTest {
 			return false;
 		}
 		@Override
-		protected void train(Dataset trainingSet) {
+		protected void train(DBDataset trainingSet) {
 			
 		}
 		@Override

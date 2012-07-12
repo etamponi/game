@@ -1,18 +1,17 @@
 package testgame.tests;
 
-import static org.junit.Assert.*;
-
-import java.io.File;
-
-import game.core.Dataset;
+import static org.junit.Assert.assertEquals;
+import game.core.DBDataset;
 import game.core.DatasetBuilder;
-import game.core.Instance;
 import game.core.InstanceTemplate;
 import game.plugins.datasetbuilders.CSVDatasetBuilder;
 import game.plugins.datasetbuilders.SequenceCSVDatasetBuilder;
 import game.plugins.datatemplates.LabelTemplate;
 import game.plugins.datatemplates.SequenceTemplate;
 import game.plugins.datatemplates.VectorTemplate;
+
+import java.io.File;
+import java.util.List;
 
 import org.junit.Test;
 
@@ -44,19 +43,17 @@ public class DatasetTest {
 		DatasetBuilder builder = new CSVDatasetBuilder();
 		builder.setOption("template", template);
 		builder.setOption("file", new File("testdata/iris.data.txt"));
-		Dataset dataset = builder.buildDataset();
+		builder.setOption("databaseName", "test");
+		DBDataset dataset = builder.buildDataset();
 		
 		assertEquals(150, dataset.size());
-		Dataset fold = dataset.getFold(0, 4);
-		Dataset complement = dataset.getFoldComplement(0, 4);
-		assertEquals(150/4, fold.size());
-		assertEquals(150-150/4, complement.size());
-		assertFalse(containsAny(fold, complement));
+		List<DBDataset> folds = dataset.getFolds(4);
+		List<DBDataset> complements = dataset.getComplementaryFolds(folds);
+		assertEquals(150/4, folds.get(0).size());
+		assertEquals(150-150/4, complements.get(0).size());
 
-		Dataset random1 = dataset.getRandomSubset(0.20);
-		Dataset random2 = dataset.getRandomSubset(0.20);
+		DBDataset random1 = dataset.getRandomSubset(0.20);
 		assertEquals(30, random1.size());
-		assertFalse(random2.containsAll(random1));
 	}
 	
 	@Test
@@ -64,16 +61,9 @@ public class DatasetTest {
 		DatasetBuilder builder = new SequenceCSVDatasetBuilder();
 		builder.setOption("template", sequenceTpl);
 		builder.setOption("file", new File("testdata/csvsequence.txt"));
-		Dataset dataset = builder.buildDataset();
+		builder.setOption("databaseName", "sequencetest");
+		DBDataset dataset = builder.buildDataset();
 		assertEquals(5, dataset.size());
-	}
-	
-	private boolean containsAny(Dataset a, Dataset b) {
-		for(Instance i: b) {
-			if (a.contains(i))
-				return true;
-		}
-		return false;
 	}
 
 }

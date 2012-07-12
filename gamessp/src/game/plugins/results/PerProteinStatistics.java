@@ -10,8 +10,9 @@
  ******************************************************************************/
 package game.plugins.results;
 
+import game.core.DBDataset;
+import game.core.DBDataset.InstanceIterator;
 import game.core.DataTemplate;
-import game.core.Dataset;
 import game.core.Experiment;
 import game.core.Instance;
 import game.core.experiments.FullExperiment;
@@ -22,40 +23,45 @@ import game.plugins.datatemplates.ProteinPrimaryStructure;
 
 import java.util.List;
 
-public class PerProteinResult extends FullMetric {
+public class PerProteinStatistics extends FullMetric {
 	
 	public DataTemplate inputTemplate;
-	public Dataset dataset;
+	public List<DBDataset> testedDatasets;
 	
-	public PerProteinResult() {
+	public PerProteinStatistics() {
 		setPrivateOptions("inputTemplate", "dataset");
 	}
 
 	@Override
 	public boolean isCompatible(Experiment object) {
-		return object.template.outputTemplate instanceof ProteinHECStructure ||
-				object.template.outputTemplate instanceof ProteinDSSPStructure;
+		return super.isCompatible(object) && 
+				(object.template.outputTemplate instanceof ProteinHECStructure ||
+				 object.template.outputTemplate instanceof ProteinDSSPStructure);
 	}
 
 	@Override
 	public boolean isReady() {
-		return dataset != null;
+		return testedDatasets != null;
 	}
 
 	@Override
 	public void evaluate(FullExperiment experiment) {
-		dataset = mergeFolds(experiment.testedDatasets);
+		testedDatasets = experiment.testedDatasets;
 		inputTemplate = experiment.template.inputTemplate;
 	}
 
 	@Override
 	public String prettyPrint() {
 		StringBuilder ret = new StringBuilder();
-		for(Instance i: dataset) {
-			if (inputTemplate instanceof ProteinPrimaryStructure)
-				ret.append("Primary:          ").append(getFasta(i.getInputData())).append("\n");
-			ret.append("Secondary (obs):  ").append(getFasta(i.getOutputData())).append("\n");
-			ret.append("Secondary (pred): ").append(getFasta(i.getPredictedData())).append("\n\n");
+		for (DBDataset dataset: testedDatasets) {
+			InstanceIterator it = dataset.instanceIterator();
+			while(it.hasNext()) {
+				Instance i = it.next();
+				if (inputTemplate instanceof ProteinPrimaryStructure)
+					ret.append("Primary:          ").append(getFasta(i.getInputData())).append("\n");
+				ret.append("Secondary (obs):  ").append(getFasta(i.getOutputData())).append("\n");
+				ret.append("Secondary (pred): ").append(getFasta(i.getPredictionData())).append("\n\n");
+			}
 		}
 		
 		return ret.toString();

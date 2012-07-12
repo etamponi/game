@@ -11,8 +11,8 @@
 package game.plugins.datasetbuilders;
 
 import game.configuration.errorchecks.FileExistsCheck;
+import game.core.DBDataset;
 import game.core.DataTemplate;
-import game.core.Dataset;
 import game.core.DatasetBuilder;
 import game.core.Instance;
 import game.core.InstanceTemplate;
@@ -57,8 +57,8 @@ public class SequenceCSVDatasetBuilder extends DatasetBuilder {
 	}
 
 	@Override
-	public Dataset buildDataset() {
-		Dataset ret = new Dataset();
+	public DBDataset buildDataset() {
+		DBDataset ret = new DBDataset(DATASETDIRECTORY, shuffle);
 		
 		InstanceTemplate atom = new InstanceTemplate();
 		atom.inputTemplate = template.getOption("inputTemplate.atom");
@@ -85,6 +85,7 @@ public class SequenceCSVDatasetBuilder extends DatasetBuilder {
 					ret.add(new Instance(inputSequence, outputSequence));
 					count++;
 				}
+				ret.setReadOnly();
 			} catch (IOException e) {}
 		}
 		

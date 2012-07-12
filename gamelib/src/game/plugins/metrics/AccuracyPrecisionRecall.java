@@ -10,14 +10,16 @@
  ******************************************************************************/
 package game.plugins.metrics;
 
+import game.core.DBDataset;
+import game.core.DBDataset.SampleIterator;
 import game.core.DataTemplate;
-import game.core.Dataset;
 import game.core.Experiment;
-import game.core.Instance;
+import game.core.Sample;
 import game.core.experiments.FullExperiment;
 import game.core.metrics.FullMetric;
 import game.plugins.datatemplates.LabelTemplate;
 import game.plugins.datatemplates.SequenceTemplate;
+import game.utils.Utils;
 
 import java.util.LinkedList;
 import java.util.List;
@@ -52,21 +54,19 @@ public class AccuracyPrecisionRecall extends FullMetric {
 		if (isReady())
 			return;
 		
-		Dataset dataset = mergeFolds(e.testedDatasets);
-		labels = getLabels(e.template.outputTemplate);
-		
+		labels = Utils.getLabels(e.template.outputTemplate);
 		for(int k = 0; k < labels.size(); k++) {
 			singleTP.add(0.0);
 			singleP.add(0.0);
 			singleT.add(0.0);
 		}
 		
-		for(Instance i: dataset) {
-			List<String> trueLabels = getData(i.getOutputData());
-			List<String> predLabels = getData(i.getPredictedData());
-			for (int index = 0; index < trueLabels.size(); index++) {
-				String trueLabel = trueLabels.get(index);
-				String predLabel = predLabels.get(index);
+		for(DBDataset dataset: e.testedDatasets) {			
+			SampleIterator it = dataset.sampleIterator(true);
+			while(it.hasNext()) {
+				Sample sample = it.next();
+				String trueLabel = (String) sample.getOutput();
+				String predLabel = (String) sample.getPrediction();
 				int k = labels.indexOf(predLabel);
 				singleP.set(k, singleP.get(k)+1);
 				if (predLabel.equals(trueLabel))
@@ -77,23 +77,6 @@ public class AccuracyPrecisionRecall extends FullMetric {
 		}
 		
 		ready = true;
-	}
-	
-	private List<String> getLabels(DataTemplate template) {
-		if (template instanceof SequenceTemplate)
-			return template.getOption("atom.labels");
-		else
-			return template.getOption("labels");
-	}
-	
-	private List<String> getData(Object data) {
-		if (data instanceof List)
-			return (List<String>)data;
-		else {
-			List<String> ret = new LinkedList<>();
-			ret.add((String)data);
-			return ret;
-		}
 	}
 
 	@Override

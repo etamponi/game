@@ -12,11 +12,11 @@ package game.plugins.classifiers;
 
 import game.configuration.errorchecks.PositivenessCheck;
 import game.core.Block;
-import game.core.Dataset;
-import game.core.Dataset.EncodedSamples;
-import game.core.EncodedSample;
+import game.core.DBDataset;
+import game.core.DBDataset.EncodedSamples;
 import game.core.Encoding;
 import game.core.InstanceTemplate;
+import game.core.Sample;
 import game.core.blocks.Classifier;
 import game.plugins.datatemplates.LabelTemplate;
 import game.plugins.datatemplates.SequenceTemplate;
@@ -75,8 +75,8 @@ public class KNNClassifier extends Classifier {
 		
 		for (double[] currentInput: inputEncoded) {
 			for(int i = 0; i < reference.size(); i++) {
-				EncodedSample sample = reference.get(i);
-				list.get(i).setData(Utils.getDistance(currentInput, sample.getInput()), sample.getOutput());
+				Sample sample = reference.get(i);
+				list.get(i).setData(Utils.getDistance(currentInput, sample.getEncodedInput()), sample.getEncodedOutput());
 			}
 			Collections.sort(list);
 			double[] currentOutput = list.get(0).getOutput();
@@ -97,7 +97,7 @@ public class KNNClassifier extends Classifier {
 	}
 
 	@Override
-	protected void train(Dataset trainingSet) {
+	protected void train(DBDataset trainingSet) {
 		reference = trainingSet.encode((Block)parents.get(0), outputEncoder);
 	}
 

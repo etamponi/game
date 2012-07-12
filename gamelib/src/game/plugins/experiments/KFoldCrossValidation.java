@@ -1,11 +1,13 @@
 package game.plugins.experiments;
 
 import game.configuration.errorchecks.RangeCheck;
-import game.core.Dataset;
+import game.core.DBDataset;
 import game.core.DatasetBuilder;
 import game.core.Graph;
 import game.core.experiments.FullExperiment;
 import game.plugins.constraints.CompatibleWith;
+
+import java.util.List;
 
 public class KFoldCrossValidation extends FullExperiment {
 	
@@ -24,18 +26,18 @@ public class KFoldCrossValidation extends FullExperiment {
 	}
 
 	@Override
-	protected void runExperiment() {
-		Dataset complete = dataset.buildDataset();
+	protected void runExperiment(String outputDirectory) {
+		DBDataset complete = dataset.buildDataset();
 		
-		Dataset[] testings = complete.getFolds(folds);
-		Dataset[] trainings = complete.getFoldComplements(folds);
+		List<DBDataset> testings = complete.getFolds(folds);
+		List<DBDataset> trainings = complete.getComplementaryFolds(testings);
 		
 		for(int i = 0; i < folds; i++) {
 			Graph graphClone = graph.cloneConfiguration();
 			updateStatus(getOverallStatus(0.01, i), "training graph for fold " + (i+1) + "/" + folds);
-			startAnotherTaskAndWait(getOverallStatus(0.70, i), trainer, graphClone, trainings[i]);
+			startAnotherTaskAndWait(getOverallStatus(0.70, i), trainer, graphClone, trainings.get(i));
 			updateStatus(getOverallStatus(0.70, i), "training complete, testing phase...");
-			testedDatasets.add((Dataset)startAnotherTaskAndWait(getOverallStatus(0.99, i), graphClone, testings[i]));
+			testedDatasets.add((DBDataset)startAnotherTaskAndWait(getOverallStatus(0.99, i), graphClone, testings.get(i), outputDirectory));
 			trainedGraphs.add(graphClone);
 			updateStatus(getOverallStatus(1.00, i), "finished fold " + (i+1) + "/" + folds);
 		}

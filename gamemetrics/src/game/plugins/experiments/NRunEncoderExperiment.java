@@ -1,7 +1,5 @@
 package game.plugins.experiments;
 
-import game.core.Dataset;
-import game.core.Dataset.EncodedSamples;
 import game.core.experiments.EncoderExperiment;
 
 public class NRunEncoderExperiment extends EncoderExperiment {
@@ -9,8 +7,8 @@ public class NRunEncoderExperiment extends EncoderExperiment {
 	public int runs = 10;
 
 	@Override
-	protected void runExperiment() {
-		Dataset ds = dataset.buildDataset();
+	protected void runExperiment(String outputDirectory) {
+		/*Dataset ds = dataset.buildDataset();
 		EncodedSamples samples = ds.encode(inputEncoder, outputEncoder);
 		
 		int foldSize = samples.size()/runs;
@@ -18,7 +16,7 @@ public class NRunEncoderExperiment extends EncoderExperiment {
 			EncodedSamples run = new EncodedSamples(samples.subList(0, foldSize));
 			encodedDatasets.add(run);
 			samples.removeAll(run);
-		}
+		}*/
 	}
 
 	@Override

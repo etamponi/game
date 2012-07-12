@@ -1,13 +1,10 @@
 package game.plugins.metrics;
 
 import game.configuration.errorchecks.RangeCheck;
-import game.core.Dataset;
 import game.core.Experiment;
-import game.core.Instance;
 import game.core.experiments.FullExperiment;
 import game.core.metrics.FullMetric;
 import game.plugins.encoders.BooleanEncoder;
-import game.utils.Utils;
 
 import java.util.LinkedList;
 import java.util.List;
@@ -32,6 +29,7 @@ public class ROC extends FullMetric {
 
 	@Override
 	public boolean isCompatible(Experiment exp) {
+		// TODO ROC supports Sequences too
 		return super.isCompatible(exp) &&
 				exp.getOption("graph.outputClassifier.outputEncoder") instanceof BooleanEncoder;
 	}
@@ -45,7 +43,7 @@ public class ROC extends FullMetric {
 	public void evaluate(FullExperiment experiment) {
 		if (isReady())
 			return;
-		
+		/*
 		String positiveLabel = experiment.getOption("graph.outputClassifier.outputEncoder.positiveLabel");
 		String negativeLabel = experiment.getOption("graph.outputClassifier.outputEncoder.negativeLabel");
 		
@@ -61,17 +59,17 @@ public class ROC extends FullMetric {
 			decode(dataset, threshold, positiveLabel, negativeLabel);
 			evaluateROCPoint(dataset, positiveLabel);
 		}
-		
+		*/
 		ready = true;
 	}
-	
+	/*
 	private void decode(Dataset dataset, double threshold, String positiveLabel, String negativeLabel) {
 		for(Instance i: dataset) {
 			double value = i.getPredictionEncoding().get(0)[0];
 			if (value >= threshold)
-				i.setPredictedData(positiveLabel);
+				i.setPredictionData(positiveLabel);
 			else
-				i.setPredictedData(negativeLabel);
+				i.setPredictionData(negativeLabel);
 		}
 	}
 	
@@ -79,8 +77,8 @@ public class ROC extends FullMetric {
 		double TP = 0, FP = 0;
 		
 		for(Instance i: dataset) {
-			if (i.getPredictedData().equals(positiveLabel)) {
-				if (i.getPredictedData().equals(i.getOutputData()))
+			if (i.getPredictionData().equals(positiveLabel)) {
+				if (i.getPredictionData().equals(i.getOutputData()))
 					TP++;
 				else
 					FP++;
@@ -100,7 +98,7 @@ public class ROC extends FullMetric {
 		
 		return count;
 	}
-
+*/
 	@Override
 	public String prettyPrint() {
 		StringBuilder ret = new StringBuilder();

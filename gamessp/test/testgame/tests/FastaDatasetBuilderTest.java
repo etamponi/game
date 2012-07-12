@@ -10,13 +10,13 @@
  ******************************************************************************/
 package testgame.tests;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import game.core.DBDataset;
+import game.core.Instance;
+import game.plugins.datasetbuilders.FastaDatasetBuilder;
 
 import java.io.File;
 import java.util.List;
-
-import game.core.Dataset;
-import game.plugins.datasetbuilders.FastaDatasetBuilder;
 
 import org.junit.Test;
 
@@ -26,13 +26,14 @@ public class FastaDatasetBuilderTest {
 	public void test() {
 		FastaDatasetBuilder builder = new FastaDatasetBuilder();
 		builder.setOption("datasetFile", new File("testdata/fastadataset.txt"));
-		Dataset dataset = builder.buildDataset();
+		DBDataset dataset = builder.buildDataset();
 		
+		Instance inst = dataset.instanceIterator().next();
 		assertEquals(2, dataset.size());
 		assertEquals("MKTAYIAKQRQISFVKSHFSRQLEERLGLIEVQAPILSRVGDGTQDNLSGAEKAVQVKVKALPDAQFEVVHSLAKWKRQTLGQHDFSAGEGLYTHMKALRPDEDRLSPLHSVYVDQWDWERVMGDGERQFSTLKSTVEAIWAGIKATEAAVSEEFGLAPFLPDQIHFVHSQELLSRYPDLDAKGRERAIAKDLGAVFLVGIGGKLSDGHRHDVRAPDYDDWSTPSELGHAGLNGDILVWNPVLEDAFELSSMGIRVDADTLKHQLALTGDEDRLELEWHQALLRGEMPQTIGGGIGQSRLTMLLLQLPHIGQVQAGVWPAAVRESVPSLL",
-				getFasta(dataset.get(0).getInputData()));
+				getFasta(inst.getInputData()));
 		assertEquals("CCCCHHHHHHHHHHHHHHHHHHHHHHCCEEECCCCCEEECCCCCCCCCCCCCCCCEECCCCCCCCCEEECCCCCCHHHHHHHHHCCCCCCEEEEEEEEECCCCCCCCCCCCCEEEEEEEEEECCCCCCCHHHHHHHHHHHHHHHHHHHHHHHHHCCCCCCCCCCCEEEEHHHHHHHCCCCCHHHHHHHHHHHHCEEEEECCCCECCCCCECCCCCCCCECCCCECCCCCECCEEEEEEEECCCCEEEECEEEEEECCHHHHHHHCCCCCCCCHHHCHHHHHHHCCCCCCEEEEEEEHHHHHHHHHCCCCHHHCCCCCCCHHHHHHCCCCC",
-				getFasta(dataset.get(0).getOutputData()));
+				getFasta(inst.getOutputData()));
 	}
 	
 	private String getFasta(Object data) {

@@ -10,7 +10,8 @@
  ******************************************************************************/
 package game.plugins.datasetbuilders;
 
-import game.core.Dataset;
+import game.configuration.errorchecks.FileExistsCheck;
+import game.core.DBDataset;
 import game.core.DatasetBuilder;
 import game.core.Instance;
 import game.core.InstanceTemplate;
@@ -27,7 +28,11 @@ import java.util.List;
 
 public class FastaDatasetBuilder extends DatasetBuilder {
 	
-	public File datasetFile = new File("nonexistent.txt");
+	public File file = new File("nonexistent.txt");
+	
+	public FastaDatasetBuilder() {
+		setOptionChecks("file", new FileExistsCheck());
+	}
 
 	@Override
 	public boolean isCompatible(InstanceTemplate template) {
@@ -37,13 +42,13 @@ public class FastaDatasetBuilder extends DatasetBuilder {
 	}
 
 	@Override
-	public Dataset buildDataset() {
-		Dataset ret = new Dataset();
+	public DBDataset buildDataset() {
+		DBDataset ret = new DBDataset(DATASETDIRECTORY, shuffle);
 		
-		if (datasetFile.exists()) {
+		if (file.exists()) {
 			try {
 				int index = 0, count = 0;
-				BufferedReader reader = new BufferedReader(new FileReader(datasetFile));
+				BufferedReader reader = new BufferedReader(new FileReader(file));
 				boolean primary = true;
 				List<String> sequence = null;
 				Instance instance = null;
@@ -68,6 +73,7 @@ public class FastaDatasetBuilder extends DatasetBuilder {
 					}
 				}
 				reader.close();
+				ret.setReadOnly();
 			} catch (IOException e) {}
 		}
 		

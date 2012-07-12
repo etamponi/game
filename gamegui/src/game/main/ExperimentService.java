@@ -14,7 +14,6 @@ import game.core.Experiment;
 import game.core.LongTask.LongTaskUpdate;
 import game.utils.Msg;
 
-import java.io.File;
 import java.util.Observable;
 import java.util.Observer;
 import java.util.concurrent.Executor;
@@ -149,7 +148,7 @@ public class ExperimentService extends Service<Experiment> {
 					}
 				};
 				e.addObserver(o);
-				Experiment ret = e.startExperiment();
+				Experiment ret = e.startExperiment(Settings.RESULTSDIR);
 				e.deleteObserver(o);
 				return ret;
 			}
@@ -160,9 +159,6 @@ public class ExperimentService extends Service<Experiment> {
 	protected void succeeded() {
 		super.succeeded();
 		Experiment completed = getValue();
-		if (!new File("results/").exists())
-			new File("results/").mkdir();
-		completed.saveConfiguration("results/completed_"+completed.name+".config.xml");
 		if (controller.addToResultList())
 			controller.getResultListController().addCompletedExperiment(completed);
 		counter.set(counter.get()+1);

@@ -18,7 +18,7 @@ public class Instance {
 	
 	private Encoding predictionEncoding;
 	
-	private Object predictedData;
+	private Object predictionData;
 	
 	public Instance() {
 		
@@ -45,12 +45,12 @@ public class Instance {
 		this.outputData = outputData;
 	}
 
-	public Object getPredictedData() {
-		return predictedData;
+	public Object getPredictionData() {
+		return predictionData;
 	}
 
-	public void setPredictedData(Object predictedData) {
-		this.predictedData = predictedData;
+	public void setPredictionData(Object predictionData) {
+		this.predictionData = predictionData;
 	}
 
 	public Encoding getPredictionEncoding() {

@@ -1,21 +1,19 @@
 package game.plugins.weka.classifiers;
 
 import game.configuration.ErrorCheck;
-import game.core.Dataset;
-import game.core.Dataset.EncodedSamples;
-import game.core.EncodedSample;
+import game.core.DBDataset;
+import game.core.DBDataset.SampleIterator;
 import game.core.Encoding;
 import game.core.InstanceTemplate;
+import game.core.Sample;
 import game.core.blocks.Classifier;
 import game.core.blocks.Encoder;
 import game.plugins.datatemplates.LabelTemplate;
 import game.plugins.datatemplates.SequenceTemplate;
-import game.plugins.encoders.BooleanEncoder;
 import game.plugins.encoders.BaseSequenceEncoder;
+import game.plugins.encoders.BooleanEncoder;
 import game.plugins.encoders.ProbabilityEncoder;
-
-import java.util.List;
-
+import game.utils.Utils;
 import weka.classifiers.functions.MultilayerPerceptron;
 import weka.core.Attribute;
 import weka.core.FastVector;
@@ -90,7 +88,7 @@ public class WekaMultilayerPerceptron extends Classifier {
 	}
 
 	@Override
-	protected void train(Dataset trainingSet) {
+	protected void train(DBDataset trainingSet) {
 		nn = new MultilayerPerceptron();
 
 		nn.setAutoBuild(true);
@@ -102,53 +100,36 @@ public class WekaMultilayerPerceptron extends Classifier {
 		nn.setValidationThreshold(validationThreshold);
 		nn.setGUI(showGUI);
 		
-		updateStatus(0.01, "calculating samples...");
-		EncodedSamples samples = trainingSet.encode(getParent(), outputEncoder);
-		int inputSize = samples.get(0).getInput().length;
+		updateStatus(0.01, "preparing Weka format for samples...");
+		SampleIterator it = trainingSet.encodedSampleIterator(getParent(), outputEncoder, false);
+		Sample sample = it.next();
+		int inputSize = sample.getEncodedInput().length;
 		FastVector attributes = new FastVector();
 		for(int i = 0; i < inputSize; i++) {
 			attributes.addElement(new Attribute("a"+i));
 		}
 		FastVector classes = new FastVector();
-		for(String label: getLabels())
+		for(String label: Utils.getLabels(template.outputTemplate))
 			classes.addElement(label);
 		attributes.addElement(new Attribute("class", classes));
 		Instances ts = new Instances("training", attributes, 0);
 		
 		updateStatus(0.05, "porting samples to Weka format...");
-		for(EncodedSample sample: samples) {
+		while(it.hasNext()) {
 			Instance i = new Instance(inputSize+1);
-			for(int index = 0; index < sample.getInput().length; index++)
-				i.setValue((Attribute)attributes.elementAt(index), sample.getInput()[index]);
-			i.setValue((Attribute)attributes.elementAt(inputSize), decode(sample.getOutput()));
+			for(int index = 0; index < sample.getEncodedInput().length; index++)
+				i.setValue((Attribute)attributes.elementAt(index), sample.getEncodedInput()[index]);
+			i.setValue((Attribute)attributes.elementAt(inputSize), (String)sample.getOutput());
 			ts.add(i);
-		}
-		ts.setClassIndex(samples.get(0).getInput().length);
-		samples = null;
-		System.gc();
+			sample = it.next();
+		} 
+		ts.setClassIndex(inputSize);
 		updateStatus(0.50, "running Weka training, please wait...");
 		try {
 			nn.buildClassifier(ts);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-	}
-	
-	private List<String> getLabels() {
-		List<String> ret = null;
-		if (template.outputTemplate instanceof LabelTemplate)
-			ret = template.outputTemplate.getOption("labels");
-		if (template.outputTemplate instanceof SequenceTemplate)
-			ret = template.outputTemplate.getOption("atom.labels");
-		return ret;
-	}
-	
-	private String decode(double[] encoding) {
-		int i = 0;
-		for(; i < encoding.length; i++)
-			if (encoding[i] != 0)
-				break;
-		return getLabels().get(i);
 	}
 
 }

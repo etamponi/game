@@ -1,14 +1,15 @@
 package game.plugins.metrics;
 
+import game.core.DBDataset;
+import game.core.DBDataset.SampleIterator;
 import game.core.DataTemplate;
-import game.core.Dataset;
-import game.core.Dataset.OutputPair;
-import game.core.Dataset.OutputPairIterator;
 import game.core.Experiment;
+import game.core.Sample;
 import game.core.experiments.FullExperiment;
 import game.core.metrics.FullMetric;
 import game.plugins.datatemplates.LabelTemplate;
 import game.plugins.datatemplates.SequenceTemplate;
+import game.utils.Utils;
 
 import java.util.List;
 
@@ -42,17 +43,18 @@ public class ConfusionMatrix extends FullMetric {
 
 	@Override
 	public void evaluate(FullExperiment experiment) {
-		labels = experiment.template.outputTemplate.getOption("labels");
+		labels = Utils.getLabels(experiment.template.outputTemplate);
 		
 		matrix = new Array2DRowRealMatrix(labels.size(), labels.size());
-		Dataset dataset = mergeFolds(experiment.testedDatasets);
 		
-		OutputPairIterator it = dataset.outputPairIterator();
-		while(it.hasNext()) {
-			OutputPair pair = it.next();
-			int observed = labels.indexOf(pair.getObserved());
-			int predicted = labels.indexOf(pair.getPredicted());
-			matrix.setEntry(observed, predicted, matrix.getEntry(observed, predicted)+1);
+		for(DBDataset dataset: experiment.testedDatasets) {
+			SampleIterator it = dataset.sampleIterator(true);
+			while(it.hasNext()) {
+				Sample sample = it.next();
+				int observed = labels.indexOf(sample.getOutput());
+				int predicted = labels.indexOf(sample.getPrediction());
+				matrix.setEntry(observed, predicted, matrix.getEntry(observed, predicted)+1);
+			}
 		}
 	}
 

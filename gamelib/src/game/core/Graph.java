@@ -11,6 +11,7 @@
 package game.core;
 
 import game.configuration.ConfigurableList;
+import game.core.DBDataset.InstanceIterator;
 import game.core.blocks.Transducer;
 import game.core.blocks.Encoder;
 import game.core.blocks.Pipe;
@@ -46,30 +47,35 @@ public class Graph extends LongTask {
 		return "dataset classification using " + name;
 	}
 	
-	public Dataset startDatasetClassification(Dataset dataset) {
-		return startTask(dataset);
+	public DBDataset startDatasetClassification(DBDataset dataset, String outputDirectory) {
+		return startTask(dataset, outputDirectory);
 	}
 	
 	public Object classify(Object inputData) {
 		return decoder.decode(outputClassifier.transform(inputData));
 	}
 	
-	protected Dataset classifyAll(Dataset dataset) {
+	protected DBDataset classifyAll(DBDataset dataset, String outputDirectory) {
+		DBDataset ret = new DBDataset(outputDirectory);
 		double singleIncrease = 1.0 / dataset.size();
 		int count = 1;
-		for (Instance i: dataset) {
-			Encoding encoding = outputClassifier.transform(i.getInputData());
-			i.setPredictionEncoding(encoding);
-			i.setPredictedData(decoder.decode(encoding));
+		InstanceIterator it = dataset.instanceIterator();
+		while (it.hasNext()) {
+			Instance instance = it.next();
+			Encoding encoding = outputClassifier.transform(instance.getInputData());
+			instance.setPredictionEncoding(encoding);
+			instance.setPredictionData(decoder.decode(encoding));
+			ret.add(instance);
 			updateStatus(getCurrentPercent()+singleIncrease, "instance predicted " + count + "/" + dataset.size());
 			count++;
 		}
-		return dataset;
+		ret.setReadOnly();
+		return ret;
 	}
 
 	@Override
 	protected Object execute(Object... params) {
-		return classifyAll((Dataset)params[0]);
+		return classifyAll((DBDataset)params[0], (String)params[1]);
 	}
 
 	@Override

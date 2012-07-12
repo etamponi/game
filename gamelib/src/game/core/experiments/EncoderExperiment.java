@@ -10,13 +10,10 @@
  ******************************************************************************/
 package game.core.experiments;
 
-import game.core.Dataset.EncodedSamples;
 import game.core.DatasetBuilder;
 import game.core.Experiment;
 import game.core.blocks.Encoder;
 import game.plugins.constraints.CompatibleWith;
-
-import java.util.List;
 
 public abstract class EncoderExperiment extends Experiment {
 	
@@ -25,8 +22,6 @@ public abstract class EncoderExperiment extends Experiment {
 	public Encoder outputEncoder;
 	
 	public DatasetBuilder dataset;
-	
-	public List<EncodedSamples> encodedDatasets;
 	
 	public EncoderExperiment() {
 		setOptionBinding("template.inputTemplate", "inputEncoder.template");

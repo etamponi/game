@@ -18,6 +18,7 @@ import game.plugins.editors.graph.BlockNode;
 public class Settings {
 	
 	public static final String CONFIGFILE = "plugins.config.xml";
+	public static final String RESULTSDIR = "results";
 
 	private static Settings instance = new Settings();
 	
