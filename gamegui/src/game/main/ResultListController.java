@@ -63,7 +63,7 @@ public class ResultListController implements Initializable {
 	@FXML
 	public void onLoad(ActionEvent event) {
 		FileChooser chooser = new FileChooser();
-		chooser.setInitialDirectory(new File(System.getProperty("user.dir")));
+		chooser.setInitialDirectory(new File(Settings.RESULTSDIR));
 		chooser.setTitle("Load completed experiment");
 		File file = chooser.showOpenDialog(resultsView.getScene().getWindow());
 		if (file != null)

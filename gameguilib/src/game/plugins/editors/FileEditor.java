@@ -43,7 +43,11 @@ public class FileEditor extends OptionEditor {
 			public void handle(ActionEvent event) {
 				FileChooser chooser = new FileChooser();
 				chooser.setTitle("Open file");
-				chooser.setInitialDirectory(new File(System.getProperty("user.dir")));
+				File currentFile = getModel().getContent();
+				if (currentFile.getParentFile() != null)
+					chooser.setInitialDirectory(currentFile.getParentFile());
+				else
+					chooser.setInitialDirectory(new File(System.getProperty("user.dir")));
 				File file = chooser.showOpenDialog(browseButton.getScene().getWindow());
 				if (file != null) {
 					pathField.setText(Utils.relativize(file));
