@@ -16,7 +16,6 @@ import game.core.Block;
 import game.editorsystem.EditorWindow;
 import game.editorsystem.Option;
 import game.editorsystem.OptionEditor;
-import game.editorsystem.Settings;
 
 import java.util.Observable;
 import java.util.Observer;
@@ -89,8 +88,7 @@ public class BlockNode extends VBox implements Observer {
 				Dragboard db = startDragAndDrop(isTemplate ? TransferMode.COPY : TransferMode.MOVE);
 				
 				ClipboardContent content = new ClipboardContent();
-				Settings.getInstance().setDragging( isTemplate ?
-						new BlockNode((Block)b.cloneConfiguration(), false, pane) : BlockNode.this);
+				pane.setDragging( isTemplate ? new BlockNode((Block)b.cloneConfiguration(), false, pane) : BlockNode.this);
 				content.put(BLOCKDATA, new HandlePosition(event.getX(), event.getY()));
 				
 				db.setContent(content);
@@ -102,7 +100,7 @@ public class BlockNode extends VBox implements Observer {
 		setOnDragDone(new EventHandler<DragEvent>() {
 			@Override
 			public void handle(DragEvent event) {
-				Settings.getInstance().setDragging(null);
+				pane.setDragging(null);
 				event.consume();
 			}
 		});

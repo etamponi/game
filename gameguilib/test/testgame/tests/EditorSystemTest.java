@@ -11,6 +11,7 @@
 package testgame.tests;
 
 import static org.junit.Assert.assertEquals;
+import game.Settings;
 import game.configuration.Configurable;
 import game.core.Dataset;
 import game.core.DataTemplate;
@@ -22,7 +23,6 @@ import game.core.blocks.Transducer;
 import game.core.datatemplates.SequenceTemplate;
 import game.editorsystem.Option;
 import game.editorsystem.OptionEditor;
-import game.editorsystem.Settings;
 import game.plugins.Constraint;
 import game.plugins.Implementation;
 import game.plugins.datatemplates.LabelTemplate;
@@ -185,7 +185,7 @@ public class EditorSystemTest extends Application {
 
 	@Test
 	public void test() throws Exception {
-		Settings.getInstance().getPluginManager().setOption("packages.add", "testgame");
+		Settings.getPluginManager().setOption("packages.add", "testgame");
 		launch();
 	}
 

@@ -10,6 +10,7 @@
  ******************************************************************************/
 package game.main;
 
+import game.Settings;
 import game.configuration.Change;
 import game.configuration.Configurable;
 import game.configuration.ConfigurableList;
@@ -17,7 +18,6 @@ import game.core.Experiment;
 import game.editorsystem.EditorWindow;
 import game.editorsystem.Option;
 import game.editorsystem.OptionEditor;
-import game.editorsystem.Settings;
 import game.plugins.PluginManager;
 import game.plugins.editors.ConfigurableEditor;
 import game.plugins.editors.SerializationEditor;
@@ -59,7 +59,7 @@ public class MainController extends Configurable implements Initializable {
 	
 	public final ConfigurableList experimentList = new ConfigurableList(this, Experiment.class);
 	
-	public final PluginManager manager = Settings.getInstance().getPluginManager();
+	public final PluginManager manager = Settings.getPluginManager();
 	
 	private ExperimentService service;
 	
@@ -126,7 +126,7 @@ public class MainController extends Configurable implements Initializable {
 			@Override
 			public void handle(ActionEvent event) {
 				new EditorWindow(new ConfigurableEditor()).startEdit(new Option(MainController.this, "manager"));
-				Settings.getInstance().getPluginManager().saveConfiguration(Settings.CONFIGFILE);
+				Settings.getPluginManager().saveConfiguration(Settings.CONFIGFILE);
 			}
 		});
 		toolbar.getItems().addAll(new Separator(), pmButton);

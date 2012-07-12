@@ -10,7 +10,6 @@
  ******************************************************************************/
 package game.main;
 
-import game.editorsystem.Settings;
 import game.utils.Msg;
 
 import java.io.File;
@@ -34,7 +33,7 @@ public class Main extends Application {
 
 	@Override
 	public void start(Stage primaryStage) throws Exception {
-		Settings.getInstance();
+		Class.forName("game.Settings");
 		Msg.setLogsDirectory(new File("logs"));
 		
 		primaryStage.setTitle("GAME 3.0 - The revenge (alpha)");

@@ -10,6 +10,7 @@
  ******************************************************************************/
 package game.editorsystem;
 
+import game.Settings;
 import game.configuration.Configurable;
 import game.editorsystem.constraints.CanEditConstraint;
 import game.plugins.Implementation;
@@ -81,7 +82,7 @@ public class Option {
 			ret.add(new Implementation(getContent()));
 			return ret;
 		} else*/
-			return owner.getCompatibleOptionImplementations(optionName, Settings.getInstance().getPluginManager());
+			return owner.getCompatibleOptionImplementations(optionName, Settings.getPluginManager());
 	}
 	
 	public boolean isBound() {
@@ -92,7 +93,7 @@ public class Option {
 	}
 	
 	public OptionEditor getBestEditor(boolean runtimeClass) {
-		PluginManager manager = Settings.getInstance().getPluginManager();
+		PluginManager manager = Settings.getPluginManager();
 		
 		Class type = getType(runtimeClass);
 		Set<Implementation<OptionEditor>> editors = manager.getCompatibleImplementationsOf(OptionEditor.class, new CanEditConstraint(type));

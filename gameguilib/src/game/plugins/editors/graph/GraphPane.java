@@ -12,10 +12,9 @@ package game.plugins.editors.graph;
 
 import game.core.Block;
 import game.core.Graph;
-import game.core.blocks.Transducer;
 import game.core.blocks.Encoder;
 import game.core.blocks.Pipe;
-import game.editorsystem.Settings;
+import game.core.blocks.Transducer;
 
 import java.util.HashMap;
 import java.util.HashSet;
@@ -57,6 +56,8 @@ public class GraphPane extends ScrollPane {
 	private double cellHeight;
 	private double cellWidth;
 	
+	private BlockNode dragging;
+	
 	public GraphPane(int hcells, int vcells, String cellImage) {
 		
 		Image img = new Image(cellImage);
@@ -89,7 +90,7 @@ public class GraphPane extends ScrollPane {
 				if (handle != null) {
 					event.acceptTransferModes(TransferMode.COPY_OR_MOVE);
 					
-					BlockNode node = Settings.getInstance().getDragging();
+					BlockNode node = getDragging();
 					node.setPosition(handle, event.getX(), event.getY());
 					node.setDragging(true);
 				}
@@ -102,7 +103,7 @@ public class GraphPane extends ScrollPane {
 			@Override
 			public void handle(DragEvent event) {
 				if (event.getDragboard().hasContent(BlockNode.BLOCKDATA)) {
-					BlockNode node = Settings.getInstance().getDragging();
+					BlockNode node = getDragging();
 					
 					if (node.getWrapper() == null && !content.getChildren().contains(node))
 						content.getChildren().add(node);
@@ -120,7 +121,7 @@ public class GraphPane extends ScrollPane {
 			@Override
 			public void handle(DragEvent event) {
 				if (event.getDragboard().hasContent(BlockNode.BLOCKDATA)) {
-					BlockNode node = Settings.getInstance().getDragging();
+					BlockNode node = getDragging();
 					if (node != null) {
 						if (node.getWrapper() != null)
 							content.getChildren().remove(node.getWrapper());
@@ -139,7 +140,7 @@ public class GraphPane extends ScrollPane {
 			@Override
 			public void handle(DragEvent event) {
 				if (event.getDragboard().hasContent(BlockNode.BLOCKDATA)) {
-					BlockNode node = Settings.getInstance().getDragging();
+					BlockNode node = getDragging();
 					node.setDragging(false);
 					
 					if (node.getWrapper() == null)
@@ -154,7 +155,7 @@ public class GraphPane extends ScrollPane {
 					if (block instanceof Pipe && !graph.pipes.contains(block))
 						graph.setOption("pipes.add", block);
 					
-					Settings.getInstance().setDragging(null);
+					setDragging(null);
 					event.setDropCompleted(true);
 				} else {
 					event.setDropCompleted(false);
@@ -453,6 +454,14 @@ public class GraphPane extends ScrollPane {
 			graph.setOption("inputEncoders.remove", block);
 		if (block instanceof Pipe)
 			graph.setOption("pipes.remove", block);
+	}
+	
+	public BlockNode getDragging() {
+		return dragging;
+	}
+	
+	public void setDragging(BlockNode node) {
+		this.dragging = node;
 	}
 	
 }

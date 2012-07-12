@@ -10,13 +10,13 @@
  ******************************************************************************/
 package game.plugins.editors.graph;
 
+import game.Settings;
 import game.configuration.Configurable;
 import game.core.Block;
 import game.core.Graph;
 import game.editorsystem.EditorController;
 import game.editorsystem.Option;
 import game.editorsystem.OptionEditor;
-import game.editorsystem.Settings;
 import game.plugins.Implementation;
 import game.plugins.PluginManager;
 import game.plugins.editors.ConfigurableEditor;
@@ -100,7 +100,7 @@ public class GraphEditorController implements EditorController {
 			@Override
 			public void handle(DragEvent event) {
 				if (event.getDragboard().hasContent(BlockNode.BLOCKDATA)) {
-					BlockNode node = Settings.getInstance().getDragging();
+					BlockNode node = graphPane.getDragging();
 					node.setDragging(false);
 					
 					AnchorPane graphRoot = graphPane.getContentPane();
@@ -135,7 +135,6 @@ public class GraphEditorController implements EditorController {
 			graphPane.setGraph(graph);
 			graphPane.parseGraph();
 			fillPools();
-			//connectConfRoot();
 		}
 	}
 
@@ -155,7 +154,7 @@ public class GraphEditorController implements EditorController {
 	
 	private void fillPool(FlowPane pool, String listOptionName) {
 		pool.getChildren().clear();
-		PluginManager manager = Settings.getInstance().getPluginManager();
+		PluginManager manager = Settings.getPluginManager();
 		Configurable list = ((Graph)graphModel.getContent()).getOption(listOptionName);
 		if (list == null)
 			return;

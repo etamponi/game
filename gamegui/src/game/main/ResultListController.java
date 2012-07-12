@@ -10,13 +10,13 @@
  ******************************************************************************/
 package game.main;
 
+import game.Settings;
 import game.configuration.Configurable;
 import game.core.Experiment;
 import game.core.Metric;
 import game.editorsystem.EditorWindow;
 import game.editorsystem.Option;
 import game.editorsystem.Option.Temporary;
-import game.editorsystem.Settings;
 import game.plugins.Implementation;
 import game.plugins.constraints.CompatibleWith;
 
@@ -49,7 +49,7 @@ public class ResultListController implements Initializable {
 		
 		TreeItem expItem = new TreeItem(e);
 		
-		SortedSet<Implementation<Metric>> metrics = Settings.getInstance().getPluginManager().
+		SortedSet<Implementation<Metric>> metrics = Settings.getPluginManager().
 				getCompatibleImplementationsOf(Metric.class, new CompatibleWith(new Temporary(e), "content"));
 		
 		for(Implementation<Metric> impl: metrics) {

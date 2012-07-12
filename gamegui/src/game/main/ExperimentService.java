@@ -10,9 +10,9 @@
  ******************************************************************************/
 package game.main;
 
+import game.Settings;
 import game.core.Experiment;
 import game.core.LongTask.LongTaskUpdate;
-import game.editorsystem.Settings;
 import game.utils.Msg;
 
 import java.util.Observable;
