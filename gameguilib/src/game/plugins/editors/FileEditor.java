@@ -11,6 +11,7 @@
 package game.plugins.editors;
 
 import game.editorsystem.OptionEditor;
+import game.utils.Utils;
 
 import java.io.File;
 
@@ -45,9 +46,9 @@ public class FileEditor extends OptionEditor {
 				chooser.setInitialDirectory(new File(System.getProperty("user.dir")));
 				File file = chooser.showOpenDialog(browseButton.getScene().getWindow());
 				if (file != null) {
-					pathField.setText(file.getAbsolutePath());
+					pathField.setText(Utils.relativize(file));
 					if (getModel() != null) {
-						setModelContent(file);
+						setModelContent(new File(pathField.getText()));
 					}
 				}
 			}
@@ -72,7 +73,7 @@ public class FileEditor extends OptionEditor {
 	public void updateView() {
 		if (getModel().getContent() == null)
 			setModelContent(new File("nonexistent.txt"));
-		pathField.setText(((File)getModel().getContent()).getAbsolutePath());
+		pathField.setText(Utils.relativize((File)getModel().getContent()));
 	}
 
 	@Override

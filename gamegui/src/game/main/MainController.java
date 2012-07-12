@@ -57,11 +57,9 @@ import javafx.stage.Stage;
 
 public class MainController extends Configurable implements Initializable {
 	
-	public ConfigurableList experimentList = new ConfigurableList(this, Experiment.class);
+	public final ConfigurableList experimentList = new ConfigurableList(this, Experiment.class);
 	
 	public final PluginManager manager = Settings.getInstance().getPluginManager();
-	
-	private Option model = new Option(this, "experimentList");
 	
 	private ExperimentService service;
 	
@@ -90,6 +88,7 @@ public class MainController extends Configurable implements Initializable {
 
 	@Override
 	public void initialize(URL location, ResourceBundle resources) {
+		Option model = new Option(this, "experimentList");
 		OptionEditor serialization = new SerializationEditor();
 		serialization.connect(model);
 		addPluginManagerEditorToToolBar((ToolBar)serialization.getView());
@@ -135,15 +134,14 @@ public class MainController extends Configurable implements Initializable {
 	
 	@FXML
 	public void onStart(ActionEvent event) {
-		ConfigurableList experiments = model.getContent();
 		service = new ExperimentService(this);
 		
 		currentProgress.progressProperty().bind(service.progressProperty());
 		currentMessage.textProperty().bind(service.messageProperty());
 		
-		double step = 1.0 / experiments.size();
+		double step = 1.0 / experimentList.size();
 		overallProgress.progressProperty().bind(
-				(service.progressProperty().divide(experiments.size())).add(service.counterProperty().multiply(step)));
+				(service.progressProperty().divide(experimentList.size())).add(service.counterProperty().multiply(step)));
 		overallMessage.textProperty().bind(service.currentExperimentProperty());
 		
 		service.setOnFailed(new EventHandler<WorkerStateEvent>() {
@@ -245,8 +243,7 @@ public class MainController extends Configurable implements Initializable {
 	private void controlButtons() {
 		if (service != null && !service.hasFinished())
 			return;
-		ConfigurableList experiments = model.getContent();
-		if (experiments.isEmpty() || !experiments.getConfigurationErrors().isEmpty()) {
+		if (experimentList.isEmpty() || !experimentList.getConfigurationErrors().isEmpty()) {
 			disableButtons(true, true, true);
 		} else {
 			disableButtons(false, true, true);

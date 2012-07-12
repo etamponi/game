@@ -10,8 +10,8 @@
  ******************************************************************************/
 package game.plugins.metrics;
 
-import game.core.DBDataset;
-import game.core.DBDataset.SampleIterator;
+import game.core.Dataset;
+import game.core.Dataset.SampleIterator;
 import game.core.DataTemplate;
 import game.core.Experiment;
 import game.core.Sample;
@@ -61,7 +61,7 @@ public class AccuracyPrecisionRecall extends FullMetric {
 			singleT.add(0.0);
 		}
 		
-		for(DBDataset dataset: e.testedDatasets) {			
+		for(Dataset dataset: e.testedDatasets) {			
 			SampleIterator it = dataset.sampleIterator(true);
 			while(it.hasNext()) {
 				Sample sample = it.next();

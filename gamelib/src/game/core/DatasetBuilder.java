@@ -33,6 +33,6 @@ public abstract class DatasetBuilder extends Configurable implements Compatible<
 		setOptionChecks("startIndex", new PositivenessCheck(true));
 	}
 	
-	public abstract DBDataset buildDataset();
+	public abstract Dataset buildDataset();
 
 }

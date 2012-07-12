@@ -10,8 +10,12 @@
  ******************************************************************************/
 package game.core;
 
-public class Instance {
+import java.io.Serializable;
+
+public class Instance implements Serializable {
 	
+	private static final long serialVersionUID = -9123652705641571185L;
+
 	private Object inputData;
 	
 	private Object outputData;

@@ -11,7 +11,7 @@
 package game.core;
 
 import game.configuration.ConfigurableList;
-import game.core.DBDataset.InstanceIterator;
+import game.core.Dataset.InstanceIterator;
 import game.core.blocks.Transducer;
 import game.core.blocks.Encoder;
 import game.core.blocks.Pipe;
@@ -47,7 +47,7 @@ public class Graph extends LongTask {
 		return "dataset classification using " + name;
 	}
 	
-	public DBDataset startDatasetClassification(DBDataset dataset, String outputDirectory) {
+	public Dataset startDatasetClassification(Dataset dataset, String outputDirectory) {
 		return startTask(dataset, outputDirectory);
 	}
 	
@@ -55,8 +55,8 @@ public class Graph extends LongTask {
 		return decoder.decode(outputClassifier.transform(inputData));
 	}
 	
-	protected DBDataset classifyAll(DBDataset dataset, String outputDirectory) {
-		DBDataset ret = new DBDataset(outputDirectory);
+	protected Dataset classifyAll(Dataset dataset, String outputDirectory) {
+		Dataset ret = new Dataset(outputDirectory, false);
 		double singleIncrease = 1.0 / dataset.size();
 		int count = 1;
 		InstanceIterator it = dataset.instanceIterator();
@@ -75,7 +75,7 @@ public class Graph extends LongTask {
 
 	@Override
 	protected Object execute(Object... params) {
-		return classifyAll((DBDataset)params[0], (String)params[1]);
+		return classifyAll((Dataset)params[0], (String)params[1]);
 	}
 
 	@Override

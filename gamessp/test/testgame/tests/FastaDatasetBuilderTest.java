@@ -11,7 +11,7 @@
 package testgame.tests;
 
 import static org.junit.Assert.assertEquals;
-import game.core.DBDataset;
+import game.core.Dataset;
 import game.core.Instance;
 import game.plugins.datasetbuilders.FastaDatasetBuilder;
 
@@ -26,7 +26,7 @@ public class FastaDatasetBuilderTest {
 	public void test() {
 		FastaDatasetBuilder builder = new FastaDatasetBuilder();
 		builder.setOption("datasetFile", new File("testdata/fastadataset.txt"));
-		DBDataset dataset = builder.buildDataset();
+		Dataset dataset = builder.buildDataset();
 		
 		Instance inst = dataset.instanceIterator().next();
 		assertEquals(2, dataset.size());

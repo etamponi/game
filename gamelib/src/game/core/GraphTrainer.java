@@ -14,16 +14,16 @@ import game.plugins.constraints.Compatible;
 
 public abstract class GraphTrainer extends LongTask implements Compatible<Graph> {
 	
-	protected abstract void trainGraph(Graph graph, DBDataset trainingSet);
+	protected abstract void trainGraph(Graph graph, Dataset trainingSet);
 	
-	public <T> T startGraphTraining(Graph graph, DBDataset trainingSet) {
+	public <T> T startGraphTraining(Graph graph, Dataset trainingSet) {
 		return startTask(graph, trainingSet);
 	}
 
 	@Override
 	protected Object execute(Object... params) {
 		Graph graph = (Graph)params[0];
-		trainGraph(graph, (DBDataset)params[1]);
+		trainGraph(graph, (Dataset)params[1]);
 		graph.setTrained();
 		
 		return null;

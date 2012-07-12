@@ -10,8 +10,8 @@
  ******************************************************************************/
 package game.plugins.results;
 
-import game.core.DBDataset;
-import game.core.DBDataset.InstanceIterator;
+import game.core.Dataset;
+import game.core.Dataset.InstanceIterator;
 import game.core.DataTemplate;
 import game.core.Experiment;
 import game.core.Instance;
@@ -26,7 +26,7 @@ import java.util.List;
 public class PerProteinStatistics extends FullMetric {
 	
 	public DataTemplate inputTemplate;
-	public List<DBDataset> testedDatasets;
+	public List<Dataset> testedDatasets;
 	
 	public PerProteinStatistics() {
 		setPrivateOptions("inputTemplate", "dataset");
@@ -53,7 +53,7 @@ public class PerProteinStatistics extends FullMetric {
 	@Override
 	public String prettyPrint() {
 		StringBuilder ret = new StringBuilder();
-		for (DBDataset dataset: testedDatasets) {
+		for (Dataset dataset: testedDatasets) {
 			InstanceIterator it = dataset.instanceIterator();
 			while(it.hasNext()) {
 				Instance i = it.next();

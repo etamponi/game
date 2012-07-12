@@ -12,8 +12,8 @@ package game.plugins.classifiers;
 
 import game.configuration.errorchecks.PositivenessCheck;
 import game.core.Block;
-import game.core.DBDataset;
-import game.core.DBDataset.EncodedSamples;
+import game.core.Dataset;
+import game.core.Dataset.EncodedSamples;
 import game.core.Encoding;
 import game.core.InstanceTemplate;
 import game.core.Sample;
@@ -97,7 +97,7 @@ public class KNNClassifier extends Classifier {
 	}
 
 	@Override
-	protected void train(DBDataset trainingSet) {
+	protected void train(Dataset trainingSet) {
 		reference = trainingSet.encode((Block)parents.get(0), outputEncoder);
 	}
 

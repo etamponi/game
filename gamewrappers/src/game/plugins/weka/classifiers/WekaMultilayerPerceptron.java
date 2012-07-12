@@ -11,8 +11,8 @@
 package game.plugins.weka.classifiers;
 
 import game.configuration.ErrorCheck;
-import game.core.DBDataset;
-import game.core.DBDataset.SampleIterator;
+import game.core.Dataset;
+import game.core.Dataset.SampleIterator;
 import game.core.Encoding;
 import game.core.InstanceTemplate;
 import game.core.Sample;
@@ -98,7 +98,7 @@ public class WekaMultilayerPerceptron extends Classifier {
 	}
 
 	@Override
-	protected void train(DBDataset trainingSet) {
+	protected void train(Dataset trainingSet) {
 		nn = new MultilayerPerceptron();
 
 		nn.setAutoBuild(true);

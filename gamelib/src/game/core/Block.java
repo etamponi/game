@@ -41,7 +41,7 @@ public abstract class Block extends LongTask {
 	
 	public abstract boolean isTrained();
 	
-	protected abstract void train(DBDataset trainingSet);
+	protected abstract void train(Dataset trainingSet);
 	
 	public abstract Encoding transform(Object inputData);
 	
@@ -52,13 +52,13 @@ public abstract class Block extends LongTask {
 		return "training of " + this;
 	}
 
-	public void startTraining(DBDataset trainingSet) {
+	public void startTraining(Dataset trainingSet) {
 		startTask(trainingSet);
 	}
 	
 	@Override
 	protected Object execute(Object... params) {
-		train((DBDataset)params[0]);
+		train((Dataset)params[0]);
 		return null;
 	}
 	

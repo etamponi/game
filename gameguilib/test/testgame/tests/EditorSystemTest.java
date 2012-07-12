@@ -12,7 +12,7 @@ package testgame.tests;
 
 import static org.junit.Assert.assertEquals;
 import game.configuration.Configurable;
-import game.core.DBDataset;
+import game.core.Dataset;
 import game.core.DataTemplate;
 import game.core.Encoding;
 import game.core.Graph;
@@ -101,7 +101,7 @@ public class EditorSystemTest extends Application {
 		}
 
 		@Override
-		protected void train(DBDataset trainingSet) {
+		protected void train(Dataset trainingSet) {
 			
 		}
 
@@ -125,7 +125,7 @@ public class EditorSystemTest extends Application {
 		}
 
 		@Override
-		protected void train(DBDataset trainingSet) {
+		protected void train(Dataset trainingSet) {
 			
 		}
 

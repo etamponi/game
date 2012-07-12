@@ -10,7 +10,7 @@
  ******************************************************************************/
 package game.plugins.classifiers;
 
-import game.core.DBDataset;
+import game.core.Dataset;
 import game.core.Encoding;
 import game.core.InstanceTemplate;
 import game.core.blocks.Combiner;
@@ -36,7 +36,7 @@ public class AveragingCombiner extends Combiner {
 	}
 
 	@Override
-	protected void train(DBDataset trainingSet) {
+	protected void train(Dataset trainingSet) {
 		trained = true;
 	}
 

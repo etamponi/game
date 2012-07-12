@@ -10,7 +10,7 @@
  ******************************************************************************/
 package game.core.experiments;
 
-import game.core.DBDataset;
+import game.core.Dataset;
 import game.core.Experiment;
 import game.core.Graph;
 import game.core.GraphTrainer;
@@ -25,7 +25,7 @@ public abstract class FullExperiment extends Experiment {
 	
 	public GraphTrainer trainer;
 	
-	public List<DBDataset> testedDatasets = new ArrayList<>();
+	public List<Dataset> testedDatasets = new ArrayList<>();
 	public List<Graph> trainedGraphs = new ArrayList<>();
 	
 	public FullExperiment() {

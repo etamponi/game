@@ -11,7 +11,7 @@
 package game.plugins.datasetbuilders;
 
 import game.configuration.errorchecks.FileExistsCheck;
-import game.core.DBDataset;
+import game.core.Dataset;
 import game.core.DataTemplate;
 import game.core.DatasetBuilder;
 import game.core.Instance;
@@ -46,8 +46,8 @@ public class CSVDatasetBuilder extends DatasetBuilder {
 	}
 
 	@Override
-	public DBDataset buildDataset() {
-		DBDataset ret = new DBDataset(DATASETDIRECTORY, shuffle);
+	public Dataset buildDataset() {
+		Dataset ret = new Dataset(DATASETDIRECTORY, shuffle);
 		
 		int inputDim = getDimension(template.inputTemplate);
 		int outputDim = getDimension(template.outputTemplate);

@@ -11,9 +11,14 @@
 package game.core;
 
 import game.configuration.Configurable;
+import game.utils.Utils;
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
@@ -28,14 +33,9 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
-import com.thoughtworks.xstream.XStream;
-import com.thoughtworks.xstream.io.xml.DomDriver;
-
-public class DBDataset extends Configurable {
+public class Dataset extends Configurable {
 	
 	private static final int COMMITCYCLE = 100;
-	
-	private static final XStream stream = new XStream(new DomDriver());
 	
 	static {
 		try {
@@ -58,21 +58,24 @@ public class DBDataset extends Configurable {
 	
 	public boolean shuffle = true;
 	
-	public DBDataset() {
+	public Dataset() {
 		setPrivateOptions("databaseName", "indices", "readOnly", "shuffle");
 	}
 	
-	public DBDataset(String datasetDirectory) {
-		this(datasetDirectory, true);
+	public Dataset(File databaseFile, boolean shuffle) {
+		this();
+		this.readOnly = true;
+		this.shuffle = shuffle;
+		setDatabaseName(Utils.relativize(databaseFile));
 	}
 	
-	public DBDataset(String datasetDirectory, boolean shuffle) {
+	public Dataset(String datasetDirectory, boolean shuffle) {
 		this();
 		this.shuffle = shuffle;
 		createDatabase(datasetDirectory);
 	}
 	
-	private DBDataset(DBDataset base, List<Integer> indices) {
+	private Dataset(Dataset base, List<Integer> indices) {
 		this();
 		this.indices = new ArrayList<>(indices);
 		this.readOnly = true;
@@ -88,12 +91,12 @@ public class DBDataset extends Configurable {
 		if (!dir.exists())
 			dir.mkdirs();
 		try {
-			String fileName = File.createTempFile("gdb", ".db", new File(datasetDirectory)).getPath();
+			String fileName = Utils.relativize(File.createTempFile("gdb", ".db", new File(datasetDirectory)));
 			databaseName = fileName;
 			connection = DriverManager.getConnection("jdbc:sqlite:"+fileName);
 			connection.setAutoCommit(false);
 			Statement statement = connection.createStatement();
-			statement.executeUpdate("CREATE TABLE Data (id INTEGER PRIMARY KEY AUTOINCREMENT, content TEXT NOT NULL);");
+			statement.executeUpdate("CREATE TABLE Data (id INTEGER PRIMARY KEY AUTOINCREMENT, content BLOB NOT NULL);");
 			statement.close();
 			connectionRegistry.put(databaseName, connection);
 		} catch (SQLException | IOException e) {
@@ -131,15 +134,18 @@ public class DBDataset extends Configurable {
 		if (readOnly)
 			return; // Cannot add instances once a dataset is readOnly
 		try {
-			String content = stream.toXML(instance);
+			ByteArrayOutputStream baos = new ByteArrayOutputStream();
+		    ObjectOutputStream oout = new ObjectOutputStream(baos);
+		    oout.writeObject(instance);
+		    oout.close();
 			PreparedStatement statement = connection.prepareStatement("INSERT INTO Data(id, content) VALUES (?, ?);");
 			statement.setInt(1, indices.size());
-			statement.setString(2, content);
+			statement.setBytes(2, baos.toByteArray());
 			statement.executeUpdate();
 			indices.add(indices.size());
 			if (indices.size() % COMMITCYCLE == 0)
 				connection.commit();
-		} catch (SQLException e) {
+		} catch (SQLException | IOException e) {
 			e.printStackTrace();
 		}
 	}
@@ -177,10 +183,14 @@ public class DBDataset extends Configurable {
 				Statement statement = connection.createStatement();
 				currentId = idIterator.next();
 				ResultSet result = statement.executeQuery("SELECT content FROM Data WHERE id = " + currentId + ";");
-				while(result.next())
-					ret = (Instance)stream.fromXML(result.getString("content"));
+				result.next();
+				byte[] buf = result.getBytes("content");
+			    if (buf != null) {
+			    	ObjectInputStream objectIn = new ObjectInputStream(new ByteArrayInputStream(buf));
+			    	ret = (Instance)objectIn.readObject();
+			    }
 				statement.close();
-			} catch (SQLException e) {
+			} catch (SQLException | IOException | ClassNotFoundException e) {
 				e.printStackTrace();
 			}
 			return ret;
@@ -349,43 +359,43 @@ public class DBDataset extends Configurable {
 		return ret;
 	}
 	
-	public List<DBDataset> getFolds(int folds) {
+	public List<Dataset> getFolds(int folds) {
 		if (!readOnly)
 			return null;
 		
-		List<DBDataset> ret = new ArrayList<>(folds);
+		List<Dataset> ret = new ArrayList<>(folds);
 		List<Integer> temp = new ArrayList<>(indices);
 		if (shuffle)
 			Collections.shuffle(temp);
 		int foldSize = indices.size() / folds;
 		for(int fold = 0; fold < folds; fold++) {
-			ret.add(new DBDataset(this, temp.subList(fold*foldSize, (fold+1)*foldSize)));
+			ret.add(new Dataset(this, temp.subList(fold*foldSize, (fold+1)*foldSize)));
 		}
 		return ret;
 	}
 	
-	public List<DBDataset> getComplementaryFolds(List<DBDataset> folds) {
+	public List<Dataset> getComplementaryFolds(List<Dataset> folds) {
 		if (!readOnly)
 			return null;
 		
-		List<DBDataset> ret = new ArrayList<>(folds.size());
+		List<Dataset> ret = new ArrayList<>(folds.size());
 		List<Integer> temp = new ArrayList<>(indices);
-		for(DBDataset fold: folds) {
+		for(Dataset fold: folds) {
 			List<Integer> complement = new ArrayList<>(temp);
 			complement.removeAll(fold.indices);
-			ret.add(new DBDataset(this, complement));
+			ret.add(new Dataset(this, complement));
 		}
 		return ret;
 	}
 	
-	public DBDataset getRandomSubset(double percent) {
+	public Dataset getRandomSubset(double percent) {
 		if (!readOnly)
 			return null;
 		
 		assert(percent > 0 && percent <= 1);
 		List<Integer> temp = new ArrayList<>(indices);
 		Collections.shuffle(temp);
-		return new DBDataset(this, temp.subList(0, (int)(percent*temp.size())));
+		return new Dataset(this, temp.subList(0, (int)(percent*temp.size())));
 	}
 	
 }

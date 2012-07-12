@@ -12,7 +12,7 @@ package game.plugins.graphtrainers;
 
 import game.configuration.errorchecks.RangeCheck;
 import game.core.Block;
-import game.core.DBDataset;
+import game.core.Dataset;
 import game.core.Graph;
 import game.core.GraphTrainer;
 
@@ -33,11 +33,11 @@ public class RandomSplitTrainer extends GraphTrainer {
 	}
 
 	@Override
-	protected void trainGraph(Graph graph, DBDataset trainingSet) {
+	protected void trainGraph(Graph graph, Dataset trainingSet) {
 		recursivelyTrainGraph(graph.outputClassifier, trainingSet, 1.0/blocksToTrain(graph));
 	}
 
-	private void recursivelyTrainGraph(Block current, DBDataset trainingSet, double increase) {
+	private void recursivelyTrainGraph(Block current, Dataset trainingSet, double increase) {
 		for (Block parent: current.parents.getList(Block.class))
 			recursivelyTrainGraph(parent, trainingSet, increase);
 

@@ -12,7 +12,7 @@ package game.core.blocks;
 
 import game.configuration.errorchecks.SizeCheck;
 import game.core.Block;
-import game.core.DBDataset;
+import game.core.Dataset;
 
 public abstract class Pipe extends Block {
 	
@@ -26,7 +26,7 @@ public abstract class Pipe extends Block {
 	}
 
 	@Override
-	protected void train(DBDataset trainingSet) {
+	protected void train(Dataset trainingSet) {
 		throw new UnsupportedOperationException("You cannot train a Pipe!");
 	}
 

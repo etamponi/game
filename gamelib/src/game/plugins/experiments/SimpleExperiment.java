@@ -10,7 +10,7 @@
  ******************************************************************************/
 package game.plugins.experiments;
 
-import game.core.DBDataset;
+import game.core.Dataset;
 import game.core.DatasetBuilder;
 import game.core.Graph;
 import game.core.experiments.FullExperiment;
@@ -36,7 +36,7 @@ public class SimpleExperiment extends FullExperiment {
 		updateStatus(0.01, "training graph...");
 		startAnotherTaskAndWait(0.50, trainer, graphClone, trainingDataset.buildDataset());
 		updateStatus(0.71, "training complete, testing phase...");
-		testedDatasets.add((DBDataset)startAnotherTaskAndWait(0.90, graphClone, testingDataset.buildDataset(), outputDirectory));
+		testedDatasets.add((Dataset)startAnotherTaskAndWait(0.90, graphClone, testingDataset.buildDataset(), outputDirectory));
 		trainedGraphs.add(graphClone);
 		updateStatus(1.00, "experiment completed");
 	}

@@ -13,6 +13,7 @@ package game.utils;
 import game.core.DataTemplate;
 import game.plugins.datatemplates.SequenceTemplate;
 
+import java.io.File;
 import java.lang.reflect.Modifier;
 import java.util.List;
 
@@ -32,6 +33,13 @@ public class Utils {
 		return isConcrete(type) && base.isAssignableFrom(type);
 	}
 	
+	public static String relativize(File file) {
+		return relativize(file.getAbsolutePath(), System.getProperty("user.dir"));
+	}
+	
+	public static String relativize(String path, String prefix) {
+		return new File(prefix).getAbsoluteFile().toURI().relativize(new File(path).getAbsoluteFile().toURI()).toString();
+	}
 	
 	public static double getDistance(double[] v1, double[] v2) {
 		double ret = 0;

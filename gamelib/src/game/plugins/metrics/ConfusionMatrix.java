@@ -10,8 +10,8 @@
  ******************************************************************************/
 package game.plugins.metrics;
 
-import game.core.DBDataset;
-import game.core.DBDataset.SampleIterator;
+import game.core.Dataset;
+import game.core.Dataset.SampleIterator;
 import game.core.DataTemplate;
 import game.core.Experiment;
 import game.core.Sample;
@@ -57,7 +57,7 @@ public class ConfusionMatrix extends FullMetric {
 		
 		matrix = new Array2DRowRealMatrix(labels.size(), labels.size());
 		
-		for(DBDataset dataset: experiment.testedDatasets) {
+		for(Dataset dataset: experiment.testedDatasets) {
 			SampleIterator it = dataset.sampleIterator(true);
 			while(it.hasNext()) {
 				Sample sample = it.next();
