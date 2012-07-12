@@ -34,9 +34,6 @@ public abstract class Experiment extends LongTask {
 
 	@Override
 	protected Object execute(Object... params) {
-		if (completed)
-			return this;
-		
 		String outputDirectory = params[0] + "/" + name;
 		final Experiment clone = cloneConfiguration();
 		Observer o = new Observer() {
@@ -48,10 +45,12 @@ public abstract class Experiment extends LongTask {
 			}
 		};
 		clone.name = name;
-		clone.addObserver(o);
-		clone.runExperiment(outputDirectory);
-		clone.deleteObserver(o);
-		clone.completed = true;
+		if (!clone.completed) {
+			clone.addObserver(o);
+			clone.runExperiment(outputDirectory);
+			clone.deleteObserver(o);
+			clone.completed = true;
+		}
 		clone.saveConfiguration(outputDirectory + "/completed_"+name+".config.xml");
 		return clone;
 	}

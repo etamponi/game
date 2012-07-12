@@ -8,10 +8,9 @@
  * Contributors:
  *     Emanuele Tamponi - initial API and implementation
  ******************************************************************************/
-package game.plugins.results;
+package game.plugins.metrics;
 
-import game.core.experiments.EncoderExperiment;
-import game.core.metrics.EncoderMetric;
+import game.plugins.experiments.EncoderExperiment;
 
 public class MultipleCorrelation extends EncoderMetric {
 

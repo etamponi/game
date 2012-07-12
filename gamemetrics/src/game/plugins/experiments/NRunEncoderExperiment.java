@@ -10,7 +10,6 @@
  ******************************************************************************/
 package game.plugins.experiments;
 
-import game.core.experiments.EncoderExperiment;
 
 public class NRunEncoderExperiment extends EncoderExperiment {
 	
