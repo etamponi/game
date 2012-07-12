@@ -38,7 +38,48 @@ public class Utils {
 	}
 	
 	public static String relativize(String path, String prefix) {
-		return new File(prefix).getAbsoluteFile().toURI().relativize(new File(path).getAbsoluteFile().toURI()).toString();
+		StringBuilder relativePath = null;
+		
+		path = path.replaceAll("\\\\", "/"); 
+		prefix = prefix.replaceAll("\\\\", "/");
+
+		if (!path.equals(prefix)) {
+			String[] pathTokens = path.split("/");
+			String[] prefixTokens = prefix.split("/");
+	
+			//Get the shortest of the two paths
+			int length = pathTokens.length < prefixTokens.length ? 
+						 pathTokens.length : prefixTokens.length;
+	
+			//Use to determine where in the loop we exited
+			int lastCommonRoot = -1;
+			int index;
+	
+			//Find common root
+			for (index = 0; index < length; index++) {
+				if (pathTokens[index].equals(prefixTokens[index])) {
+					lastCommonRoot = index;
+				} else {
+					break;
+					//If we didn't find a common prefix then throw
+				}
+			}
+			if (lastCommonRoot != -1) {
+				//Build up the relative path
+				relativePath = new StringBuilder();
+				//Add on the ..
+				for (index = lastCommonRoot + 1; index < prefixTokens.length; index++) {
+					if (prefixTokens[index].length() > 0) {
+						relativePath.append("../");
+					}
+				}
+				for (index = lastCommonRoot + 1; index < pathTokens.length - 1; index++) {
+					relativePath.append(pathTokens[index] + "/");
+				}
+				relativePath.append(pathTokens[pathTokens.length - 1]);
+			}
+		} 
+		return relativePath == null ? null : relativePath.toString();
 	}
 	
 	public static double getDistance(double[] v1, double[] v2) {
