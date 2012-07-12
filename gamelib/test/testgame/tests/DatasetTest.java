@@ -14,10 +14,10 @@ import static org.junit.Assert.assertEquals;
 import game.core.Dataset;
 import game.core.DatasetBuilder;
 import game.core.InstanceTemplate;
+import game.core.datatemplates.SequenceTemplate;
 import game.plugins.datasetbuilders.CSVDatasetBuilder;
 import game.plugins.datasetbuilders.SequenceCSVDatasetBuilder;
 import game.plugins.datatemplates.LabelTemplate;
-import game.plugins.datatemplates.SequenceTemplate;
 import game.plugins.datatemplates.VectorTemplate;
 
 import java.io.File;

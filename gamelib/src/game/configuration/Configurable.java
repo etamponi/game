@@ -64,7 +64,7 @@ public abstract class Configurable extends Observable implements Observer {
 	private LinkedList<String> omittedFromErrorCheck = new LinkedList<>();
 	private LinkedList<String> omittedFromConfiguration = new LinkedList<>();
 	private LinkedList<String> privateOptions = new LinkedList<>();
-	private boolean notify = true;
+	protected boolean notify = true;
 	
 	static {
 		configStream.registerConverter(converter);
@@ -188,8 +188,6 @@ public abstract class Configurable extends Observable implements Observer {
 							             ((Configurable)entry.getValue()).getConfigurationErrors(seen)));
 			}
 		}
-		
-		// TODO All not respected binding.
 	
 		return ret;
 	}

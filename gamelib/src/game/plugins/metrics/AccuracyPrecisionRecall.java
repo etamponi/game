@@ -12,13 +12,11 @@ package game.plugins.metrics;
 
 import game.core.Dataset;
 import game.core.Dataset.SampleIterator;
-import game.core.DataTemplate;
 import game.core.Experiment;
 import game.core.Sample;
 import game.core.experiments.FullExperiment;
 import game.core.metrics.FullMetric;
 import game.plugins.datatemplates.LabelTemplate;
-import game.plugins.datatemplates.SequenceTemplate;
 import game.utils.Utils;
 
 import java.util.LinkedList;
@@ -41,20 +39,15 @@ public class AccuracyPrecisionRecall extends FullMetric {
 	@Override
 	public boolean isCompatible(Experiment exp) {
 		return super.isCompatible(exp) &&
-				isCompatible(exp.template.outputTemplate);
-	}
-	
-	private boolean isCompatible(DataTemplate template) {
-		return template instanceof LabelTemplate ||
-				(template instanceof SequenceTemplate && template.getOption("atom") instanceof LabelTemplate);
+				Utils.checkTemplateClass(exp.template.outputTemplate, LabelTemplate.class);
 	}
 
 	@Override
-	public void evaluate(FullExperiment e) { // FIXME Use folds instead of only one dataset
+	public void evaluate(FullExperiment e) {
 		if (isReady())
 			return;
 		
-		labels = Utils.getLabels(e.template.outputTemplate);
+		labels = e.template.outputTemplate.getOption("labels");
 		for(int k = 0; k < labels.size(); k++) {
 			singleTP.add(0.0);
 			singleP.add(0.0);

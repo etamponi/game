@@ -11,11 +11,10 @@
 package game.utils;
 
 import game.core.DataTemplate;
-import game.plugins.datatemplates.SequenceTemplate;
+import game.core.datatemplates.SequenceTemplate;
 
 import java.io.File;
 import java.lang.reflect.Modifier;
-import java.util.List;
 
 import com.thoughtworks.xstream.XStream;
 import com.thoughtworks.xstream.io.xml.DomDriver;
@@ -126,12 +125,11 @@ public class Utils {
 	public static <T> T deepClone(T object) {
 		return (T)stream.fromXML(stream.toXML(object));
 	}
-	
-	public static List<String> getLabels(DataTemplate template) {
-		if (template instanceof SequenceTemplate)
-			return template.getOption("atom.labels");
-		else
-			return template.getOption("labels");
+
+	public static boolean checkTemplateClass(DataTemplate outputTemplate, Class<? extends DataTemplate> type) {
+		return type.isAssignableFrom(outputTemplate.getClass())
+				|| (outputTemplate instanceof SequenceTemplate 
+						&& type.isAssignableFrom(outputTemplate.getOption("atom").getClass()));
 	}
 	
 }

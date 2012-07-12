@@ -12,13 +12,11 @@ package game.plugins.metrics;
 
 import game.core.Dataset;
 import game.core.Dataset.SampleIterator;
-import game.core.DataTemplate;
 import game.core.Experiment;
 import game.core.Sample;
 import game.core.experiments.FullExperiment;
 import game.core.metrics.FullMetric;
 import game.plugins.datatemplates.LabelTemplate;
-import game.plugins.datatemplates.SequenceTemplate;
 import game.utils.Utils;
 
 import java.util.List;
@@ -38,12 +36,7 @@ public class ConfusionMatrix extends FullMetric {
 	@Override
 	public boolean isCompatible(Experiment exp) {
 		return super.isCompatible(exp) &&
-				isCompatible(exp.template.outputTemplate);
-	}
-	
-	private boolean isCompatible(DataTemplate template) {
-		return template instanceof LabelTemplate ||
-				(template instanceof SequenceTemplate && template.getOption("atom") instanceof LabelTemplate);
+				Utils.checkTemplateClass(exp.template.outputTemplate, LabelTemplate.class);
 	}
 
 	@Override
@@ -53,7 +46,7 @@ public class ConfusionMatrix extends FullMetric {
 
 	@Override
 	public void evaluate(FullExperiment experiment) {
-		labels = Utils.getLabels(experiment.template.outputTemplate);
+		labels = experiment.template.outputTemplate.getOption("labels");
 		
 		matrix = new Array2DRowRealMatrix(labels.size(), labels.size());
 		

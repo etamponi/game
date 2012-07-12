@@ -10,6 +10,8 @@
  ******************************************************************************/
 package game.plugins.datatemplates;
 
+import game.core.datatemplates.SequenceTemplate;
+
 public abstract class ProteinStructureTemplate extends SequenceTemplate {
 	
 	public ProteinStructureTemplate() {

@@ -8,12 +8,29 @@
  * Contributors:
  *     Emanuele Tamponi - initial API and implementation
  ******************************************************************************/
-package game.plugins.datatemplates;
+package game.core.datatemplates;
 
 import game.core.DataTemplate;
 
 public class SequenceTemplate extends DataTemplate {
 
 	public AtomicTemplate atom;
+
+	@Override
+	protected Object getLocalOption(String optionName) {
+		Object ret = super.getLocalOption(optionName);
+		if (ret == null) {
+			ret = atom.getOption(optionName);
+		}
+		return ret;
+	}
+
+	@Override
+	protected void setLocalOption(String optionName, Object content, Object setter) {
+		if (getPublicOptionNames().contains(optionName))
+			super.setLocalOption(optionName, content, setter);
+		else
+			atom.setOption(optionName, content, notify, setter);
+	}
 	
 }

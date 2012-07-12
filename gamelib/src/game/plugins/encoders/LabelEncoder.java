@@ -32,7 +32,7 @@ public abstract class LabelEncoder extends Encoder<LabelTemplate> {
 			public void update(Observable observed, Object message) {
 				if (message instanceof Change) {
 					if (((Change)message).getPath().startsWith("template"))
-						updateMapping((LabelTemplate)template);
+						updateMapping(template);
 				}
 			}
 		});
@@ -57,11 +57,11 @@ public abstract class LabelEncoder extends Encoder<LabelTemplate> {
 		return labelMapping.values().iterator().next().length;
 	}
 	
-	private void updateMapping(LabelTemplate template) {
-		this.template = template;
-		
-		if (template == null || template.labels == null || !isCompatible(template))
+	private void updateMapping(DataTemplate tpl) {
+		if (tpl == null || !isCompatible(tpl) || tpl.getOption("labels") == null)
 			return;
+		
+		this.template = (LabelTemplate)tpl;
 		
 		for (String label: template.labels.getList(String.class)) {
 			if (label != null && !labelMapping.containsKey(label))

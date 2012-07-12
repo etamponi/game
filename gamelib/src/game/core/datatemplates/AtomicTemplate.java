@@ -8,7 +8,7 @@
  * Contributors:
  *     Emanuele Tamponi - initial API and implementation
  ******************************************************************************/
-package game.plugins.datatemplates;
+package game.core.datatemplates;
 
 import game.core.DataTemplate;
 

@@ -11,6 +11,7 @@
 package game.plugins.datatemplates;
 
 import game.configuration.errorchecks.PositivenessCheck;
+import game.core.datatemplates.AtomicTemplate;
 
 public class VectorTemplate extends AtomicTemplate {
 

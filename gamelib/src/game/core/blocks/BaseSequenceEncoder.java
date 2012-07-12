@@ -8,14 +8,13 @@
  * Contributors:
  *     Emanuele Tamponi - initial API and implementation
  ******************************************************************************/
-package game.plugins.encoders;
+package game.core.blocks;
 
 import game.configuration.errorchecks.PositivenessCheck;
 import game.core.DataTemplate;
 import game.core.Encoding;
-import game.core.blocks.Encoder;
+import game.core.datatemplates.SequenceTemplate;
 import game.plugins.constraints.CompatibleWith;
-import game.plugins.datatemplates.SequenceTemplate;
 
 import java.util.List;
 
@@ -47,6 +46,23 @@ public class BaseSequenceEncoder extends Encoder<SequenceTemplate> {
 	@Override
 	public boolean isCompatible(DataTemplate object) {
 		return object instanceof SequenceTemplate;
+	}
+	
+	@Override
+	protected Object getLocalOption(String optionName) {
+		Object ret = super.getLocalOption(optionName);
+		if (ret == null) {
+			ret = atomEncoder.getOption(optionName);
+		}
+		return ret;
+	}
+
+	@Override
+	protected void setLocalOption(String optionName, Object content, Object setter) {
+		if (getPublicOptionNames().contains(optionName))
+			super.setLocalOption(optionName, content, setter);
+		else
+			atomEncoder.setOption(optionName, content, notify, setter);
 	}
 
 }

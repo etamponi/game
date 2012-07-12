@@ -16,8 +16,8 @@ import game.core.DataTemplate;
 import game.core.DatasetBuilder;
 import game.core.Instance;
 import game.core.InstanceTemplate;
+import game.core.datatemplates.SequenceTemplate;
 import game.plugins.datatemplates.LabelTemplate;
-import game.plugins.datatemplates.SequenceTemplate;
 import game.plugins.datatemplates.VectorTemplate;
 
 import java.io.BufferedReader;

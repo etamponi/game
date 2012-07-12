@@ -16,11 +16,10 @@ import game.core.Dataset.SampleIterator;
 import game.core.Encoding;
 import game.core.InstanceTemplate;
 import game.core.Sample;
+import game.core.blocks.BaseSequenceEncoder;
 import game.core.blocks.Classifier;
 import game.core.blocks.Encoder;
 import game.plugins.datatemplates.LabelTemplate;
-import game.plugins.datatemplates.SequenceTemplate;
-import game.plugins.encoders.BaseSequenceEncoder;
 import game.plugins.encoders.BooleanEncoder;
 import game.plugins.encoders.ProbabilityEncoder;
 import game.utils.Utils;
@@ -55,9 +54,11 @@ public class WekaMultilayerPerceptron extends Classifier {
 			@Override
 			public String getError(Encoder value) {
 				if (value instanceof BaseSequenceEncoder) {
-					Encoder atomEncoder = ((BaseSequenceEncoder) value).atomEncoder;
+					Encoder atomEncoder = value.getOption("atomEncoder");
 					if (atomEncoder instanceof ProbabilityEncoder)
 						return null;
+					if ((int)value.getOption("windowSize") != 1)
+						return "only window size = 1 is allowed";
 				}
 				if (value instanceof ProbabilityEncoder)
 					return null;
@@ -68,9 +69,7 @@ public class WekaMultilayerPerceptron extends Classifier {
 
 	@Override
 	public boolean isCompatible(InstanceTemplate template) {
-		return template.outputTemplate instanceof LabelTemplate ||
-				(template.outputTemplate instanceof SequenceTemplate &&
-						template.outputTemplate.getOption("atom") instanceof LabelTemplate);
+		return Utils.checkTemplateClass(template.outputTemplate, LabelTemplate.class);
 	}
 
 	@Override
@@ -119,7 +118,7 @@ public class WekaMultilayerPerceptron extends Classifier {
 			attributes.addElement(new Attribute("a"+i));
 		}
 		FastVector classes = new FastVector();
-		for(String label: Utils.getLabels(template.outputTemplate))
+		for(String label: (Iterable<String>)template.outputTemplate.getOption("labels"))
 			classes.addElement(label);
 		attributes.addElement(new Attribute("class", classes));
 		Instances ts = new Instances("training", attributes, 0);

@@ -13,6 +13,7 @@ package game.plugins.datatemplates;
 import game.configuration.ConfigurableList;
 import game.configuration.errorchecks.NoRepetitionCheck;
 import game.configuration.errorchecks.SizeCheck;
+import game.core.datatemplates.AtomicTemplate;
 
 public class LabelTemplate extends AtomicTemplate {
 

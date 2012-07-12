@@ -13,7 +13,6 @@ package game.plugins.editors.configurablelist;
 import game.configuration.Change;
 import game.configuration.ConfigurableList;
 import game.editorsystem.ControlledEditor;
-import game.editorsystem.Option;
 
 import java.util.Observable;
 
@@ -38,12 +37,6 @@ public class ConfigurableListEditor extends ControlledEditor {
 	@Override
 	public boolean isInline() {
 		return false;
-	}
-
-	@Override
-	public void connect(Option model) {
-		// TODO Auto-generated method stub
-		super.connect(model);
 	}
 
 	@Override

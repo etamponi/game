@@ -12,9 +12,9 @@ package game.plugins.decoders;
 
 import game.core.Decoder;
 import game.core.Encoding;
+import game.core.blocks.BaseSequenceEncoder;
 import game.core.blocks.Encoder;
 import game.plugins.constraints.CompatibleWith;
-import game.plugins.encoders.BaseSequenceEncoder;
 
 import java.util.LinkedList;
 import java.util.List;
