@@ -51,7 +51,7 @@ public class BaseSequenceEncoder extends Encoder<SequenceTemplate> {
 	@Override
 	protected Object getLocalOption(String optionName) {
 		Object ret = super.getLocalOption(optionName);
-		if (ret == null) {
+		if (ret == null && atomEncoder != null) {
 			ret = atomEncoder.getOption(optionName);
 		}
 		return ret;
@@ -61,7 +61,7 @@ public class BaseSequenceEncoder extends Encoder<SequenceTemplate> {
 	protected void setLocalOption(String optionName, Object content, Object setter) {
 		if (getPublicOptionNames().contains(optionName))
 			super.setLocalOption(optionName, content, setter);
-		else
+		else if (atomEncoder != null)
 			atomEncoder.setOption(optionName, content, notify, setter);
 	}
 

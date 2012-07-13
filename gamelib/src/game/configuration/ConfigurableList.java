@@ -23,7 +23,7 @@ public class ConfigurableList extends Configurable implements List {
 	
 	public Class elementType;
 	
-	public ArrayList internal = new ArrayList();
+	private ArrayList internal = new ArrayList();
 	
 	private Object setter = null;
 	
@@ -31,7 +31,7 @@ public class ConfigurableList extends Configurable implements List {
 		// DO NOT USE NEVER NEVER NEVER
 		elementType = Object.class;
 		
-		setPrivateOptions("elementType", "internal");
+		setPrivateOptions("elementType");
 	}
 	
 	public ConfigurableList(Configurable owner, Class elementType) {

@@ -127,6 +127,8 @@ public class Utils {
 	}
 
 	public static boolean checkTemplateClass(DataTemplate outputTemplate, Class<? extends DataTemplate> type) {
+		if (outputTemplate == null)
+			return false;
 		return type.isAssignableFrom(outputTemplate.getClass())
 				|| (outputTemplate instanceof SequenceTemplate 
 						&& type.isAssignableFrom(outputTemplate.getOption("atom").getClass()));

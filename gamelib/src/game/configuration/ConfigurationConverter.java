@@ -40,7 +40,7 @@ class ConfigurationConverter implements Converter {
 			Object option = object.getOption(optionName);
 			if (option != null) {
 				if (optionName.matches("^\\d+$"))
-					writer.startNode("cl_el_"+optionName);
+					writer.startNode("item"+optionName);
 				else
 					writer.startNode(optionName);
 				if (option.getClass() != object.getOptionType(optionName))
@@ -62,11 +62,14 @@ class ConfigurationConverter implements Converter {
 			while(reader.hasMoreChildren()) {
 				reader.moveDown();
 				String optionName = reader.getNodeName();
-				if (optionName.matches("^cl_el_\\d+$"))
-					optionName = optionName.substring(6);
+				if (optionName.matches("^item\\d+$"))
+					optionName = optionName.substring(4);
 				String className = reader.getAttribute("class");
 				Class optionType = className != null ? classLoader.loadClass(className) : object.getOptionType(optionName);
-				object.setOption(optionName, context.convertAnother(object, optionType)/*, false, null*/);
+				if (optionName.matches("^\\d+$"))
+					object.setOption("add", context.convertAnother(object, optionType));
+				else
+					object.setOption(optionName, context.convertAnother(object, optionType)/*, false, null*/);
 				reader.moveUp();
 			}
 		} catch (ClassNotFoundException | InstantiationException | IllegalAccessException e) {

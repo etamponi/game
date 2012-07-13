@@ -34,12 +34,12 @@ import java.util.SortedSet;
 
 import com.thoughtworks.xstream.XStream;
 import com.thoughtworks.xstream.annotations.XStreamOmitField;
-import com.thoughtworks.xstream.io.xml.DomDriver;
+import com.thoughtworks.xstream.converters.Converter;
 
 public abstract class Configurable extends Observable implements Observer {
 	
 	@XStreamOmitField
-	private static XStream configStream = new XStream(new DomDriver());
+	private static final XStream configStream = new XStream();
 	@XStreamOmitField
 	private static ConfigurationConverter converter = new ConfigurationConverter();
 	
@@ -83,6 +83,10 @@ public abstract class Configurable extends Observable implements Observer {
 	public static void setClassLoader(ClassLoader loader) {
 		configStream.setClassLoader(loader);
 		converter.setClassLoader(loader);
+	}
+	
+	public static void registerConverter(Converter converter) {
+		configStream.registerConverter(converter);
 	}
 	
 	public <T> T getOption(String optionPath) {

@@ -17,7 +17,6 @@ import game.core.Encoding;
 import game.core.InstanceTemplate;
 import game.core.Sample;
 import game.core.blocks.BaseSequenceEncoder;
-import game.core.blocks.Classifier;
 import game.core.blocks.Encoder;
 import game.plugins.datatemplates.LabelTemplate;
 import game.plugins.encoders.BooleanEncoder;
@@ -29,7 +28,7 @@ import weka.core.FastVector;
 import weka.core.Instance;
 import weka.core.Instances;
 
-public class WekaMultilayerPerceptron extends Classifier {
+public class WekaMultilayerPerceptron extends WekaClassifier {
 	
 	public int hiddenNeurons = 5;
 	
@@ -54,11 +53,11 @@ public class WekaMultilayerPerceptron extends Classifier {
 			@Override
 			public String getError(Encoder value) {
 				if (value instanceof BaseSequenceEncoder) {
+					if ((int)value.getOption("windowSize") != 1)
+						return "only window size = 1 is allowed";
 					Encoder atomEncoder = value.getOption("atomEncoder");
 					if (atomEncoder instanceof ProbabilityEncoder)
 						return null;
-					if ((int)value.getOption("windowSize") != 1)
-						return "only window size = 1 is allowed";
 				}
 				if (value instanceof ProbabilityEncoder)
 					return null;
