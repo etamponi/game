@@ -65,15 +65,15 @@ public class ConfusionMatrix extends FullMetric {
 	public String prettyPrint() {
 		StringBuilder ret = new StringBuilder();
 		
-		ret.append(String.format("%20s|", ""));
+		ret.append(String.format("%20s |", ""));
 		for(String label: labels)
-			ret.append(String.format("%20s|", label+"(P)"));
+			ret.append(String.format("%20s |", label+"(P)"));
 		ret.append("\n");
 		for(int i = 0; i < labels.size(); i++) {
 			String observed = labels.get(i);
-			ret.append(String.format("%20s|", observed+"(O)"));
+			ret.append(String.format("%20s |", observed+"(O)"));
 			for(int j = 0; j < labels.size(); j++)
-				ret.append(String.format("%16f    |", matrix.getEntry(i, j)));
+				ret.append(String.format("%20.0f |", matrix.getEntry(i, j)));
 			ret.append("\n");
 		}
 		

@@ -42,6 +42,7 @@ public class ConfigurableListEditorController implements EditorController {
 
 	@Override
 	public void updateView() {
+		listView.getSelectionModel().clearSelection();
 		listView.getItems().clear();
 		ConfigurableList list = model.getContent();
 		if (list == null)
