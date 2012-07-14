@@ -19,9 +19,14 @@ import game.editorsystem.OptionEditor;
 import java.net.URL;
 import java.util.ResourceBundle;
 
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.ListView;
+import javafx.scene.control.SelectionMode;
 
 public class ConfigurableListEditorController implements EditorController {
 	
@@ -32,7 +37,7 @@ public class ConfigurableListEditorController implements EditorController {
 	
 	@Override
 	public void initialize(URL location, ResourceBundle resources) {
-
+		listView.getSelectionModel().setSelectionMode(SelectionMode.SINGLE);
 	}
 	
 	@Override
@@ -42,16 +47,16 @@ public class ConfigurableListEditorController implements EditorController {
 
 	@Override
 	public void updateView() {
-		listView.getSelectionModel().clearSelection();
-		listView.getItems().clear();
 		ConfigurableList list = model.getContent();
 		if (list == null)
 			return;
 		
+		ObservableList<Option> items = FXCollections.<Option>observableArrayList();
 		for (int i = 0; i < list.size(); i++) {
-			Option option = new Option(list, String.valueOf(i));
-			listView.getItems().add(option);
+			items.add(new Option(list, String.valueOf(i)));
 		}
+		listView.setItems(items);
+		listView.getSelectionModel().clearSelection();
 	}
 	
 	@FXML

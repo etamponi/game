@@ -41,8 +41,14 @@ public class ConfigurableListEditor extends ControlledEditor {
 
 	@Override
 	public void update(Observable observed, Object m) {
+		super.update(observed, m);
 		if (m instanceof Change) {
-			updateView();
+			Change change = (Change)m;
+			if (change.getPath().matches(getModel().getOptionName() + "\\.\\d+")
+					|| change.getPath().matches(getModel().getOptionName() + "\\.\\d+\\.name")) {
+				if (change.getSetter() != this)
+					updateView();
+			}
 		}
 	}
 
