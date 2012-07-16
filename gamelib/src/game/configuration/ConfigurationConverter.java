@@ -59,6 +59,8 @@ class ConfigurationConverter implements Converter {
 		try {
 			object = (Configurable)(context.currentObject() != null ? context.currentObject() 
 																	: context.getRequiredType().newInstance());
+			if (object instanceof ConfigurableList)
+				((ConfigurableList) object).clear();
 			while(reader.hasMoreChildren()) {
 				reader.moveDown();
 				String optionName = reader.getNodeName();
