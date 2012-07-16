@@ -42,6 +42,8 @@ public class SerializationEditor extends OptionEditor {
 	
 	public SerializationEditor() {
 		line.getItems().addAll(new Button(), new Button());
+		line.getItems().set(0, makeSaveAndLoadConfiguration("SAVE"));
+		line.getItems().set(1, makeSaveAndLoadConfiguration("LOAD"));
 	}
 
 	@Override
@@ -56,10 +58,7 @@ public class SerializationEditor extends OptionEditor {
 
 	@Override
 	public void updateView() {
-		if (getModel() != null) {
-			line.getItems().set(0, makeSaveAndLoadConfiguration("SAVE"));
-			line.getItems().set(1, makeSaveAndLoadConfiguration("LOAD"));
-		}
+		
 	}
 	
 	private void messageDialog(String title, String message) {
@@ -94,10 +93,10 @@ public class SerializationEditor extends OptionEditor {
 		ret.setGraphic(graphic);
 		ret.setContentDisplay(ContentDisplay.GRAPHIC_ONLY);
 		
-		final Configurable content = getModel().getContent();
 		ret.setOnAction(new EventHandler<ActionEvent>() {
 			@Override
 			public void handle(ActionEvent event) {
+				Configurable content = getModel().getContent();
 				FileChooser chooser = new FileChooser();
 				chooser.setInitialDirectory(new File(System.getProperty("user.dir")));
 				chooser.getExtensionFilters().add(new ExtensionFilter("GAME configuration file", "*.config.xml"));
@@ -120,6 +119,7 @@ public class SerializationEditor extends OptionEditor {
 							messageDialog("Cannot load object configuration", "Object could not be loaded. Check for type and constraints.");
 						}
 					}
+					out = null;
 				}
 				event.consume();
 			}

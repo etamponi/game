@@ -37,7 +37,7 @@ public class EditorWindow extends Stage {
 		AnchorPane.setBottomAnchor(view, 0.0);
 		
 		root.getChildren().add(view);
-		root.setMinWidth(200);
+		root.setMinWidth(400);
 		
 		setScene(new Scene(root));
 	}
