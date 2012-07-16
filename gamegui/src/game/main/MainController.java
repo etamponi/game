@@ -160,7 +160,7 @@ public class MainController extends Configurable implements Initializable {
 			}
 		});
 
-		service.start();
+		service.startList();
 		disableButtons(true, false, false);
 	}
 	
