@@ -85,6 +85,7 @@ public class SequenceCSVDatasetBuilder extends DatasetBuilder {
 					ret.add(new Instance(inputSequence, outputSequence));
 					count++;
 				}
+				reader.close();
 				ret.setReadOnly();
 			} catch (IOException e) {}
 		}

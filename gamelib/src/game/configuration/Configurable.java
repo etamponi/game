@@ -15,9 +15,9 @@ import game.plugins.Constraint;
 import game.plugins.Implementation;
 import game.plugins.PluginManager;
 import game.plugins.constraints.TrueConstraint;
+import game.utils.Utils;
 
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.lang.reflect.Field;
@@ -30,7 +30,6 @@ import java.util.LinkedList;
 import java.util.Map;
 import java.util.Observable;
 import java.util.Observer;
-import java.util.Scanner;
 import java.util.Set;
 import java.util.SortedSet;
 
@@ -79,18 +78,7 @@ public abstract class Configurable extends Observable implements Observer {
 	}
 	
 	public static <T> T createFromConfiguration(File configFile) {
-		Object ret = null;
-		Scanner scanner = null;
-		try {
-			scanner = new Scanner(configFile);
-			String xml = scanner.useDelimiter("\\Z").next();  
-			ret = configStream.fromXML(xml);
-		} catch (FileNotFoundException e) {
-			e.printStackTrace();
-		} finally {
-			scanner.close();
-		}
-		return (T)ret;
+		return (T)configStream.fromXML(Utils.readFile(configFile));
 	}
 	
 	public static void setClassLoader(ClassLoader loader) {
@@ -260,7 +248,7 @@ public abstract class Configurable extends Observable implements Observer {
 		System.gc();
 		
 		if (ret == true) {
-			configStream.fromXML(file, this);
+			configStream.fromXML(Utils.readFile(file), this);
 			setChanged();
 			notifyObservers(new Change("", null, new HashSet<Configurable>()));
 		}

@@ -65,6 +65,7 @@ public class CSVDatasetBuilder extends DatasetBuilder {
 					ret.add(new Instance(input, output));
 					count++;
 				}
+				reader.close();
 				ret.setReadOnly();
 			} catch (IOException e) {}
 		}

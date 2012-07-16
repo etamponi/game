@@ -14,7 +14,9 @@ import game.core.DataTemplate;
 import game.core.datatemplates.SequenceTemplate;
 
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.lang.reflect.Modifier;
+import java.util.Scanner;
 
 import com.thoughtworks.xstream.XStream;
 import com.thoughtworks.xstream.io.xml.DomDriver;
@@ -30,6 +32,18 @@ public class Utils {
 	
 	public static boolean isImplementation(Class type, Class base) {
 		return isConcrete(type) && base.isAssignableFrom(type);
+	}
+	
+	public static String readFile(File file) {
+		String ret = null;
+		try {
+			Scanner scanner = new Scanner(file);
+			ret = scanner.useDelimiter("\\Z").next();
+			scanner.close();
+		} catch (FileNotFoundException e) {
+			e.printStackTrace();
+		}
+		return ret; 
 	}
 	
 	public static String relativize(File file) {

@@ -98,6 +98,7 @@ public class ConfigurableEditor extends OptionEditor {
 			errorList.getItems().addAll(content.getConfigurationErrors());
 			errorList.setPrefHeight(75);
 			errorList.setPrefWidth(75);
+			GridPane.setVgrow(errorList, Priority.SOMETIMES);
 			Label label = new Label("errors:");
 			pane.addRow(count, label, errorList);
 			applyRowLayout(label, errorList, true);
