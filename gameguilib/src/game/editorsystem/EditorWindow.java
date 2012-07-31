@@ -45,7 +45,10 @@ public class EditorWindow extends Stage {
 	
 	public void startEdit(Option model) {
 		editor.connect(model);
-		setTitle(model.getContent().toString());
+		if (model.getContent() != null)
+			setTitle(model.getContent().toString());
+		else
+			setTitle(model.getType().getSimpleName());
 		showAndWait();
 		editor.disconnect();
 	}

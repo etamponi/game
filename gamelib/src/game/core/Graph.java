@@ -10,7 +10,6 @@
  ******************************************************************************/
 package game.core;
 
-import game.configuration.ConfigurableList;
 import game.core.Dataset.InstanceIterator;
 import game.core.blocks.Encoder;
 import game.core.blocks.Pipe;
@@ -30,7 +29,7 @@ public class Graph extends LongTask {
 	
 	public TemplateConstrainedList inputEncoders = new TemplateConstrainedList(this, Encoder.class);
 	
-	public ConfigurableList pipes = new ConfigurableList(this, Pipe.class);
+	public TemplateConstrainedList pipes = new TemplateConstrainedList(this, Pipe.class);
 	
 	public Decoder decoder;
 	
@@ -38,7 +37,7 @@ public class Graph extends LongTask {
 	
 	public Graph() {
 		setOptionBinding("template", 						"classifiers.constraint");
-		setOptionBinding("template.inputTemplate", 			"inputEncoders.constraint");
+		setOptionBinding("template.inputTemplate", 			"inputEncoders.constraint", "pipes.constraint");
 		setOptionBinding("outputClassifier.outputEncoder", 	"decoder.encoder");
 		
 		setOptionConstraint("decoder", new CompatibleWith(this, "outputClassifier.outputEncoder"));

@@ -53,8 +53,9 @@ public class ConfigurableListEditorController implements EditorController {
 		for (int i = 0; i < list.size(); i++) {
 			items.add(new Option(list, String.valueOf(i)));
 		}
-		listView.setItems(items);
+		//listView.getSelectionModel().select(-1);
 		listView.getSelectionModel().clearSelection();
+		listView.setItems(items);
 	}
 	
 	@FXML
