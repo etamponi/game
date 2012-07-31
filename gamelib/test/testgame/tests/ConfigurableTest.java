@@ -55,7 +55,7 @@ public class ConfigurableTest {
 
 		object.setOption("optionList.remove", 1);
 		object.setOption("optionList.remove", object.getOption("optionList.0"));
-		assertEquals(0, ((List)object.getOption("optionList")).size());
+		assertEquals(0, object.getOption("optionList", List.class).size());
 		object.setOption("optionList.add", new ConfigurableImplB());
 
 		object2 = object.getOption("optionA4");

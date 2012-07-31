@@ -13,8 +13,10 @@ package game.plugins.encoders;
 import game.core.DataTemplate;
 import game.plugins.datatemplates.LabelTemplate;
 
-public class BooleanEncoder extends ProbabilityEncoder {
+public class BooleanEncoder extends LabelEncoder {
 	
+	public static final int POSITIVEINDEX = 0;
+
 	public BooleanEncoder() {
 		setPrivateOptions("labelMapping");
 	}
@@ -26,16 +28,16 @@ public class BooleanEncoder extends ProbabilityEncoder {
 	}
 
 	@Override
-	protected void updateSingleMapping() {
-		labelMapping.put(getPositiveLabel(), new double[]{1});
-		labelMapping.put(getNegativeLabel(), new double[]{0});
+	protected void updateLabelMapping() {
+		labelMapping.put(positiveLabel(), new double[]{1});
+		labelMapping.put(negativeLabel(), new double[]{0});
 	}
 	
-	public String getPositiveLabel() {
+	public String positiveLabel() {
 		return (String)template.labels.get(0);
 	}
 	
-	public String getNegativeLabel() {
+	public String negativeLabel() {
 		return (String)template.labels.get(1);
 	}
 

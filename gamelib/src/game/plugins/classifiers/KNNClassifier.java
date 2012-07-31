@@ -65,7 +65,7 @@ public class KNNClassifier extends Classifier {
 
 	@Override
 	public boolean isCompatible(InstanceTemplate template) {
-		return Utils.checkTemplateClass(template.outputTemplate, LabelTemplate.class);
+		return template.outputTemplate instanceof LabelTemplate;
 	}
 
 	@Override

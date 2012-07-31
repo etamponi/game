@@ -10,9 +10,6 @@
  ******************************************************************************/
 package game.utils;
 
-import game.core.DataTemplate;
-import game.core.datatemplates.SequenceTemplate;
-
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.lang.reflect.Modifier;
@@ -139,7 +136,7 @@ public class Utils {
 	public static <T> T deepClone(T object) {
 		return (T)stream.fromXML(stream.toXML(object));
 	}
-
+	/*
 	public static boolean checkTemplateClass(DataTemplate outputTemplate, Class<? extends DataTemplate> type) {
 		if (outputTemplate == null)
 			return false;
@@ -147,5 +144,17 @@ public class Utils {
 				|| (outputTemplate instanceof SequenceTemplate 
 						&& type.isAssignableFrom(outputTemplate.getOption("atom").getClass()));
 	}
-	
+	*/
+
+	public static int maxIndex(double[] element) {
+		int maxIndex = 0;
+		double maxProb = element[0];
+		for(int i = 1; i < element.length; i++) {
+			if (element[i] > maxProb) {
+				maxProb = element[i];
+				maxIndex = i;
+			}
+		}
+		return maxIndex;
+	}
 }

@@ -18,6 +18,7 @@ import game.plugins.datatemplates.LabelTemplate;
 
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Observable;
 import java.util.Observer;
 
@@ -39,17 +40,19 @@ public abstract class LabelEncoder extends Encoder<LabelTemplate> {
 		
 	}
 	
-	protected abstract void updateSingleMapping();
+	protected abstract void updateLabelMapping();
 
 	@Override
-	public Encoding transform(Object inputData) {
+	public Encoding transform(List input) {
 		Encoding ret = new Encoding();
-		double[] enc;
-		if (labelMapping.containsKey(inputData))
-			enc = labelMapping.get(inputData).clone();
-		else
-			enc = new double[getElementSize()];
-		ret.add(enc);
+		for (Object element: input) {
+			double[] enc;
+			if (labelMapping.containsKey(element))
+				enc = labelMapping.get(element).clone();
+			else
+				enc = new double[getElementSize()];
+			ret.add(enc);
+		}
 		return ret;
 	}
 	
@@ -72,7 +75,7 @@ public abstract class LabelEncoder extends Encoder<LabelTemplate> {
 				labelMapping.remove(key);
 		}
 		
-		updateSingleMapping();
+		updateLabelMapping();
 	}
 
 	@Override

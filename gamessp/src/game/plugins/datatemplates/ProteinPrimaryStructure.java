@@ -17,7 +17,7 @@ public class ProteinPrimaryStructure extends ProteinStructureTemplate {
 	
 	public ProteinPrimaryStructure() {
 		for (String aminoacid: aminoacids)
-			atom.setOption("labels.add", aminoacid);
+			labels.add(aminoacid);
 	}
 	
 }

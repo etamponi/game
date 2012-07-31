@@ -13,8 +13,8 @@ package testgame.tests;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 import game.configuration.Configurable;
-import game.core.Dataset;
 import game.core.DataTemplate;
+import game.core.Dataset;
 import game.core.Decoder;
 import game.core.Encoding;
 import game.core.Graph;
@@ -27,6 +27,7 @@ import game.plugins.datatemplates.LabelTemplate;
 import game.plugins.datatemplates.VectorTemplate;
 
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 import org.junit.Test;
@@ -35,7 +36,7 @@ public class GraphTest {
 	
 	public static class EncoderImplA extends Encoder<VectorTemplate> {
 		@Override
-		public Encoding transform(Object inputData) {
+		public Encoding transform(List inputData) {
 			return null;
 		}
 
@@ -47,7 +48,7 @@ public class GraphTest {
 	
 	public static class EncoderImplB extends Encoder<LabelTemplate> {
 		@Override
-		public Encoding transform(Object inputData) {
+		public Encoding transform(List inputData) {
 			return null;
 		}
 
@@ -63,7 +64,7 @@ public class GraphTest {
 	
 	public static class DecoderImplA extends Decoder<EncoderImplA> {
 		@Override
-		public Object decode(Encoding outputEncoded) {
+		public List decode(Encoding outputEncoded) {
 			return null;
 		}
 
@@ -75,7 +76,7 @@ public class GraphTest {
 	
 	public static class DecoderImplB extends Decoder<EncoderImplB> {
 		@Override
-		public Object decode(Encoding outputEncoded) {
+		public List decode(Encoding outputEncoded) {
 			return null;
 		}
 
@@ -95,7 +96,7 @@ public class GraphTest {
 			
 		}
 		@Override
-		public Encoding transform(Object inputData) {
+		public Encoding transform(List inputData) {
 			return null;
 		}
 		@Override
@@ -114,7 +115,7 @@ public class GraphTest {
 			
 		}
 		@Override
-		public Encoding transform(Object inputData) {
+		public Encoding transform(List inputData) {
 			return null;
 		}
 		@Override

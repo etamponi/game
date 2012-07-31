@@ -16,22 +16,27 @@ import game.core.blocks.Encoder;
 import game.plugins.encoders.LabelEncoder;
 import game.utils.Utils;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map.Entry;
 
 public class DistanceLabelDecoder extends Decoder<LabelEncoder> {
 
 	@Override
-	public Object decode(Encoding outputEncoded) {
-		String ret = null;
-		double[] enc = outputEncoded.get(0);
-		double minDistance = Double.MAX_VALUE;
+	public List decode(Encoding outputEncoded) {
+		List ret = new ArrayList<>(outputEncoded.length());
 		
-		for (Entry<String, double[]> entry: encoder.labelMapping.entrySet()) {
-			double distance = Utils.getDistance(enc, entry.getValue());
-			if (distance < minDistance) {
-				minDistance = distance;
-				ret = entry.getKey();
+		for(double[] element: outputEncoded) {
+			String label = null;
+			double minDistance = Double.MAX_VALUE;
+			for (Entry<String, double[]> entry: encoder.labelMapping.entrySet()) {
+				double distance = Utils.getDistance(element, entry.getValue());
+				if (distance < minDistance) {
+					minDistance = distance;
+					label = entry.getKey();
+				}
 			}
+			ret.add(label);
 		}
 		
 		return ret;

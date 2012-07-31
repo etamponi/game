@@ -10,7 +10,9 @@
  ******************************************************************************/
 package game.core.blocks;
 
+import game.configuration.ErrorCheck;
 import game.configuration.errorchecks.CompatibilityCheck;
+import game.configuration.errorchecks.PositivenessCheck;
 import game.configuration.errorchecks.SizeCheck;
 import game.core.Block;
 import game.core.Dataset;
@@ -21,9 +23,21 @@ public abstract class Encoder<DT extends DataTemplate> extends Block implements 
 	
 	public DT template;
 	
+	public int windowSize = 1;
+	
 	public Encoder() {
 		setOptionChecks("parents", new SizeCheck(0, 0));
 		setOptionChecks("template", new CompatibilityCheck(this));
+		
+		setOptionChecks("windowSize", new PositivenessCheck(false), new ErrorCheck<Integer>() {
+			@Override
+			public String getError(Integer value) {
+				if (template != null && !template.sequence && windowSize != 1)
+					return "windowSize has to be 1 if the data is not a sequence";
+				else
+					return null;
+			}
+		});
 	}
 
 	@Override

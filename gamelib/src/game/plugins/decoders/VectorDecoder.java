@@ -15,6 +15,9 @@ import game.core.Encoding;
 import game.core.blocks.Encoder;
 import game.plugins.encoders.VectorEncoder;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class VectorDecoder extends Decoder<VectorEncoder> {
 
 	@Override
@@ -23,8 +26,11 @@ public class VectorDecoder extends Decoder<VectorEncoder> {
 	}
 
 	@Override
-	public Object decode(Encoding outputEncoded) {
-		return outputEncoded.get(0);
+	public List decode(Encoding outputEncoded) {
+		List ret = new ArrayList<>(outputEncoded.length());
+		for(double[] element: outputEncoded)
+			ret.add(element);
+		return ret;
 	}
 
 }

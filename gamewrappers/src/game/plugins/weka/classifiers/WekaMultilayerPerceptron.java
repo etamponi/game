@@ -10,18 +10,13 @@
  ******************************************************************************/
 package game.plugins.weka.classifiers;
 
-import game.configuration.ErrorCheck;
 import game.core.Dataset;
 import game.core.Dataset.SampleIterator;
 import game.core.Encoding;
 import game.core.InstanceTemplate;
 import game.core.Sample;
-import game.core.blocks.BaseSequenceEncoder;
-import game.core.blocks.Encoder;
 import game.plugins.datatemplates.LabelTemplate;
-import game.plugins.encoders.BooleanEncoder;
-import game.plugins.encoders.ProbabilityEncoder;
-import game.utils.Utils;
+import game.plugins.encoders.OneHotEncoder;
 import weka.classifiers.functions.MultilayerPerceptron;
 import weka.core.Attribute;
 import weka.core.FastVector;
@@ -47,42 +42,22 @@ public class WekaMultilayerPerceptron extends WekaClassifier {
 	public MultilayerPerceptron nn;
 
 	public WekaMultilayerPerceptron() {
-		setPrivateOptions("nn");
-		
-		setOptionChecks("outputEncoder", new ErrorCheck<Encoder>(){
-			@Override
-			public String getError(Encoder value) {
-				if (value instanceof BaseSequenceEncoder) {
-					if ((int)value.getOption("windowSize") != 1)
-						return "only window size = 1 is allowed";
-					Encoder atomEncoder = value.getOption("atomEncoder");
-					if (atomEncoder instanceof ProbabilityEncoder)
-						return null;
-				}
-				if (value instanceof ProbabilityEncoder)
-					return null;
-				return "only ProbabilityEncoders are allowed";
-			}
-		});
+		outputEncoder = new OneHotEncoder();
+		setPrivateOptions("nn", "outputEncoder");
 	}
 
 	@Override
 	public boolean isCompatible(InstanceTemplate template) {
-		return Utils.checkTemplateClass(template.outputTemplate, LabelTemplate.class);
+		return template.outputTemplate instanceof LabelTemplate;
 	}
 
 	@Override
 	protected Encoding classify(Encoding inputEncoded) {
 		Encoding ret = new Encoding();
-		Encoder atomEncoder = outputEncoder instanceof BaseSequenceEncoder ? (Encoder)outputEncoder.getOption("atomEncoder") : outputEncoder;
 		for(double[] input: inputEncoded) {
 			Instance i = new Instance(1.0, input);
 			try {
-				double[] element = nn.distributionForInstance(i);
-				if (atomEncoder instanceof BooleanEncoder)
-					ret.add(new double[]{element[0]});
-				else
-					ret.add(element);
+				ret.add(nn.distributionForInstance(i));
 			} catch (Exception e) {
 				e.printStackTrace();
 			}

@@ -15,12 +15,15 @@ import game.core.Encoding;
 import game.core.blocks.Encoder;
 import game.plugins.datatemplates.VectorTemplate;
 
+import java.util.List;
+
 public class VectorEncoder extends Encoder<VectorTemplate> {
 
 	@Override
-	public Encoding transform(Object inputData) {
+	public Encoding transform(List input) {
 		Encoding ret = new Encoding();
-		ret.add((double[])inputData);
+		for(Object element: input)
+			ret.add((double[])element);
 		return ret;
 	}
 

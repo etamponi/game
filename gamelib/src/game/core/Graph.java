@@ -12,12 +12,13 @@ package game.core;
 
 import game.configuration.ConfigurableList;
 import game.core.Dataset.InstanceIterator;
-import game.core.blocks.Transducer;
 import game.core.blocks.Encoder;
 import game.core.blocks.Pipe;
+import game.core.blocks.Transducer;
 import game.plugins.constraints.CompatibleWith;
 
 import java.util.LinkedList;
+import java.util.List;
 
 public class Graph extends LongTask {
 	
@@ -26,10 +27,13 @@ public class Graph extends LongTask {
 	public InstanceTemplate template; 
 
 	public TemplateConstrainedList classifiers = new TemplateConstrainedList(this, Transducer.class);
+	
 	public TemplateConstrainedList inputEncoders = new TemplateConstrainedList(this, Encoder.class);
+	
 	public ConfigurableList pipes = new ConfigurableList(this, Pipe.class);
 	
 	public Decoder decoder;
+	
 	public Transducer outputClassifier;
 	
 	public Graph() {
@@ -51,8 +55,8 @@ public class Graph extends LongTask {
 		return startTask(dataset, outputDirectory);
 	}
 	
-	public Object classify(Object inputData) {
-		return decoder.decode(outputClassifier.transform(inputData));
+	public List classify(List input) {
+		return decoder.decode(outputClassifier.transform(input));
 	}
 	
 	protected Dataset classifyAll(Dataset dataset, String outputDirectory) {
@@ -62,11 +66,12 @@ public class Graph extends LongTask {
 		InstanceIterator it = dataset.instanceIterator();
 		while (it.hasNext()) {
 			Instance instance = it.next();
-			Encoding encoding = outputClassifier.transform(instance.getInputData());
+			Encoding encoding = outputClassifier.transform(instance.getInput());
 			instance.setPredictionEncoding(encoding);
-			instance.setPredictionData(decoder.decode(encoding));
+			instance.setPrediction(decoder.decode(encoding));
 			ret.add(instance);
-			updateStatus(getCurrentPercent()+singleIncrease, "instance predicted " + count + "/" + dataset.size());
+			if ((count-1) % 10 == 0 || count == dataset.size())
+				updateStatus(getCurrentPercent()+singleIncrease, "instances predicted " + count + "/" + dataset.size());
 			count++;
 		}
 		ret.setReadOnly();

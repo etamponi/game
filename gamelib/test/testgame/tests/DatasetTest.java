@@ -14,7 +14,6 @@ import static org.junit.Assert.assertEquals;
 import game.core.Dataset;
 import game.core.DatasetBuilder;
 import game.core.InstanceTemplate;
-import game.core.datatemplates.SequenceTemplate;
 import game.plugins.datasetbuilders.CSVDatasetBuilder;
 import game.plugins.datasetbuilders.SequenceCSVDatasetBuilder;
 import game.plugins.datatemplates.LabelTemplate;
@@ -38,14 +37,14 @@ public class DatasetTest {
 		template.outputTemplate.setOption("labels.add", "Iris-versicolor");
 		template.outputTemplate.setOption("labels.add", "Iris-virginica");
 		
-		sequenceTpl.inputTemplate = new SequenceTemplate();
-		sequenceTpl.outputTemplate = new SequenceTemplate();
-		sequenceTpl.inputTemplate.setOption("atom", new VectorTemplate());
-		sequenceTpl.inputTemplate.setOption("atom.featureNumber", 20);
-		sequenceTpl.outputTemplate.setOption("atom", new LabelTemplate());
-		sequenceTpl.outputTemplate.setOption("atom.labels.add", "H");
-		sequenceTpl.outputTemplate.setOption("atom.labels.add", "E");
-		sequenceTpl.outputTemplate.setOption("atom.labels.add", "C");
+		sequenceTpl.inputTemplate = new VectorTemplate();
+		sequenceTpl.outputTemplate = new LabelTemplate();
+		sequenceTpl.inputTemplate.setOption("sequence", true);
+		sequenceTpl.inputTemplate.setOption("featureNumber", 20);
+		sequenceTpl.outputTemplate.setOption("sequence", true);
+		sequenceTpl.outputTemplate.setOption("labels.add", "H");
+		sequenceTpl.outputTemplate.setOption("labels.add", "E");
+		sequenceTpl.outputTemplate.setOption("labels.add", "C");
 	}
 
 	@Test

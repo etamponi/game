@@ -14,21 +14,20 @@ import game.core.Decoder;
 import game.core.Encoding;
 import game.core.blocks.Encoder;
 import game.plugins.encoders.OneHotEncoder;
+import game.utils.Utils;
 
-public class ProbabilityLabelDecoder extends Decoder<OneHotEncoder> {
+import java.util.ArrayList;
+import java.util.List;
+
+public class ProbabilityOneHotDecoder extends Decoder<OneHotEncoder> {
 
 	@Override
-	public Object decode(Encoding outputEncoded) {
-		double[] enc = outputEncoded.get(0);
-		int maxIndex = 0;
-		double maxProb = enc[0];
-		for(int i = 1; i < enc.length; i++) {
-			if (enc[i] > maxProb) {
-				maxProb = enc[i];
-				maxIndex = i;
-			}
+	public List decode(Encoding outputEncoded) {
+		List ret = new ArrayList<>(outputEncoded.length());
+		for (double[] element: outputEncoded) {
+			ret.add(encoder.template.labels.get(Utils.maxIndex(element)));
 		}
-		return encoder.template.labels.get(maxIndex);
+		return ret;
 	}
 
 	@Override

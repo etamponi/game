@@ -13,14 +13,13 @@ package testgame.tests;
 import static org.junit.Assert.assertEquals;
 import game.Settings;
 import game.configuration.Configurable;
-import game.core.Dataset;
 import game.core.DataTemplate;
+import game.core.Dataset;
 import game.core.Encoding;
 import game.core.Graph;
 import game.core.InstanceTemplate;
 import game.core.blocks.Encoder;
 import game.core.blocks.Transducer;
-import game.core.datatemplates.SequenceTemplate;
 import game.editorsystem.Option;
 import game.editorsystem.OptionEditor;
 import game.plugins.Constraint;
@@ -30,6 +29,9 @@ import game.plugins.datatemplates.VectorTemplate;
 import game.plugins.editors.ImplementationChooserEditor;
 import game.plugins.editors.NumberEditor;
 import game.plugins.editors.graph.OuterGraphEditor;
+
+import java.util.List;
+
 import javafx.application.Application;
 import javafx.application.Platform;
 import javafx.scene.control.ComboBox;
@@ -106,7 +108,7 @@ public class EditorSystemTest extends Application {
 		}
 
 		@Override
-		public Encoding transform(Object inputData) {
+		public Encoding transform(List inputData) {
 			return null;
 		}
 
@@ -130,7 +132,7 @@ public class EditorSystemTest extends Application {
 		}
 
 		@Override
-		public Encoding transform(Object inputData) {
+		public Encoding transform(List inputData) {
 			return null;
 		}
 
@@ -144,13 +146,13 @@ public class EditorSystemTest extends Application {
 	public static class EncoderA extends Encoder<VectorTemplate> {
 
 		@Override
-		public Encoding transform(Object inputData) {
+		public Encoding transform(List inputData) {
 			return null;
 		}
 
 		@Override
 		public boolean isCompatible(DataTemplate object) {
-			return object instanceof VectorTemplate;
+			return object instanceof VectorTemplate && object.sequence == false;
 		}
 		
 	}
@@ -158,27 +160,27 @@ public class EditorSystemTest extends Application {
 	public static class EncoderB extends Encoder<LabelTemplate> {
 
 		@Override
-		public Encoding transform(Object inputData) {
+		public Encoding transform(List inputData) {
 			return null;
 		}
 
 		@Override
 		public boolean isCompatible(DataTemplate object) {
-			return object instanceof LabelTemplate;
+			return object instanceof LabelTemplate && object.sequence == false;
 		}
 		
 	}
 	
-	public static class EncoderC extends Encoder<SequenceTemplate> {
+	public static class EncoderC extends Encoder<DataTemplate> {
 
 		@Override
-		public Encoding transform(Object inputData) {
+		public Encoding transform(List inputData) {
 			return null;
 		}
 
 		@Override
 		public boolean isCompatible(DataTemplate object) {
-			return object instanceof SequenceTemplate;
+			return object.sequence == true;
 		}
 		
 	}

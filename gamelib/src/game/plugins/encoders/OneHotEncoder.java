@@ -11,14 +11,14 @@
 package game.plugins.encoders;
 
 
-public class OneHotEncoder extends ProbabilityEncoder {
+public class OneHotEncoder extends LabelEncoder {
 
 	public OneHotEncoder() {
 		setPrivateOptions("labelMapping");
 	}
 
 	@Override
-	protected void updateSingleMapping() {
+	protected void updateLabelMapping() {
 		for(int i = 0; i < template.labels.size(); i++) {
 			double[] mapping = new double[template.labels.size()];
 			mapping[i] = 1;

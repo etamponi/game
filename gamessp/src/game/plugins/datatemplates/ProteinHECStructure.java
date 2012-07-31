@@ -17,7 +17,7 @@ public class ProteinHECStructure extends ProteinStructureTemplate {
 	
 	public ProteinHECStructure() {
 		for (String type: types)
-			atom.setOption("labels.add", type);
+			labels.add(type);
 	}
 	
 }

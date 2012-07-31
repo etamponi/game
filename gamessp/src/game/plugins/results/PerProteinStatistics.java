@@ -58,9 +58,9 @@ public class PerProteinStatistics extends FullMetric {
 			while(it.hasNext()) {
 				Instance i = it.next();
 				if (inputTemplate instanceof ProteinPrimaryStructure)
-					ret.append("Primary:          ").append(getFasta(i.getInputData())).append("\n");
-				ret.append("Secondary (obs):  ").append(getFasta(i.getOutputData())).append("\n");
-				ret.append("Secondary (pred): ").append(getFasta(i.getPredictionData())).append("\n\n");
+					ret.append("Primary:          ").append(getFasta(i.getInput())).append("\n");
+				ret.append(	   "Secondary (obs):  ").append(getFasta(i.getOutput())).append("\n");
+				ret.append(    "Secondary (pred): ").append(getFasta(i.getPrediction())).append("\n\n");
 			}
 		}
 		

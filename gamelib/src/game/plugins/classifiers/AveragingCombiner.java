@@ -18,12 +18,6 @@ import game.core.blocks.Combiner;
 import java.util.List;
 
 public class AveragingCombiner extends Combiner {
-	
-	public boolean trained = false;
-	
-	public AveragingCombiner() {
-		setPrivateOptions("trained");
-	}
 
 	@Override
 	public boolean isCompatible(InstanceTemplate object) {
@@ -32,17 +26,17 @@ public class AveragingCombiner extends Combiner {
 
 	@Override
 	public boolean isTrained() {
-		return trained;
+		return true;
 	}
 
 	@Override
 	protected void train(Dataset trainingSet) {
-		trained = true;
+		return;
 	}
 
 	@Override
-	public Encoding transform(Object inputData) {
-		List<Encoding> encs = getParentsEncodings(inputData);
+	public Encoding transform(List input) {
+		List<Encoding> encs = getParentsEncodings(input);
 		
 		if (encs.size() == 1)
 			return encs.get(0);

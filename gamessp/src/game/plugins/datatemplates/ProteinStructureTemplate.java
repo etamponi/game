@@ -10,15 +10,13 @@
  ******************************************************************************/
 package game.plugins.datatemplates;
 
-import game.core.datatemplates.SequenceTemplate;
 
 
-public abstract class ProteinStructureTemplate extends SequenceTemplate {
+public abstract class ProteinStructureTemplate extends LabelTemplate {
 	
 	public ProteinStructureTemplate() {
-		setOption("atom", new LabelTemplate());
-		
-		setPrivateOptions("atom");
+		sequence = true;
+		setPrivateOptions("labels", "sequence");
 	}
 
 }

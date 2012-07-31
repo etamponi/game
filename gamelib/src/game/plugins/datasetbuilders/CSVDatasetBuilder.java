@@ -41,8 +41,8 @@ public class CSVDatasetBuilder extends DatasetBuilder {
 	}
 
 	private boolean isCompatible(DataTemplate template) {
-		return template instanceof VectorTemplate
-				|| template instanceof LabelTemplate;
+		return (template instanceof VectorTemplate
+				|| template instanceof LabelTemplate) && template.sequence == false;
 	}
 
 	@Override

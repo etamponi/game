@@ -16,11 +16,14 @@ import game.core.Encoding;
 import game.core.blocks.Encoder;
 import game.plugins.encoders.BooleanEncoder;
 
-public class ThresholdLabelDecoder extends Decoder<BooleanEncoder> {
+import java.util.ArrayList;
+import java.util.List;
+
+public class ThresholdBooleanDecoder extends Decoder<BooleanEncoder> {
 	
 	public double threshold = 0.5;
 	
-	public ThresholdLabelDecoder() {
+	public ThresholdBooleanDecoder() {
 		setOptionChecks("threshold", new RangeCheck(0.0, 1.0));
 	}
 
@@ -30,12 +33,16 @@ public class ThresholdLabelDecoder extends Decoder<BooleanEncoder> {
 	}
 
 	@Override
-	public Object decode(Encoding outputEncoded) {
-		double value = outputEncoded.get(0)[0];
-		if (value >= threshold)
-			return encoder.getPositiveLabel();
-		else
-			return encoder.getNegativeLabel();
+	public List decode(Encoding outputEncoded) {
+		List ret = new ArrayList<>(outputEncoded.length());
+		for(double[] element: outputEncoded) {
+			double positiveScore = element[BooleanEncoder.POSITIVEINDEX];
+			if (positiveScore >= threshold)
+				ret.add(encoder.positiveLabel());
+			else
+				ret.add(encoder.negativeLabel());
+		}
+		return ret;
 	}
 
 }

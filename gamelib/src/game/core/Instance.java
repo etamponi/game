@@ -11,50 +11,59 @@
 package game.core;
 
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.List;
 
 public class Instance implements Serializable {
 	
 	private static final long serialVersionUID = -9123652705641571185L;
 
-	private Object inputData;
+	private List input;
 	
-	private Object outputData;
+	private List output;
+	
+	private List prediction;
 	
 	private Encoding predictionEncoding;
-	
-	private Object predictionData;
 	
 	public Instance() {
 		
 	}
 	
-	public Instance(Object inputData, Object outputData) {
-		this.inputData = inputData;
-		this.outputData = outputData;
+	public Instance(List input, List output) {
+		this.input = input;
+		this.output = output;
+	}
+	
+	public Instance(Object singleInput, Object singleOutput) {
+		this.input = new ArrayList<>();
+		this.output = new ArrayList<>();
+		this.input.add(singleInput);
+		this.output.add(singleOutput);
 	}
 
-	public Object getInputData() {
-		return inputData;
+	public List getInput() {
+		return input;
 	}
 
-	public void setInputData(Object inputData) {
-		this.inputData = inputData;
+	public void setInput(List input) {
+		this.input = input;
 	}
 
-	public Object getOutputData() {
-		return outputData;
+	public List getOutput() {
+		return output;
 	}
 
-	public void setOutputData(Object outputData) {
-		this.outputData = outputData;
+	public void setOutput(List output) {
+		this.output = output;
 	}
 
-	public Object getPredictionData() {
-		return predictionData;
+	public List getPrediction() {
+		return prediction;
 	}
 
-	public void setPredictionData(Object predictionData) {
-		this.predictionData = predictionData;
+	public void setPrediction(List prediction) {
+		this.prediction = prediction;
 	}
 
 	public Encoding getPredictionEncoding() {

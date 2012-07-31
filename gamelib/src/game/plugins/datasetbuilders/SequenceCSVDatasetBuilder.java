@@ -11,12 +11,11 @@
 package game.plugins.datasetbuilders;
 
 import game.configuration.errorchecks.FileExistsCheck;
-import game.core.Dataset;
 import game.core.DataTemplate;
+import game.core.Dataset;
 import game.core.DatasetBuilder;
 import game.core.Instance;
 import game.core.InstanceTemplate;
-import game.core.datatemplates.SequenceTemplate;
 import game.plugins.datatemplates.LabelTemplate;
 import game.plugins.datatemplates.VectorTemplate;
 
@@ -44,16 +43,8 @@ public class SequenceCSVDatasetBuilder extends DatasetBuilder {
 	}
 	
 	private boolean isCompatible(DataTemplate template) {
-		if (template instanceof SequenceTemplate)
-			template = ((SequenceTemplate)template).atom;
-		else
-			return false;
-		
-		if (template instanceof LabelTemplate ||
-				template instanceof VectorTemplate)
-			return true;
-		else
-			return false;
+		return (template instanceof VectorTemplate
+				|| template instanceof LabelTemplate) && template.sequence == true;
 	}
 
 	@Override
@@ -72,8 +63,8 @@ public class SequenceCSVDatasetBuilder extends DatasetBuilder {
 				int count = 0, index = 0;
 				BufferedReader reader = new BufferedReader(new FileReader(file));
 				for(String line = reader.readLine(); line != null && count < instanceNumber; line = reader.readLine(), index++) {
-					List<Object> inputSequence = new LinkedList<>();
-					List<Object> outputSequence = new LinkedList<>();
+					List inputSequence = new LinkedList<>();
+					List outputSequence = new LinkedList<>();
 					while (line != null && !line.matches("^$")) {
 						String[] tokens = line.split(separators);
 						inputSequence.add(getData(Arrays.copyOfRange(tokens, 0, inputDim), atom.inputTemplate));

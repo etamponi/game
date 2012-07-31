@@ -10,16 +10,13 @@
  ******************************************************************************/
 package game.plugins.datatemplates;
 
-import game.core.datatemplates.SequenceTemplate;
 
 
-public class PreEncodedPrimaryStructure extends SequenceTemplate {
+public class PreEncodedPrimaryStructure extends VectorTemplate {
 
 	public PreEncodedPrimaryStructure() {
-		setOption("atom", new VectorTemplate());
-		setOption("atom.featureNumber", 20);
-		
-		setPrivateOptions("atom");
+		sequence = true;
+		setPrivateOptions("featureNumber", "sequence");
 	}
 	
 }

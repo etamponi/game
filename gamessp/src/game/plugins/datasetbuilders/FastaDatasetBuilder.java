@@ -60,10 +60,10 @@ public class FastaDatasetBuilder extends DatasetBuilder {
 						for (int i = 0; i < line.length(); i++)
 							sequence.add(String.valueOf(line.charAt(i)));
 						if (primary) {
-							instance.setInputData(sequence);
+							instance.setInput(sequence);
 							sequence = new LinkedList<>();
 						} else {
-							instance.setOutputData(sequence);
+							instance.setOutput(sequence);
 							if (index++ >= startIndex) {
 								ret.add(instance);
 								count++;

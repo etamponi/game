@@ -43,7 +43,7 @@ public abstract class Block extends LongTask {
 	
 	protected abstract void train(Dataset trainingSet);
 	
-	public abstract Encoding transform(Object inputData);
+	public abstract Encoding transform(List input);
 	
 	public abstract boolean acceptsNewParents();
 	
@@ -62,11 +62,11 @@ public abstract class Block extends LongTask {
 		return null;
 	}
 	
-	protected List<Encoding> getParentsEncodings(Object inputData) {
+	protected List<Encoding> getParentsEncodings(List input) {
 		List<Encoding> ret = new LinkedList<>();
 		
 		for (Block parent: parents.getList(Block.class)) {
-			ret.add(parent.transform(inputData));
+			ret.add(parent.transform(input));
 		}
 		
 		return ret;
@@ -76,9 +76,9 @@ public abstract class Block extends LongTask {
 		return (Block)parents.get(i);
 	}
 	
-	public Encoding getParentEncoding(int i, Object inputData) {
+	public Encoding getParentEncoding(int i, List input) {
 		assert(i >= 0 && i < parents.size());
-		return ((Block)parents.get(i)).transform(inputData);
+		return ((Block)parents.get(i)).transform(input);
 	}
 
 }

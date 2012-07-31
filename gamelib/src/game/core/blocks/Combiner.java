@@ -10,6 +10,7 @@
  ******************************************************************************/
 package game.core.blocks;
 
+import game.configuration.Configurable;
 import game.configuration.ErrorCheck;
 import game.configuration.errorchecks.SizeCheck;
 
@@ -19,24 +20,28 @@ import java.util.List;
 
 public abstract class Combiner extends Transducer {
 	
-	public static class ClassifiersOnlyListCheck implements ErrorCheck<List> {
-
-		@Override
-		public String getError(List list) {
-			for (Object element: list) {
-				if (!(element instanceof Transducer))
-					return "this list can only contain Classifiers";
-			}
-			
-			return null;
-		}
-		
-	}
-	
 	public Combiner() {
-		setOptionBinding("outputEncoder", "parents.*.outputEncoder");
-		
-		setOptionChecks("parents", new ClassifiersOnlyListCheck(), new SizeCheck(1));
+		setOptionChecks("parents", new SizeCheck(1),
+		new ErrorCheck<List>() {
+			@Override public String getError(List value) {
+				for (Object element: value) {
+					if (!(element instanceof Transducer))
+						return "parents of Combiner can only be Transducers";
+				}
+				return null;
+			}
+		},
+		new ErrorCheck<List>() {
+			@Override public String getError(List value) {
+				if (value.isEmpty())
+					return null;
+				for (Object parent: value) {
+					if (!outputEncoder.equals(((Configurable)parent).getOption("outputEncoder")))
+						return "parent Transducers must have the same outputEncoder as this Combiner";
+				}
+				return null;
+			}
+		});
 	}
 
 }

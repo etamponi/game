@@ -11,9 +11,9 @@
 package game.plugins.datatemplates;
 
 import game.configuration.errorchecks.PositivenessCheck;
-import game.core.datatemplates.AtomicTemplate;
+import game.core.DataTemplate;
 
-public class VectorTemplate extends AtomicTemplate {
+public class VectorTemplate extends DataTemplate {
 
 	public int featureNumber;
 	

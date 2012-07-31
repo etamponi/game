@@ -10,6 +10,7 @@
  ******************************************************************************/
 package game.plugins.pipes;
 
+import game.core.DataTemplate;
 import game.core.Encoding;
 import game.core.blocks.Pipe;
 
@@ -18,8 +19,8 @@ import java.util.List;
 public class Concatenator extends Pipe {
 
 	@Override
-	public Encoding transform(Object inputData) {
-		List<Encoding> encs = getParentsEncodings(inputData);
+	public Encoding transform(List input) {
+		List<Encoding> encs = getParentsEncodings(input);
 		
 		Encoding ret = new Encoding();
 		
@@ -43,6 +44,11 @@ public class Concatenator extends Pipe {
 		for (Encoding enc: encs)
 			ret += enc.getElementSize();
 		return ret;
+	}
+
+	@Override
+	public boolean isCompatible(DataTemplate object) {
+		return true;
 	}
 
 }

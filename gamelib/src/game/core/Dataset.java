@@ -214,9 +214,9 @@ public class Dataset extends Configurable {
 		private Block inputEncoder;
 		private Block outputEncoder;
 		private InstanceIterator instanceIterator = instanceIterator();
-		private List<Object> currentInputSequence;
-		private List<Object> currentOutputSequence;
-		private List<Object> currentPredictionSequence;
+		private List currentInputSequence;
+		private List currentOutputSequence;
+		private List currentPredictionSequence;
 		private Encoding currentInputEncoding;
 		private Encoding currentOutputEncoding;
 		private Encoding currentPredictionEncoding;
@@ -238,26 +238,16 @@ public class Dataset extends Configurable {
 		
 		private void prepareForNextInstance() {
 			Instance inst = instanceIterator.next();
-			currentInputSequence = getSequence(inst.getInputData());
-			currentOutputSequence = getSequence(inst.getOutputData());
-			if (inst.getPredictionData() != null)
-				currentPredictionSequence = getSequence(inst.getPredictionData());
+			currentInputSequence = inst.getInput();
+			currentOutputSequence = inst.getOutput();
+			if (inst.getPrediction() != null)
+				currentPredictionSequence = inst.getPrediction();
 			if (inputEncoder != null && outputEncoder != null) {
-				currentInputEncoding = inputEncoder.transform(inst.getInputData());
-				currentOutputEncoding = outputEncoder.transform(inst.getOutputData());
+				currentInputEncoding = inputEncoder.transform(inst.getInput());
+				currentOutputEncoding = outputEncoder.transform(inst.getOutput());
 			}
 			currentPredictionEncoding = inst.getPredictionEncoding();
 			indexInInstance = 0;
-		}
-		
-		private List<Object> getSequence(Object data) {
-			if (data instanceof List) {
-				return (List)data;
-			} else {
-				List<Object> ret = new ArrayList<>(1);
-				ret.add(data);
-				return ret;
-			}
 		}
 
 		@Override

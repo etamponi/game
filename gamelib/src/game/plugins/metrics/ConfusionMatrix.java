@@ -17,7 +17,6 @@ import game.core.Sample;
 import game.core.experiments.FullExperiment;
 import game.core.metrics.FullMetric;
 import game.plugins.datatemplates.LabelTemplate;
-import game.utils.Utils;
 
 import java.util.List;
 
@@ -36,7 +35,7 @@ public class ConfusionMatrix extends FullMetric {
 	@Override
 	public boolean isCompatible(Experiment exp) {
 		return super.isCompatible(exp) &&
-				Utils.checkTemplateClass(exp.template.outputTemplate, LabelTemplate.class);
+				exp.template.outputTemplate instanceof LabelTemplate;
 	}
 
 	@Override

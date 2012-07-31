@@ -13,8 +13,11 @@ package game.plugins.pipes;
 import game.configuration.errorchecks.PositivenessCheck;
 import game.configuration.errorchecks.SizeCheck;
 import game.core.Block;
+import game.core.DataTemplate;
 import game.core.Encoding;
 import game.core.blocks.Pipe;
+
+import java.util.List;
 
 public class WindowEnlarger extends Pipe {
 	
@@ -27,8 +30,13 @@ public class WindowEnlarger extends Pipe {
 	}
 
 	@Override
-	public Encoding transform(Object inputData) {
-		return parents.getList(Block.class).get(0).transform(inputData).makeWindowedEncoding(windowSize);
+	public Encoding transform(List input) {
+		return parents.getList(Block.class).get(0).transform(input).makeWindowedEncoding(windowSize);
+	}
+
+	@Override
+	public boolean isCompatible(DataTemplate template) {
+		return template.sequence;
 	}
 
 }

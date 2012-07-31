@@ -17,6 +17,6 @@ public class ProteinDSSPStructure extends ProteinStructureTemplate {
 	
 	public ProteinDSSPStructure() {
 		for (String type: types)
-			atom.setOption("labels.add", type);
+			labels.add(type);
 	}
 }

@@ -104,6 +104,10 @@ public abstract class Configurable extends Observable implements Observer {
 			return (T)((Configurable)object).getOption(optionPath.substring(firstOptionIndex+1));
 	}
 	
+	public <T> T getOption(String optionPath, Class<T> type) {
+		return (T)getOption(optionPath);
+	}
+	
 	public void setOption(String optionPath, Object content) {
 		setOption(optionPath, content, true, null);
 	}

@@ -15,6 +15,8 @@ import game.configuration.errorchecks.CompatibilityCheck;
 import game.core.blocks.Encoder;
 import game.plugins.constraints.Compatible;
 
+import java.util.List;
+
 public abstract class Decoder<E extends Encoder> extends Configurable implements Compatible<Encoder> {
 	
 	public E encoder;
@@ -23,6 +25,6 @@ public abstract class Decoder<E extends Encoder> extends Configurable implements
 		setOptionChecks("encoder", new CompatibilityCheck(this));
 	}
 	
-	public abstract Object decode(Encoding outputEncoded);
+	public abstract List decode(Encoding outputEncoded);
 
 }
