@@ -70,7 +70,7 @@ public class PluginManager extends Configurable {
 				int i = 0;
 				for(File path: paths)
 					urls[i++] = new URL("file", "localhost", path.getAbsolutePath());
-				loader = new URLClassLoader(urls, ClassLoader.getSystemClassLoader());
+				loader = new URLClassLoader(urls, getClass().getClassLoader());
 				conf.addUrls(urls);
 			} catch (IOException e) {
 				e.printStackTrace();
