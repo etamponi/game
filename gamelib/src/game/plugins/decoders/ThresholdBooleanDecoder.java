@@ -33,7 +33,7 @@ public class ThresholdBooleanDecoder extends Decoder<BooleanEncoder> {
 	}
 
 	@Override
-	public List decode(Encoding outputEncoded) {
+	protected List baseDecode(Encoding outputEncoded) {
 		List ret = new ArrayList<>(outputEncoded.length());
 		for(double[] element: outputEncoded) {
 			double positiveScore = element[BooleanEncoder.POSITIVEINDEX];

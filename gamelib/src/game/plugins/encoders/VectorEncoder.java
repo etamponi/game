@@ -20,7 +20,7 @@ import java.util.List;
 public class VectorEncoder extends Encoder<VectorTemplate> {
 
 	@Override
-	public Encoding transform(List input) {
+	public Encoding baseEncode(List input) {
 		Encoding ret = new Encoding();
 		for(Object element: input)
 			ret.add((double[])element);

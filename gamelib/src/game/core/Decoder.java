@@ -21,10 +21,19 @@ public abstract class Decoder<E extends Encoder> extends Configurable implements
 	
 	public E encoder;
 	
+	public boolean interpolate = false;
+	
 	public Decoder() {
 		setOptionChecks("encoder", new CompatibilityCheck(this));
 	}
 	
-	public abstract List decode(Encoding outputEncoded);
+	protected abstract List baseDecode(Encoding outputEncoded);
+	
+	public List decode(Encoding outputEncoded) {
+		if (interpolate)
+			return baseDecode(outputEncoded.makeInterpolatedEncoding(encoder.windowSize));
+		else
+			return baseDecode(outputEncoded.makeTrimmedEncoding(encoder.windowSize));
+	}
 
 }

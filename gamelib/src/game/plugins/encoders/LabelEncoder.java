@@ -43,7 +43,7 @@ public abstract class LabelEncoder extends Encoder<LabelTemplate> {
 	protected abstract void updateLabelMapping();
 
 	@Override
-	public Encoding transform(List input) {
+	public Encoding baseEncode(List input) {
 		Encoding ret = new Encoding();
 		for (Object element: input) {
 			double[] enc;

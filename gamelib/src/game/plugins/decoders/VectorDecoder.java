@@ -26,7 +26,7 @@ public class VectorDecoder extends Decoder<VectorEncoder> {
 	}
 
 	@Override
-	public List decode(Encoding outputEncoded) {
+	protected List baseDecode(Encoding outputEncoded) {
 		List ret = new ArrayList<>(outputEncoded.length());
 		for(double[] element: outputEncoded)
 			ret.add(element);

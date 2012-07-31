@@ -22,7 +22,7 @@ import java.util.List;
 public class ProbabilityOneHotDecoder extends Decoder<OneHotEncoder> {
 
 	@Override
-	public List decode(Encoding outputEncoded) {
+	protected List baseDecode(Encoding outputEncoded) {
 		List ret = new ArrayList<>(outputEncoded.length());
 		for (double[] element: outputEncoded) {
 			ret.add(encoder.template.labels.get(Utils.maxIndex(element)));

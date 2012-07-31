@@ -146,7 +146,7 @@ public class EditorSystemTest extends Application {
 	public static class EncoderA extends Encoder<VectorTemplate> {
 
 		@Override
-		public Encoding transform(List inputData) {
+		public Encoding baseEncode(List inputData) {
 			return null;
 		}
 
@@ -160,7 +160,7 @@ public class EditorSystemTest extends Application {
 	public static class EncoderB extends Encoder<LabelTemplate> {
 
 		@Override
-		public Encoding transform(List inputData) {
+		public Encoding baseEncode(List inputData) {
 			return null;
 		}
 
@@ -174,7 +174,7 @@ public class EditorSystemTest extends Application {
 	public static class EncoderC extends Encoder<DataTemplate> {
 
 		@Override
-		public Encoding transform(List inputData) {
+		public Encoding baseEncode(List inputData) {
 			return null;
 		}
 

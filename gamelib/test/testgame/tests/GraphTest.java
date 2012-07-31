@@ -36,7 +36,7 @@ public class GraphTest {
 	
 	public static class EncoderImplA extends Encoder<VectorTemplate> {
 		@Override
-		public Encoding transform(List inputData) {
+		public Encoding baseEncode(List inputData) {
 			return null;
 		}
 
@@ -48,7 +48,7 @@ public class GraphTest {
 	
 	public static class EncoderImplB extends Encoder<LabelTemplate> {
 		@Override
-		public Encoding transform(List inputData) {
+		public Encoding baseEncode(List inputData) {
 			return null;
 		}
 
@@ -64,7 +64,7 @@ public class GraphTest {
 	
 	public static class DecoderImplA extends Decoder<EncoderImplA> {
 		@Override
-		public List decode(Encoding outputEncoded) {
+		protected List baseDecode(Encoding outputEncoded) {
 			return null;
 		}
 
@@ -76,7 +76,7 @@ public class GraphTest {
 	
 	public static class DecoderImplB extends Decoder<EncoderImplB> {
 		@Override
-		public List decode(Encoding outputEncoded) {
+		protected List baseDecode(Encoding outputEncoded) {
 			return null;
 		}
 

@@ -10,6 +10,8 @@
  ******************************************************************************/
 package game.core.blocks;
 
+import java.util.List;
+
 import game.configuration.ErrorCheck;
 import game.configuration.errorchecks.CompatibilityCheck;
 import game.configuration.errorchecks.PositivenessCheck;
@@ -17,6 +19,7 @@ import game.configuration.errorchecks.SizeCheck;
 import game.core.Block;
 import game.core.Dataset;
 import game.core.DataTemplate;
+import game.core.Encoding;
 import game.plugins.constraints.Compatible;
 
 public abstract class Encoder<DT extends DataTemplate> extends Block implements Compatible<DataTemplate> {
@@ -38,6 +41,13 @@ public abstract class Encoder<DT extends DataTemplate> extends Block implements 
 					return null;
 			}
 		});
+	}
+
+	protected abstract Encoding baseEncode(List input);
+
+	@Override
+	public Encoding transform(List input) {
+		return baseEncode(input).makeWindowedEncoding(windowSize);
 	}
 
 	@Override

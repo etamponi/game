@@ -39,6 +39,7 @@ public class PluginManager extends Configurable {
 	private Reflections internal;
 	
 	public ConfigurableList packages = new ConfigurableList(this, String.class);
+	
 	public ConfigurableList paths = new ConfigurableList(this, File.class);
 	
 	public PluginManager() {

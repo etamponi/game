@@ -23,7 +23,7 @@ import java.util.Map.Entry;
 public class DistanceLabelDecoder extends Decoder<LabelEncoder> {
 
 	@Override
-	public List decode(Encoding outputEncoded) {
+	protected List baseDecode(Encoding outputEncoded) {
 		List ret = new ArrayList<>(outputEncoded.length());
 		
 		for(double[] element: outputEncoded) {

@@ -23,9 +23,10 @@ public class EditorWindow extends Stage {
 	public EditorWindow(OptionEditor editor) {
 		assert(editor != null);
 		
+		// TODO Add OK/Cancel buttons
+		
 		this.editor = editor;
 		
-		setTitle(editor.getClass().getSimpleName());
 		initModality(Modality.APPLICATION_MODAL);
 		
 		AnchorPane root = new AnchorPane();
@@ -44,6 +45,7 @@ public class EditorWindow extends Stage {
 	
 	public void startEdit(Option model) {
 		editor.connect(model);
+		setTitle(model.getContent().toString());
 		showAndWait();
 		editor.disconnect();
 	}
