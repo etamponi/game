@@ -14,7 +14,6 @@ import game.configuration.errorchecks.LengthCheck;
 import game.plugins.Constraint;
 import game.plugins.Implementation;
 import game.plugins.PluginManager;
-import game.plugins.constraints.TrueConstraint;
 import game.utils.Utils;
 
 import java.io.File;
@@ -24,9 +23,11 @@ import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedList;
+import java.util.List;
 import java.util.Map;
 import java.util.Observable;
 import java.util.Observer;
@@ -45,26 +46,39 @@ public abstract class Configurable extends Observable implements Observer {
 	private static ConfigurationConverter converter = new ConfigurationConverter();
 	
 	private class RequestForBoundOptions {
-		private LinkedList<String> boundOptions;
+		private List<String> boundOptions;
 		private String path;
 		
-		public RequestForBoundOptions(LinkedList<String> boundOptions, String path) {
+		public RequestForBoundOptions(List<String> boundOptions, String path) {
 			this.boundOptions = boundOptions;
 			this.path = path;
 		}
 		
-		public LinkedList<String> getBoundOptions() { return boundOptions; }
+		public List<String> getBoundOptions() { return boundOptions; }
+		public String getPath() { return path; }
+	}
+	
+	private class RequestForConstraints {
+		private List<Constraint> constraints;
+		private String path;
+
+		public RequestForConstraints(List<Constraint> constraints, String path) {
+			this.constraints = constraints;
+			this.path = path;
+		}
+		
+		public List<Constraint> getConstraints() { return constraints; }
 		public String getPath() { return path; }
 	}
 	
 //	public String name;
 	
-	private LinkedList<OptionBinding> optionBindings = new LinkedList<>();
-	private HashMap<String, LinkedList<ErrorCheck>> optionChecks = new HashMap<>();
-	protected HashMap<String, Constraint> optionConstraints = new HashMap<>();
-	private LinkedList<String> omittedFromErrorCheck = new LinkedList<>();
-	private LinkedList<String> omittedFromConfiguration = new LinkedList<>();
-	private LinkedList<String> privateOptions = new LinkedList<>();
+	private List<OptionBinding> optionBindings = new LinkedList<>();
+	private Map<String, List<ErrorCheck>> optionChecks = new HashMap<>();
+	protected Map<String, List<Constraint>> optionConstraints = new HashMap<>();
+	private List<String> omittedFromErrorCheck = new LinkedList<>();
+	private List<String> omittedFromConfiguration = new LinkedList<>();
+	private List<String> privateOptions = new LinkedList<>();
 	protected boolean notify = true;
 	
 	static {
@@ -132,29 +146,29 @@ public abstract class Configurable extends Observable implements Observer {
 		this.notify = true;
 	}
 	
-	public LinkedList<String> getBoundOptionNames() {
-		LinkedList<String> bound = new LinkedList<>();
+	public List<String> getBoundOptionNames() {
+		List<String> bound = new LinkedList<>();
 		setChanged();
 		notifyObservers(new RequestForBoundOptions(bound, ""));
 		return bound;
 	}
 	
-	public LinkedList<String> getUnboundOptionNames() {
-		LinkedList<String> ret = getPublicOptionNames();
+	public List<String> getUnboundOptionNames() {
+		List<String> ret = getPublicOptionNames();
 		ret.removeAll(getBoundOptionNames());
 		return ret;
 	}
 	
-	public LinkedList<String> getAllOptionNames() {
-		LinkedList<String> ret = new LinkedList<>();
+	public List<String> getAllOptionNames() {
+		List<String> ret = new LinkedList<>();
 		for (Field f: getClass().getFields())
 			if (!Modifier.isStatic(f.getModifiers()) && !Modifier.isFinal(f.getModifiers()))
 				ret.add(f.getName());
 		return ret;
 	}
 	
-	public LinkedList<String> getPublicOptionNames() {
-		LinkedList<String> ret = getAllOptionNames();
+	public List<String> getPublicOptionNames() {
+		List<String> ret = getAllOptionNames();
 		ret.removeAll(privateOptions);
 		return ret;
 	}
@@ -202,7 +216,7 @@ public abstract class Configurable extends Observable implements Observer {
 	}
 	
 	public <T> SortedSet<Implementation<T>> getCompatibleOptionImplementations(String optionName, PluginManager manager) {
-		return manager.getCompatibleImplementationsOf(getOptionType(optionName), getOptionConstraint(optionName));
+		return manager.getCompatibleImplementationsOf(getOptionType(optionName), getOptionConstraints(optionName));
 	}
 	
 	public Class getOptionType(String optionName) {
@@ -304,7 +318,6 @@ public abstract class Configurable extends Observable implements Observer {
 	
 	public <T extends Configurable> T cloneConfiguration() {
 		Configurable clone = (Configurable)configStream.fromXML(this.getConfiguration());
-//		clone.name = String.format("%s%03d", getClass().getSimpleName(), clone.hashCode() % 1000);
 		return (T)clone;
 	}
 	
@@ -328,6 +341,18 @@ public abstract class Configurable extends Observable implements Observer {
 			observedOption.deleteObserver(this);
 			setChanged();
 			notifyObservers(new RequestForBoundOptions(request.getBoundOptions(), pathToParent));
+			observedOption.addObserver(this);
+		}
+		
+		if (message instanceof RequestForConstraints) {
+			RequestForConstraints request = (RequestForConstraints)message;
+			String pathToParent = getOptionNameFromContent(observedOption) + "." + request.getPath();
+			if (optionConstraints.containsKey(pathToParent))
+				request.getConstraints().addAll(optionConstraints.get(pathToParent));
+			
+			observedOption.deleteObserver(this);
+			setChanged();
+			notifyObservers(new RequestForConstraints(request.getConstraints(), pathToParent));
 			observedOption.addObserver(this);
 		}
 	}
@@ -370,13 +395,6 @@ public abstract class Configurable extends Observable implements Observer {
 		for (String optionName: optionNames)
 			omittedFromErrorCheck.add(optionName);
 	}
-	
-	protected void omitFromConfiguration(String... optionNames) {
-		for (String optionName: optionNames) {
-			omittedFromConfiguration.add(optionName);
-			omittedFromErrorCheck.add(optionName);
-		}
-	}
 
 	protected void setOptionBinding(String masterPath, String... slaves) {
 		optionBindings.add(new OptionBinding(this, masterPath, slaves));
@@ -389,15 +407,30 @@ public abstract class Configurable extends Observable implements Observer {
 			optionChecks.get(optionName).add(check);
 	}
 	
-	protected void setOptionConstraint(String optionName, Constraint c) {
-		optionConstraints.put(optionName, c);
+	protected void setOptionConstraints(String optionName, Constraint... constraints) {
+		List<Constraint> list = new ArrayList<>(constraints.length);
+		for(Constraint c: constraints)
+			list.add(c);
+		optionConstraints.put(optionName, list);
 	}
-	
-	protected Constraint getOptionConstraint(String optionName) {
+	/*
+	protected void addOptionConstraints(String optionName, Constraint... constraints) {
 		if (!optionConstraints.containsKey(optionName))
-			return TrueConstraint.getInstance();
-		else
-			return optionConstraints.get(optionName);
+			setOptionConstraints(optionName, constraints);
+		else {
+			List<Constraint> list = optionConstraints.get(optionName);
+			for(Constraint c: constraints)
+				list.add(c);
+		}
+	}
+	*/
+	protected List<Constraint> getOptionConstraints(String optionName) {
+		List<Constraint> constraints = new LinkedList<>();
+		if (optionConstraints.containsKey(optionName))
+			constraints.addAll(optionConstraints.get(optionName));
+		setChanged();
+		notifyObservers(new RequestForConstraints(constraints, optionName));
+		return constraints;
 	}
 	
 	protected Object getLocalOption(String optionName) {

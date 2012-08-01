@@ -60,7 +60,7 @@ public class EditorSystemTest extends Application {
 		public ConfigurableImplA() {
 			setOptionBinding("optionA3", "optionA5.optionK1");
 			
-			setOptionConstraint("optionA5", new Constraint<ConfigurableAbstract>() {
+			setOptionConstraints("optionA5", new Constraint<ConfigurableAbstract>() {
 				@Override
 				public boolean isValid(ConfigurableAbstract o) {
 					if (optionA2 == 1)

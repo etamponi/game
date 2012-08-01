@@ -36,7 +36,7 @@ public abstract class Encoder<DT extends DataTemplate> extends Block implements 
 			@Override
 			public String getError(Integer value) {
 				if (template != null && !template.sequence && windowSize != 1)
-					return "windowSize has to be 1 if the data is not a sequence";
+					return "has to be 1 (not a sequence)";
 				else
 					return null;
 			}

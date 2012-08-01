@@ -31,7 +31,7 @@ public abstract class FullExperiment extends Experiment {
 	public FullExperiment() {
 		setOptionBinding("template", "graph.template");
 		
-		setOptionConstraint("trainer", new CompatibleWith(this, "graph"));
+		setOptionConstraints("trainer", new CompatibleWith(this, "graph"));
 		
 		setPrivateOptions("testedDatasets", "trainedGraphs");
 	}

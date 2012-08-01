@@ -24,10 +24,9 @@ public abstract class Transducer extends Block implements Compatible<InstanceTem
 	
 	public Transducer() {
 		setOptionBinding("template.outputTemplate", "outputEncoder.template");
+		setOptionConstraints("outputEncoder", new CompatibleWith(this, "template.outputTemplate"));
 		
 		setOptionChecks("template", new CompatibilityCheck(this));
-		
-		setOptionConstraint("outputEncoder", new CompatibleWith(this, "template.outputTemplate"));
 	}
 
 	@Override

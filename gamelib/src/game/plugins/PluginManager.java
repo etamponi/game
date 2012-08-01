@@ -21,6 +21,7 @@ import java.io.IOException;
 import java.lang.reflect.Modifier;
 import java.net.URL;
 import java.net.URLClassLoader;
+import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Observable;
@@ -121,12 +122,24 @@ public class PluginManager extends Configurable {
 		return ret;
 	}
 	
-	public <T> SortedSet<Implementation<T>> getCompatibleImplementationsOf(Class<T> base, Constraint c) {
+	public <T> SortedSet<Implementation<T>> getCompatibleImplementationsOf(Class<T> base, Constraint constraint) {
+		List<Constraint> temp = new ArrayList<>(1); temp.add(constraint);
+		return getCompatibleImplementationsOf(base, temp);
+	}
+	
+	public <T> SortedSet<Implementation<T>> getCompatibleImplementationsOf(Class<T> base, List<Constraint> constraints) {
 		Set<Implementation<T>> all = getImplementationsOf(base);
 		SortedSet<Implementation<T>> ret = new TreeSet<>();
 		
 		for (Implementation i: all) {
-			if (c.isValid(i.getContent()))
+			boolean accepted = true;
+			for (Constraint c: constraints) {
+				if (!c.isValid(i.getContent())) {
+					accepted = false;
+					break;
+				}
+			}
+			if (accepted)
 				ret.add(i);
 		}
 		

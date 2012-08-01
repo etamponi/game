@@ -15,7 +15,6 @@ import game.plugins.Constraint;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.ListIterator;
 
@@ -60,8 +59,8 @@ public class ConfigurableList extends Configurable implements List {
 	}
 
 	@Override
-	public LinkedList<String> getAllOptionNames() {
-		LinkedList<String> ret = super.getAllOptionNames();
+	public List<String> getAllOptionNames() {
+		List<String> ret = super.getAllOptionNames();
 		for(int i = 0; i < internal.size(); i++)
 			ret.add(String.valueOf(i));
 		return ret;
@@ -286,11 +285,11 @@ public class ConfigurableList extends Configurable implements List {
 	}
 
 	@Override
-	protected Constraint getOptionConstraint(String optionName) {
-		if (!optionConstraints.containsKey(optionName) && optionName.matches("\\d+"))
-			return super.getOptionConstraint("*");
-		else
-			return super.getOptionConstraint(optionName);
+	protected List<Constraint> getOptionConstraints(String optionName) {
+		List<Constraint> ret = super.getOptionConstraints(optionName);
+		if (optionName.matches("\\d+"))
+			ret.addAll(super.getOptionConstraints("*"));
+		return ret;
 	}
 
 }

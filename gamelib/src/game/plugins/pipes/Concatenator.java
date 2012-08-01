@@ -10,7 +10,6 @@
  ******************************************************************************/
 package game.plugins.pipes;
 
-import game.core.DataTemplate;
 import game.core.Encoding;
 import game.core.blocks.Pipe;
 
@@ -44,11 +43,6 @@ public class Concatenator extends Pipe {
 		for (Encoding enc: encs)
 			ret += enc.getElementSize();
 		return ret;
-	}
-
-	@Override
-	public boolean isCompatible(DataTemplate object) {
-		return true;
 	}
 
 }

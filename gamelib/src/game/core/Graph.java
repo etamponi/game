@@ -10,6 +10,7 @@
  ******************************************************************************/
 package game.core;
 
+import game.configuration.ConfigurableList;
 import game.core.Dataset.InstanceIterator;
 import game.core.blocks.Encoder;
 import game.core.blocks.Pipe;
@@ -25,22 +26,25 @@ public class Graph extends LongTask {
 	
 	public InstanceTemplate template; 
 
-	public TemplateConstrainedList classifiers = new TemplateConstrainedList(this, Transducer.class);
+	public ConfigurableList classifiers = new ConfigurableList(this, Transducer.class);
 	
-	public TemplateConstrainedList inputEncoders = new TemplateConstrainedList(this, Encoder.class);
+	public ConfigurableList inputEncoders = new ConfigurableList(this, Encoder.class);
 	
-	public TemplateConstrainedList pipes = new TemplateConstrainedList(this, Pipe.class);
+	public ConfigurableList pipes = new ConfigurableList(this, Pipe.class);
 	
 	public Decoder decoder;
 	
 	public Transducer outputClassifier;
 	
 	public Graph() {
-		setOptionBinding("template", 						"classifiers.constraint");
-		setOptionBinding("template.inputTemplate", 			"inputEncoders.constraint", "pipes.constraint");
-		setOptionBinding("outputClassifier.outputEncoder", 	"decoder.encoder");
+		setOptionBinding("template", "classifiers.*.template");
+		setOptionConstraints("classifiers.*", new CompatibleWith(this, "template"));
 		
-		setOptionConstraint("decoder", new CompatibleWith(this, "outputClassifier.outputEncoder"));
+		setOptionBinding("template.inputTemplate", "inputEncoders.*.template");
+		setOptionConstraints("inputEncoders.*", new CompatibleWith(this, "template.inputTemplate"));
+		
+		setOptionBinding("outputClassifier.outputEncoder", 	"decoder.encoder");
+		setOptionConstraints("decoder", new CompatibleWith(this, "outputClassifier.outputEncoder"));
 
 		omitFromErrorCheck("classifiers", "inputEncoders", "pipes");
 	}

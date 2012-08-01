@@ -27,10 +27,9 @@ public class KFoldCrossValidation extends FullExperiment {
 	
 	public KFoldCrossValidation() {
 		setOptionBinding("template", "dataset.template");
+		setOptionConstraints("dataset", new CompatibleWith(this, "template"));
 		
 		setOptionChecks("folds", new RangeCheck(RangeCheck.LOWER, 2));
-		
-		setOptionConstraint("dataset", new CompatibleWith(this, "template"));
 		
 		setPrivateOptions("trainedGraphs");
 	}

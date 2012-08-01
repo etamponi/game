@@ -25,9 +25,8 @@ public class SimpleExperiment extends FullExperiment {
 	public SimpleExperiment() {
 		setOptionBinding("template", "trainingDataset.template",
 									 "testingDataset.template");
-		
-		setOptionConstraint("trainingDataset", new CompatibleWith(this, "template"));
-		setOptionConstraint("testingDataset", new CompatibleWith(this, "template"));
+		setOptionConstraints("trainingDataset", new CompatibleWith(this, "template"));
+		setOptionConstraints("testingDataset", new CompatibleWith(this, "template"));
 	}
 
 	@Override

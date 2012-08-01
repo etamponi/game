@@ -12,11 +12,9 @@ package game.core.blocks;
 
 import game.configuration.errorchecks.SizeCheck;
 import game.core.Block;
-import game.core.DataTemplate;
 import game.core.Dataset;
-import game.plugins.constraints.Compatible;
 
-public abstract class Pipe extends Block implements Compatible<DataTemplate> {
+public abstract class Pipe extends Block {
 	
 	public Pipe() {
 		setOptionChecks("parents", new SizeCheck(1));
