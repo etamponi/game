@@ -102,7 +102,7 @@ public class Graph extends LongTask {
 		if (current == null)
 			return null;
 		if (path.contains(current))
-			return "graph cannot have directed cycles.";
+			return "graph can not contain directed cycles.";
 		path.add(current);
 		for (Block parent: current.parents.getList(Block.class)) {
 			String ret = recursivelyAddAll(parent, new LinkedList(path));

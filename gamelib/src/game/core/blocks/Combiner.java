@@ -13,6 +13,7 @@ package game.core.blocks;
 import game.configuration.Configurable;
 import game.configuration.ErrorCheck;
 import game.configuration.errorchecks.SizeCheck;
+import game.core.Dataset;
 
 import java.util.List;
 
@@ -20,7 +21,11 @@ import java.util.List;
 
 public abstract class Combiner extends Transducer {
 	
+	public boolean trained = false;
+	
 	public Combiner() {
+		setPrivateOptions("trained");
+		
 		setOptionChecks("parents", new SizeCheck(1),
 		new ErrorCheck<List>() {
 			@Override public String getError(List value) {
@@ -42,6 +47,16 @@ public abstract class Combiner extends Transducer {
 				return null;
 			}
 		});
+	}
+
+	@Override
+	public boolean isTrained() {
+		return trained;
+	}
+
+	@Override
+	protected void train(Dataset trainingSet) {
+		trained = true;
 	}
 
 }
