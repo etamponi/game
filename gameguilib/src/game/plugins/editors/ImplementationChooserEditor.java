@@ -46,7 +46,7 @@ public class ImplementationChooserEditor extends OptionEditor {
 	
 	private HBox container = new HBox();
 	
-	private ComboBox<Implementation<Configurable>> box = new ComboBox<>();
+	private ComboBox<Implementation<Configurable>> box = new ComboBox<Implementation<Configurable>>();
 	
 	public ImplementationChooserEditor() {
 		Button editButton = new Button("Edit");
