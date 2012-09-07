@@ -317,8 +317,8 @@ public abstract class Configurable extends Observable implements Observer {
 	}
 	
 	public <T extends Configurable> T cloneConfiguration() {
-		Configurable clone = (Configurable)configStream.fromXML(this.getConfiguration());
-		return (T)clone;
+		T clone = (T)configStream.fromXML(this.getConfiguration());
+		return clone;
 	}
 	
 	@Override

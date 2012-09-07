@@ -10,47 +10,99 @@
  ******************************************************************************/
 package game.editorsystem;
 
+import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
+import javafx.geometry.Insets;
+import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.Scene;
+import javafx.scene.control.Button;
 import javafx.scene.layout.AnchorPane;
+import javafx.scene.layout.HBox;
+import javafx.scene.layout.Priority;
+import javafx.scene.layout.VBox;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
+import javafx.stage.WindowEvent;
 
 public class EditorWindow extends Stage {
 	
 	private OptionEditor editor;
+	private Option original;
 	
-	public EditorWindow(OptionEditor editor) {
-		assert(editor != null);
+	public EditorWindow(OptionEditor e) {
+		assert(e != null);
 		
 		// TODO Add OK/Cancel buttons
 		
-		this.editor = editor;
+		this.editor = e;
 		
 		initModality(Modality.APPLICATION_MODAL);
 		
-		AnchorPane root = new AnchorPane();
+		VBox layout = new VBox(5);
+		layout.setPadding(new Insets(5));
+		layout.setMinWidth(400);
 		
-		Node view = editor.getView();
+		AnchorPane root = new AnchorPane();
+		VBox.setVgrow(root, Priority.ALWAYS);
+		layout.getChildren().add(root);
+		
+		HBox controls = new HBox(5);
+		controls.setPadding(new Insets(5));
+		controls.setAlignment(Pos.CENTER);
+		layout.getChildren().add(controls);
+		
+		Button okButton = new Button("OK");
+		okButton.setPrefWidth(70);
+		okButton.setOnAction(new EventHandler<ActionEvent>() {
+			@Override
+			public void handle(ActionEvent event) {
+				original.setContent(editor.getModel().getContent());
+				editor.disconnect();
+				close();
+			}
+		});
+		controls.getChildren().add(okButton);
+		
+		Button cancelButton = new Button("Cancel");
+		cancelButton.setPrefWidth(70);
+		cancelButton.setOnAction(new EventHandler<ActionEvent>() {
+			@Override
+			public void handle(ActionEvent event) {
+				editor.disconnect();
+				close();
+			}
+		});
+		controls.getChildren().add(cancelButton);
+		
+		Node view = e.getView();
 		AnchorPane.setTopAnchor(view, 0.0);
 		AnchorPane.setLeftAnchor(view, 0.0);
 		AnchorPane.setRightAnchor(view, 0.0);
 		AnchorPane.setBottomAnchor(view, 0.0);
-		
 		root.getChildren().add(view);
-		root.setMinWidth(400);
 		
-		setScene(new Scene(root));
+		setScene(new Scene(layout));
+		
+		setOnCloseRequest(new EventHandler<WindowEvent>() {
+			@Override
+			public void handle(WindowEvent event) {
+				
+				editor.disconnect();
+			}
+		});
 	}
 	
 	public void startEdit(Option model) {
-		editor.connect(model);
-		if (model.getContent() != null)
-			setTitle(model.getContent().toString());
+		this.original = model;
+		Option copy = new Option(model.getOwner().cloneConfiguration(), model.getOptionName());
+		
+		editor.connect(copy);
+		if (copy.getContent() != null)
+			setTitle(copy.getContent().toString());
 		else
-			setTitle(model.getType().getSimpleName());
-		showAndWait();
-		editor.disconnect();
+			setTitle(copy.getType().getSimpleName());
+		show();
 	}
 
 }

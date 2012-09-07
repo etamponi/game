@@ -30,6 +30,11 @@ public abstract class OptionEditor implements Observer {
 	
 	public abstract Class getBaseEditableClass();
 	
+	@Override
+	protected void finalize() throws Throwable {
+		disconnect();
+	}
+
 	public Option getModel() {
 		return model;
 	}
@@ -47,9 +52,8 @@ public abstract class OptionEditor implements Observer {
 	}
 
 	public void disconnect() {
-		assert(this.model != null);
-		
-		this.model.getOwner().deleteObserver(this);
+		if (this.model != null)
+			this.model.getOwner().deleteObserver(this);
 	}
 	
 	public boolean canEdit(Class type) {

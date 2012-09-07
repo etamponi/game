@@ -77,12 +77,7 @@ public class Option {
 	}
 	
 	public <T> SortedSet<Implementation<T>> getCompatibleImplementations() {
-		/*if (owner instanceof Root) {
-			SortedSet<Implementation<T>> ret = new TreeSet<>();
-			ret.add(new Implementation(getContent()));
-			return ret;
-		} else*/
-			return owner.getCompatibleOptionImplementations(optionName, Settings.getPluginManager());
+		return owner.getCompatibleOptionImplementations(optionName, Settings.getPluginManager());
 	}
 	
 	public boolean isBound() {
