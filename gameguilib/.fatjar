@@ -1,10 +1,10 @@
 #Fat Jar Configuration File
-#Tue Jul 31 18:34:36 CEST 2012
+#Sat Aug 04 18:13:33 CEST 2012
 onejar.license.required=true
 manifest.classpath=
 manifest.removesigners=true
 onejar.checkbox=false
-jarname=dist\\gameguilib.jar
+jarname=gameguilib.jar
 manifest.mergeall=true
 manifest.mainclass=
 manifest.file=<createnew>
