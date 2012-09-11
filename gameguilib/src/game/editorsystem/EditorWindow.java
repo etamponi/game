@@ -28,12 +28,11 @@ import javafx.stage.WindowEvent;
 public class EditorWindow extends Stage {
 	
 	private OptionEditor editor;
-	private Option original;
+	
+	private Object original;
 	
 	public EditorWindow(OptionEditor e) {
 		assert(e != null);
-		
-		// TODO Add OK/Cancel buttons
 		
 		this.editor = e;
 		
@@ -57,7 +56,6 @@ public class EditorWindow extends Stage {
 		okButton.setOnAction(new EventHandler<ActionEvent>() {
 			@Override
 			public void handle(ActionEvent event) {
-				original.setContent(editor.getModel().getContent());
 				editor.disconnect();
 				close();
 			}
@@ -69,7 +67,9 @@ public class EditorWindow extends Stage {
 		cancelButton.setOnAction(new EventHandler<ActionEvent>() {
 			@Override
 			public void handle(ActionEvent event) {
+				Option model = editor.getModel();
 				editor.disconnect();
+				model.setContent(original);
 				close();
 			}
 		});
@@ -87,22 +87,22 @@ public class EditorWindow extends Stage {
 		setOnCloseRequest(new EventHandler<WindowEvent>() {
 			@Override
 			public void handle(WindowEvent event) {
-				
+				Option model = editor.getModel();
 				editor.disconnect();
+				model.setContent(original);
 			}
 		});
 	}
 	
 	public void startEdit(Option model) {
-		this.original = model;
-		Option copy = new Option(model.getOwner().cloneConfiguration(), model.getOptionName());
+		original = model.cloneContent();
 		
-		editor.connect(copy);
-		if (copy.getContent() != null)
-			setTitle(copy.getContent().toString());
+		editor.connect(model);
+		if (model.getContent() != null)
+			setTitle(model.getContent().toString());
 		else
-			setTitle(copy.getType().getSimpleName());
-		show();
+			setTitle(model.getType().getSimpleName());
+		showAndWait();
 	}
 
 }

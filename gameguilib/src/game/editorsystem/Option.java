@@ -27,6 +27,8 @@ public class Option {
 		
 		public Object content;
 		
+		public Temporary() { }
+		
 		public Temporary(Object content) {
 			this.setOption("content", content);
 		}
@@ -139,6 +141,13 @@ public class Option {
 				parents.add(i);
 		}
 		return parents;
+	}
+
+	public <T> T cloneContent() {
+		Configurable ownerClone = owner.cloneConfiguration();
+		T ret = ownerClone.getOption(optionName);
+		ownerClone.setOption(optionName, null);
+		return ret;
 	}
 
 }

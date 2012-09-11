@@ -321,13 +321,16 @@ public abstract class Configurable extends Observable implements Observer {
 		return clone;
 	}
 	
+	public void forceUpdate() {
+		propagateUpdate("", null);
+	}
+	
 	@Override
 	public void update(Observable observedOption, Object message) {
 		if (message instanceof Change) {
 			Change change = (Change)message;
 			String changedOption = getOptionNameFromContent(observedOption);
 			changedOption += change.getPath().isEmpty() ? "" : "." + change.getPath();
-
 			propagateUpdate(changedOption, change.getSetter(), change.getPropagators());
 		}
 		

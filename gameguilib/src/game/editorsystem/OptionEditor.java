@@ -42,6 +42,8 @@ public abstract class OptionEditor implements Observer {
 	public void connect(Option model) {
 		assert(model != null);
 		
+//		System.out.println("Connecting " + this.getClass().getSimpleName() + " to " + model.getOwner() + "." + model.getOptionName() + " = " + model.getContent());
+		
 		if (this.model != null)
 			disconnect();
 		
@@ -52,8 +54,11 @@ public abstract class OptionEditor implements Observer {
 	}
 
 	public void disconnect() {
+//		System.out.println("Disconnecting " + this.getClass().getSimpleName() + " from " + model.getOwner() + "." + model.getOptionName() + " = " + model.getContent());
+		
 		if (this.model != null)
 			this.model.getOwner().deleteObserver(this);
+		this.model = null;
 	}
 	
 	public boolean canEdit(Class type) {

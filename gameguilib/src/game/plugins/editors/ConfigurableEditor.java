@@ -138,8 +138,9 @@ public class ConfigurableEditor extends OptionEditor {
 		super.update(observed, m);
 		if (m instanceof Change) {
 			errorList.getItems().clear();
-			if (getModel() != null && getModel().getContent() != null)
+			if (getModel() != null && getModel().getContent() != null) {
 				errorList.getItems().addAll(((Configurable)getModel().getContent()).getConfigurationErrors());
+			}
 		}
 	}
 

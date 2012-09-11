@@ -38,14 +38,12 @@ class ConfigurationConverter implements Converter {
 			if (object.isOmittedFromConfiguration(optionName))
 				continue;
 			Object option = object.getOption(optionName);
-			if (optionName.matches("^\\d+$"))
-				writer.startNode("item"+optionName);
-			else
-				writer.startNode(optionName);
-			
-			if (option == null) {
-				writer.addAttribute("null", "1");
-			} else {
+			if (option != null) {
+				if (optionName.matches("^\\d+$"))
+					writer.startNode("item"+optionName);
+				else
+					writer.startNode(optionName);
+				
 				if (option.getClass() != object.getOptionType(optionName))
 					writer.addAttribute("class", option.getClass().getName());
 				context.convertAnother(option);
@@ -69,20 +67,12 @@ class ConfigurationConverter implements Converter {
 				if (optionName.matches("^item\\d+$"))
 					optionName = optionName.substring(4);
 				
-				boolean isNull = reader.getAttribute("null") != null ? true : false;
-				if (isNull) {
-					if (optionName.matches("^\\d+$"))
-						object.setOption("add", null);
-					else
-						object.setOption(optionName, null);
-				} else {
-					String className = reader.getAttribute("class");
-					Class optionType = className != null ? classLoader.loadClass(className) : object.getOptionType(optionName);
-					if (optionName.matches("^\\d+$"))
-						object.setOption("add", context.convertAnother(object, optionType));
-					else
-						object.setOption(optionName, context.convertAnother(object, optionType)/*, false, null*/);
-				}
+				String className = reader.getAttribute("class");
+				Class optionType = className != null ? classLoader.loadClass(className) : object.getOptionType(optionName);
+				if (optionName.matches("^\\d+$"))
+					object.setOption("add", context.convertAnother(object, optionType));
+				else
+					object.setOption(optionName, context.convertAnother(object, optionType)/*, false, null*/);
 				reader.moveUp();
 			}
 		} catch (ClassNotFoundException | InstantiationException | IllegalAccessException e) {
