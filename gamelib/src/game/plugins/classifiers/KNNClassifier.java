@@ -18,6 +18,7 @@ import game.core.InstanceTemplate;
 import game.core.Sample;
 import game.core.blocks.Classifier;
 import game.plugins.datatemplates.LabelTemplate;
+import game.plugins.encoders.OneHotEncoder;
 import game.utils.Utils;
 
 import java.util.ArrayList;
@@ -58,9 +59,11 @@ public class KNNClassifier extends Classifier {
 	public ArrayList<SampleWithDistance> reference;
 	
 	public KNNClassifier() {
-		setOptionChecks("k", new PositivenessCheck(false));
+		setOption("outputEncoder", new OneHotEncoder());
 		
-		setPrivateOptions("reference");
+		setOptionChecks("k", new PositivenessCheck(false));
+
+		setPrivateOptions("reference", "outputEncoder");
 	}
 
 	@Override

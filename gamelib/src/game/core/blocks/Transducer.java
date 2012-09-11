@@ -30,8 +30,8 @@ public abstract class Transducer extends Block implements Compatible<InstanceTem
 	}
 
 	@Override
-	public boolean acceptsNewParents() {
-		return !isTrained();
+	public boolean acceptsParents() {
+		return true;
 	}
 
 }

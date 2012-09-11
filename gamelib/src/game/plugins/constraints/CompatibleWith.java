@@ -15,8 +15,15 @@ import game.plugins.Constraint;
 
 public class CompatibleWith implements Constraint<Compatible> {
 	
+	private static final String THIS = "this";
+	
 	private Configurable owner;
 	private String constraintOption;
+
+	public CompatibleWith(Configurable owner) {
+		this.owner = owner;
+		this.constraintOption = THIS;
+	}
 	
 	public CompatibleWith(Configurable owner, String constraintOption) {
 		this.owner = owner;
@@ -25,7 +32,9 @@ public class CompatibleWith implements Constraint<Compatible> {
 
 	@Override
 	public boolean isValid(Compatible o) {
-		if (owner.getOption(constraintOption) != null)
+		if (constraintOption.equals(THIS))
+			return o.isCompatible(owner);
+		else if (owner.getOption(constraintOption) != null)
 			return o.isCompatible(owner.getOption(constraintOption));
 		else
 			return false;

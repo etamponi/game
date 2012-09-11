@@ -10,7 +10,6 @@
  ******************************************************************************/
 package game.plugins.classifiers;
 
-import game.core.Dataset;
 import game.core.Encoding;
 import game.core.InstanceTemplate;
 import game.core.blocks.Combiner;
@@ -22,16 +21,6 @@ public class AveragingCombiner extends Combiner {
 	@Override
 	public boolean isCompatible(InstanceTemplate object) {
 		return true;
-	}
-
-	@Override
-	public boolean isTrained() {
-		return true;
-	}
-
-	@Override
-	protected void train(Dataset trainingSet) {
-		return;
 	}
 
 	@Override

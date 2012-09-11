@@ -61,7 +61,7 @@ public abstract class Encoder<DT extends DataTemplate> extends Block implements 
 	}
 	
 	@Override
-	public boolean acceptsNewParents() {
+	public boolean acceptsParents() {
 		return false;
 	}
 

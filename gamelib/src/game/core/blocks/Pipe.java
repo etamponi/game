@@ -31,7 +31,7 @@ public abstract class Pipe extends Block {
 	}
 
 	@Override
-	public boolean acceptsNewParents() {
+	public boolean acceptsParents() {
 		return true;
 	}
 

@@ -10,7 +10,7 @@
  ******************************************************************************/
 package game.plugins.editors.graph;
 
-import game.core.Graph;
+import game.core.blocks.Graph;
 import game.editorsystem.ControlledEditor;
 import game.editorsystem.EditorWindow;
 import game.editorsystem.OptionEditor;

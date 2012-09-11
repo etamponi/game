@@ -13,8 +13,8 @@ package game.plugins.graphtrainers;
 import game.configuration.errorchecks.RangeCheck;
 import game.core.Block;
 import game.core.Dataset;
-import game.core.Graph;
 import game.core.GraphTrainer;
+import game.core.blocks.Graph;
 
 import java.util.HashSet;
 import java.util.Set;

@@ -40,6 +40,8 @@ public abstract class Combiner extends Transducer {
 			@Override public String getError(List value) {
 				if (value.isEmpty())
 					return null;
+				if (outputEncoder == null)
+					return null;
 				for (Object parent: value) {
 					if (!outputEncoder.equals(((Configurable)parent).getOption("outputEncoder")))
 						return "parent Transducers must have the same outputEncoder as this Combiner";

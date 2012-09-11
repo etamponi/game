@@ -10,6 +10,7 @@
  ******************************************************************************/
 package game.core;
 
+import game.core.blocks.Graph;
 import game.plugins.constraints.Compatible;
 
 public abstract class GraphTrainer extends LongTask implements Compatible<Graph> {
@@ -24,8 +25,6 @@ public abstract class GraphTrainer extends LongTask implements Compatible<Graph>
 	protected Object execute(Object... params) {
 		Graph graph = (Graph)params[0];
 		trainGraph(graph, (Dataset)params[1]);
-		graph.setTrained();
-		
 		return null;
 	}
 

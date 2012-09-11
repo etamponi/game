@@ -13,7 +13,7 @@ package game.plugins.editors.graph;
 import game.Settings;
 import game.configuration.Configurable;
 import game.core.Block;
-import game.core.Graph;
+import game.core.blocks.Graph;
 import game.editorsystem.EditorController;
 import game.editorsystem.Option;
 import game.editorsystem.OptionEditor;
@@ -147,7 +147,7 @@ public class GraphEditorController implements EditorController {
 	private static class GraphConfigurationEditor extends ConfigurableEditor {
 		
 		public GraphConfigurationEditor() {
-			setHiddenOptions("classifiers", "inputEncoders", "pipes", "outputClassifier");
+			setHiddenOptions("classifiers", "inputEncoders", "pipes", "outputClassifier", "parents");
 		}
 		
 	}

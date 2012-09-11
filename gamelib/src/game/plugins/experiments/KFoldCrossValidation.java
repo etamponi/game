@@ -13,7 +13,7 @@ package game.plugins.experiments;
 import game.configuration.errorchecks.RangeCheck;
 import game.core.Dataset;
 import game.core.DatasetBuilder;
-import game.core.Graph;
+import game.core.blocks.Graph;
 import game.core.experiments.FullExperiment;
 import game.plugins.constraints.CompatibleWith;
 
@@ -44,9 +44,9 @@ public class KFoldCrossValidation extends FullExperiment {
 		for(int i = 0; i < folds; i++) {
 			Graph graphClone = graph.cloneConfiguration();
 			updateStatus(getOverallStatus(0.01, i), "training graph for fold " + (i+1) + "/" + folds);
-			startAnotherTaskAndWait(getOverallStatus(0.70, i), trainer, graphClone, trainings.get(i));
+			startAnotherTaskAndWait(getOverallStatus(0.70, i), graphClone, trainings.get(i));
 			updateStatus(getOverallStatus(0.70, i), "training complete, testing phase...");
-			testedDatasets.add((Dataset)startAnotherTaskAndWait(getOverallStatus(0.99, i), graphClone, testings.get(i), outputDirectory));
+			testedDatasets.add(classifyDataset(getOverallStatus(0.99, i), graphClone, testings.get(i), outputDirectory));
 			trainedGraphs.add(graphClone);
 			updateStatus(getOverallStatus(1.00, i), "finished fold " + (i+1) + "/" + folds);
 		}

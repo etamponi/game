@@ -8,23 +8,26 @@
  * Contributors:
  *     Emanuele Tamponi - initial API and implementation
  ******************************************************************************/
-package game.core;
+package game.core.blocks;
 
 import game.configuration.ConfigurableList;
-import game.core.Dataset.InstanceIterator;
-import game.core.blocks.Encoder;
-import game.core.blocks.Pipe;
-import game.core.blocks.Transducer;
+import game.core.Block;
+import game.core.Dataset;
+import game.core.Decoder;
+import game.core.Encoding;
+import game.core.GraphTrainer;
+import game.core.Instance;
+import game.core.InstanceTemplate;
 import game.plugins.constraints.CompatibleWith;
 
 import java.util.LinkedList;
 import java.util.List;
 
-public class Graph extends LongTask {
+public class Graph extends Transducer {
 	
-	public String name;
+	public boolean trained = false;
 	
-	public InstanceTemplate template; 
+	public InstanceTemplate template;
 
 	public ConfigurableList classifiers = new ConfigurableList(this, Transducer.class);
 	
@@ -36,6 +39,8 @@ public class Graph extends LongTask {
 	
 	public Transducer outputClassifier;
 	
+	public GraphTrainer trainer;
+	
 	public Graph() {
 		setOptionBinding("template", "classifiers.*.template");
 		setOptionConstraints("classifiers.*", new CompatibleWith(this, "template"));
@@ -45,10 +50,14 @@ public class Graph extends LongTask {
 		
 		setOptionBinding("outputClassifier.outputEncoder", 	"decoder.encoder");
 		setOptionConstraints("decoder", new CompatibleWith(this, "outputClassifier.outputEncoder"));
+		
+		setOptionConstraints("trainer", new CompatibleWith(this));
 
 		omitFromErrorCheck("classifiers", "inputEncoders", "pipes");
+		
+		setPrivateOptions("trained");
 	}
-
+	/*
 	@Override
 	public String getTaskDescription() {
 		return "dataset classification using " + name;
@@ -85,7 +94,7 @@ public class Graph extends LongTask {
 	protected Object execute(Object... params) {
 		return classifyAll((Dataset)params[0], (String)params[1]);
 	}
-
+	*/
 	@Override
 	protected LinkedList<String> getErrors() {
 		LinkedList<String> ret = super.getErrors();
@@ -111,7 +120,7 @@ public class Graph extends LongTask {
 		}
 		return null;
 	}
-
+	/*
 	public void setTrained() {
 		classifiers.clear();
 		inputEncoders.clear();
@@ -119,5 +128,32 @@ public class Graph extends LongTask {
 		classifiers.setOption("add", outputClassifier, false, null);
 		outputClassifier.name = name;
 	}
-
+	*/
+	@Override
+	public boolean isTrained() {
+		return trained;
+	}
+	@Override
+	protected void train(Dataset trainingSet) {
+		startAnotherTaskAndWait(1, trainer, this, trainingSet);
+		trained = true;
+	}
+	@Override
+	public Encoding transform(List input) {
+		return outputClassifier.transform(input);
+	}
+	@Override
+	public boolean acceptsParents() {
+		return false;
+	}
+	public void classifyInstance(Instance instance) {
+		Encoding encoding = this.transform(instance.getInput());
+		instance.setPredictionEncoding(encoding);
+		instance.setPrediction(decoder.decode(encoding));
+	}
+	@Override
+	public boolean isCompatible(InstanceTemplate object) {
+		return true;
+	}
+	
 }

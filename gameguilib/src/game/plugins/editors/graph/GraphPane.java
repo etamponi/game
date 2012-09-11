@@ -11,8 +11,8 @@
 package game.plugins.editors.graph;
 
 import game.core.Block;
-import game.core.Graph;
 import game.core.blocks.Encoder;
+import game.core.blocks.Graph;
 import game.core.blocks.Pipe;
 import game.core.blocks.Transducer;
 
@@ -341,7 +341,7 @@ public class GraphPane extends ScrollPane {
 			}
 		});
 		
-		if (!node.getBlock().acceptsNewParents()) {
+		if (!node.getBlock().acceptsParents()) {
 			in.setOpacity(0);
 		} else {
 			in.setOnMouseClicked(new EventHandler<MouseEvent>() {

@@ -45,7 +45,7 @@ public abstract class Block extends LongTask {
 	
 	public abstract Encoding transform(List input);
 	
-	public abstract boolean acceptsNewParents();
+	public abstract boolean acceptsParents();
 	
 	@Override
 	public String getTaskDescription() {
