@@ -30,6 +30,7 @@ import javafx.event.Event;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.scene.Node;
+import javafx.scene.control.Accordion;
 import javafx.scene.control.Slider;
 import javafx.scene.input.DragEvent;
 import javafx.scene.input.KeyCode;
@@ -57,6 +58,8 @@ public class GraphEditorController implements EditorController {
 	private FlowPane pipesPane;
 	@FXML
 	private Slider zoom;
+	@FXML
+	private Accordion accordion;
 
 	private GraphPane graphPane;
 	
@@ -140,11 +143,17 @@ public class GraphEditorController implements EditorController {
 			
 			if (!editor.isReadOnly())
 				fillPools();
-			else {
-				classifiersPane.setVisible(false);
-				inputEncodersPane.setVisible(false);
-				pipesPane.setVisible(false);
+			if (editor.isReadOnly()) {
+				accordion.setExpandedPane(accordion.getPanes().get(0));
+				for(int i = 1; i < accordion.getPanes().size(); i++) {
+					accordion.getPanes().get(i).setDisable(true);
+				}
+			} else {
+				for(int i = 1; i < accordion.getPanes().size(); i++) {
+					accordion.getPanes().get(i).setDisable(false);
+				}
 			}
+			
 //			graphPane.setDisable(editor.isReadOnly());
 		}
 		

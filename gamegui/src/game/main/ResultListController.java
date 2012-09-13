@@ -78,7 +78,7 @@ public class ResultListController implements Initializable {
 			Experiment e = (Experiment)selected.getParent().getValue();
 			Metric m = (Metric)selected.getValue();
 			m.evaluate(e);
-			TextViewer viewer = new TextViewer((Metric)selected.getValue());
+			TextViewer viewer = new TextViewer(m);
 			viewer.show();
 		}
 		if (selected.getValue() instanceof Experiment) {

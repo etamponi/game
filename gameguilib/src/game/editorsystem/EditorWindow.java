@@ -30,6 +30,8 @@ public class EditorWindow extends Stage {
 	private OptionEditor editor;
 	
 	private Object original;
+
+	private Button cancelButton;
 	
 	public EditorWindow(OptionEditor e) {
 		assert(e != null);
@@ -62,7 +64,7 @@ public class EditorWindow extends Stage {
 		});
 		controls.getChildren().add(okButton);
 		
-		Button cancelButton = new Button("Cancel");
+		cancelButton = new Button("Cancel");
 		cancelButton.setPrefWidth(70);
 		cancelButton.setOnAction(new EventHandler<ActionEvent>() {
 			@Override
@@ -102,6 +104,11 @@ public class EditorWindow extends Stage {
 			setTitle(model.getContent().toString());
 		else
 			setTitle(model.getType().getSimpleName());
+		
+		if (editor.isReadOnly()) {
+			cancelButton.setVisible(false);
+		}
+		
 		showAndWait();
 	}
 

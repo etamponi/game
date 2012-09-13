@@ -13,9 +13,11 @@ package game.plugins.editors.graph;
 
 import game.configuration.Change;
 import game.core.Block;
+import game.core.blocks.Graph;
 import game.editorsystem.EditorWindow;
 import game.editorsystem.Option;
 import game.editorsystem.OptionEditor;
+import game.plugins.editors.graph.OuterGraphEditor.GraphEditor;
 
 import java.util.Observable;
 import java.util.Observer;
@@ -117,7 +119,11 @@ public class BlockNode extends VBox implements Observer {
 				@Override
 				public void handle(MouseEvent event) {
 					if (event.getClickCount() > 1) {
-						OptionEditor editor = model.getBestEditor(true);
+						OptionEditor editor;
+						if (Graph.class.isAssignableFrom(model.getType(true)))
+							editor = new GraphEditor();
+						else
+							editor = model.getBestEditor(true);
 						editor.setReadOnly(pane.isReadOnly());
 						new EditorWindow(editor).startEdit(model);
 					}

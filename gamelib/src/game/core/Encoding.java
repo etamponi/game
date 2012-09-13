@@ -44,8 +44,6 @@ public class Encoding extends ArrayList<double[]> {
 	}
 	
 	public Encoding makeWindowedEncoding(int windowSize) {
-		assert(windowSize > 0 && windowSize % 2 == 1);
-		
 		Encoding ret = new Encoding();
 		
 		for(int i = 0; i < size(); i++)
@@ -59,12 +57,12 @@ public class Encoding extends ArrayList<double[]> {
 	}
 	
 	public Encoding makeTrimmedEncoding(int windowSize) {
-		assert(windowSize > 0 && windowSize % 2 == 1 && getElementSize() % windowSize == 0);
+		assert(getElementSize() % windowSize == 0);
 		
 		Encoding ret = new Encoding();
 		
 		int newElementSize = getElementSize() / windowSize;
-		int startingPos = (windowSize / 2)*newElementSize;
+		int startingPos = (windowSize / 2 - (windowSize % 2 == 0 ? 1 : 0))*newElementSize;
 		for(double[] element: this) {
 			double[] newElement = new double[newElementSize];
 			System.arraycopy(element, startingPos, newElement, 0, newElementSize);
@@ -77,8 +75,8 @@ public class Encoding extends ArrayList<double[]> {
 	private double[] makeWindow(int center, int windowSize) {
 		double[] ret = new double[windowSize*getElementSize()];
 		
-		int halfWindow = windowSize / 2;
-		for(int k = center-halfWindow, j = 0; k < length() && k <= center+halfWindow; k++, j++) {
+		int halfWindow = windowSize / 2 - (windowSize % 2 == 0 ? 1 : 0);
+		for(int k = center-halfWindow, j = 0; k < length() && k < (center-halfWindow+windowSize); k++, j++) {
 			if (k < 0)
 				continue;
 			System.arraycopy(get(k), 0, ret, j*getElementSize(), getElementSize());

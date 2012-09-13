@@ -27,6 +27,7 @@ import javafx.event.EventHandler;
 import javafx.scene.Node;
 import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
+import javafx.scene.control.TextField;
 import javafx.scene.layout.HBox;
 
 public class ImplementationChooserEditor extends OptionEditor {
@@ -52,7 +53,7 @@ public class ImplementationChooserEditor extends OptionEditor {
 	
 	public ImplementationChooserEditor() {
 		this.editButton = new Button("Edit");
-		editButton.setPrefWidth(50);
+		editButton.setPrefWidth(55);
 		editButton.setOnAction(new EventHandler<ActionEvent>() {
 			@Override
 			public void handle(ActionEvent event) {
@@ -77,32 +78,40 @@ public class ImplementationChooserEditor extends OptionEditor {
 
 	@Override
 	public void updateView() {
-		box.getSelectionModel().selectedItemProperty().removeListener(listener);
-		box.getItems().clear();
-		
-		if (getModel() != null) {
-			Object current = getModel().getContent();
-			box.getItems().add(new Implementation(null));
-			if (current == null)
-				box.getSelectionModel().select(0);
-			
-			Set<Implementation<Configurable>> implementations = getModel().getCompatibleImplementations();
-			for (Implementation<Configurable> impl: implementations) {
-				if (current != null && current.getClass().equals(impl.getContent().getClass())) {
-					box.getItems().add(new Implementation(current));
-					box.getSelectionModel().select(box.getItems().size()-1);
-				} else
-					box.getItems().add(impl);
-			}
-
-			box.getSelectionModel().selectedItemProperty().addListener(listener);
-		}
-		
-		box.setDisable(isReadOnly());
-		if (isReadOnly())
+		if (isReadOnly()) {
+			container.getChildren().set(0, getReadOnlyBox());
 			editButton.setText("View");
-		else
+		} else {
+			container.getChildren().set(0, box);
+			box.getSelectionModel().selectedItemProperty().removeListener(listener);
+			box.getItems().clear();
+			
+			if (getModel() != null) {
+				Object current = getModel().getContent();
+				box.getItems().add(new Implementation(null));
+				if (current == null)
+					box.getSelectionModel().select(0);
+				
+				Set<Implementation<Configurable>> implementations = getModel().getCompatibleImplementations();
+				for (Implementation<Configurable> impl: implementations) {
+					if (current != null && current.getClass().equals(impl.getContent().getClass())) {
+						box.getItems().add(new Implementation(current));
+						box.getSelectionModel().select(box.getItems().size()-1);
+					} else
+						box.getItems().add(impl);
+				}
+	
+				box.getSelectionModel().selectedItemProperty().addListener(listener);
+			}
 			editButton.setText("Edit");
+		}
+	}
+
+	private Node getReadOnlyBox() {
+		TextField field = new TextField(new Implementation(getModel().getContent()).toString());
+		field.setEditable(false);
+		field.prefWidthProperty().bind(container.widthProperty().subtract(editButton.prefWidthProperty()).subtract(5));
+		return field;
 	}
 
 	@Override

@@ -21,11 +21,11 @@ import javafx.scene.control.Button;
 
 public class OuterGraphEditor extends OptionEditor {
 	
-	private static class GraphEditor extends ControlledEditor {
+	public static class GraphEditor extends ControlledEditor {
 		
 		@Override
 		public Class getBaseEditableClass() {
-			return Graph.class;
+			return GraphEditor.class;
 		}
 
 		@Override

@@ -32,7 +32,7 @@ public class SimpleExperiment extends FullExperiment {
 	protected void runExperiment(String outputDirectory) {
 		Graph graphClone = graph.cloneConfiguration();
 		updateStatus(0.01, "training graph...");
-		startAnotherTaskAndWait(0.50, graph, graphClone, trainingDataset.buildDataset());
+		startAnotherTaskAndWait(0.50, graphClone, trainingDataset.buildDataset());
 		updateStatus(0.71, "training complete, testing phase...");
 		testedDatasets.add(classifyDataset(0.90, graphClone, testingDataset.buildDataset(), outputDirectory));
 		trainedGraphs.add(graphClone);

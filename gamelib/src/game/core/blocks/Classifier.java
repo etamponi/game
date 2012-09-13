@@ -31,6 +31,8 @@ public abstract class Classifier extends Transducer {
 	}
 	
 	protected Block getParent() {
+		if (parents.isEmpty())
+			return null;
 		return (Block)parents.get(0);
 	}
 	
