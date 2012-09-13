@@ -61,6 +61,8 @@ public class GraphEditorController implements EditorController {
 	private GraphPane graphPane;
 	
 	private OptionEditor confEditor = new GraphConfigurationEditor();
+
+	private OptionEditor editor;
 	
 	@Override
 	public void initialize(URL location, ResourceBundle resources) {
@@ -134,8 +136,19 @@ public class GraphEditorController implements EditorController {
 		if (graph != null) {
 			graphPane.setGraph(graph);
 			graphPane.parseGraph();
-			fillPools();
+			graphPane.setReadOnly(editor.isReadOnly());
+			
+			if (!editor.isReadOnly())
+				fillPools();
+			else {
+				classifiersPane.setVisible(false);
+				inputEncodersPane.setVisible(false);
+				pipesPane.setVisible(false);
+			}
+//			graphPane.setDisable(editor.isReadOnly());
 		}
+		
+		confEditor.setReadOnly(editor.isReadOnly());
 	}
 
 	private void fillPools() {
@@ -180,6 +193,16 @@ public class GraphEditorController implements EditorController {
 	protected void finalize() throws Throwable {
 		confEditor.disconnect();
 		super.finalize();
+	}
+
+	@Override
+	public void setEditor(OptionEditor editor) {
+		this.editor = editor;
+	}
+
+	@Override
+	public OptionEditor getEditor() {
+		return editor;
 	}
 
 }

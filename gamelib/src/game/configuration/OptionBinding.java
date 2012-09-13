@@ -17,13 +17,13 @@ class OptionBinding {
 	private final String masterPath;
 	private final String[] slaves;
 	
-	public OptionBinding(Configurable owner, String masterPath, String... slaves) {
+	OptionBinding(Configurable owner, String masterPath, String... slaves) {
 		this.owner = owner;
 		this.masterPath = masterPath;
 		this.slaves = slaves;
 	}
 	
-	public void updateOnChange(String changedOption) {
+	void updateOnChange(String changedOption) {
 		Object masterContent = owner.getOption(masterPath);
 		if (isOnPath(masterPath, changedOption)) {
 			for (String slave: slaves) {
@@ -38,7 +38,7 @@ class OptionBinding {
 		}
 	}
 	
-	public LinkedList<String> getBoundOptions(String pathToParent) {
+	LinkedList<String> getBoundOptions(String pathToParent) {
 		LinkedList<String> ret = new LinkedList<>();
 		for (String slave: slaves) {
 			if (isOnPath(slave, pathToParent)) {

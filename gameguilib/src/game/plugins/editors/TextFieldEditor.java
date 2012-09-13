@@ -53,6 +53,8 @@ public abstract class TextFieldEditor extends OptionEditor {
 			textField.setText(getModel().getContent().toString());
 		else
 			textField.setText("");
+		
+		textField.setEditable(!isReadOnly());
 	}
 
 }

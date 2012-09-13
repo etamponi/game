@@ -15,15 +15,15 @@ import game.plugins.constraints.Compatible;
 
 public class CompatibilityCheck implements ErrorCheck {
 	
-	private Compatible owner;
+	private Compatible compatible;
 	
-	public CompatibilityCheck(Compatible owner) {
-		this.owner = owner;
+	public CompatibilityCheck(Compatible compatible) {
+		this.compatible = compatible;
 	}
 
 	@Override
 	public String getError(Object value) {
-		if (!owner.isCompatible(value))
+		if (!compatible.isCompatible(value))
 			return "this value is not compatible with the option";
 		else
 			return null;

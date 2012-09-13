@@ -32,6 +32,8 @@ public class ConfigurableListEditorController implements EditorController {
 	
 	@FXML
 	private ListView<Option> listView;
+
+	private OptionEditor editor;
 	
 	@Override
 	public void initialize(URL location, ResourceBundle resources) {
@@ -56,6 +58,8 @@ public class ConfigurableListEditorController implements EditorController {
 		//listView.getSelectionModel().select(-1);
 		listView.getSelectionModel().clearSelection();
 		listView.setItems(items);
+		
+		listView.setDisable(editor.isReadOnly());
 	}
 	
 	@FXML
@@ -93,6 +97,16 @@ public class ConfigurableListEditorController implements EditorController {
 			new EditorWindow(editor).startEdit(listView.getItems().get(index));
 //			updateView();
 		}
+	}
+
+	@Override
+	public void setEditor(OptionEditor editor) {
+		this.editor = editor;
+	}
+
+	@Override
+	public OptionEditor getEditor() {
+		return editor;
 	}
 	
 }

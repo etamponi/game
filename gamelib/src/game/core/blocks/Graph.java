@@ -48,7 +48,7 @@ public class Graph extends Transducer {
 		setOptionBinding("template.inputTemplate", "inputEncoders.*.template");
 		setOptionConstraints("inputEncoders.*", new CompatibleWith(this, "template.inputTemplate"));
 		
-		setOptionBinding("outputClassifier.outputEncoder", 	"decoder.encoder");
+		setOptionBinding("outputClassifier.outputEncoder", 	"decoder.encoder", "outputEncoder");
 		setOptionConstraints("decoder", new CompatibleWith(this, "outputClassifier.outputEncoder"));
 		
 		setOptionConstraints("trainer", new CompatibleWith(this));

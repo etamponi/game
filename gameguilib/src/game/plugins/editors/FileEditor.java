@@ -78,6 +78,9 @@ public class FileEditor extends OptionEditor {
 		if (getModel().getContent() == null)
 			setModelContent(new File("nonexistent.txt"));
 		pathField.setText(Utils.relativize((File)getModel().getContent()));
+		
+		pathField.setEditable(!isReadOnly());
+		browseButton.setDisable(isReadOnly());
 	}
 
 	@Override

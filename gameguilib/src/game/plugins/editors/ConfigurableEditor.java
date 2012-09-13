@@ -75,11 +75,13 @@ public class ConfigurableEditor extends OptionEditor {
 		if (getModel() != null && getModel().getContent() != null) {
 			Configurable content = getModel().getContent();
 			
-			OptionEditor serializationEditor = new SerializationEditor();
-			serializationEditor.connect(getModel());
-			subEditors.add(serializationEditor);
+			if (!isReadOnly()) {
+				OptionEditor serializationEditor = new SerializationEditor();
+				serializationEditor.connect(getModel());
+				subEditors.add(serializationEditor);
+				pane.add(serializationEditor.getView(), 0, 0, 2, 1);
+			}
 			
-			pane.add(serializationEditor.getView(), 0, 0, 2, 1);
 			for (String optionName: content.getUnboundOptionNames()) {
 				if (hiddenOptions.contains(optionName))
 					continue;
@@ -90,6 +92,7 @@ public class ConfigurableEditor extends OptionEditor {
 				OptionEditor editor = prepareEditor(option);
 				if (editor == null)
 					continue;
+				editor.setReadOnly(isReadOnly());
 				pane.addRow(optionName.equals("name") ? 1 : count++, label, editor.getView());
 				applyRowLayout(label, editor.getView(), editor.isInline());
 			}

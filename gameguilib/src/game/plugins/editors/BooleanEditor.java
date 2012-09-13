@@ -45,6 +45,8 @@ public class BooleanEditor extends OptionEditor {
 	@Override
 	public void updateView() {
 		box.setSelected((boolean)getModel().getContent());
+		
+		box.setDisable(isReadOnly());
 	}
 
 	@Override

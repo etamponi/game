@@ -57,6 +57,8 @@ public class GraphPane extends ScrollPane {
 	private double cellWidth;
 	
 	private BlockNode dragging;
+
+	private boolean readOnly;
 	
 	public GraphPane(int hcells, int vcells, String cellImage) {
 		
@@ -462,6 +464,14 @@ public class GraphPane extends ScrollPane {
 	
 	public void setDragging(BlockNode node) {
 		this.dragging = node;
+	}
+
+	public void setReadOnly(boolean readOnly) {
+		this.readOnly = readOnly;
+	}
+	
+	public boolean isReadOnly() {
+		return readOnly;
 	}
 	
 }

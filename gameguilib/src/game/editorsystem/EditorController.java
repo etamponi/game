@@ -13,6 +13,9 @@ package game.editorsystem;
 import javafx.fxml.Initializable;
 
 public interface EditorController extends Initializable {
+	
+	public void setEditor(OptionEditor editor);
+	public OptionEditor getEditor();
 
 	public void setModel(Option model);
 

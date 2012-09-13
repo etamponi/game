@@ -21,6 +21,7 @@ import javafx.scene.Node;
 public abstract class OptionEditor implements Observer {
 	
 	private Option model;
+	private boolean readOnly;
 	
 	public abstract Node getView();
 	
@@ -42,8 +43,6 @@ public abstract class OptionEditor implements Observer {
 	public void connect(Option model) {
 		assert(model != null);
 		
-//		System.out.println("Connecting " + this.getClass().getSimpleName() + " to " + model.getOwner() + "." + model.getOptionName() + " = " + model.getContent());
-		
 		if (this.model != null)
 			disconnect();
 		
@@ -54,8 +53,6 @@ public abstract class OptionEditor implements Observer {
 	}
 
 	public void disconnect() {
-//		System.out.println("Disconnecting " + this.getClass().getSimpleName() + " from " + model.getOwner() + "." + model.getOptionName() + " = " + model.getContent());
-		
 		if (this.model != null)
 			this.model.getOwner().deleteObserver(this);
 		this.model = null;
@@ -68,13 +65,25 @@ public abstract class OptionEditor implements Observer {
 	protected void setModelContent(Object content) {
 		model.setContent(content, this);
 	}
+	
+	public void setReadOnly(boolean readOnly) {
+		if (this.readOnly != readOnly) {
+			this.readOnly = readOnly;
+			if (getModel() != null)
+				updateView();
+		}
+	}
+	
+	public boolean isReadOnly() {
+		return readOnly;
+	}
 
 	@Override
 	public void update(Observable observed, Object m) {
 		if (m instanceof Change) {
 			Change change = (Change)m;
 			
-			if (change.getPath().equals(model.getOptionName())) {
+			if (model != null && change.getPath().equals(model.getOptionName())) {
 				if (change.getSetter() != this)
 					updateView();
 			}

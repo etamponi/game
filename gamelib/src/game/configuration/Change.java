@@ -22,7 +22,7 @@ public class Change {
 
 	private Set<Configurable> propagators;
 	
-	public Change(String path, Object setter, Set<Configurable> propagators) {
+	Change(String path, Object setter, Set<Configurable> propagators) {
 		this.path = path;
 		this.setter = setter;
 		this.propagators = propagators;
@@ -35,14 +35,14 @@ public class Change {
 	public Object getSetter() {
 		return setter;
 	}
-	
-	public Set<Configurable> getPropagators() {
-		return propagators;
-	}
 
 	public boolean pathContains(String element) {
 		List<String> tokens = Arrays.asList(path.split("\\."));
 		return tokens.contains(element);
+	}
+	
+	Set<Configurable> getPropagators() {
+		return propagators;
 	}
 	
 }

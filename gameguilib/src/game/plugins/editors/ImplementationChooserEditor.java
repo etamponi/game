@@ -47,9 +47,11 @@ public class ImplementationChooserEditor extends OptionEditor {
 	private HBox container = new HBox();
 	
 	private ComboBox<Implementation<Configurable>> box = new ComboBox<Implementation<Configurable>>();
+
+	private Button editButton;
 	
 	public ImplementationChooserEditor() {
-		Button editButton = new Button("Edit");
+		this.editButton = new Button("Edit");
 		editButton.setPrefWidth(50);
 		editButton.setOnAction(new EventHandler<ActionEvent>() {
 			@Override
@@ -58,6 +60,7 @@ public class ImplementationChooserEditor extends OptionEditor {
 					return;
 				
 				OptionEditor editor = getModel().getBestEditor(true);
+				editor.setReadOnly(isReadOnly());
 				EditorWindow window = new EditorWindow(editor);
 				window.startEdit(getModel());
 			}
@@ -94,6 +97,12 @@ public class ImplementationChooserEditor extends OptionEditor {
 
 			box.getSelectionModel().selectedItemProperty().addListener(listener);
 		}
+		
+		box.setDisable(isReadOnly());
+		if (isReadOnly())
+			editButton.setText("View");
+		else
+			editButton.setText("Edit");
 	}
 
 	@Override

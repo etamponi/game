@@ -17,6 +17,7 @@ import game.core.Metric;
 import game.editorsystem.EditorWindow;
 import game.editorsystem.Option;
 import game.editorsystem.Option.Temporary;
+import game.editorsystem.OptionEditor;
 import game.plugins.Implementation;
 import game.plugins.constraints.CompatibleWith;
 
@@ -82,7 +83,9 @@ public class ResultListController implements Initializable {
 		}
 		if (selected.getValue() instanceof Experiment) {
 			Option option = new Option(selected.getValue());
-			new EditorWindow(option.getBestEditor(true)).startEdit(option);
+			OptionEditor editor = option.getBestEditor(true);
+			editor.setReadOnly(true);
+			new EditorWindow(editor).startEdit(option);
 		}
 	}
 	

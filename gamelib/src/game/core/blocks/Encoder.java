@@ -24,6 +24,8 @@ import game.plugins.constraints.Compatible;
 
 public abstract class Encoder<DT extends DataTemplate> extends Block implements Compatible<DataTemplate> {
 	
+	public boolean trained = false;
+	
 	public DT template;
 	
 	public int windowSize = 1;
@@ -41,6 +43,8 @@ public abstract class Encoder<DT extends DataTemplate> extends Block implements 
 					return null;
 			}
 		});
+		
+		setPrivateOptions("trained");
 	}
 
 	protected abstract Encoding baseEncode(List input);
@@ -52,12 +56,12 @@ public abstract class Encoder<DT extends DataTemplate> extends Block implements 
 
 	@Override
 	public boolean isTrained() {
-		return true;
+		return trained;
 	}
 
 	@Override
 	protected void train(Dataset trainingSet) {
-		throw new UnsupportedOperationException("You cannot train an Encoder!");
+		trained = true;
 	}
 	
 	@Override

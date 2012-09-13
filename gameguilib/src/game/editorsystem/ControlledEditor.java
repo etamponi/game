@@ -35,6 +35,7 @@ public abstract class ControlledEditor extends OptionEditor {
 
 			root = (Parent)fxmlLoader.load(location.openStream());
 			controller = fxmlLoader.getController();
+			controller.setEditor(this);
 
 			AnchorPane.setTopAnchor(root, 0.0);
 			AnchorPane.setLeftAnchor(root, 0.0);

@@ -11,6 +11,7 @@
 package game.plugins.editors.blocks;
 
 import game.core.Block;
+import game.editorsystem.Option;
 import game.plugins.editors.ConfigurableEditor;
 
 public class BlockEditor extends ConfigurableEditor {
@@ -22,6 +23,15 @@ public class BlockEditor extends ConfigurableEditor {
 	@Override
 	public Class getBaseEditableClass() {
 		return Block.class;
+	}
+
+	@Override
+	public void connect(Option model) {
+		if (model.getContent() != null) {
+			if (((Block)model.getContent()).isTrained())
+				setReadOnly(true);
+		}
+		super.connect(model);
 	}
 	
 }

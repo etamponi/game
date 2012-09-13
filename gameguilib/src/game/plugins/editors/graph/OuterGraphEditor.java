@@ -41,6 +41,7 @@ public class OuterGraphEditor extends OptionEditor {
 		editorButton.setOnAction(new EventHandler<ActionEvent>() {
 			@Override
 			public void handle(ActionEvent event) {
+				editor.setReadOnly(isReadOnly());
 				new EditorWindow(editor).startEdit(getModel());
 			}
 		});
@@ -63,8 +64,12 @@ public class OuterGraphEditor extends OptionEditor {
 
 	@Override
 	public void updateView() {
-		if (getModel() != null)
-			editorButton.setText("Edit graph: " + getModel().getContent());
+		if (((Graph)getModel().getContent()).isTrained())
+			setReadOnly(true);
+		
+		if (getModel() != null) {
+			editorButton.setText((isReadOnly() ? "View" : "Edit") + " graph: " + getModel().getContent());
+		}
 	}
 
 }

@@ -85,6 +85,9 @@ public class BlockNode extends VBox implements Observer {
 		setOnDragDetected(new EventHandler<MouseEvent>() {
 			@Override
 			public void handle(MouseEvent event) {
+				if (b.isTrained() || pane.isReadOnly())
+					return;
+				
 				Dragboard db = startDragAndDrop(isTemplate ? TransferMode.COPY : TransferMode.MOVE);
 				
 				ClipboardContent content = new ClipboardContent();
@@ -115,6 +118,7 @@ public class BlockNode extends VBox implements Observer {
 				public void handle(MouseEvent event) {
 					if (event.getClickCount() > 1) {
 						OptionEditor editor = model.getBestEditor(true);
+						editor.setReadOnly(pane.isReadOnly());
 						new EditorWindow(editor).startEdit(model);
 					}
 				}
