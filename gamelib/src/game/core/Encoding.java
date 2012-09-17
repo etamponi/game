@@ -56,16 +56,17 @@ public class Encoding extends ArrayList<double[]> {
 		return null; // FIXME makeInterpolatedEncoding
 	}
 	
-	public Encoding makeTrimmedEncoding(int windowSize) {
-		assert(getElementSize() % windowSize == 0);
+	public Encoding makeTrimmedEncoding(int initialWindowSize, int finalWindowSize) {
+		assert(getElementSize() % initialWindowSize == 0);
 		
 		Encoding ret = new Encoding();
 		
-		int newElementSize = getElementSize() / windowSize;
-		int startingPos = (windowSize / 2 - (windowSize % 2 == 0 ? 1 : 0))*newElementSize;
+		int baseElementSize = getElementSize() / initialWindowSize;
+		int finalElementSize = baseElementSize * finalWindowSize;
+		int startingPos = (initialWindowSize / 2 - (initialWindowSize % 2 == 0 ? 1 : 0) - finalWindowSize / 2)*baseElementSize;
 		for(double[] element: this) {
-			double[] newElement = new double[newElementSize];
-			System.arraycopy(element, startingPos, newElement, 0, newElementSize);
+			double[] newElement = new double[finalElementSize];
+			System.arraycopy(element, startingPos, newElement, 0, finalElementSize);
 			ret.add(newElement);
 		}
 		

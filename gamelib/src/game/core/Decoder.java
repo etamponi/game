@@ -33,7 +33,7 @@ public abstract class Decoder<E extends Encoder> extends Configurable implements
 		if (interpolate)
 			return baseDecode(outputEncoded.makeInterpolatedEncoding(encoder.windowSize));
 		else
-			return baseDecode(outputEncoded.makeTrimmedEncoding(encoder.windowSize));
+			return baseDecode(outputEncoded.makeTrimmedEncoding(encoder.windowSize, 1));
 	}
 
 }

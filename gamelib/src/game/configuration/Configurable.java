@@ -263,7 +263,6 @@ public abstract class Configurable extends Observable implements Observer {
 			ret = false;
 		}
 		temporary = null;
-		System.gc();
 		
 		if (ret == true) {
 			configStream.fromXML(Utils.readFile(file), this);
