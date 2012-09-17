@@ -129,7 +129,6 @@ public class ExperimentService extends Service<Experiment> {
 		return new Task<Experiment>() {
 			@Override
 			protected Experiment call() throws Exception {
-				System.gc();
 				System.out.println("Total memory: " + Runtime.getRuntime().totalMemory());
 				System.out.println(" Free memory: " + Runtime.getRuntime().freeMemory());
 				

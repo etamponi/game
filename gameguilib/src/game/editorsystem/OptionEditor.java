@@ -82,7 +82,6 @@ public abstract class OptionEditor implements Observer {
 	public void update(Observable observed, Object m) {
 		if (m instanceof Change) {
 			Change change = (Change)m;
-			
 			if (model != null && change.getPath().equals(model.getOptionName())) {
 				if (change.getSetter() != this)
 					updateView();

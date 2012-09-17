@@ -5,5 +5,6 @@
 	<classpathentry kind="con" path="at.bestsolution.efxclipse.tooling.jdt.core.JAVAFX_CONTAINER"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/gameguilib"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/gamelib"/>
+	<classpathentry kind="lib" path="C:/Program Files/Java/jre7/lib/jfxrt.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
