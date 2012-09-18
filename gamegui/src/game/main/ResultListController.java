@@ -92,7 +92,7 @@ public class ResultListController implements Initializable {
 	@FXML
 	public void onRemove(ActionEvent event) {
 		TreeItem selected = (TreeItem)resultsView.getSelectionModel().getSelectedItem();
-		if (selected.getValue() instanceof Experiment) {
+		if (selected != null && selected.getValue() instanceof Experiment) {
 			resultsView.getRoot().getChildren().remove(selected);
 		}
 	}
