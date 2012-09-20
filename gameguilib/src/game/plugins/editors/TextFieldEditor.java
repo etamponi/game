@@ -10,13 +10,13 @@
  ******************************************************************************/
 package game.plugins.editors;
 
-import game.editorsystem.OptionEditor;
+import game.editorsystem.Editor;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.scene.Node;
 import javafx.scene.control.TextField;
 
-public abstract class TextFieldEditor extends OptionEditor {
+public abstract class TextFieldEditor extends Editor {
 	
 	protected TextField textField = new TextField();
 	

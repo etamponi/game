@@ -10,13 +10,13 @@
  ******************************************************************************/
 package game.plugins.editors;
 
-import game.editorsystem.OptionEditor;
+import game.editorsystem.Editor;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.scene.Node;
 import javafx.scene.control.CheckBox;
 
-public class BooleanEditor extends OptionEditor {
+public class BooleanEditor extends Editor {
 	
 	private CheckBox box = new CheckBox();
 	

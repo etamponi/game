@@ -8,32 +8,40 @@
  * Contributors:
  *     Emanuele Tamponi - initial API and implementation
  ******************************************************************************/
-package game.plugins.editors.configurablelist;
+package game.plugins.editors.list;
 
 import game.configuration.ConfigurableList;
+import game.editorsystem.Editor;
 import game.editorsystem.EditorController;
 import game.editorsystem.EditorWindow;
 import game.editorsystem.Option;
-import game.editorsystem.OptionEditor;
 
 import java.net.URL;
+import java.util.List;
 import java.util.ResourceBundle;
 
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.scene.control.Button;
 import javafx.scene.control.ListView;
 import javafx.scene.control.SelectionMode;
 
-public class ConfigurableListEditorController implements EditorController {
+public class ListEditorController implements EditorController {
 	
 	private Option model;
 	
 	@FXML
 	private ListView<Option> listView;
+	@FXML
+	private Button addButton;
+	@FXML
+	private Button removeButton;
+	@FXML
+	private Button editButton;
 
-	private OptionEditor editor;
+	private Editor editor;
 	
 	@Override
 	public void initialize(URL location, ResourceBundle resources) {
@@ -47,19 +55,27 @@ public class ConfigurableListEditorController implements EditorController {
 
 	@Override
 	public void updateView() {
-		ConfigurableList list = model.getContent();
+		List list = model.getContent();
 		if (list == null)
 			return;
 		
 		ObservableList<Option> items = FXCollections.<Option>observableArrayList();
 		for (int i = 0; i < list.size(); i++) {
-			items.add(new Option(list, String.valueOf(i)));
+			items.add(list instanceof ConfigurableList ?
+					  new Option((ConfigurableList)list, String.valueOf(i))
+					: new Option(list.get(i)));
 		}
 		//listView.getSelectionModel().select(-1);
 		listView.getSelectionModel().clearSelection();
 		listView.setItems(items);
 		
-		listView.setDisable(editor.isReadOnly());
+		boolean disable = editor.isReadOnly() || !(list instanceof ConfigurableList);
+		addButton.setDisable(disable);
+		removeButton.setDisable(disable);
+		if (editor.isReadOnly())
+			editButton.setText("View");
+		else
+			editButton.setText("Edit");
 	}
 	
 	@FXML
@@ -87,25 +103,25 @@ public class ConfigurableListEditorController implements EditorController {
 	
 	@FXML
 	public void editAction(ActionEvent event) {
-		ConfigurableList list = model.getContent();
-		if (list == null)
+		if (model.getContent() == null)
 			return;
 		
 		int index = listView.getSelectionModel().getSelectedIndex();
 		if (index >= 0) {
-			OptionEditor editor = listView.getItems().get(index).getBestEditor(true);
+			Editor editor = listView.getItems().get(index).getBestEditor(true);
+			editor.setReadOnly(this.editor.isReadOnly());
 			new EditorWindow(editor).startEdit(listView.getItems().get(index));
 //			updateView();
 		}
 	}
 
 	@Override
-	public void setEditor(OptionEditor editor) {
+	public void setEditor(Editor editor) {
 		this.editor = editor;
 	}
 
 	@Override
-	public OptionEditor getEditor() {
+	public Editor getEditor() {
 		return editor;
 	}
 	

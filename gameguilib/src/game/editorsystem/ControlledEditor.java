@@ -19,7 +19,7 @@ import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.layout.AnchorPane;
 
-public abstract class ControlledEditor extends OptionEditor {
+public abstract class ControlledEditor extends Editor {
 	
 	private Node root;
 	

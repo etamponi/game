@@ -10,7 +10,7 @@
  ******************************************************************************/
 package game.plugins.editors.blocks;
 
-import game.editorsystem.OptionEditor;
+import game.editorsystem.Editor;
 import game.plugins.encoders.LabelEncoder;
 import javafx.event.EventHandler;
 import javafx.scene.Node;
@@ -19,7 +19,7 @@ import javafx.scene.control.TextField;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.GridPane;
 
-public class LabelMappingEditor extends OptionEditor {
+public class LabelMappingEditor extends Editor {
 	
 	GridPane root = new GridPane();
 

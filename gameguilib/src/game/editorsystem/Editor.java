@@ -18,7 +18,7 @@ import java.util.Observer;
 
 import javafx.scene.Node;
 
-public abstract class OptionEditor implements Observer {
+public abstract class Editor implements Observer {
 	
 	private Option model;
 	private boolean readOnly;

@@ -10,7 +10,7 @@
  ******************************************************************************/
 package game.plugins.editors;
 
-import game.editorsystem.OptionEditor;
+import game.editorsystem.Editor;
 import game.utils.Utils;
 
 import java.io.File;
@@ -25,7 +25,7 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
 import javafx.stage.FileChooser;
 
-public class FileEditor extends OptionEditor {
+public class FileEditor extends Editor {
 	
 	HBox line = new HBox();
 	

@@ -10,9 +10,8 @@
  ******************************************************************************/
 package game.main;
 
-import game.utils.Msg;
+import game.utils.Log;
 
-import java.io.File;
 import java.net.URL;
 
 import javafx.application.Application;
@@ -34,7 +33,7 @@ public class Main extends Application {
 	@Override
 	public void start(Stage primaryStage) throws Exception {
 		Class.forName("game.Settings");
-		Msg.setLogsDirectory(new File("logs"));
+		Log.setLogsDirectory("logs");
 		
 		primaryStage.setTitle("GAME 3.0 - The revenge (alpha)");
 		URL location = getClass().getResource("MainView.fxml");

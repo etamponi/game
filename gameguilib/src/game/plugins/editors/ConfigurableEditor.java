@@ -13,7 +13,7 @@ package game.plugins.editors;
 import game.configuration.Change;
 import game.configuration.Configurable;
 import game.editorsystem.Option;
-import game.editorsystem.OptionEditor;
+import game.editorsystem.Editor;
 import game.utils.Utils;
 
 import java.util.HashMap;
@@ -33,15 +33,15 @@ import javafx.scene.layout.ColumnConstraints;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Priority;
 
-public class ConfigurableEditor extends OptionEditor {
+public class ConfigurableEditor extends Editor {
 	
 	private GridPane pane = new GridPane();
 	private ListView<String> errorList = new ListView<>();
 	
 	private HashSet<String> hiddenOptions = new HashSet<>();
-	private HashMap<String, Class<? extends OptionEditor>> specificEditors = new HashMap<>();
+	private HashMap<String, Class<? extends Editor>> specificEditors = new HashMap<>();
 	
-	private List<OptionEditor> subEditors = new LinkedList<>();
+	private List<Editor> subEditors = new LinkedList<>();
 	
 	public ConfigurableEditor() {
 		AnchorPane.setTopAnchor(pane, 0.0);
@@ -67,7 +67,7 @@ public class ConfigurableEditor extends OptionEditor {
 	@Override
 	public void updateView() {
 		pane.getChildren().clear();
-		for (OptionEditor editor: subEditors)
+		for (Editor editor: subEditors)
 			editor.disconnect();
 		subEditors.clear();
 		
@@ -76,7 +76,7 @@ public class ConfigurableEditor extends OptionEditor {
 			Configurable content = getModel().getContent();
 			
 			if (!isReadOnly()) {
-				OptionEditor serializationEditor = new SerializationEditor();
+				Editor serializationEditor = new SerializationEditor();
 				serializationEditor.connect(getModel());
 				subEditors.add(serializationEditor);
 				pane.add(serializationEditor.getView(), 0, 0, 2, 1);
@@ -89,7 +89,7 @@ public class ConfigurableEditor extends OptionEditor {
 				Option option = new Option(content, optionName);
 				Label label = new Label(optionName+": ");
 				
-				OptionEditor editor = prepareEditor(option);
+				Editor editor = prepareEditor(option);
 				if (editor == null)
 					continue;
 				editor.setReadOnly(isReadOnly());
@@ -97,20 +97,22 @@ public class ConfigurableEditor extends OptionEditor {
 				applyRowLayout(label, editor.getView(), editor.isInline());
 			}
 			
-			errorList.getItems().clear();
-			errorList.getItems().addAll(content.getConfigurationErrors());
-			errorList.setPrefHeight(75);
-			errorList.setPrefWidth(75);
-			GridPane.setVgrow(errorList, Priority.SOMETIMES);
-			Label label = new Label("errors:");
-			pane.addRow(count, label, errorList);
-			applyRowLayout(label, errorList, true);
+			if (!isReadOnly()) {
+				errorList.getItems().clear();
+				errorList.getItems().addAll(content.getConfigurationErrors());
+				errorList.setPrefHeight(75);
+				errorList.setPrefWidth(75);
+				GridPane.setVgrow(errorList, Priority.SOMETIMES);
+				Label label = new Label("errors:");
+				pane.addRow(count, label, errorList);
+				applyRowLayout(label, errorList, true);
+			}
 		}
 	}
 	
 	@Override
 	public void disconnect() {
-		for(OptionEditor editor: subEditors)
+		for(Editor editor: subEditors)
 			editor.disconnect();
 		super.disconnect();
 	}
@@ -152,12 +154,12 @@ public class ConfigurableEditor extends OptionEditor {
 			hiddenOptions.add(optionName);
 	}
 	
-	protected void setSpecificEditor(String optionName, Class<? extends OptionEditor> editor) {
+	protected void setSpecificEditor(String optionName, Class<? extends Editor> editor) {
 		specificEditors.put(optionName, editor);
 	}
 	
-	private OptionEditor prepareEditor(Option option) {
-		OptionEditor editor = null;
+	private Editor prepareEditor(Option option) {
+		Editor editor = null;
 		try {
 			if (specificEditors.containsKey(option.getOptionName()))
 				editor = specificEditors.get(option.getOptionName()).newInstance();

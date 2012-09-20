@@ -8,7 +8,7 @@
  * Contributors:
  *     Emanuele Tamponi - initial API and implementation
  ******************************************************************************/
-package game.plugins.editors.configurablelist;
+package game.plugins.editors.list;
 
 import game.configuration.Change;
 import game.configuration.ConfigurableList;
@@ -20,7 +20,7 @@ import javafx.scene.Node;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Priority;
 
-public class ConfigurableListEditor extends ControlledEditor {
+public class ListEditor extends ControlledEditor {
 	
 	@Override
 	public Node getView() {

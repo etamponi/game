@@ -27,13 +27,13 @@ import javafx.stage.WindowEvent;
 
 public class EditorWindow extends Stage {
 	
-	private OptionEditor editor;
+	private Editor editor;
 	
 	private Object original;
 
 	private Button cancelButton;
 	
-	public EditorWindow(OptionEditor e) {
+	public EditorWindow(Editor e) {
 		assert(e != null);
 		
 		this.editor = e;
@@ -71,7 +71,10 @@ public class EditorWindow extends Stage {
 			public void handle(ActionEvent event) {
 				Option model = editor.getModel();
 				editor.disconnect();
-				model.setContent(original);
+				if (!model.getContent().equals(original)) {
+					System.out.println("Reverting changes");
+					model.setContent(original);
+				}
 				close();
 			}
 		});
@@ -91,7 +94,10 @@ public class EditorWindow extends Stage {
 			public void handle(WindowEvent event) {
 				Option model = editor.getModel();
 				editor.disconnect();
-				model.setContent(original);
+				if (!model.getContent().equals(original)) {
+					System.out.println("Reverting changes");
+					model.setContent(original);
+				}
 			}
 		});
 	}

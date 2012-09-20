@@ -11,7 +11,7 @@
 package game.plugins.editors;
 
 import game.configuration.Configurable;
-import game.editorsystem.OptionEditor;
+import game.editorsystem.Editor;
 
 import java.io.File;
 
@@ -33,7 +33,7 @@ import javafx.stage.FileChooser.ExtensionFilter;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 
-public class SerializationEditor extends OptionEditor {
+public class SerializationEditor extends Editor {
 	
 	private final Image SAVECONFIGURATION = new Image(getClass().getResourceAsStream("saveConfiguration.png"));
 	private final Image LOADCONFIGURATION = new Image(getClass().getResourceAsStream("loadConfiguration.png"));

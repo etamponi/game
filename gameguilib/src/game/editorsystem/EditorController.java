@@ -14,8 +14,8 @@ import javafx.fxml.Initializable;
 
 public interface EditorController extends Initializable {
 	
-	public void setEditor(OptionEditor editor);
-	public OptionEditor getEditor();
+	public void setEditor(Editor editor);
+	public Editor getEditor();
 
 	public void setModel(Option model);
 

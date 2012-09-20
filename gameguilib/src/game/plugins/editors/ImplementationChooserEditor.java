@@ -13,7 +13,7 @@ package game.plugins.editors;
 import game.configuration.Change;
 import game.configuration.Configurable;
 import game.editorsystem.EditorWindow;
-import game.editorsystem.OptionEditor;
+import game.editorsystem.Editor;
 import game.plugins.Implementation;
 import game.utils.Utils;
 
@@ -29,8 +29,9 @@ import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.HBox;
+import javafx.scene.layout.Priority;
 
-public class ImplementationChooserEditor extends OptionEditor {
+public class ImplementationChooserEditor extends Editor {
 	
 	private ChangeListener<Implementation> listener = new ChangeListener<Implementation>() {
 		@Override
@@ -60,7 +61,7 @@ public class ImplementationChooserEditor extends OptionEditor {
 				if (getModel().getContent() == null)
 					return;
 				
-				OptionEditor editor = getModel().getBestEditor(true);
+				Editor editor = getModel().getBestEditor(true);
 				editor.setReadOnly(isReadOnly());
 				EditorWindow window = new EditorWindow(editor);
 				window.startEdit(getModel());
@@ -110,7 +111,7 @@ public class ImplementationChooserEditor extends OptionEditor {
 	private Node getReadOnlyBox() {
 		TextField field = new TextField(new Implementation(getModel().getContent()).toString());
 		field.setEditable(false);
-		field.prefWidthProperty().bind(container.widthProperty().subtract(editButton.prefWidthProperty()).subtract(5));
+		HBox.setHgrow(field, Priority.ALWAYS);
 		return field;
 	}
 

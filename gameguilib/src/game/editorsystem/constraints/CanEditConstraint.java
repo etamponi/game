@@ -10,10 +10,10 @@
  ******************************************************************************/
 package game.editorsystem.constraints;
 
-import game.editorsystem.OptionEditor;
+import game.editorsystem.Editor;
 import game.plugins.Constraint;
 
-public class CanEditConstraint implements Constraint<OptionEditor> {
+public class CanEditConstraint implements Constraint<Editor> {
 	
 	private Class type;
 	
@@ -22,7 +22,7 @@ public class CanEditConstraint implements Constraint<OptionEditor> {
 	}
 
 	@Override
-	public boolean isValid(OptionEditor o) {
+	public boolean isValid(Editor o) {
 		return o.canEdit(type);
 	}
 

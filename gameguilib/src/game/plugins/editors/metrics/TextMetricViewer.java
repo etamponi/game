@@ -8,19 +8,20 @@
  * Contributors:
  *     Emanuele Tamponi - initial API and implementation
  ******************************************************************************/
-package game.main;
+package game.plugins.editors.metrics;
 
 import game.core.Metric;
-import javafx.scene.Scene;
+import game.editorsystem.Editor;
+import javafx.scene.Node;
 import javafx.scene.control.TextArea;
 import javafx.scene.layout.AnchorPane;
-import javafx.stage.Stage;
 
-public class TextViewer extends Stage {
+public class TextMetricViewer extends Editor {
 	
-	public TextViewer(Metric evaluation) {
-		AnchorPane pane = new AnchorPane();
-		TextArea content = new TextArea(evaluation.prettyPrint());
+	private AnchorPane pane = new AnchorPane();
+	private TextArea content = new TextArea();
+	
+	public TextMetricViewer() {
 		content.setStyle("-fx-font-family: monospace;");
 		content.setEditable(false);
 		content.setPrefSize(800, 120);
@@ -29,7 +30,29 @@ public class TextViewer extends Stage {
 		AnchorPane.setRightAnchor(content, 14.0);
 		AnchorPane.setBottomAnchor(content, 14.0);
 		pane.getChildren().add(content);
-		setScene(new Scene(pane));
+	}
+
+	@Override
+	public Node getView() {
+		return pane;
+	}
+
+	@Override
+	public void updateView() {
+		if (getModel() == null)
+			content.setText("");
+		else
+			content.setText(((Metric)getModel().getContent()).prettyPrint());
+	}
+
+	@Override
+	public boolean isInline() {
+		return false;
+	}
+
+	@Override
+	public Class getBaseEditableClass() {
+		return Metric.class;
 	}
 	
 }

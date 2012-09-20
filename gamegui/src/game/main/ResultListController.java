@@ -14,10 +14,10 @@ import game.Settings;
 import game.configuration.Configurable;
 import game.core.Experiment;
 import game.core.Metric;
+import game.editorsystem.Editor;
 import game.editorsystem.EditorWindow;
 import game.editorsystem.Option;
 import game.editorsystem.Option.Temporary;
-import game.editorsystem.OptionEditor;
 import game.plugins.Implementation;
 import game.plugins.constraints.CompatibleWith;
 
@@ -74,19 +74,33 @@ public class ResultListController implements Initializable {
 	@FXML
 	public void onShow(ActionEvent event) {
 		TreeItem selected = (TreeItem)resultsView.getSelectionModel().getSelectedItem();
+		if (selected != null) {
+			if (selected.getValue() instanceof Metric) {
+				Experiment e = (Experiment)selected.getParent().getValue();
+				Metric m = (Metric)selected.getValue();
+				if (!m.isReady())
+					m.evaluate(e);
+			}
+			Option option = new Option(selected.getValue());
+			Editor editor = option.getBestEditor(true);
+			editor.setReadOnly(true);
+			new EditorWindow(editor).startEdit(option);
+		}
+		/*
 		if (selected.getValue() instanceof Metric) {
 			Experiment e = (Experiment)selected.getParent().getValue();
 			Metric m = (Metric)selected.getValue();
 			m.evaluate(e);
-			TextViewer viewer = new TextViewer(m);
+			TextMetricViewer viewer = new TextMetricViewer(m);
 			viewer.show();
 		}
 		if (selected.getValue() instanceof Experiment) {
 			Option option = new Option(selected.getValue());
-			OptionEditor editor = option.getBestEditor(true);
+			Editor editor = option.getBestEditor(true);
 			editor.setReadOnly(true);
 			new EditorWindow(editor).startEdit(option);
 		}
+		*/
 	}
 	
 	@FXML

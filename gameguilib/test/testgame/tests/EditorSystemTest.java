@@ -21,7 +21,7 @@ import game.core.blocks.Encoder;
 import game.core.blocks.Graph;
 import game.core.blocks.Transducer;
 import game.editorsystem.Option;
-import game.editorsystem.OptionEditor;
+import game.editorsystem.Editor;
 import game.plugins.Constraint;
 import game.plugins.Implementation;
 import game.plugins.datatemplates.LabelTemplate;
@@ -197,7 +197,7 @@ public class EditorSystemTest extends Application {
 		
 		Option option = new Option(object, "optionA3");
 		
-		OptionEditor best = option.getBestEditor(false);
+		Editor best = option.getBestEditor(false);
 		assertEquals(NumberEditor.class, best.getClass());
 		best.connect(option);
 		
@@ -255,7 +255,7 @@ public class EditorSystemTest extends Application {
 		object = new ConfigurableImplA();
 		object.setOption("graph", graph);
 		option = new Option(object, "graph");
-		OptionEditor graphEditor = option.getBestEditor(true);
+		Editor graphEditor = option.getBestEditor(true);
 		assertEquals(OuterGraphEditor.class, graphEditor.getClass());
 		
 		Platform.exit();

@@ -26,8 +26,6 @@ import java.util.List;
 public class Graph extends Transducer {
 	
 	public boolean trained = false;
-	
-	public InstanceTemplate template;
 
 	public ConfigurableList classifiers = new ConfigurableList(this, Transducer.class);
 	
@@ -57,44 +55,7 @@ public class Graph extends Transducer {
 		
 		setPrivateOptions("trained");
 	}
-	/*
-	@Override
-	public String getTaskDescription() {
-		return "dataset classification using " + name;
-	}
-	
-	public Dataset startDatasetClassification(Dataset dataset, String outputDirectory) {
-		return startTask(dataset, outputDirectory);
-	}
-	
-	public List classify(List input) {
-		return decoder.decode(outputClassifier.transform(input));
-	}
-	
-	protected Dataset classifyAll(Dataset dataset, String outputDirectory) {
-		Dataset ret = new Dataset(outputDirectory, false);
-		double singleIncrease = 1.0 / dataset.size();
-		int count = 1;
-		InstanceIterator it = dataset.instanceIterator();
-		while (it.hasNext()) {
-			Instance instance = it.next();
-			Encoding encoding = outputClassifier.transform(instance.getInput());
-			instance.setPredictionEncoding(encoding);
-			instance.setPrediction(decoder.decode(encoding));
-			ret.add(instance);
-			if ((count-1) % 10 == 0 || count == dataset.size())
-				updateStatus(getCurrentPercent()+singleIncrease, "instances predicted " + count + "/" + dataset.size());
-			count++;
-		}
-		ret.setReadOnly();
-		return ret;
-	}
 
-	@Override
-	protected Object execute(Object... params) {
-		return classifyAll((Dataset)params[0], (String)params[1]);
-	}
-	*/
 	@Override
 	protected LinkedList<String> getErrors() {
 		LinkedList<String> ret = super.getErrors();
@@ -120,15 +81,7 @@ public class Graph extends Transducer {
 		}
 		return null;
 	}
-	/*
-	public void setTrained() {
-		classifiers.clear();
-		inputEncoders.clear();
-		pipes.clear();
-		classifiers.setOption("add", outputClassifier, false, null);
-		outputClassifier.name = name;
-	}
-	*/
+
 	@Override
 	public boolean isTrained() {
 		return trained;

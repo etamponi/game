@@ -18,6 +18,7 @@ import game.core.Instance;
 import game.core.InstanceTemplate;
 import game.plugins.datatemplates.LabelTemplate;
 import game.plugins.datatemplates.VectorTemplate;
+import game.utils.MD5Checksum;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -47,7 +48,7 @@ public class CSVDatasetBuilder extends DatasetBuilder {
 
 	@Override
 	public Dataset buildDataset() {
-		Dataset ret = new Dataset(DATASETDIRECTORY, shuffle);
+		Dataset ret = new Dataset(CACHEDIRECTORY, MD5Checksum.getMD5Checksum(file.getAbsolutePath()), shuffle);
 		
 		int inputDim = getDimension(template.inputTemplate);
 		int outputDim = getDimension(template.outputTemplate);

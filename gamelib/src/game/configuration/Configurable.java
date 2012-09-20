@@ -320,6 +320,12 @@ public abstract class Configurable extends Observable implements Observer {
 		return clone;
 	}
 	
+	public <T extends Configurable> T cloneConfiguration(String newName) {
+		T clone = (T)configStream.fromXML(this.getConfiguration());
+		clone.setOption("name", newName);
+		return clone;
+	}
+	
 	public void forceUpdate() {
 		propagateUpdate("", null);
 	}

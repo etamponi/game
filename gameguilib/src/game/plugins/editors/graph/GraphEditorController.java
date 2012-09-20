@@ -16,7 +16,7 @@ import game.core.Block;
 import game.core.blocks.Graph;
 import game.editorsystem.EditorController;
 import game.editorsystem.Option;
-import game.editorsystem.OptionEditor;
+import game.editorsystem.Editor;
 import game.plugins.Implementation;
 import game.plugins.PluginManager;
 import game.plugins.editors.ConfigurableEditor;
@@ -63,9 +63,9 @@ public class GraphEditorController implements EditorController {
 
 	private GraphPane graphPane;
 	
-	private OptionEditor confEditor = new GraphConfigurationEditor();
+	private Editor confEditor = new GraphConfigurationEditor();
 
-	private OptionEditor editor;
+	private Editor editor;
 	
 	@Override
 	public void initialize(URL location, ResourceBundle resources) {
@@ -205,12 +205,12 @@ public class GraphEditorController implements EditorController {
 	}
 
 	@Override
-	public void setEditor(OptionEditor editor) {
+	public void setEditor(Editor editor) {
 		this.editor = editor;
 	}
 
 	@Override
-	public OptionEditor getEditor() {
+	public Editor getEditor() {
 		return editor;
 	}
 

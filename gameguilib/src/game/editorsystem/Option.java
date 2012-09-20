@@ -89,20 +89,20 @@ public class Option {
 			return !owner.getUnboundOptionNames().contains(optionName);
 	}
 	
-	public OptionEditor getBestEditor(boolean runtimeClass) {
+	public Editor getBestEditor(boolean runtimeClass) {
 		PluginManager manager = Settings.getPluginManager();
 		
 		Class type = getType(runtimeClass);
-		Set<Implementation<OptionEditor>> editors = manager.getCompatibleImplementationsOf(OptionEditor.class, new CanEditConstraint(type));
-		Iterator<Implementation<OptionEditor>> it = editors.iterator();
+		Set<Implementation<Editor>> editors = manager.getCompatibleImplementationsOf(Editor.class, new CanEditConstraint(type));
+		Iterator<Implementation<Editor>> it = editors.iterator();
 		
 		if (!it.hasNext())
 			return null;
 		
-		OptionEditor best = it.next().getContent();
+		Editor best = it.next().getContent();
 		int bestDistance = distance(best.getBaseEditableClass(), type);
 		while (it.hasNext()) {
-			OptionEditor current = it.next().getContent();
+			Editor current = it.next().getContent();
 			int currDistance = distance(current.getBaseEditableClass(), type);
 			if (currDistance < bestDistance) {
 				best = current;

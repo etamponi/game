@@ -17,11 +17,11 @@ import game.configuration.ConfigurableList;
 import game.core.Experiment;
 import game.editorsystem.EditorWindow;
 import game.editorsystem.Option;
-import game.editorsystem.OptionEditor;
+import game.editorsystem.Editor;
 import game.plugins.PluginManager;
 import game.plugins.editors.ConfigurableEditor;
 import game.plugins.editors.SerializationEditor;
-import game.plugins.editors.configurablelist.ConfigurableListEditor;
+import game.plugins.editors.list.ListEditor;
 
 import java.io.IOException;
 import java.net.URL;
@@ -89,11 +89,11 @@ public class MainController extends Configurable implements Initializable {
 	@Override
 	public void initialize(URL location, ResourceBundle resources) {
 		Option model = new Option(this, "experimentList");
-		OptionEditor serialization = new SerializationEditor();
+		Editor serialization = new SerializationEditor();
 		serialization.connect(model);
 		addPluginManagerEditorToToolBar((ToolBar)serialization.getView());
 		
-		OptionEditor editor = new ConfigurableListEditor();
+		Editor editor = new ListEditor();
 		editor.connect(model);
 		experimentsRoot.getChildren().addAll(serialization.getView(), editor.getView());
 		experimentsRoot.setSpacing(10);

@@ -62,17 +62,10 @@ public class Dataset extends Configurable {
 		setPrivateOptions("databaseName", "indices", "readOnly", "shuffle");
 	}
 	
-	public Dataset(File databaseFile, boolean shuffle) {
-		this();
-		this.readOnly = true;
-		this.shuffle = shuffle;
-		setDatabaseName(Utils.relativize(databaseFile));
-	}
-	
-	public Dataset(String datasetDirectory, boolean shuffle) {
+	public Dataset(String datasetDirectory, String cacheName, boolean shuffle) {
 		this();
 		this.shuffle = shuffle;
-		createDatabase(datasetDirectory);
+		createDatabase(datasetDirectory, cacheName);
 	}
 	
 	private Dataset(Dataset base, List<Integer> indices) {
@@ -80,18 +73,19 @@ public class Dataset extends Configurable {
 		this.indices = new ArrayList<>(indices);
 		this.readOnly = true;
 		this.connection = base.connection;
+		this.databaseName = base.databaseName;
 	}
 	
 	public int size() {
 		return indices.size();
 	}
 	
-	private void createDatabase(String datasetDirectory) {
+	private void createDatabase(String datasetDirectory, String cacheName) {
 		File dir = new File(datasetDirectory);
 		if (!dir.exists())
 			dir.mkdirs();
 		try {
-			String fileName = Utils.relativize(File.createTempFile("gdb", ".db", new File(datasetDirectory)));
+			String fileName = Utils.relativize(new File(datasetDirectory))+"/dataset_"+cacheName+".db";
 			databaseName = fileName;
 			connection = DriverManager.getConnection("jdbc:sqlite:"+fileName);
 			connection.setAutoCommit(false);
@@ -99,7 +93,7 @@ public class Dataset extends Configurable {
 			statement.executeUpdate("CREATE TABLE Data (id INTEGER PRIMARY KEY AUTOINCREMENT, content BLOB NOT NULL);");
 			statement.close();
 			connectionRegistry.put(databaseName, connection);
-		} catch (SQLException | IOException e) {
+		} catch (SQLException e) {
 			e.printStackTrace();
 		}
 	}

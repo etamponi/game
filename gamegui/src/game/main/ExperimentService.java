@@ -13,7 +13,7 @@ package game.main;
 import game.Settings;
 import game.core.Experiment;
 import game.core.LongTask.LongTaskUpdate;
-import game.utils.Msg;
+import game.utils.Log;
 
 import java.util.Observable;
 import java.util.Observer;
@@ -133,12 +133,11 @@ public class ExperimentService extends Service<Experiment> {
 				System.out.println(" Free memory: " + Runtime.getRuntime().freeMemory());
 				
 				final Experiment e = (Experiment)controller.experimentList.get(counter.get());
-				Msg.setLogPrefix(e.name);
 				Observer o = new Observer() {
 					@Override
 					public void update(Observable obs, Object m) {
 						if (m instanceof LongTaskUpdate) {
-							Msg.info("%6.2f%%: %s", e.getCurrentPercent()*100, e.getCurrentMessage());
+							Log.write(e, "%6.2f%%: %s", e.getCurrentPercent()*100, e.getCurrentMessage());
 							updateMessage(e.getCurrentMessage());
 							updateProgress((long)(e.getCurrentPercent()*100), 100);
 //							try {
