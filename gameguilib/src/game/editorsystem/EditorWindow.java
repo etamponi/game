@@ -94,7 +94,7 @@ public class EditorWindow extends Stage {
 			public void handle(WindowEvent event) {
 				Option model = editor.getModel();
 				editor.disconnect();
-				if (!model.getContent().equals(original)) {
+				if (model.getContent() != null && !model.getContent().equals(original)) {
 					System.out.println("Reverting changes");
 					model.setContent(original);
 				}

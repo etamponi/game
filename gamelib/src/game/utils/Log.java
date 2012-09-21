@@ -38,6 +38,7 @@ public class Log {
 	private static void writeLog(String fileName, String format) {
 		try {
 			PrintWriter writer = new PrintWriter(new FileWriter(new File(fileName), true), true);
+			System.out.println(format);
 			writer.println(format);
 			writer.close();
 		} catch (IOException e) {

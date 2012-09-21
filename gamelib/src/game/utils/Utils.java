@@ -13,6 +13,8 @@ package game.utils;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.lang.reflect.Modifier;
+import java.math.BigInteger;
+import java.util.Random;
 import java.util.Scanner;
 
 import com.thoughtworks.xstream.XStream;
@@ -164,5 +166,11 @@ public class Utils {
 			if (e > max)
 				max = e;
 		return max;
+	}
+	
+	private static Random generator = new Random();
+
+	public static String randomString() {
+		return new BigInteger(130, generator).toString(32);
 	}
 }

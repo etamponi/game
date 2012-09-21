@@ -86,6 +86,9 @@ public class Dataset extends Configurable {
 			dir.mkdirs();
 		try {
 			String fileName = Utils.relativize(new File(datasetDirectory))+"/dataset_"+cacheName+".db";
+			File file = new File(fileName);
+			if (file.exists())
+				file.delete();
 			databaseName = fileName;
 			connection = DriverManager.getConnection("jdbc:sqlite:"+fileName);
 			connection.setAutoCommit(false);

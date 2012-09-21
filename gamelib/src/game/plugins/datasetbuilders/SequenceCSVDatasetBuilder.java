@@ -18,7 +18,7 @@ import game.core.Instance;
 import game.core.InstanceTemplate;
 import game.plugins.datatemplates.LabelTemplate;
 import game.plugins.datatemplates.VectorTemplate;
-import game.utils.MD5Checksum;
+import game.utils.Utils;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -50,14 +50,10 @@ public class SequenceCSVDatasetBuilder extends DatasetBuilder {
 
 	@Override
 	public Dataset buildDataset() {
-		Dataset ret = new Dataset(CACHEDIRECTORY, MD5Checksum.getMD5Checksum(file.getAbsolutePath()), shuffle);
+		Dataset ret = new Dataset(CACHEDIRECTORY, Utils.randomString(), shuffle);
 		
-		InstanceTemplate atom = new InstanceTemplate();
-		atom.inputTemplate = template.getOption("inputTemplate.atom");
-		atom.outputTemplate = template.getOption("outputTemplate.atom");
-		
-		int inputDim = getDimension(atom.inputTemplate);
-		int outputDim = getDimension(atom.outputTemplate);
+		int inputDim = getDimension(template.inputTemplate);
+		int outputDim = getDimension(template.outputTemplate);
 		
 		if (file.exists()) {
 			try {
@@ -68,16 +64,18 @@ public class SequenceCSVDatasetBuilder extends DatasetBuilder {
 					List outputSequence = new LinkedList<>();
 					while (line != null && !line.matches("^$")) {
 						String[] tokens = line.split(separators);
-						inputSequence.add(getData(Arrays.copyOfRange(tokens, 0, inputDim), atom.inputTemplate));
-						outputSequence.add(getData(Arrays.copyOfRange(tokens, inputDim, inputDim+outputDim), atom.outputTemplate));
+						inputSequence.add(getData(Arrays.copyOfRange(tokens, 0, inputDim), template.inputTemplate));
+						outputSequence.add(getData(Arrays.copyOfRange(tokens, inputDim, inputDim+outputDim), template.outputTemplate));
 						line = reader.readLine();
 					}
 					if (index < startIndex)
 						continue;
+//					System.out.println(inputSequence.size() + " " + outputSequence.size());
 					ret.add(new Instance(inputSequence, outputSequence));
 					count++;
 				}
 				reader.close();
+//				System.out.println(count);
 				ret.setReadOnly();
 			} catch (IOException e) {}
 		}

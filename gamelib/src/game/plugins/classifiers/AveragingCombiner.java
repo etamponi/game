@@ -40,7 +40,7 @@ public class AveragingCombiner extends Combiner {
 		return ret;
 	}
 	
-	private void sumEncodings(Encoding to, Encoding from) {
+	protected void sumEncodings(Encoding to, Encoding from) {
 		if (to.isEmpty()) {
 			to.addAll(from);
 			return;

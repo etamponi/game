@@ -16,7 +16,7 @@ public class PreEncodedPrimaryStructure extends VectorTemplate {
 
 	public PreEncodedPrimaryStructure() {
 		sequence = true;
-		setPrivateOptions("featureNumber", "sequence");
+		setPrivateOptions("sequence");
 	}
 	
 }

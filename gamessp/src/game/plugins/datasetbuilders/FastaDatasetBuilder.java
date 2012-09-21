@@ -18,7 +18,7 @@ import game.core.InstanceTemplate;
 import game.plugins.datatemplates.ProteinDSSPStructure;
 import game.plugins.datatemplates.ProteinHECStructure;
 import game.plugins.datatemplates.ProteinPrimaryStructure;
-import game.utils.MD5Checksum;
+import game.utils.Utils;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -44,7 +44,7 @@ public class FastaDatasetBuilder extends DatasetBuilder {
 
 	@Override
 	public Dataset buildDataset() {
-		Dataset ret = new Dataset(CACHEDIRECTORY, MD5Checksum.getMD5Checksum(file.getAbsolutePath()), shuffle);
+		Dataset ret = new Dataset(CACHEDIRECTORY, Utils.randomString(), shuffle);
 		
 		if (file.exists()) {
 			try {
