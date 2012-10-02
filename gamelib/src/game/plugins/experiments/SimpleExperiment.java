@@ -13,6 +13,7 @@ package game.plugins.experiments;
 import game.core.DatasetBuilder;
 import game.core.blocks.Graph;
 import game.core.experiments.FullExperiment;
+import game.core.experiments.FullResult;
 import game.plugins.constraints.CompatibleWith;
 
 public class SimpleExperiment extends FullExperiment {
@@ -29,14 +30,16 @@ public class SimpleExperiment extends FullExperiment {
 	}
 
 	@Override
-	protected void runExperiment(String outputDirectory) {
+	protected FullResult runExperiment(String outputDirectory) {
+		FullResult ret = new FullResult();
 		Graph graphClone = graph.cloneConfiguration(graph.name + "_trained");
 		updateStatus(0.01, "training graph...");
 		startAnotherTaskAndWait(0.50, graphClone, trainingDataset.buildDataset());
 		updateStatus(0.71, "training complete, testing phase...");
-		testedDatasets.add(classifyDataset(0.90, graphClone, testingDataset.buildDataset(), outputDirectory, "tested"));
-		trainedGraphs.add(graphClone);
+		ret.testedDatasets.add(classifyDataset(0.90, graphClone, testingDataset.buildDataset(), outputDirectory, "tested"));
+		ret.trainedGraphs.add(graphClone);
 		updateStatus(1.00, "experiment completed");
+		return ret;
 	}
 
 	@Override

@@ -91,7 +91,7 @@ public abstract class Configurable extends Observable implements Observer {
 		setOptionChecks("name", new LengthCheck(1));
 	}
 	
-	public static <T> T createFromConfiguration(File configFile) {
+	public static <T> T loadFromConfiguration(File configFile) {
 		return (T)configStream.fromXML(Utils.readFile(configFile));
 	}
 	
@@ -251,7 +251,7 @@ public abstract class Configurable extends Observable implements Observer {
 	public boolean loadConfiguration(File file) {
 		boolean ret = true;
 		
-		Configurable temporary = Configurable.createFromConfiguration(file);
+		Configurable temporary = Configurable.loadFromConfiguration(file);
 		if (temporary.getClass().equals(this.getClass())) {
 			for(String boundOption: getBoundOptionNames()) {
 				if (!temporary.getOption(boundOption).equals(this.getOption(boundOption))) {

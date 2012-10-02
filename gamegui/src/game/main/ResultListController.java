@@ -12,8 +12,8 @@ package game.main;
 
 import game.Settings;
 import game.configuration.Configurable;
-import game.core.Experiment;
 import game.core.Metric;
+import game.core.Result;
 import game.editorsystem.Editor;
 import game.editorsystem.EditorWindow;
 import game.editorsystem.Option;
@@ -44,14 +44,11 @@ public class ResultListController implements Initializable {
 		resultsView.getRoot().setExpanded(true);
 	}
 	
-	public void addCompletedExperiment(Experiment e) {
-		if (!e.completed)
-			return;
-		
-		TreeItem expItem = new TreeItem(e);
+	public void addResult(Result r) {
+		TreeItem expItem = new TreeItem(r);
 		
 		SortedSet<Implementation<Metric>> metrics = Settings.getPluginManager().
-				getCompatibleImplementationsOf(Metric.class, new CompatibleWith(new Temporary(e), "content"));
+				getCompatibleImplementationsOf(Metric.class, new CompatibleWith(new Temporary(r), "content"));
 		
 		for(Implementation<Metric> impl: metrics) {
 			TreeItem evaItem = new TreeItem(impl.getContent());
@@ -65,10 +62,10 @@ public class ResultListController implements Initializable {
 	public void onLoad(ActionEvent event) {
 		FileChooser chooser = new FileChooser();
 		chooser.setInitialDirectory(new File(Settings.RESULTSDIR));
-		chooser.setTitle("Load completed experiment");
+		chooser.setTitle("Load result");
 		File file = chooser.showOpenDialog(resultsView.getScene().getWindow());
 		if (file != null)
-			addCompletedExperiment((Experiment)Configurable.createFromConfiguration(file));
+			addResult((Result)Configurable.loadFromConfiguration(file));
 	}
 	
 	@FXML
@@ -76,10 +73,10 @@ public class ResultListController implements Initializable {
 		TreeItem selected = (TreeItem)resultsView.getSelectionModel().getSelectedItem();
 		if (selected != null) {
 			if (selected.getValue() instanceof Metric) {
-				Experiment e = (Experiment)selected.getParent().getValue();
+				Result r = (Result)selected.getParent().getValue();
 				Metric m = (Metric)selected.getValue();
 				if (!m.isReady())
-					m.evaluate(e);
+					m.evaluate(r);
 			}
 			Option option = new Option(selected.getValue());
 			Editor editor = option.getBestEditor(true);
@@ -106,7 +103,7 @@ public class ResultListController implements Initializable {
 	@FXML
 	public void onRemove(ActionEvent event) {
 		TreeItem selected = (TreeItem)resultsView.getSelectionModel().getSelectedItem();
-		if (selected != null && selected.getValue() instanceof Experiment) {
+		if (selected != null && selected.getValue() instanceof Result) {
 			resultsView.getRoot().getChildren().remove(selected);
 		}
 	}

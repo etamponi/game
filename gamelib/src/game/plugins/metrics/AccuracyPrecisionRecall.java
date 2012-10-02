@@ -12,9 +12,9 @@ package game.plugins.metrics;
 
 import game.core.Dataset;
 import game.core.Dataset.SampleIterator;
-import game.core.Experiment;
+import game.core.Result;
 import game.core.Sample;
-import game.core.experiments.FullExperiment;
+import game.core.experiments.FullResult;
 import game.core.metrics.FullMetric;
 import game.plugins.datatemplates.LabelTemplate;
 
@@ -36,24 +36,24 @@ public class AccuracyPrecisionRecall extends FullMetric {
 	}
 	
 	@Override
-	public boolean isCompatible(Experiment exp) {
-		return super.isCompatible(exp) &&
-				exp.template.outputTemplate instanceof LabelTemplate;
+	public boolean isCompatible(Result result) {
+		return super.isCompatible(result) &&
+				result.experiment.template.outputTemplate instanceof LabelTemplate;
 	}
 
 	@Override
-	public void evaluate(FullExperiment e) {
+	public void evaluate(FullResult result) {
 		if (isReady())
 			return;
 		
-		labels = e.template.outputTemplate.getOption("labels");
+		labels = result.experiment.template.outputTemplate.getOption("labels");
 		for(int k = 0; k < labels.size(); k++) {
 			singleTP.add(0.0);
 			singleP.add(0.0);
 			singleT.add(0.0);
 		}
 		
-		for(Dataset dataset: e.testedDatasets) {			
+		for(Dataset dataset: result.testedDatasets.getList(Dataset.class)) {			
 			SampleIterator it = dataset.sampleIterator(true);
 			while(it.hasNext()) {
 				Sample sample = it.next();

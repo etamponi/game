@@ -13,6 +13,7 @@ package game.main;
 import game.Settings;
 import game.core.Experiment;
 import game.core.LongTask.LongTaskUpdate;
+import game.core.Result;
 import game.utils.Log;
 
 import java.util.Observable;
@@ -29,7 +30,7 @@ import javafx.event.Event;
 import javafx.event.EventType;
 
 @SuppressWarnings("deprecation")
-public class ExperimentService extends Service<Experiment> {
+public class ExperimentService extends Service<Result> {
 	
 	public static final EventType<Event> FINISHED = new EventType<>();
 	
@@ -58,13 +59,16 @@ public class ExperimentService extends Service<Experiment> {
 	private SimpleThreadExecutor executor = new SimpleThreadExecutor();
 	
 	private IntegerProperty counter = new SimpleIntegerProperty(0);
-	private StringProperty currentExperiment = new SimpleStringProperty("");
+	private StringProperty currentExperimentName = new SimpleStringProperty("");
 	
 	private MainController controller;
 	
 	private boolean paused = false;
 	private boolean stopped = false;
 	private boolean finished = true;
+	
+	private Experiment currentExperiment;
+	private Observer experimentObserver;
 	
 	public ExperimentService(MainController controller) {
 		super();
@@ -91,6 +95,11 @@ public class ExperimentService extends Service<Experiment> {
 		executor.getThread().stop();
 		try {
 			executor.getThread().join();
+			if (currentExperiment != null && experimentObserver != null) {
+				currentExperiment.deleteObserver(experimentObserver);
+				currentExperiment = null;
+				experimentObserver = null;
+			}
 		} catch (InterruptedException e) {}
 	}
 	
@@ -104,7 +113,7 @@ public class ExperimentService extends Service<Experiment> {
 	
 	public void startList() { 
 		counter.set(0);
-		currentExperiment.set(controller.experimentList.get(0).toString());
+		currentExperimentName.set(controller.experimentList.get(0).toString());
 		paused = false;
 		stopped = false;
 		finished = false;
@@ -117,7 +126,7 @@ public class ExperimentService extends Service<Experiment> {
 	}
 	
 	public StringProperty currentExperimentProperty() {
-		return currentExperiment;
+		return currentExperimentName;
 	}
 	
 	public boolean hasFinished() {
@@ -125,30 +134,26 @@ public class ExperimentService extends Service<Experiment> {
 	}
 
 	@Override
-	protected Task<Experiment> createTask() {
-		return new Task<Experiment>() {
+	protected Task<Result> createTask() {
+		return new Task<Result>() {
 			@Override
-			protected Experiment call() throws Exception {
-				System.out.println("Total memory: " + Runtime.getRuntime().totalMemory());
-				System.out.println(" Free memory: " + Runtime.getRuntime().freeMemory());
-				
-				final Experiment e = (Experiment)controller.experimentList.get(counter.get());
-				Observer o = new Observer() {
+			protected Result call() throws Exception {
+				currentExperiment = (Experiment)controller.experimentList.get(counter.get());
+				experimentObserver = new Observer() {
 					@Override
 					public void update(Observable obs, Object m) {
 						if (m instanceof LongTaskUpdate) {
-							Log.write(e, "%6.2f%%: %s", e.getCurrentPercent()*100, e.getCurrentMessage());
-							updateMessage(e.getCurrentMessage());
-							updateProgress((long)(e.getCurrentPercent()*100), 100);
-//							try {
-//								Thread.sleep(100);
-//							} catch (InterruptedException e) {}
+							Log.write(currentExperiment, "%6.2f%%: %s", currentExperiment.getCurrentPercent()*100, currentExperiment.getCurrentMessage());
+							updateMessage(currentExperiment.getCurrentMessage());
+							updateProgress((long)(currentExperiment.getCurrentPercent()*100), 100);
 						}
 					}
 				};
-				e.addObserver(o);
-				Experiment ret = e.startExperiment(Settings.RESULTSDIR);
-				e.deleteObserver(o);
+				currentExperiment.addObserver(experimentObserver);
+				Result ret = currentExperiment.startExperiment(Settings.RESULTSDIR);
+				currentExperiment.deleteObserver(experimentObserver);
+				currentExperiment = null;
+				experimentObserver = null;
 				return ret;
 			}
 		};
@@ -157,13 +162,13 @@ public class ExperimentService extends Service<Experiment> {
 	@Override
 	protected void succeeded() {
 		super.succeeded();
-		Experiment completed = getValue();
+		Result result = getValue();
 		if (controller.addToResultList())
-			controller.getResultListController().addCompletedExperiment(completed);
+			controller.getResultListController().addResult(result);
 		counter.set(counter.get()+1);
 		if (counter.get() < controller.experimentList.size()) {
 			reset();
-			currentExperiment.set(controller.experimentList.get(counter.get()).toString());
+			currentExperimentName.set(controller.experimentList.get(counter.get()).toString());
 			start();
 		} else {
 			finished = true;

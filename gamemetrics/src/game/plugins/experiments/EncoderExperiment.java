@@ -11,13 +11,14 @@
 package game.plugins.experiments;
 
 import game.core.Experiment;
+import game.core.Result;
 
 public class EncoderExperiment extends Experiment {
 
 	@Override
-	protected void runExperiment(String outputDirectory) {
+	protected Result runExperiment(String outputDirectory) {
 		// TODO Auto-generated method stub
-
+		return null;
 	}
 
 	@Override

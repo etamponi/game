@@ -75,12 +75,13 @@ public class ConfigurableEditor extends Editor {
 		if (getModel() != null && getModel().getContent() != null) {
 			Configurable content = getModel().getContent();
 			
-			if (!isReadOnly()) {
+//			if (!isReadOnly()) {
 				Editor serializationEditor = new SerializationEditor();
+				serializationEditor.setReadOnly(isReadOnly());
 				serializationEditor.connect(getModel());
 				subEditors.add(serializationEditor);
 				pane.add(serializationEditor.getView(), 0, 0, 2, 1);
-			}
+//			}
 			
 			for (String optionName: content.getUnboundOptionNames()) {
 				if (hiddenOptions.contains(optionName))

@@ -10,8 +10,8 @@
  ******************************************************************************/
 package game.core;
 
-import java.util.Observable;
-import java.util.Observer;
+import java.io.File;
+
 
 
 public abstract class Experiment extends LongTask {
@@ -20,39 +20,23 @@ public abstract class Experiment extends LongTask {
 	
 	public InstanceTemplate template;
 	
-	public boolean completed = false;
-
-	public Experiment() {
-		setPrivateOptions("completed");
-	}
-	
-	public Experiment startExperiment(String prefixDirectory) {
+	public Result startExperiment(String prefixDirectory) {
 		return startTask(prefixDirectory);
 	}
 	
-	protected abstract void runExperiment(String outputDirectory);
+	protected abstract Result runExperiment(String outputDirectory);
 
 	@Override
 	protected Object execute(Object... params) {
 		String outputDirectory = params[0] + "/" + name;
-		final Experiment clone = cloneConfiguration();
-		Observer o = new Observer() {
-			@Override
-			public void update(Observable o, Object arg) {
-				if (arg instanceof LongTaskUpdate) {
-					updateStatus(clone.getCurrentPercent(), clone.getCurrentMessage());
-				}
-			}
-		};
-		clone.name = name;
-		if (!clone.completed) {
-			clone.addObserver(o);
-			clone.runExperiment(outputDirectory);
-			clone.deleteObserver(o);
-			clone.completed = true;
-		}
-		clone.saveConfiguration(outputDirectory + "/completed_"+name+".config.xml");
-		return clone;
+		File dir = new File(outputDirectory);
+		if (!dir.exists())
+			dir.mkdirs();
+		this.saveConfiguration(outputDirectory+"/"+name+".config.xml");
+		Result result = runExperiment(outputDirectory);
+		result.experiment = this;
+		result.saveConfiguration(outputDirectory + "/result_"+name+".config.xml");
+		return result;
 	}
 
 }

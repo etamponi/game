@@ -152,7 +152,7 @@ public class ConfigurableTest {
 		
 		objectA.saveConfiguration("testdata/testconfig.xml");
 		
-		Configurable objectC = Configurable.createFromConfiguration(new File("testdata/testconfig.xml"));
+		Configurable objectC = Configurable.loadFromConfiguration(new File("testdata/testconfig.xml"));
 		assertEquals("This is optionA1", objectC.getOption("optionA1"));
 		assertEquals("This is optionA2", objectC.getOption("optionA2"));
 		assertEquals("This is optionA3", objectC.getOption("optionA3"));

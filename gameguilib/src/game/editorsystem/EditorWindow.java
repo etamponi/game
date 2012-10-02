@@ -71,7 +71,7 @@ public class EditorWindow extends Stage {
 			public void handle(ActionEvent event) {
 				Option model = editor.getModel();
 				editor.disconnect();
-				if (!model.getContent().equals(original)) {
+				if (model.getContent() != null && !model.getContent().equals(original)) {
 					System.out.println("Reverting changes");
 					model.setContent(original);
 				}
@@ -111,9 +111,7 @@ public class EditorWindow extends Stage {
 		else
 			setTitle(model.getType().getSimpleName());
 		
-		if (editor.isReadOnly()) {
-			cancelButton.setVisible(false);
-		}
+		cancelButton.setDisable(editor.isReadOnly());
 		
 		showAndWait();
 	}

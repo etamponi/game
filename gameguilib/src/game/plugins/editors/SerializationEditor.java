@@ -58,7 +58,7 @@ public class SerializationEditor extends Editor {
 
 	@Override
 	public void updateView() {
-		
+		line.getItems().get(1).setDisable(isReadOnly());
 	}
 	
 	private void messageDialog(String title, String message) {

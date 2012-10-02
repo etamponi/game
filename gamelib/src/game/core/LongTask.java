@@ -29,7 +29,7 @@ public abstract class LongTask extends Configurable {
 	protected <T> T startTask(Object... params) {
 		updateStatus(0.0, "start task " + getTaskDescription());
 		Object ret = execute(params);
-		updateStatus(1.0, "task finished");
+		updateStatus(1.0, "task finished (" + getTaskDescription() + ")");
 		return (T)ret;
 	}
 	

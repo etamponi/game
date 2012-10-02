@@ -13,11 +13,11 @@ package game.core;
 import game.configuration.Configurable;
 import game.plugins.constraints.Compatible;
 
-public abstract class Metric<E extends Experiment> extends Configurable implements Compatible<Experiment> {
+public abstract class Metric<R extends Result> extends Configurable implements Compatible<Result> {
 	
 	public abstract boolean isReady();
 	
-	public abstract void evaluate(E e);
+	public abstract void evaluate(R result);
 	
 	public abstract String prettyPrint();
 	

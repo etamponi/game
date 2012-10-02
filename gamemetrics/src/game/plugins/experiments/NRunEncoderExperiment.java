@@ -10,13 +10,15 @@
  ******************************************************************************/
 package game.plugins.experiments;
 
+import game.core.Result;
+
 
 public class NRunEncoderExperiment extends EncoderExperiment {
 	
 	public int runs = 10;
 
 	@Override
-	protected void runExperiment(String outputDirectory) {
+	protected Result runExperiment(String outputDirectory) {
 		/*Dataset ds = dataset.buildDataset();
 		EncodedSamples samples = ds.encode(inputEncoder, outputEncoder);
 		
@@ -26,6 +28,7 @@ public class NRunEncoderExperiment extends EncoderExperiment {
 			encodedDatasets.add(run);
 			samples.removeAll(run);
 		}*/
+		return null;
 	}
 
 	@Override

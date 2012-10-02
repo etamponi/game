@@ -10,15 +10,15 @@
  ******************************************************************************/
 package game.core.metrics;
 
-import game.core.Experiment;
 import game.core.Metric;
-import game.core.experiments.FullExperiment;
+import game.core.Result;
+import game.core.experiments.FullResult;
 
-public abstract class FullMetric extends Metric<FullExperiment> {
+public abstract class FullMetric extends Metric<FullResult> {
 
 	@Override
-	public boolean isCompatible(Experiment exp) {
-		return exp instanceof FullExperiment;
+	public boolean isCompatible(Result result) {
+		return result instanceof FullResult;
 	}
 	
 }

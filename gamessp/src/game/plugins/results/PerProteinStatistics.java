@@ -10,12 +10,12 @@
  ******************************************************************************/
 package game.plugins.results;
 
+import game.core.DataTemplate;
 import game.core.Dataset;
 import game.core.Dataset.InstanceIterator;
-import game.core.DataTemplate;
-import game.core.Experiment;
 import game.core.Instance;
-import game.core.experiments.FullExperiment;
+import game.core.Result;
+import game.core.experiments.FullResult;
 import game.core.metrics.FullMetric;
 import game.plugins.datatemplates.ProteinDSSPStructure;
 import game.plugins.datatemplates.ProteinHECStructure;
@@ -33,10 +33,10 @@ public class PerProteinStatistics extends FullMetric {
 	}
 
 	@Override
-	public boolean isCompatible(Experiment object) {
-		return super.isCompatible(object) && 
-				(object.template.outputTemplate instanceof ProteinHECStructure ||
-				 object.template.outputTemplate instanceof ProteinDSSPStructure);
+	public boolean isCompatible(Result result) {
+		return super.isCompatible(result) && 
+				(result.experiment.template.outputTemplate instanceof ProteinHECStructure ||
+				 result.experiment.template.outputTemplate instanceof ProteinDSSPStructure);
 	}
 
 	@Override
@@ -45,9 +45,9 @@ public class PerProteinStatistics extends FullMetric {
 	}
 
 	@Override
-	public void evaluate(FullExperiment experiment) {
-		testedDatasets = experiment.testedDatasets;
-		inputTemplate = experiment.template.inputTemplate;
+	public void evaluate(FullResult result) {
+		testedDatasets = result.testedDatasets;
+		inputTemplate = result.experiment.template.inputTemplate;
 	}
 
 	@Override

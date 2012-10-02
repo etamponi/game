@@ -148,12 +148,12 @@ public class Utils {
 	}
 	*/
 
-	public static int maxIndex(double[] element) {
+	public static int maxIndex(double[] v) {
 		int maxIndex = 0;
-		double max = element[0];
-		for(int i = 1; i < element.length; i++) {
-			if (element[i] > max) {
-				max = element[i];
+		double max = v[0];
+		for(int i = 1; i < v.length; i++) {
+			if (v[i] > max) {
+				max = v[i];
 				maxIndex = i;
 			}
 		}

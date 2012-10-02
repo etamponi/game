@@ -10,7 +10,7 @@
  ******************************************************************************/
 package game.plugins.metrics;
 
-import game.plugins.experiments.EncoderExperiment;
+import game.plugins.experiments.EncoderResult;
 
 public class MultipleCorrelation extends EncoderMetric {
 
@@ -21,7 +21,7 @@ public class MultipleCorrelation extends EncoderMetric {
 	}
 
 	@Override
-	public void evaluate(EncoderExperiment e) {
+	public void evaluate(EncoderResult result) {
 		
 	}
 

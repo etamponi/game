@@ -10,14 +10,14 @@
  ******************************************************************************/
 package game.plugins.metrics;
 
-import game.core.Experiment;
 import game.core.Metric;
-import game.plugins.experiments.EncoderExperiment;
+import game.core.Result;
+import game.plugins.experiments.EncoderResult;
 
-public class EncoderMetric extends Metric<EncoderExperiment> {
+public class EncoderMetric extends Metric<EncoderResult> {
 
 	@Override
-	public boolean isCompatible(Experiment object) {
+	public boolean isCompatible(Result result) {
 		// TODO Auto-generated method stub
 		return false;
 	}
@@ -29,7 +29,7 @@ public class EncoderMetric extends Metric<EncoderExperiment> {
 	}
 
 	@Override
-	public void evaluate(EncoderExperiment e) {
+	public void evaluate(EncoderResult result) {
 		// TODO Auto-generated method stub
 
 	}

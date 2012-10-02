@@ -15,6 +15,7 @@ import game.core.Dataset;
 import game.core.DatasetBuilder;
 import game.core.blocks.Graph;
 import game.core.experiments.FullExperiment;
+import game.core.experiments.FullResult;
 import game.plugins.constraints.CompatibleWith;
 
 import java.util.List;
@@ -35,8 +36,9 @@ public class KFoldCrossValidation extends FullExperiment {
 	}
 
 	@Override
-	protected void runExperiment(String outputDirectory) {
+	protected FullResult runExperiment(String outputDirectory) {
 		Dataset complete = dataset.buildDataset();
+		FullResult ret = new FullResult();
 		
 		List<Dataset> testings = complete.getFolds(folds);
 		List<Dataset> trainings = complete.getComplementaryFolds(testings);
@@ -46,11 +48,12 @@ public class KFoldCrossValidation extends FullExperiment {
 			updateStatus(getOverallStatus(0.01, i), "training graph for fold " + (i+1) + "/" + folds);
 			startAnotherTaskAndWait(getOverallStatus(0.70, i), graphClone, trainings.get(i));
 			updateStatus(getOverallStatus(0.70, i), "training complete, testing phase...");
-			testedDatasets.add(classifyDataset(getOverallStatus(0.99, i), graphClone, testings.get(i), outputDirectory, "tested_"+i));
-			trainedGraphs.add(graphClone);
+			ret.testedDatasets.add(classifyDataset(getOverallStatus(0.99, i), graphClone, testings.get(i), outputDirectory, "tested_"+i));
+			ret.trainedGraphs.add(graphClone);
 			updateStatus(getOverallStatus(1.00, i), "finished fold " + (i+1) + "/" + folds);
 		}
 		updateStatus(1.00, "experiment completed");
+		return ret;
 	}
 	
 	private double getOverallStatus(double foldStatus, int fold) {

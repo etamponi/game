@@ -63,7 +63,7 @@ public class Encoding extends ArrayList<double[]> {
 		
 		int baseElementSize = getElementSize() / initialWindowSize;
 		int finalElementSize = baseElementSize * finalWindowSize;
-		int startingPos = (initialWindowSize / 2 - (initialWindowSize % 2 == 0 ? 1 : 0) - finalWindowSize / 2)*baseElementSize;
+		int startingPos = ((initialWindowSize - finalWindowSize) / 2 - ((initialWindowSize+finalWindowSize) % 2 == 1 ? 1 : 0))*baseElementSize;
 		for(double[] element: this) {
 			double[] newElement = new double[finalElementSize];
 			System.arraycopy(element, startingPos, newElement, 0, finalElementSize);
