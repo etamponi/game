@@ -17,7 +17,6 @@ import game.configuration.ConfigurableList;
 import game.core.Experiment;
 import game.editorsystem.EditorWindow;
 import game.editorsystem.Option;
-import game.editorsystem.Editor;
 import game.plugins.PluginManager;
 import game.plugins.editors.ConfigurableEditor;
 import game.plugins.editors.SerializationEditor;
@@ -86,14 +85,18 @@ public class MainController extends Configurable implements Initializable {
 	@FXML
 	private CheckBox addToResults;
 
+	private SerializationEditor serialization;
+
+	private ListEditor editor;
+
 	@Override
 	public void initialize(URL location, ResourceBundle resources) {
 		Option model = new Option(this, "experimentList");
-		Editor serialization = new SerializationEditor();
+		this.serialization = new SerializationEditor();
 		serialization.connect(model);
 		addPluginManagerEditorToToolBar((ToolBar)serialization.getView());
 		
-		Editor editor = new ListEditor();
+		this.editor = new ListEditor();
 		editor.connect(model);
 		experimentsRoot.getChildren().addAll(serialization.getView(), editor.getView());
 		experimentsRoot.setSpacing(10);
@@ -149,6 +152,8 @@ public class MainController extends Configurable implements Initializable {
 			public void handle(WorkerStateEvent event) {
 				if (!service.isStopped())
 					service.getException().printStackTrace();
+				editor.setReadOnly(false);
+				serialization.setReadOnly(false);
 				controlButtons();
 			}
 		});
@@ -156,10 +161,14 @@ public class MainController extends Configurable implements Initializable {
 		service.addEventHandler(ExperimentService.FINISHED, new EventHandler<Event>() {
 			@Override
 			public void handle(Event event) {
+				editor.setReadOnly(false);
+				serialization.setReadOnly(false);
 				controlButtons();
 			}
 		});
 
+		editor.setReadOnly(true);
+		serialization.setReadOnly(true);
 		service.startList();
 		disableButtons(true, false, false);
 	}
