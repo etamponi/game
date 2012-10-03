@@ -1,9 +1,7 @@
 /logs
-/graphs
 /plugins.config.xml
-/experiments
 /results
 /sampledata
 /local
-/datasets
 /dataset_cache
+/bin
