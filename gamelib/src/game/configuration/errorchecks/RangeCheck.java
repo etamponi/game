@@ -14,8 +14,10 @@ import game.configuration.ErrorCheck;
 
 public class RangeCheck implements ErrorCheck<Number> {
 	
-	public static final int LOWER = 0;
-	public static final int UPPER = 1;
+	public enum RangeType {
+		LOWER,
+		UPPER
+	}
 	
 	private double lowerBound = Double.MIN_VALUE;
 	private double upperBound = Double.MAX_VALUE;
@@ -26,10 +28,10 @@ public class RangeCheck implements ErrorCheck<Number> {
 		this.upperBound = upperBound;
 	}
 	
-	public RangeCheck(int type, double bound) {
-		if (type == LOWER)
+	public RangeCheck(RangeType type, double bound) {
+		if (type == RangeType.LOWER)
 			this.lowerBound = bound;
-		if (type == UPPER)
+		if (type == RangeType.UPPER)
 			this.upperBound = bound;
 	}
 

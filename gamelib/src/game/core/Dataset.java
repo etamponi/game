@@ -239,6 +239,11 @@ public class Dataset extends Configurable {
 			prepareForNextInstance();
 		}
 		
+		public void reset() {
+			instanceIterator = instanceIterator();
+			prepareForNextInstance();
+		}
+		
 		private void prepareForNextInstance() {
 			Instance inst = instanceIterator.next();
 			currentInputSequence = inst.getInput();

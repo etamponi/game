@@ -11,6 +11,7 @@
 package game.plugins.experiments;
 
 import game.configuration.errorchecks.RangeCheck;
+import game.configuration.errorchecks.RangeCheck.RangeType;
 import game.core.Dataset;
 import game.core.DatasetBuilder;
 import game.core.blocks.Graph;
@@ -30,7 +31,7 @@ public class KFoldCrossValidation extends FullExperiment {
 		setOptionBinding("template", "dataset.template");
 		setOptionConstraints("dataset", new CompatibleWith(this, "template"));
 		
-		setOptionChecks("folds", new RangeCheck(RangeCheck.LOWER, 2));
+		setOptionChecks("folds", new RangeCheck(RangeType.LOWER, 2));
 		
 		setPrivateOptions("trainedGraphs");
 	}

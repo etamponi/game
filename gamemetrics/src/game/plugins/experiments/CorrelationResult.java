@@ -8,27 +8,27 @@
  * Contributors:
  *     Emanuele Tamponi - initial API and implementation
  ******************************************************************************/
-package game.plugins.metrics;
+package game.plugins.experiments;
 
-import game.plugins.experiments.EncoderResult;
+import game.core.Result;
 
-public class MultipleCorrelation extends EncoderMetric {
+import java.util.ArrayList;
+import java.util.List;
 
-	@Override
-	public boolean isReady() {
-		// TODO Auto-generated method stub
-		return false;
+import org.apache.commons.math3.linear.RealVector;
+
+public class CorrelationResult extends Result {
+	
+	private List<RealVector> perClassMeasures = new ArrayList<>();
+	
+	private List<Double> overallMeasures = new ArrayList<>();
+
+	public List<RealVector> getPerClassMeasures() {
+		return perClassMeasures;
 	}
 
-	@Override
-	public void evaluate(EncoderResult result) {
-		
-	}
-
-	@Override
-	public String prettyPrint() {
-		// TODO Auto-generated method stub
-		return null;
+	public List<Double> getOverallMeasures() {
+		return overallMeasures;
 	}
 
 }
