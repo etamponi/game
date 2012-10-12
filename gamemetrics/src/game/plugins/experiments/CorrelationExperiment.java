@@ -50,7 +50,7 @@ public class CorrelationExperiment extends Experiment {
 		setOptionConstraints("outputEncoder", new CompatibleWith(this, "template.outputTemplate"));
 		
 		setOptionChecks("folds", new RangeCheck(RangeType.LOWER, 2.0));
-		setOptionChecks("samples", new RangeCheck(RangeType.LOWER, 100.0));
+		setOptionChecks("samples", new RangeCheck(RangeType.LOWER, 10.0));
 	}
 
 	@Override
@@ -61,9 +61,13 @@ public class CorrelationExperiment extends Experiment {
 		List<Dataset> split = complete.getFolds(folds);
 		for(Dataset d: split) {
 			SampleIterator it;
-			it = d.encodedSampleIterator(inputEncoder, new OneHotEncoder(), false);
+			Encoder encoder = new OneHotEncoder();
+			encoder.setOption("template", template.outputTemplate);
+			it = d.encodedSampleIterator(inputEncoder, encoder, false);
 			ret.getPerClassMeasures().add(measure.evaluate(it, samples));
-			it = d.encodedSampleIterator(inputEncoder, new IntegerEncoder(), false);
+			encoder = new IntegerEncoder();
+			encoder.setOption("template", template.outputTemplate);
+			it = d.encodedSampleIterator(inputEncoder, encoder, false);
 			ret.getOverallMeasures().add(measure.evaluate(it, samples).getEntry(0));
 		}
 		
@@ -72,8 +76,7 @@ public class CorrelationExperiment extends Experiment {
 
 	@Override
 	public String getTaskDescription() {
-		// TODO Auto-generated method stub
-		return null;
+		return "correlation experiment with " + folds + " folds, " + samples + " samples per fold and " + inputEncoder.getClass().getSimpleName() + " as encoder.";
 	}
 
 }

@@ -22,7 +22,7 @@ public class MultipleDetermination extends CorrelationMeasure {
 		
 		for(int col = 0; col < cols; col++) {
 			it.reset();
-			for(int i = 0; i < samples; i++) {
+			for(int i = 0; i < samples && it.hasNext(); i++) {
 				Sample sample = it.next();
 				Y[i] = sample.getEncodedOutput()[col];
 				X[i] = sample.getEncodedInput();

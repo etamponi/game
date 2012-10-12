@@ -19,9 +19,13 @@ import org.apache.commons.math3.linear.RealVector;
 
 public class CorrelationResult extends Result {
 	
-	private List<RealVector> perClassMeasures = new ArrayList<>();
+	public List<RealVector> perClassMeasures = new ArrayList<>();
 	
-	private List<Double> overallMeasures = new ArrayList<>();
+	public List<Double> overallMeasures = new ArrayList<>();
+	
+	public CorrelationResult() {
+		setPrivateOptions("perClassMeasures", "overallMeasures");
+	}
 
 	public List<RealVector> getPerClassMeasures() {
 		return perClassMeasures;

@@ -72,7 +72,6 @@ public class EditorWindow extends Stage {
 				Option model = editor.getModel();
 				editor.disconnect();
 				if (model.getContent() != null && !model.getContent().equals(original)) {
-					System.out.println("Reverting changes");
 					model.setContent(original);
 				}
 				close();
@@ -95,7 +94,6 @@ public class EditorWindow extends Stage {
 				Option model = editor.getModel();
 				editor.disconnect();
 				if (model.getContent() != null && !model.getContent().equals(original)) {
-					System.out.println("Reverting changes");
 					model.setContent(original);
 				}
 			}
