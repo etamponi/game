@@ -375,7 +375,7 @@ public abstract class Configurable extends Observable implements Observer {
 		if (name != null)
 			return name;
 		else
-			return String.format("%s%03d", getClass().getSimpleName(), hashCode() % 1000);
+			return getClass().getSimpleName();
 	}
 	
 	protected void propagateUpdate(String changedOption, Object setter) {
