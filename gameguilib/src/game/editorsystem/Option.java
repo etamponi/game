@@ -90,10 +90,8 @@ public class Option {
 	}
 	
 	public Editor getBestEditor(boolean runtimeClass) {
-		PluginManager manager = Settings.getPluginManager();
-		
 		Class type = getType(runtimeClass);
-		Set<Implementation<Editor>> editors = manager.getCompatibleImplementationsOf(Editor.class, new CanEditConstraint(type));
+		Set<Implementation<Editor>> editors = PluginManager.getCompatibleImplementationsOf(Editor.class, new CanEditConstraint(type));
 		Iterator<Implementation<Editor>> it = editors.iterator();
 		
 		if (!it.hasNext())

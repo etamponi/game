@@ -19,18 +19,13 @@ public class Settings {
 	public static final String CONFIGFILE = "plugins.config.xml";
 	public static final String RESULTSDIR = "results";
 	
-	private static PluginManager manager = new PluginManager();
-	
 	static {
+		PluginManager manager = new PluginManager();
 		File config = new File(CONFIGFILE);
 		if (!config.exists())
 			manager.saveConfiguration(CONFIGFILE);
 		else
 			manager.loadConfiguration(CONFIGFILE);
+		manager.setAsManager();
 	}
-	
-	public static PluginManager getPluginManager() {
-		return manager;
-	}
-	
 }

@@ -42,8 +42,9 @@ public class PluginManagerTest {
 	public void test() {
 		PluginManager manager = new PluginManager();
 		manager.setOption("packages.add", "testgame");
+		manager.setAsManager();
 		
-		Set<Class> set = classSet(manager.getImplementationsOf(Parent.class));
+		Set<Class> set = classSet(PluginManager.getImplementationsOf(Parent.class));
 		Set<Class> real = new HashSet<>();
 		real.add(ChildAA.class);
 		real.add(ChildB.class);
@@ -52,14 +53,14 @@ public class PluginManagerTest {
 		assertEquals(4, set.size());
 		assertTrue(set.containsAll(real));
 		
-		set = classSet(manager.getImplementationsOf(Interface.class));
+		set = classSet(PluginManager.getImplementationsOf(Interface.class));
 		real.clear();
 		real.add(ChildAA.class);
 		real.add(ChildC.class);
 		assertEquals(2, set.size());
 		assertTrue(set.containsAll(real));
 		
-		set = classSet(manager.getCompatibleImplementationsOf(Parent.class, new Constraint() {
+		set = classSet(PluginManager.getCompatibleImplementationsOf(Parent.class, new Constraint() {
 			@Override
 			public boolean isValid(Object o) {
 				return o.getClass().getSimpleName().length() < 8;

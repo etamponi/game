@@ -32,7 +32,7 @@ public abstract class Experiment extends LongTask {
 		File dir = new File(outputDirectory);
 		if (!dir.exists())
 			dir.mkdirs();
-		this.saveConfiguration(outputDirectory+"/"+name+".config.xml");
+		this.saveConfiguration(outputDirectory+"/experiment_"+name+".config.xml");
 		Result result = runExperiment(outputDirectory);
 		result.experiment = this;
 		result.saveConfiguration(outputDirectory + "/result_"+name+".config.xml");

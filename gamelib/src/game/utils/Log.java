@@ -10,12 +10,17 @@
  ******************************************************************************/
 package game.utils;
 
+import game.core.LongTask;
+import game.core.LongTask.LongTaskUpdate;
+
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.text.DateFormat;
 import java.util.Date;
+import java.util.Observable;
+import java.util.Observer;
 
 public class Log {
 	
@@ -34,7 +39,7 @@ public class Log {
 	
 	public static void write(Object prefix, String format, Object... args) {
 		if (logsDirectory == null)
-			return;
+			setLogsDirectory("logs/");
 		
 		String fileName = logsDirectory.getAbsolutePath() + "/logging_" + prefix + ".log.txt";
 		
@@ -54,6 +59,37 @@ public class Log {
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
+	}
+	
+	public static class Logger implements Observer {
+		
+		private LongTask task;
+		
+		public Logger(LongTask task) {
+			this.task = task;
+			task.addObserver(this);
+		}
+
+		@Override
+		public void update(Observable o, Object arg) {
+			if (arg instanceof LongTaskUpdate) {
+				Log.write(task, "%6.2f%%: %s", task.getCurrentPercent()*100, task.getCurrentMessage());
+			}
+		}
+		
+		public void stop() {
+			task.deleteObserver(this);
+		}
+		
+		public void start() {
+			task.addObserver(this);
+		}
+
+		@Override
+		protected void finalize() throws Throwable {
+			stop();
+		}
+		
 	}
 
 }

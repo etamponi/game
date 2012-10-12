@@ -187,7 +187,8 @@ public class EditorSystemTest extends Application {
 
 	@Test
 	public void test() throws Exception {
-		Settings.getPluginManager().setOption("packages.add", "testgame");
+		new Settings();
+		PluginManager.setOption("packages.add", "testgame");
 		launch();
 	}
 

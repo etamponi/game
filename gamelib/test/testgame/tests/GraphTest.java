@@ -129,6 +129,7 @@ public class GraphTest {
 		PluginManager manager = new PluginManager();
 		manager.setOption("packages.remove", "game");
 		manager.setOption("packages.add", "testgame");
+		manager.setAsManager();
 		
 		Graph graph = new Graph();
 		
@@ -141,7 +142,7 @@ public class GraphTest {
 		graph.setOption("template.outputTemplate.labels.add", "C");
 		
 		Configurable classifiers = graph.getOption("classifiers");
-		Set<Class> set = classSet(classifiers.getCompatibleOptionImplementations("*", manager));
+		Set<Class> set = classSet(classifiers.getCompatibleOptionImplementations("*"));
 		Set<Class> real = new HashSet<>();
 		real.add(ClassifierImplA.class);
 		assertEquals(real.size(), set.size());
@@ -153,7 +154,7 @@ public class GraphTest {
 		graph.setOption("outputClassifier", graph.getOption("classifiers.0"));
 		
 		Configurable object = graph.getOption("outputClassifier");
-		set = classSet(object.getCompatibleOptionImplementations("outputEncoder", manager));
+		set = classSet(object.getCompatibleOptionImplementations("outputEncoder"));
 		real.clear();
 		real.add(EncoderImplB.class);
 		real.add(EncoderImplC.class);
@@ -163,7 +164,7 @@ public class GraphTest {
 		graph.setOption("outputClassifier.outputEncoder", new EncoderImplB());
 		assertEquals(graph.getOption("template.outputTemplate"), graph.getOption("outputClassifier.outputEncoder.template"));
 		
-		set = classSet(graph.getCompatibleOptionImplementations("decoder", manager));
+		set = classSet(graph.getCompatibleOptionImplementations("decoder"));
 		real.clear();
 		real.add(DecoderImplB.class);
 		assertEquals(real.size(), set.size());
@@ -172,14 +173,14 @@ public class GraphTest {
 		assertEquals(graph.getOption("outputClassifier.outputEncoder"), graph.getOption("decoder.encoder"));
 		
 		object = graph.getOption("inputEncoders");
-		set = classSet(object.getCompatibleOptionImplementations("*", manager));
+		set = classSet(object.getCompatibleOptionImplementations("*"));
 		real.clear();
 		real.add(EncoderImplA.class);
 		assertEquals(real.size(), set.size());
 		assertTrue(set.containsAll(real));
 		
 		graph.setOption("inputEncoders.add", new EncoderImplA());
-		set = classSet(object.getCompatibleOptionImplementations("0", manager));
+		set = classSet(object.getCompatibleOptionImplementations("0"));
 		assertEquals(real.size(), set.size());
 		assertTrue(set.containsAll(real));
 		

@@ -215,8 +215,8 @@ public abstract class Configurable extends Observable implements Observer {
 		return ret;
 	}
 	
-	public <T> SortedSet<Implementation<T>> getCompatibleOptionImplementations(String optionName, PluginManager manager) {
-		return manager.getCompatibleImplementationsOf(getOptionType(optionName), getOptionConstraints(optionName));
+	public <T> SortedSet<Implementation<T>> getCompatibleOptionImplementations(String optionName) {
+		return PluginManager.getCompatibleImplementationsOf(getOptionType(optionName), getOptionConstraints(optionName));
 	}
 	
 	public Class getOptionType(String optionName) {

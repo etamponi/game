@@ -10,7 +10,6 @@
  ******************************************************************************/
 package game.plugins;
 
-import game.configuration.Change;
 import game.configuration.Configurable;
 import game.configuration.ConfigurableList;
 import game.configuration.errorchecks.ListMustContainCheck;
@@ -24,8 +23,6 @@ import java.net.URLClassLoader;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Observable;
-import java.util.Observer;
 import java.util.Set;
 import java.util.SortedSet;
 import java.util.TreeSet;
@@ -43,9 +40,11 @@ public class PluginManager extends Configurable {
 	
 	public ConfigurableList paths = new ConfigurableList(this, File.class);
 	
+	private static PluginManager manager = new PluginManager(); 
+	
 	public PluginManager() {
 		setOptionChecks("packages", new ListMustContainCheck("game"));
-		
+		/*
 		this.addObserver(new Observer() {
 			@Override
 			public void update(Observable o, Object m) {
@@ -57,11 +56,11 @@ public class PluginManager extends Configurable {
 				}
 			}
 		});
-		
+		*/
 		packages.add("game");
 	}
 	
-	private void reset() {
+	public void setAsManager() {
 		ConfigurationBuilder conf = new ConfigurationBuilder();
 		
 		List<File> paths = getExistentPaths(this.paths.getList(File.class));
@@ -91,6 +90,8 @@ public class PluginManager extends Configurable {
 		conf.addUrls(ClasspathHelper.forClassLoader());
 		
 		internal = new Reflections(conf);
+		
+		manager = this;
 	}
 	
 	private List<File> getExistentPaths(List<File> paths) {
@@ -104,8 +105,8 @@ public class PluginManager extends Configurable {
 		return ret;
 	}
 	
-	public <T> SortedSet<Implementation<T>> getImplementationsOf(Class<T> base) {
-		Set<Class<? extends T>> all = internal.getSubTypesOf(base);
+	public static <T> SortedSet<Implementation<T>> getImplementationsOf(Class<T> base) {
+		Set<Class<? extends T>> all = manager.internal.getSubTypesOf(base);
 		SortedSet<Implementation<T>> ret = new TreeSet<>();
 		
 		try {
@@ -122,12 +123,12 @@ public class PluginManager extends Configurable {
 		return ret;
 	}
 	
-	public <T> SortedSet<Implementation<T>> getCompatibleImplementationsOf(Class<T> base, Constraint constraint) {
+	public static <T> SortedSet<Implementation<T>> getCompatibleImplementationsOf(Class<T> base, Constraint constraint) {
 		List<Constraint> temp = new ArrayList<>(1); temp.add(constraint);
 		return getCompatibleImplementationsOf(base, temp);
 	}
 	
-	public <T> SortedSet<Implementation<T>> getCompatibleImplementationsOf(Class<T> base, List<Constraint> constraints) {
+	public static <T> SortedSet<Implementation<T>> getCompatibleImplementationsOf(Class<T> base, List<Constraint> constraints) {
 		Set<Implementation<T>> all = getImplementationsOf(base);
 		SortedSet<Implementation<T>> ret = new TreeSet<>();
 		
