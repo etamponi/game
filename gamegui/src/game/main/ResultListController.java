@@ -19,6 +19,7 @@ import game.editorsystem.EditorWindow;
 import game.editorsystem.Option;
 import game.editorsystem.Option.Temporary;
 import game.plugins.Implementation;
+import game.plugins.PluginManager;
 import game.plugins.constraints.CompatibleWith;
 
 import java.io.File;
@@ -47,7 +48,7 @@ public class ResultListController implements Initializable {
 	public void addResult(Result r) {
 		TreeItem expItem = new TreeItem(r);
 		
-		SortedSet<Implementation<Metric>> metrics = Settings.getPluginManager().
+		SortedSet<Implementation<Metric>> metrics = PluginManager.
 				getCompatibleImplementationsOf(Metric.class, new CompatibleWith(new Temporary(r), "content"));
 		
 		for(Implementation<Metric> impl: metrics) {

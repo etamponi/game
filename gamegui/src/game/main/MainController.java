@@ -58,8 +58,6 @@ public class MainController extends Configurable implements Initializable {
 	
 	public final ConfigurableList experimentList = new ConfigurableList(this, Experiment.class);
 	
-	public final PluginManager manager = Settings.getPluginManager();
-	
 	private ExperimentService service;
 	
 	private ResultListController resultListController;
@@ -128,8 +126,10 @@ public class MainController extends Configurable implements Initializable {
 		pmButton.setOnAction(new EventHandler<ActionEvent>() {
 			@Override
 			public void handle(ActionEvent event) {
-				new EditorWindow(new ConfigurableEditor()).startEdit(new Option(MainController.this, "manager"));
-				Settings.getPluginManager().saveConfiguration(Settings.CONFIGFILE);
+				PluginManager manager = PluginManager.get();
+				new EditorWindow(new ConfigurableEditor()).startEdit(new Option(manager));
+				manager.saveConfiguration(Settings.CONFIGFILE);
+				manager.setAsManager();
 			}
 		});
 		toolbar.getItems().addAll(new Separator(), pmButton);

@@ -10,7 +10,6 @@
  ******************************************************************************/
 package game.editorsystem;
 
-import game.Settings;
 import game.configuration.Configurable;
 import game.editorsystem.constraints.CanEditConstraint;
 import game.plugins.Implementation;
@@ -79,7 +78,7 @@ public class Option {
 	}
 	
 	public <T> SortedSet<Implementation<T>> getCompatibleImplementations() {
-		return owner.getCompatibleOptionImplementations(optionName, Settings.getPluginManager());
+		return owner.getCompatibleOptionImplementations(optionName);
 	}
 	
 	public boolean isBound() {

@@ -11,6 +11,7 @@
 package game;
 
 import game.plugins.PluginManager;
+import game.utils.Log;
 
 import java.io.File;
 
@@ -18,8 +19,9 @@ public class Settings {
 	
 	public static final String CONFIGFILE = "plugins.config.xml";
 	public static final String RESULTSDIR = "results";
+	public static final String LOGSDIR = "logs";
 	
-	static {
+	public static void initialize() {
 		PluginManager manager = new PluginManager();
 		File config = new File(CONFIGFILE);
 		if (!config.exists())
@@ -27,5 +29,7 @@ public class Settings {
 		else
 			manager.loadConfiguration(CONFIGFILE);
 		manager.setAsManager();
+		
+		Log.setLogsDirectory(LOGSDIR);
 	}
 }

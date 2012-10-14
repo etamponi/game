@@ -1,10 +1,10 @@
 #Fat Jar Configuration File
-#Fri Oct 12 10:55:41 CEST 2012
+#Sun Oct 14 15:39:03 CEST 2012
 onejar.license.required=true
 manifest.classpath=
 manifest.removesigners=true
 onejar.checkbox=false
-jarname=dist\\gamewrappers.jar
+jarname=../gamegui/plugins/gamewrappers.jar
 manifest.mergeall=true
 manifest.mainclass=
 manifest.file=<createnew>

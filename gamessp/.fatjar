@@ -1,10 +1,10 @@
 #Fat Jar Configuration File
-#Fri Oct 12 10:55:27 CEST 2012
+#Sun Oct 14 15:40:40 CEST 2012
 onejar.license.required=true
 manifest.classpath=
 manifest.removesigners=true
 onejar.checkbox=false
-jarname=dist/gamessp.jar
+jarname=../gamegui/plugins/gamessp.jar
 manifest.mergeall=true
 manifest.mainclass=
 manifest.file=<createnew>

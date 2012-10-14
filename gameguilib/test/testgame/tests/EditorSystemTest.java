@@ -20,10 +20,11 @@ import game.core.InstanceTemplate;
 import game.core.blocks.Encoder;
 import game.core.blocks.Graph;
 import game.core.blocks.Transducer;
-import game.editorsystem.Option;
 import game.editorsystem.Editor;
+import game.editorsystem.Option;
 import game.plugins.Constraint;
 import game.plugins.Implementation;
+import game.plugins.PluginManager;
 import game.plugins.datatemplates.LabelTemplate;
 import game.plugins.datatemplates.VectorTemplate;
 import game.plugins.editors.ImplementationChooserEditor;
@@ -187,8 +188,10 @@ public class EditorSystemTest extends Application {
 
 	@Test
 	public void test() throws Exception {
-		new Settings();
-		PluginManager.setOption("packages.add", "testgame");
+		Settings.initialize();
+		PluginManager manager = PluginManager.get();
+		manager.setOption("packages.add", "testgame");
+		manager.setAsManager();
 		launch();
 	}
 

@@ -42,6 +42,10 @@ public class PluginManager extends Configurable {
 	
 	private static PluginManager manager = new PluginManager(); 
 	
+	public static PluginManager get() {
+		return manager;
+	}
+	
 	public PluginManager() {
 		setOptionChecks("packages", new ListMustContainCheck("game"));
 		/*
