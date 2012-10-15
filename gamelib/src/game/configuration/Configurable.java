@@ -36,14 +36,13 @@ import java.util.SortedSet;
 
 import com.thoughtworks.xstream.XStream;
 import com.thoughtworks.xstream.annotations.XStreamOmitField;
-import com.thoughtworks.xstream.converters.Converter;
 
 public abstract class Configurable extends Observable implements Observer {
 	
 	@XStreamOmitField
 	private static final XStream configStream = new XStream();
 	@XStreamOmitField
-	private static ConfigurationConverter converter = new ConfigurationConverter();
+	private static Set<BaseConverter> converters = new HashSet<>();
 	
 	private class RequestForBoundOptions {
 		private List<String> boundOptions;
@@ -82,7 +81,8 @@ public abstract class Configurable extends Observable implements Observer {
 	protected boolean notify = true;
 	
 	static {
-		configStream.registerConverter(converter);
+		registerConverter(new ConfigurableConverter());
+		registerConverter(new ConfigurableCollectionConverter());
 	}
 	
 	public Configurable() {
@@ -97,11 +97,13 @@ public abstract class Configurable extends Observable implements Observer {
 	
 	public static void setClassLoader(ClassLoader loader) {
 		configStream.setClassLoader(loader);
-		converter.setClassLoader(loader);
+		for (BaseConverter converter: converters)
+			converter.setClassLoader(loader);
 	}
 	
-	public static void registerConverter(Converter converter) {
+	public static void registerConverter(BaseConverter converter) {
 		configStream.registerConverter(converter);
+		converters.add(converter);
 	}
 	
 	public <T> T getOption(String optionPath) {
@@ -149,7 +151,7 @@ public abstract class Configurable extends Observable implements Observer {
 	public List<String> getBoundOptionNames() {
 		List<String> bound = new LinkedList<>();
 		setChanged();
-		notifyObservers(new RequestForBoundOptions(bound, ""));
+		update(null, new RequestForBoundOptions(bound, ""));
 		return bound;
 	}
 	
@@ -341,15 +343,17 @@ public abstract class Configurable extends Observable implements Observer {
 		
 		if (message instanceof RequestForBoundOptions) {
 			RequestForBoundOptions request = (RequestForBoundOptions)message;
-			String pathToParent = getOptionNameFromContent(observedOption) + "." + request.getPath();
+			String pathToParent = observedOption == null ? "" : getOptionNameFromContent(observedOption) + "." + request.getPath();
 			for (OptionBinding binding: optionBindings) {
 				request.getBoundOptions().addAll(binding.getBoundOptions(pathToParent));
 			}
 			
-			observedOption.deleteObserver(this);
+			if (observedOption != null)
+				observedOption.deleteObserver(this);
 			setChanged();
 			notifyObservers(new RequestForBoundOptions(request.getBoundOptions(), pathToParent));
-			observedOption.addObserver(this);
+			if (observedOption != null)
+				observedOption.addObserver(this);
 		}
 		
 		if (message instanceof RequestForConstraints) {
@@ -488,8 +492,6 @@ public abstract class Configurable extends Observable implements Observer {
 	
 	protected LinkedList<String> getErrors() {
 		LinkedList<String> ret = new LinkedList<>();
-		
-		
 		
 		return ret;
 	}

@@ -11,19 +11,20 @@
 package game.utils;
 
 
+import game.configuration.BaseConverter;
+
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 
-import com.thoughtworks.xstream.converters.Converter;
 import com.thoughtworks.xstream.converters.MarshallingContext;
 import com.thoughtworks.xstream.converters.UnmarshallingContext;
 import com.thoughtworks.xstream.io.HierarchicalStreamReader;
 import com.thoughtworks.xstream.io.HierarchicalStreamWriter;
 
-public class WekaClassifierConverter implements Converter {
+public class WekaClassifierConverter extends BaseConverter {
 
 	@Override
 	public boolean canConvert(Class type) {

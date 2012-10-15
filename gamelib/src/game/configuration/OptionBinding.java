@@ -41,10 +41,15 @@ class OptionBinding {
 	LinkedList<String> getBoundOptions(String pathToParent) {
 		LinkedList<String> ret = new LinkedList<>();
 		for (String slave: slaves) {
-			if (isOnPath(slave, pathToParent)) {
+			
+			if (pathToParent == "") {
+				if (!slave.contains("."))
+					ret.add(slave);
+			} else if (isOnPath(slave, pathToParent)) {
 				if (slave.split("\\.").length == pathToParent.split("\\.").length+1)
 					ret.add(slave.substring(slave.lastIndexOf('.')+1));
 			}
+			
 		}
 		return ret;
 	}

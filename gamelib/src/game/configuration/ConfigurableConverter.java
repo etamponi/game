@@ -10,28 +10,20 @@
  ******************************************************************************/
 package game.configuration;
 
-import com.thoughtworks.xstream.converters.Converter;
 import com.thoughtworks.xstream.converters.MarshallingContext;
 import com.thoughtworks.xstream.converters.UnmarshallingContext;
 import com.thoughtworks.xstream.io.HierarchicalStreamReader;
 import com.thoughtworks.xstream.io.HierarchicalStreamWriter;
 
-class ConfigurationConverter implements Converter {
+class ConfigurableConverter extends BaseConverter {
 	
-	private ClassLoader classLoader = getClass().getClassLoader();
-
 	@Override
 	public boolean canConvert(Class type) {
 		return Configurable.class.isAssignableFrom(type);
 	}
-	
-	public void setClassLoader(ClassLoader loader) {
-		this.classLoader = loader;
-	}
 
 	@Override
-	public void marshal(Object o, HierarchicalStreamWriter writer,
-			MarshallingContext context) {
+	public void marshal(Object o, HierarchicalStreamWriter writer, MarshallingContext context) {
 		Configurable object = (Configurable)o;
 		
 		for (String optionName: object.getAllOptionNames()) {
@@ -39,14 +31,12 @@ class ConfigurationConverter implements Converter {
 				continue;
 			Object option = object.getOption(optionName);
 			if (option != null) {
-				if (optionName.matches("^\\d+$"))
-					writer.startNode("item"+optionName);
-				else
-					writer.startNode(optionName);
+				writer.startNode(optionName);
 				
 				if (option.getClass() != object.getOptionType(optionName))
 					writer.addAttribute("class", option.getClass().getName());
 				context.convertAnother(option);
+				
 				writer.endNode();
 			}
 		}
@@ -59,20 +49,12 @@ class ConfigurationConverter implements Converter {
 		try {
 			object = (Configurable)(context.currentObject() != null ? context.currentObject() 
 																	: context.getRequiredType().newInstance());
-			if (object instanceof ConfigurableList)
-				((ConfigurableList) object).clear();
 			while(reader.hasMoreChildren()) {
 				reader.moveDown();
 				String optionName = reader.getNodeName();
-				if (optionName.matches("^item\\d+$"))
-					optionName = optionName.substring(4);
-				
 				String className = reader.getAttribute("class");
-				Class optionType = className != null ? classLoader.loadClass(className) : object.getOptionType(optionName);
-				if (optionName.matches("^\\d+$"))
-					object.setOption("add", context.convertAnother(object, optionType));
-				else
-					object.setOption(optionName, context.convertAnother(object, optionType)/*, false, null*/);
+				Class optionType = className != null ? getClassLoader().loadClass(className) : object.getOptionType(optionName);
+				object.setOption(optionName, context.convertAnother(object, optionType)/*, false, null*/);
 				reader.moveUp();
 			}
 		} catch (ClassNotFoundException | InstantiationException | IllegalAccessException e) {

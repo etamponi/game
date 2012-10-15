@@ -34,10 +34,8 @@ public class ConfigurableList extends Configurable implements List {
 	}
 	
 	public ConfigurableList(Configurable owner, Class elementType) {
-		super();
+		this();
 		this.elementType = elementType;
-		
-		setPrivateOptions("elementType");
 		addObserver(owner);
 	}
 	
