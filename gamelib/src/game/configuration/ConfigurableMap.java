@@ -1,7 +1,9 @@
 package game.configuration;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -52,6 +54,13 @@ public class ConfigurableMap extends Configurable implements Map<String, Object>
 		return internal.entrySet();
 	}
 
+	public <T> Set<Map.Entry<String, T>> entrySet(Class<T> type) {
+		Set<Entry<String, T>> ret = new HashSet<>();
+		for(Entry<String, Object> entry: internal.entrySet())
+			ret.add((Entry<String, T>)entry);
+		return ret;
+	}
+
 	@Override
 	public Object get(Object key) {
 		return internal.get(key);
@@ -71,6 +80,8 @@ public class ConfigurableMap extends Configurable implements Map<String, Object>
 	public Object put(String key, Object value) {
 		if (key.contains("."))
 			throw new IllegalArgumentException("Key cannot contain dots");
+		if (!elementType.isAssignableFrom(value.getClass()))
+			throw new IllegalArgumentException("Value must be a " + elementType.getClass());
 		
 		Object oldValue = internal.put(key, value);
 		if (oldValue != null && oldValue instanceof Configurable)
@@ -112,6 +123,13 @@ public class ConfigurableMap extends Configurable implements Map<String, Object>
 	@Override
 	public Collection<Object> values() {
 		return internal.values();
+	}
+	
+	public <T> Collection<T> values(Class<T> type) {
+		List<T> ret = new ArrayList<>(values().size());
+		for(Object o: values())
+			ret.add((T)o);
+		return ret;
 	}
 
 	@Override

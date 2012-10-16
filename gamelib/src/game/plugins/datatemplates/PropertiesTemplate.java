@@ -1,12 +1,12 @@
 package game.plugins.datatemplates;
 
-import game.configuration.ConfigurableList;
+import game.configuration.ConfigurableMap;
 import game.configuration.errorchecks.SizeCheck;
 import game.core.DataTemplate;
 
 public class PropertiesTemplate extends DataTemplate {
 	
-	public ConfigurableList properties = new ConfigurableList(this, DataTemplate.class);
+	public ConfigurableMap properties = new ConfigurableMap(this, DataTemplate.class);
 	
 	public PropertiesTemplate() {
 		setOptionChecks("properties", new SizeCheck(1));
@@ -14,8 +14,10 @@ public class PropertiesTemplate extends DataTemplate {
 
 	@Override
 	public int getDescriptionLength() {
-		// TODO Auto-generated method stub
-		return 0;
+		int count = 0;
+		for (DataTemplate template: properties.values(DataTemplate.class))
+			count += template.getDescriptionLength();
+		return count;
 	}
 
 }
