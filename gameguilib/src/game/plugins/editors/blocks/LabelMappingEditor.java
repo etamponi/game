@@ -19,6 +19,9 @@ import javafx.scene.control.TextField;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.GridPane;
 
+import org.apache.commons.math3.linear.ArrayRealVector;
+import org.apache.commons.math3.linear.RealVector;
+
 public class LabelMappingEditor extends Editor {
 	
 	GridPane root = new GridPane();
@@ -52,7 +55,7 @@ public class LabelMappingEditor extends Editor {
 			tf.setOnKeyReleased(new EventHandler<KeyEvent>() {
 				@Override
 				public void handle(KeyEvent event) {
-					double[] enc = fromText(tf.getText());
+					RealVector enc = fromText(tf.getText());
 					if (enc != null)
 						encoder.labelMapping.put(label, enc);
 				}
@@ -62,30 +65,28 @@ public class LabelMappingEditor extends Editor {
 		}
 	}
 	
-	public String toText(double[] v) {
+	public String toText(RealVector v) {
 		if (v == null)
 			return "";
 		
 		StringBuilder ret = new StringBuilder();
 		
 		int count = 0;
-		for (double e: v)
-			ret.append(String.format("%.0f", e)).append(++count < v.length ? ", " : "");
+		for (double e: v.toArray())
+			ret.append(String.format("%.0f", e)).append(++count < v.getDimension() ? ", " : "");
 		
 		return ret.toString();
 	}
 	
-	public double[] fromText(String text) {
+	public RealVector fromText(String text) {
 		String[] tokens = text.split(" *, *");
-		double[] ret = new double[tokens.length];
-		int i = 0;
+		RealVector ret = new ArrayRealVector();
 		for (String token: tokens) {
 			try {
-				ret[i] = Double.parseDouble(token);
+				ret.append(Double.parseDouble(token));
 			} catch (NumberFormatException ex) {
 				return null;
 			}
-			i++;
 		}
 		return ret;
 	}

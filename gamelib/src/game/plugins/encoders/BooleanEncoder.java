@@ -10,6 +10,8 @@
  ******************************************************************************/
 package game.plugins.encoders;
 
+import org.apache.commons.math3.linear.ArrayRealVector;
+
 import game.core.DataTemplate;
 import game.plugins.datatemplates.LabelTemplate;
 
@@ -29,8 +31,8 @@ public class BooleanEncoder extends LabelEncoder {
 
 	@Override
 	protected void updateLabelMapping() {
-		labelMapping.put(positiveLabel(), new double[]{1});
-		labelMapping.put(negativeLabel(), new double[]{0});
+		labelMapping.put(positiveLabel(), new ArrayRealVector(new double[]{1}));
+		labelMapping.put(negativeLabel(), new ArrayRealVector(new double[]{0}));
 	}
 	
 	public String positiveLabel() {

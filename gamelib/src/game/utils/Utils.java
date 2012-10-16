@@ -17,6 +17,8 @@ import java.math.BigInteger;
 import java.util.Random;
 import java.util.Scanner;
 
+import org.apache.commons.math3.linear.RealVector;
+
 import com.thoughtworks.xstream.XStream;
 import com.thoughtworks.xstream.io.xml.DomDriver;
 
@@ -94,13 +96,18 @@ public class Utils {
 		return relativePath == null ? null : relativePath.toString();
 	}
 	
-	public static double getDistance(double[] v1, double[] v2) {
-		double ret = 0;
-		for (int i = 0; i < v1.length; i++)
-			ret += (v1[i]-v2[i])*(v1[i]-v2[i]);
-		return Math.sqrt(ret);
+	public static double getDistance(String type, RealVector v1, RealVector v2) {
+		switch(type.toLowerCase()) {
+		case "l1":
+			return v1.getL1Distance(v2);
+		case "l2":
+			return v1.getDistance(v2);
+		case "linf":
+			return v1.getLInfDistance(v2);
+		}
+		return -1;
 	}
-	
+	/*
 	public static void sumTo(double[] to, double[] from) {
 		for (int i = 0; i < to.length; i++)
 			to[i] += from[i];
@@ -134,7 +141,7 @@ public class Utils {
 		
 		return sum;
 	}
-	
+	*/
 	public static <T> T deepClone(T object) {
 		return (T)stream.fromXML(stream.toXML(object));
 	}
@@ -147,7 +154,7 @@ public class Utils {
 						&& type.isAssignableFrom(outputTemplate.getOption("atom").getClass()));
 	}
 	*/
-
+	/*
 	public static int maxIndex(double[] v) {
 		int maxIndex = 0;
 		double max = v[0];
@@ -167,7 +174,7 @@ public class Utils {
 				max = e;
 		return max;
 	}
-	
+	*/
 	private static Random generator = new Random();
 
 	public static String randomString() {

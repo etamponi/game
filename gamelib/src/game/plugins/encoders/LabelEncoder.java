@@ -22,9 +22,12 @@ import java.util.List;
 import java.util.Observable;
 import java.util.Observer;
 
+import org.apache.commons.math3.linear.ArrayRealVector;
+import org.apache.commons.math3.linear.RealVector;
+
 public abstract class LabelEncoder extends Encoder<LabelTemplate> {
 	
-	public HashMap<String, double[]> labelMapping = new HashMap<>();
+	public HashMap<String, RealVector> labelMapping = new HashMap<>();
 	
 	public LabelEncoder() {
 		
@@ -44,21 +47,22 @@ public abstract class LabelEncoder extends Encoder<LabelTemplate> {
 
 	@Override
 	public Encoding baseEncode(List input) {
-		Encoding ret = new Encoding();
-		for (Object element: input) {
-			double[] enc;
+		Encoding ret = new Encoding(getFeatureNumber(), input.size());
+		for (int j = 0; j < input.size(); j++) {
+			Object element = input.get(j);
+			RealVector enc;
 			if (labelMapping.containsKey(element))
-				enc = labelMapping.get(element).clone();
+				enc = labelMapping.get(element).copy();
 			else
-				enc = new double[getBaseFeatureNumber()];
-			ret.add(enc);
+				enc = new ArrayRealVector(getBaseFeatureNumber());
+			ret.setElement(j, enc);
 		}
 		return ret;
 	}
 	
 	@Override
 	protected int getBaseFeatureNumber() {
-		return labelMapping.values().iterator().next().length;
+		return labelMapping.values().iterator().next().getDimension();
 	}
 	
 	private void updateMapping(DataTemplate tpl) {
@@ -69,7 +73,7 @@ public abstract class LabelEncoder extends Encoder<LabelTemplate> {
 		
 		for (String label: template.labels.getList(String.class)) {
 			if (label != null && !labelMapping.containsKey(label))
-				labelMapping.put(label, new double[]{});
+				labelMapping.put(label, new ArrayRealVector());
 		}
 		for (String key: new HashSet<String>(labelMapping.keySet())) {
 			if (!template.labels.contains(key))

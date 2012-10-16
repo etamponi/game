@@ -26,6 +26,8 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.util.Arrays;
 
+import org.apache.commons.math3.linear.ArrayRealVector;
+
 public class CSVDatasetBuilder extends DatasetBuilder {
 	
 	public File file = new File("nonexistent.txt");
@@ -84,7 +86,7 @@ public class CSVDatasetBuilder extends DatasetBuilder {
 					e.printStackTrace();
 				}
 			}
-			return ret;
+			return new ArrayRealVector(ret);
 		}
 		if (template instanceof LabelTemplate) {
 			if (((LabelTemplate) template).labels.contains(tokens[0]))

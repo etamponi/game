@@ -1,10 +1,12 @@
 package game.plugins.pipes;
 
-import java.util.List;
-
 import game.configuration.ErrorCheck;
 import game.core.Encoding;
 import game.core.blocks.Pipe;
+
+import java.util.List;
+
+import org.apache.commons.math3.linear.RealVector;
 
 public class FeatureSelection extends Pipe {
 	
@@ -24,19 +26,20 @@ public class FeatureSelection extends Pipe {
 
 	@Override
 	public Encoding transform(List input) {
-		Encoding ret = new Encoding();
+		Encoding ret = new Encoding(getFeatureNumber(), input.size());
 		Encoding base = getParentEncoding(0, input);
 		
-		for(double[] baseElement: base) {
-			double[] element = new double[getFeatureNumber()];
-			int i = 0, j = 0;
+		for(int j = 0; j < input.size(); j++) {
+			RealVector baseElement = base.getElement(j);
+			int baseIndex = 0, i = 0;
 			for(char c: mask.toCharArray()) {
 				if (c == '1') {
-					element[j] = baseElement[i];
-					j++;
+					ret.setEntry(i, j, baseElement.getEntry(baseIndex));
+					i++;
 				}
-				i++;
+				baseIndex++;
 			}
+			
 		}
 		
 		return ret;

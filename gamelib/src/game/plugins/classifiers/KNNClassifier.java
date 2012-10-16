@@ -10,6 +10,7 @@
  ******************************************************************************/
 package game.plugins.classifiers;
 
+import game.configuration.ErrorCheck;
 import game.configuration.errorchecks.PositivenessCheck;
 import game.core.Dataset;
 import game.core.Dataset.SampleIterator;
@@ -24,14 +25,16 @@ import game.utils.Utils;
 import java.util.ArrayList;
 import java.util.Collections;
 
+import org.apache.commons.math3.linear.RealVector;
+
 public class KNNClassifier extends Classifier {
 	
-	private static class SampleWithDistance implements Comparable<SampleWithDistance> {
+	private static class TrainingSampleWithDistance implements Comparable<TrainingSampleWithDistance> {
 		private double distance = Double.MAX_VALUE;
-		private double[] input;
-		private double[] output;
+		private RealVector input;
+		private RealVector output;
 		
-		public SampleWithDistance(double[] input, double[] output) {
+		public TrainingSampleWithDistance(RealVector input, RealVector output) {
 			this.input = input;
 			this.output = output;
 		}
@@ -41,27 +44,40 @@ public class KNNClassifier extends Classifier {
 		}
 
 		@Override
-		public int compareTo(SampleWithDistance other) {
+		public int compareTo(TrainingSampleWithDistance other) {
 			return Double.compare(distance, other.distance);
 		}
 		
-		public double[] getInput() {
+		public RealVector getInput() {
 			return input;
 		}
 		
-		public double[] getOutput() {
+		public RealVector getOutput() {
 			return output;
 		}
 	}
 	
 	public int k;
 	
-	public ArrayList<SampleWithDistance> reference;
+	public ArrayList<TrainingSampleWithDistance> reference;
+	
+	public String distanceType = "L2";
 	
 	public KNNClassifier() {
 		setOption("outputEncoder", new OneHotEncoder());
 		
 		setOptionChecks("k", new PositivenessCheck(false));
+		
+		setOptionChecks("distanceType", new ErrorCheck<String>() {
+			@Override public String getError(String value) {
+				value = value.toLowerCase();
+				if (value.equals("l2") || value.equals("l1") || value.equals("linf"))
+					return null;
+				else
+					return "can only be L1, L2 or linf";
+			}
+			
+		});
 
 		setPrivateOptions("reference", "outputEncoder");
 	}
@@ -73,21 +89,22 @@ public class KNNClassifier extends Classifier {
 
 	@Override
 	protected Encoding classify(Encoding inputEncoded) {
-		Encoding ret = new Encoding();
+		Encoding ret = new Encoding(getFeatureNumber(), inputEncoded.length());
 		
-		for (double[] currentInput: inputEncoded) {
+		for (int j = 0; j < inputEncoded.length(); j++) {
+			RealVector currentInput = inputEncoded.getElement(j);
 			for(int i = 0; i < reference.size(); i++) {
-				SampleWithDistance sample = reference.get(i);
-				sample.setDistance(Utils.getDistance(currentInput, sample.getInput()));
+				TrainingSampleWithDistance sample = reference.get(i);
+				sample.setDistance(Utils.getDistance(distanceType, currentInput, sample.getInput()));
 			}
 			Collections.sort(reference);
-			double[] currentOutput = reference.get(0).getOutput();
+			RealVector currentOutput = reference.get(0).getOutput();
 			if (k > 1) {
 				for(int i = 1; i < k; i++)
-					Utils.sumTo(currentOutput, reference.get(i).getOutput());
-				Utils.scale(currentOutput, 1.0/k);
+					currentOutput = currentOutput.add(reference.get(i).getOutput());
+				currentOutput.mapDivideToSelf(k);
 			}
-			ret.add(currentOutput);
+			ret.setElement(j, currentOutput);
 		}
 		
 		return ret;
@@ -104,7 +121,7 @@ public class KNNClassifier extends Classifier {
 		reference = new ArrayList<>();
 		while(it.hasNext()) {
 			Sample sample = it.next();
-			reference.add(new SampleWithDistance(sample.getEncodedInput(), sample.getEncodedOutput()));
+			reference.add(new TrainingSampleWithDistance(sample.getEncodedInput(), sample.getEncodedOutput()));
 		}
 	}
 

@@ -17,13 +17,16 @@ import game.plugins.datatemplates.VectorTemplate;
 
 import java.util.List;
 
+import org.apache.commons.math3.linear.RealVector;
+
 public class VectorEncoder extends Encoder<VectorTemplate> {
 
 	@Override
 	public Encoding baseEncode(List input) {
-		Encoding ret = new Encoding();
+		Encoding ret = new Encoding(getFeatureNumber(), input.size());
+		int j = 0;
 		for(Object element: input)
-			ret.add((double[])element);
+			ret.setElement(j++, (RealVector)element);
 		return ret;
 	}
 

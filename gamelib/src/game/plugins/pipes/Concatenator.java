@@ -22,27 +22,14 @@ public class Concatenator extends Pipe {
 	public Encoding transform(List input) {
 		List<Encoding> encs = getParentsEncodings(input);
 		
-		Encoding ret = new Encoding();
+		Encoding ret = new Encoding(getFeatureNumber(), input.size());
 		
-		int newElementSize = countElements(encs);
-		int len = encs.get(0).length();
-		for (int i = 0; i < len; i++) {
-			int startIndex = 0;
-			double[] element = new double[newElementSize];
-			for (Encoding enc: encs) {
-				System.arraycopy(enc.get(i), 0, element, startIndex, enc.getFeatureNumber());
-				startIndex += enc.getFeatureNumber();
-			}
-			ret.add(element);
+		int startRow = 0;
+		for (Encoding enc: encs) {
+			ret.setSubMatrix(enc.getData(), startRow, 0);
+			startRow += enc.getFeatureNumber();
 		}
 		
-		return ret;
-	}
-	
-	private int countElements(List<Encoding> encs) {
-		int ret = 0;
-		for (Encoding enc: encs)
-			ret += enc.getFeatureNumber();
 		return ret;
 	}
 

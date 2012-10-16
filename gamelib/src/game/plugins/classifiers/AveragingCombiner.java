@@ -16,6 +16,8 @@ import game.core.blocks.Combiner;
 
 import java.util.List;
 
+import org.apache.commons.math3.linear.RealMatrix;
+
 public class AveragingCombiner extends Combiner {
 
 	@Override
@@ -30,27 +32,14 @@ public class AveragingCombiner extends Combiner {
 		if (encs.size() == 1)
 			return encs.get(0);
 		
-		Encoding ret = new Encoding();
+		RealMatrix ret = new Encoding(getFeatureNumber(), input.size());
 		double normalization = 1.0 / encs.size();
 		
 		for(Encoding enc: encs)
-			sumEncodings(ret, enc);
-		ret.mulBy(normalization);
+			ret = ret.add(enc);
+		ret = ret.scalarMultiply(normalization);
 		
-		return ret;
-	}
-	
-	protected void sumEncodings(Encoding to, Encoding from) {
-		if (to.isEmpty()) {
-			to.addAll(from);
-			return;
-		}
-		for(int k = 0; k < to.length(); k++) {
-			double[] element = to.get(k);
-			double[] other = from.get(k);
-			for (int i = 0; i < to.getFeatureNumber(); i++)
-				element[i] += other[i];
-		}
+		return new Encoding(ret);
 	}
 
 }

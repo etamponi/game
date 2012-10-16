@@ -10,6 +10,8 @@
  ******************************************************************************/
 package game.plugins.encoders;
 
+import org.apache.commons.math3.linear.ArrayRealVector;
+
 public class IntegerEncoder extends LabelEncoder {
 	
 	public IntegerEncoder() {
@@ -19,7 +21,7 @@ public class IntegerEncoder extends LabelEncoder {
 	@Override
 	protected void updateLabelMapping() {
 		for(int i = 0; i < template.labels.size(); i++)
-			labelMapping.put((String)template.labels.get(i), new double[]{i+1});
+			labelMapping.put((String)template.labels.get(i), new ArrayRealVector(new double[]{i+1}));
 	}
 
 }

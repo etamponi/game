@@ -275,11 +275,11 @@ public class Dataset extends Configurable {
 			case EVERYTHING:
 				ret = new Sample(
 						currentInputSequence.get(indexInInstance),
-						currentInputEncoding.get(indexInInstance),
+						currentInputEncoding.getElement(indexInInstance),
 						currentOutputSequence.get(indexInInstance),
-						currentOutputEncoding.get(indexInInstance),
+						currentOutputEncoding.getElement(indexInInstance),
 						currentPredictionSequence.get(indexInInstance),
-						currentPredictionEncoding.get(indexInInstance));
+						currentPredictionEncoding.getElement(indexInInstance));
 				break;
 			case IN_OUT:
 				ret = new Sample(
@@ -295,9 +295,9 @@ public class Dataset extends Configurable {
 			case IN_OUT_ENC:
 				ret = new Sample(
 						currentInputSequence.get(indexInInstance),
-						currentInputEncoding.get(indexInInstance),
+						currentInputEncoding.getElement(indexInInstance),
 						currentOutputSequence.get(indexInInstance),
-						currentOutputEncoding.get(indexInInstance));
+						currentOutputEncoding.getElement(indexInInstance));
 				break;
 			}
 			

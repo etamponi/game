@@ -13,7 +13,7 @@ public class MultipleDetermination extends CorrelationMeasure {
 
 	@Override
 	public RealVector evaluate(SampleIterator it, int samples) {
-		int cols = it.next().getEncodedOutput().length;
+		int cols = it.next().getEncodedOutput().getDimension();
 		
 		RealVector ret = new ArrayRealVector(cols);
 		double[]   Y = new double[samples];
@@ -24,8 +24,8 @@ public class MultipleDetermination extends CorrelationMeasure {
 			it.reset();
 			for(int i = 0; i < samples && it.hasNext(); i++) {
 				Sample sample = it.next();
-				Y[i] = sample.getEncodedOutput()[col];
-				X[i] = sample.getEncodedInput();
+				Y[i] = sample.getEncodedOutput().getEntry(cols);
+				X[i] = sample.getEncodedInput().toArray();
 			}
 			regression.newSampleData(Y, X);
 			double R2 = adjust ? regression.calculateAdjustedRSquared() : regression.calculateRSquared();

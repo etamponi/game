@@ -86,11 +86,18 @@ public abstract class Configurable extends Observable implements Observer {
 	}
 	
 	public Configurable() {
-		setOption("name", String.format("%s%03d", getClass().getSimpleName(), hashCode() % 1000));
+		try {
+			getClass().getField("name");
+			setOption("name", String.format("%s%03d", getClass().getSimpleName(), hashCode() % 1000));
+		} catch (NoSuchFieldException | SecurityException e) {}
 		
 		setOptionChecks("name", new LengthCheck(1));
 	}
 	
+	public boolean hasOption(String optionName) {
+		return getAllOptionNames().contains(optionName);
+	}
+
 	public static <T> T loadFromConfiguration(File configFile) {
 		return (T)configStream.fromXML(Utils.readFile(configFile));
 	}

@@ -53,11 +53,11 @@ public class WekaMultilayerPerceptron extends WekaClassifier {
 
 	@Override
 	protected Encoding classify(Encoding inputEncoded) {
-		Encoding ret = new Encoding();
-		for(double[] input: inputEncoded) {
-			Instance i = new Instance(1.0, input);
+		Encoding ret = new Encoding(getFeatureNumber(), inputEncoded.length());
+		for(int j = 0; j < ret.length(); j++) {
+			Instance i = new Instance(1.0, inputEncoded.getElement(j).toArray());
 			try {
-				ret.add(nn.distributionForInstance(i));
+				ret.setColumn(j, nn.distributionForInstance(i));
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
@@ -86,7 +86,7 @@ public class WekaMultilayerPerceptron extends WekaClassifier {
 		updateStatus(0.01, "preparing Weka format for samples...");
 		SampleIterator it = trainingSet.encodedSampleIterator(getParent(), outputEncoder, false);
 		Sample sample = it.next();
-		int inputSize = sample.getEncodedInput().length;
+		int inputSize = sample.getEncodedInput().getDimension();
 		FastVector attributes = new FastVector();
 		for(int i = 0; i < inputSize; i++) {
 			attributes.addElement(new Attribute("a"+i));
@@ -100,8 +100,8 @@ public class WekaMultilayerPerceptron extends WekaClassifier {
 		updateStatus(0.05, "porting samples to Weka format...");
 		while(it.hasNext()) {
 			Instance i = new Instance(inputSize+1);
-			for(int index = 0; index < sample.getEncodedInput().length; index++)
-				i.setValue((Attribute)attributes.elementAt(index), sample.getEncodedInput()[index]);
+			for(int index = 0; index < sample.getEncodedInput().getDimension(); index++)
+				i.setValue((Attribute)attributes.elementAt(index), sample.getEncodedInput().getEntry(index));
 			i.setValue((Attribute)attributes.elementAt(inputSize), (String)sample.getOutput());
 			ts.add(i);
 			sample = it.next();

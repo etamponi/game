@@ -20,17 +20,21 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map.Entry;
 
+import org.apache.commons.math3.linear.RealVector;
+
 public class DistanceLabelDecoder extends Decoder<LabelEncoder> {
+	
+	public String distanceType = "L2"; 
 
 	@Override
 	protected List baseDecode(Encoding outputEncoded) {
 		List ret = new ArrayList<>(outputEncoded.length());
 		
-		for(double[] element: outputEncoded) {
+		for(RealVector element: outputEncoded) {
 			String label = null;
 			double minDistance = Double.MAX_VALUE;
-			for (Entry<String, double[]> entry: encoder.labelMapping.entrySet()) {
-				double distance = Utils.getDistance(element, entry.getValue());
+			for (Entry<String, RealVector> entry: encoder.labelMapping.entrySet()) {
+				double distance = Utils.getDistance(distanceType, element, entry.getValue());
 				if (distance < minDistance) {
 					minDistance = distance;
 					label = entry.getKey();

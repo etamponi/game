@@ -10,6 +10,9 @@
  ******************************************************************************/
 package game.plugins.encoders;
 
+import org.apache.commons.math3.linear.ArrayRealVector;
+import org.apache.commons.math3.linear.RealVector;
+
 
 public class OneHotEncoder extends LabelEncoder {
 
@@ -20,8 +23,8 @@ public class OneHotEncoder extends LabelEncoder {
 	@Override
 	protected void updateLabelMapping() {
 		for(int i = 0; i < template.labels.size(); i++) {
-			double[] mapping = new double[template.labels.size()];
-			mapping[i] = 1;
+			RealVector mapping = new ArrayRealVector(template.labels.size());
+			mapping.setEntry(i, 1);
 			labelMapping.put((String)template.labels.get(i), mapping); 
 		}
 	}
