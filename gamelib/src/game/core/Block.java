@@ -47,6 +47,8 @@ public abstract class Block extends LongTask {
 	
 	public abstract boolean acceptsParents();
 	
+	public abstract int getFeatureNumber();
+	
 	@Override
 	public String getTaskDescription() {
 		return "training of " + this;

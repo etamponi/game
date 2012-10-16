@@ -50,13 +50,14 @@ public abstract class LabelEncoder extends Encoder<LabelTemplate> {
 			if (labelMapping.containsKey(element))
 				enc = labelMapping.get(element).clone();
 			else
-				enc = new double[getElementSize()];
+				enc = new double[getBaseFeatureNumber()];
 			ret.add(enc);
 		}
 		return ret;
 	}
 	
-	private int getElementSize() {
+	@Override
+	protected int getBaseFeatureNumber() {
 		return labelMapping.values().iterator().next().length;
 	}
 	

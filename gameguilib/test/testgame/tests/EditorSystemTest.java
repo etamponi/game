@@ -155,6 +155,11 @@ public class EditorSystemTest extends Application {
 		public boolean isCompatible(DataTemplate object) {
 			return object instanceof VectorTemplate && object.sequence == false;
 		}
+
+		@Override
+		protected int getBaseFeatureNumber() {
+			return 0;
+		}
 		
 	}
 	
@@ -169,6 +174,11 @@ public class EditorSystemTest extends Application {
 		public boolean isCompatible(DataTemplate object) {
 			return object instanceof LabelTemplate && object.sequence == false;
 		}
+
+		@Override
+		protected int getBaseFeatureNumber() {
+			return 0;
+		}
 		
 	}
 	
@@ -182,6 +192,11 @@ public class EditorSystemTest extends Application {
 		@Override
 		public boolean isCompatible(DataTemplate object) {
 			return object.sequence == true;
+		}
+
+		@Override
+		protected int getBaseFeatureNumber() {
+			return 0;
 		}
 		
 	}

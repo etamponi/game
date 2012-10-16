@@ -12,7 +12,6 @@ package game.plugins.pipes;
 
 import game.configuration.errorchecks.PositivenessCheck;
 import game.configuration.errorchecks.SizeCheck;
-import game.core.Block;
 import game.core.Encoding;
 import game.core.blocks.Pipe;
 
@@ -30,7 +29,15 @@ public class WindowEnlarger extends Pipe {
 
 	@Override
 	public Encoding transform(List input) {
-		return parents.getList(Block.class).get(0).transform(input).makeWindowedEncoding(windowSize);
+		return getParent(0).transform(input).makeWindowedEncoding(windowSize);
+	}
+
+	@Override
+	public int getFeatureNumber() {
+		if (parents.isEmpty())
+			return 0;
+		else
+			return getParent(0).getFeatureNumber()*windowSize;
 	}
 
 }

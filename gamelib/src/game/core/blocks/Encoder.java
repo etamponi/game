@@ -48,6 +48,13 @@ public abstract class Encoder<DT extends DataTemplate> extends Block implements 
 	}
 
 	protected abstract Encoding baseEncode(List input);
+	
+	protected abstract int getBaseFeatureNumber();
+	
+	@Override
+	public int getFeatureNumber() {
+		return getBaseFeatureNumber()*windowSize;
+	}
 
 	@Override
 	public Encoding transform(List input) {

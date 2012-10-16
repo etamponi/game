@@ -15,9 +15,9 @@ package game.plugins.datatemplates;
 public class PreEncodedPrimaryStructure extends VectorTemplate {
 
 	public PreEncodedPrimaryStructure() {
-		featureNumber = 20;
+		dimension = 20;
 		sequence = true;
-		setPrivateOptions("sequence", "featureNumber");
+		setPrivateOptions("sequence", "dimension");
 	}
 	
 }

@@ -10,6 +10,7 @@
  ******************************************************************************/
 package game.plugins.pipes;
 
+import game.core.Block;
 import game.core.Encoding;
 import game.core.blocks.Pipe;
 
@@ -29,8 +30,8 @@ public class Concatenator extends Pipe {
 			int startIndex = 0;
 			double[] element = new double[newElementSize];
 			for (Encoding enc: encs) {
-				System.arraycopy(enc.get(i), 0, element, startIndex, enc.getElementSize());
-				startIndex += enc.getElementSize();
+				System.arraycopy(enc.get(i), 0, element, startIndex, enc.getFeatureNumber());
+				startIndex += enc.getFeatureNumber();
 			}
 			ret.add(element);
 		}
@@ -41,7 +42,15 @@ public class Concatenator extends Pipe {
 	private int countElements(List<Encoding> encs) {
 		int ret = 0;
 		for (Encoding enc: encs)
-			ret += enc.getElementSize();
+			ret += enc.getFeatureNumber();
+		return ret;
+	}
+
+	@Override
+	public int getFeatureNumber() {
+		int ret = 0;
+		for (Block parent: parents.getList(Block.class))
+			ret += parent.getFeatureNumber();
 		return ret;
 	}
 

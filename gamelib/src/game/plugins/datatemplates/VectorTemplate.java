@@ -15,10 +15,15 @@ import game.core.DataTemplate;
 
 public class VectorTemplate extends DataTemplate {
 
-	public int featureNumber;
+	public int dimension;
 	
 	public VectorTemplate() {
-		setOptionChecks("featureNumber", new PositivenessCheck(false));
+		setOptionChecks("dimension", new PositivenessCheck(false));
+	}
+
+	@Override
+	public int getDescriptionLength() {
+		return dimension;
 	}
 	
 }

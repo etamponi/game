@@ -44,6 +44,11 @@ public class GraphTest {
 		public boolean isCompatible(DataTemplate object) {
 			return object instanceof VectorTemplate;
 		}
+
+		@Override
+		protected int getBaseFeatureNumber() {
+			return 0;
+		}
 	}
 	
 	public static class EncoderImplB extends Encoder<LabelTemplate> {
@@ -55,6 +60,11 @@ public class GraphTest {
 		@Override
 		public boolean isCompatible(DataTemplate object) {
 			return object instanceof LabelTemplate;
+		}
+
+		@Override
+		protected int getBaseFeatureNumber() {
+			return 0;
 		}
 	}
 	
@@ -135,7 +145,7 @@ public class GraphTest {
 		
 		graph.setOption("template", new InstanceTemplate());
 		graph.setOption("template.inputTemplate", new VectorTemplate());
-		graph.setOption("template.inputTemplate.featureNumber", 3);
+		graph.setOption("template.inputTemplate.dimension", 3);
 		graph.setOption("template.outputTemplate", new LabelTemplate());
 		graph.setOption("template.outputTemplate.labels.add", "A");
 		graph.setOption("template.outputTemplate.labels.add", "B");

@@ -48,7 +48,7 @@ public class AveragingCombiner extends Combiner {
 		for(int k = 0; k < to.length(); k++) {
 			double[] element = to.get(k);
 			double[] other = from.get(k);
-			for (int i = 0; i < to.getElementSize(); i++)
+			for (int i = 0; i < to.getFeatureNumber(); i++)
 				element[i] += other[i];
 		}
 	}

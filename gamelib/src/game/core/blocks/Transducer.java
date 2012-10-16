@@ -34,4 +34,9 @@ public abstract class Transducer extends Block implements Compatible<InstanceTem
 		return true;
 	}
 
+	@Override
+	public int getFeatureNumber() {
+		return outputEncoder.getFeatureNumber();
+	}
+
 }

@@ -30,7 +30,7 @@ public class Encoding extends ArrayList<double[]> {
 		super(other);
 	}
 	
-	public int getElementSize() {
+	public int getFeatureNumber() {
 		return !isEmpty() ? get(0).length : 0;
 	}
 	
@@ -57,11 +57,11 @@ public class Encoding extends ArrayList<double[]> {
 	}
 	
 	public Encoding makeTrimmedEncoding(int initialWindowSize, int finalWindowSize) {
-		assert(getElementSize() % initialWindowSize == 0);
+		assert(getFeatureNumber() % initialWindowSize == 0);
 		
 		Encoding ret = new Encoding();
 		
-		int baseElementSize = getElementSize() / initialWindowSize;
+		int baseElementSize = getFeatureNumber() / initialWindowSize;
 		int finalElementSize = baseElementSize * finalWindowSize;
 		int startingPos = ((initialWindowSize - finalWindowSize) / 2 - ((initialWindowSize+finalWindowSize) % 2 == 1 ? 1 : 0))*baseElementSize;
 		for(double[] element: this) {
@@ -74,13 +74,13 @@ public class Encoding extends ArrayList<double[]> {
 	}
 	
 	private double[] makeWindow(int center, int windowSize) {
-		double[] ret = new double[windowSize*getElementSize()];
+		double[] ret = new double[windowSize*getFeatureNumber()];
 		
 		int halfWindow = windowSize / 2 - (windowSize % 2 == 0 ? 1 : 0);
 		for(int k = center-halfWindow, j = 0; k < length() && k < (center-halfWindow+windowSize); k++, j++) {
 			if (k < 0)
 				continue;
-			System.arraycopy(get(k), 0, ret, j*getElementSize(), getElementSize());
+			System.arraycopy(get(k), 0, ret, j*getFeatureNumber(), getFeatureNumber());
 		}
 		
 		return ret;

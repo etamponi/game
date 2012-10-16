@@ -16,4 +16,6 @@ public abstract class DataTemplate extends Configurable {
 	
 	public boolean sequence = false;
 	
+	public abstract int getDescriptionLength();
+	
 }

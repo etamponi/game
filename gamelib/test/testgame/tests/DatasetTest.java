@@ -32,7 +32,7 @@ public class DatasetTest {
 	static {
 		template.inputTemplate = new VectorTemplate();
 		template.outputTemplate = new LabelTemplate();
-		template.inputTemplate.setOption("featureNumber", 4);
+		template.inputTemplate.setOption("dimension", 4);
 		template.outputTemplate.setOption("labels.add", "Iris-setosa");
 		template.outputTemplate.setOption("labels.add", "Iris-versicolor");
 		template.outputTemplate.setOption("labels.add", "Iris-virginica");
@@ -40,7 +40,7 @@ public class DatasetTest {
 		sequenceTpl.inputTemplate = new VectorTemplate();
 		sequenceTpl.outputTemplate = new LabelTemplate();
 		sequenceTpl.inputTemplate.setOption("sequence", true);
-		sequenceTpl.inputTemplate.setOption("featureNumber", 20);
+		sequenceTpl.inputTemplate.setOption("dimension", 20);
 		sequenceTpl.outputTemplate.setOption("sequence", true);
 		sequenceTpl.outputTemplate.setOption("labels.add", "H");
 		sequenceTpl.outputTemplate.setOption("labels.add", "E");

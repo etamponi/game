@@ -113,9 +113,9 @@ public class Option {
 	@Override
 	public String toString() {
 		if (getContent() == null)
-			return "<null>";
+			return getOptionName() + ": <null>";
 		else
-			return getContent().toString();
+			return getOptionName() + ": " + getContent().toString();
 	}
 
 	private int distance(Class origin, Class target) {

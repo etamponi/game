@@ -22,5 +22,10 @@ public class LabelTemplate extends DataTemplate {
 	public LabelTemplate() {
 		setOptionChecks("labels", new NoRepetitionCheck(), new SizeCheck(2));
 	}
+
+	@Override
+	public int getDescriptionLength() {
+		return 1;
+	}
 	
 }

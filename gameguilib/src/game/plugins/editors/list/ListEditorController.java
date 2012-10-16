@@ -85,7 +85,9 @@ public class ListEditorController implements EditorController {
 			return;
 		
 		list.add(null);
-//		updateView();
+		
+		listView.getSelectionModel().select(list.size()-1);
+		editAction(event);
 	}
 	
 	@FXML
@@ -97,7 +99,6 @@ public class ListEditorController implements EditorController {
 		int index = listView.getSelectionModel().getSelectedIndex();
 		if (index >= 0) {
 			list.remove(index);
-//			updateView();
 		}
 	}
 	
@@ -111,7 +112,6 @@ public class ListEditorController implements EditorController {
 			Editor editor = listView.getItems().get(index).getBestEditor(true);
 			editor.setReadOnly(this.editor.isReadOnly());
 			new EditorWindow(editor).startEdit(listView.getItems().get(index));
-//			updateView();
 		}
 	}
 

@@ -32,4 +32,9 @@ public class VectorEncoder extends Encoder<VectorTemplate> {
 		return object instanceof VectorTemplate;
 	}
 
+	@Override
+	public int getBaseFeatureNumber() {
+		return template.dimension;
+	}
+
 }

@@ -102,7 +102,7 @@ public class SequenceCSVDatasetBuilder extends DatasetBuilder {
 
 	private int getDimension(DataTemplate template) {
 		if (template instanceof VectorTemplate) {
-			return ((VectorTemplate) template).featureNumber;
+			return ((VectorTemplate) template).dimension;
 		}
 		if (template instanceof LabelTemplate) {
 			return 1;

@@ -12,4 +12,10 @@ public class PropertiesTemplate extends DataTemplate {
 		setOptionChecks("properties", new SizeCheck(1));
 	}
 
+	@Override
+	public int getDescriptionLength() {
+		// TODO Auto-generated method stub
+		return 0;
+	}
+
 }

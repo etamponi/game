@@ -2,6 +2,7 @@ package game.configuration;
 
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -29,74 +30,117 @@ public class ConfigurableMap extends Configurable implements Map<String, Object>
 	
 	@Override
 	public void clear() {
-		// TODO Auto-generated method stub
-		
+		for(Object value: internal.values()) {
+			if (value instanceof Configurable)
+				((Configurable) value).deleteObserver(this);
+		}
+		internal.clear();
 	}
 
 	@Override
 	public boolean containsKey(Object key) {
-		// TODO Auto-generated method stub
-		return false;
+		return internal.containsKey(key);
 	}
 
 	@Override
 	public boolean containsValue(Object value) {
-		// TODO Auto-generated method stub
-		return false;
+		return internal.containsValue(value);
 	}
 
 	@Override
 	public Set<java.util.Map.Entry<String, Object>> entrySet() {
-		// TODO Auto-generated method stub
-		return null;
+		return internal.entrySet();
 	}
 
 	@Override
 	public Object get(Object key) {
-		// TODO Auto-generated method stub
-		return null;
+		return internal.get(key);
 	}
 
 	@Override
 	public boolean isEmpty() {
-		// TODO Auto-generated method stub
-		return false;
+		return internal.isEmpty();
 	}
 
 	@Override
 	public Set<String> keySet() {
-		// TODO Auto-generated method stub
-		return null;
+		return internal.keySet();
 	}
 
 	@Override
 	public Object put(String key, Object value) {
-		// TODO Auto-generated method stub
-		return null;
+		if (key.contains("."))
+			throw new IllegalArgumentException("Key cannot contain dots");
+		
+		Object oldValue = internal.put(key, value);
+		if (oldValue != null && oldValue instanceof Configurable)
+			((Configurable)oldValue).deleteObserver(this);
+		
+		if (value instanceof Configurable)
+			((Configurable) value).addObserver(this);
+		
+		propagateUpdate(key, setter);
+		
+		return oldValue;
 	}
 
 	@Override
 	public void putAll(Map<? extends String, ? extends Object> m) {
-		// TODO Auto-generated method stub
-		
+		for (java.util.Map.Entry<? extends String, ? extends Object> entry: m.entrySet())
+			put(entry.getKey(), entry.getValue());
 	}
 
 	@Override
 	public Object remove(Object key) {
-		// TODO Auto-generated method stub
-		return null;
+		if (!internal.containsKey(key))
+			return null;
+		
+		Object oldValue = internal.remove(key);
+		if (oldValue != null && oldValue instanceof Configurable)
+			((Configurable)oldValue).deleteObserver(this);
+		
+		propagateUpdate("", setter);
+		
+		return oldValue;
 	}
 
 	@Override
 	public int size() {
-		// TODO Auto-generated method stub
-		return 0;
+		return internal.size();
 	}
 
 	@Override
 	public Collection<Object> values() {
-		// TODO Auto-generated method stub
-		return null;
+		return internal.values();
 	}
+
+	@Override
+	public List<String> getAllOptionNames() {
+		List<String> ret = super.getAllOptionNames();
+		ret.addAll(internal.keySet());
+		return ret;
+	}
+
+	@Override
+	protected Object getLocalOption(String optionName) {
+		Object ret = super.getLocalOption(optionName);
+		if (ret == null && containsKey(optionName))
+			ret = get(optionName);
+		return ret;
+	}
+
+	@Override
+	protected void setLocalOption(String optionName, Object content, Object setter) {
+		if (super.getLocalOption(optionName) != null) {
+			super.setLocalOption(optionName, content, setter);
+		} else {
+			this.setter = setter;
+			
+			put(optionName, content);
+			
+			this.setter = null;
+		}
+	}
+	
 
 }

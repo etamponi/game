@@ -16,18 +16,22 @@ import game.core.Dataset;
 
 public abstract class Pipe extends Block {
 	
+	public boolean trained = false;
+	
 	public Pipe() {
 		setOptionChecks("parents", new SizeCheck(1));
+		
+		setPrivateOptions("trained");
 	}
 	
 	@Override
 	public boolean isTrained() {
-		return true;
+		return trained;
 	}
 
 	@Override
 	protected void train(Dataset trainingSet) {
-		throw new UnsupportedOperationException("You cannot train a Pipe!");
+		trained = true;
 	}
 
 	@Override
