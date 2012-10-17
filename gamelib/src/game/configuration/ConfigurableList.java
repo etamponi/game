@@ -136,6 +136,10 @@ public class ConfigurableList extends Configurable implements List {
 		return internal.get(index);
 	}
 
+	public <T> T get(int index, Class<T> cast) {
+		return (T)internal.get(index);
+	}
+
 	@Override
 	public int indexOf(Object o) {
 		return internal.indexOf(o);

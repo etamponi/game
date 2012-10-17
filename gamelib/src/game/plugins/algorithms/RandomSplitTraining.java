@@ -8,41 +8,41 @@
  * Contributors:
  *     Emanuele Tamponi - initial API and implementation
  ******************************************************************************/
-package game.plugins.graphtrainers;
+package game.plugins.algorithms;
 
 import game.configuration.errorchecks.RangeCheck;
 import game.core.Block;
 import game.core.Dataset;
-import game.core.GraphTrainer;
+import game.core.TrainingAlgorithm;
 import game.core.blocks.Graph;
 
 import java.util.HashSet;
 import java.util.Set;
 
-public class RandomSplitTrainer extends GraphTrainer {
+public class RandomSplitTraining extends TrainingAlgorithm<Graph> {
 	
 	public double splitPercent = 1.0;
 	
-	public RandomSplitTrainer() {
+	public RandomSplitTraining() {
 		setOptionChecks("splitPercent", new RangeCheck(0.05, 1.00));
 	}
 
 	@Override
-	public boolean isCompatible(Graph graph) {
+	public boolean isCompatible(Block block) {
 		return true;
 	}
 
 	@Override
-	protected void trainGraph(Graph graph, Dataset trainingSet) {
-		recursivelyTrainGraph(graph.outputClassifier, trainingSet, 1.0/blocksToTrain(graph));
+	protected void train(Dataset trainingSet) {
+		recursivelyTrainGraph(block.outputClassifier, trainingSet, 1.0/blocksToTrain(block));
 	}
 
 	private void recursivelyTrainGraph(Block current, Dataset trainingSet, double increase) {
 		for (Block parent: current.parents.getList(Block.class))
 			recursivelyTrainGraph(parent, trainingSet, increase);
 
-		if (!current.isTrained()) {
-			startAnotherTaskAndWait(getCurrentPercent()+increase, current, trainingSet.getRandomSubset(splitPercent));
+		if (!current.trained) {
+			executeAnotherTaskAndWait(getCurrentPercent()+increase, current.trainingAlgorithm, trainingSet.getRandomSubset(splitPercent));
 		}
 	}
 	
@@ -51,7 +51,7 @@ public class RandomSplitTrainer extends GraphTrainer {
 		countBlocks(graph.outputClassifier, blocks);
 		int count = 0;
 		for(Block block: blocks)
-			if (!block.isTrained()) count++;
+			if (!block.trained) count++;
 		return count;
 	}
 	

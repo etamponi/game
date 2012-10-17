@@ -11,10 +11,9 @@
 package testgame.tests;
 
 import static org.junit.Assert.assertEquals;
-import game.Settings;
 import game.configuration.Configurable;
 import game.core.DataTemplate;
-import game.core.Dataset;
+import game.core.DataTemplate.Data;
 import game.core.Encoding;
 import game.core.InstanceTemplate;
 import game.core.blocks.Encoder;
@@ -30,9 +29,6 @@ import game.plugins.datatemplates.VectorTemplate;
 import game.plugins.editors.ImplementationChooserEditor;
 import game.plugins.editors.NumberEditor;
 import game.plugins.editors.graph.OuterGraphEditor;
-
-import java.util.List;
-
 import javafx.application.Application;
 import javafx.application.Platform;
 import javafx.scene.control.ComboBox;
@@ -99,17 +95,7 @@ public class EditorSystemTest extends Application {
 	public static class ClassifierA extends Transducer {
 
 		@Override
-		public boolean isTrained() {
-			return false;
-		}
-
-		@Override
-		protected void train(Dataset trainingSet) {
-			
-		}
-
-		@Override
-		public Encoding transform(List inputData) {
+		public Encoding transform(Data inputData) {
 			return null;
 		}
 
@@ -123,17 +109,7 @@ public class EditorSystemTest extends Application {
 	public static class ClassifierB extends Transducer {
 
 		@Override
-		public boolean isTrained() {
-			return false;
-		}
-
-		@Override
-		protected void train(Dataset trainingSet) {
-			
-		}
-
-		@Override
-		public Encoding transform(List inputData) {
+		public Encoding transform(Data inputData) {
 			return null;
 		}
 
@@ -147,7 +123,7 @@ public class EditorSystemTest extends Application {
 	public static class EncoderA extends Encoder<VectorTemplate> {
 
 		@Override
-		public Encoding baseEncode(List inputData) {
+		public Encoding baseEncode(Data inputData) {
 			return null;
 		}
 
@@ -166,7 +142,7 @@ public class EditorSystemTest extends Application {
 	public static class EncoderB extends Encoder<LabelTemplate> {
 
 		@Override
-		public Encoding baseEncode(List inputData) {
+		public Encoding baseEncode(Data inputData) {
 			return null;
 		}
 
@@ -185,7 +161,7 @@ public class EditorSystemTest extends Application {
 	public static class EncoderC extends Encoder<DataTemplate> {
 
 		@Override
-		public Encoding baseEncode(List inputData) {
+		public Encoding baseEncode(Data inputData) {
 			return null;
 		}
 
@@ -203,7 +179,6 @@ public class EditorSystemTest extends Application {
 
 	@Test
 	public void test() throws Exception {
-		Settings.initialize();
 		PluginManager manager = PluginManager.get();
 		manager.setOption("packages.add", "testgame");
 		manager.setAsManager();

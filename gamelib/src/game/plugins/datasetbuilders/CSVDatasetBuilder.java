@@ -14,7 +14,6 @@ import game.configuration.errorchecks.FileExistsCheck;
 import game.core.DataTemplate;
 import game.core.Dataset;
 import game.core.DatasetBuilder;
-import game.core.Instance;
 import game.core.InstanceTemplate;
 import game.plugins.datatemplates.LabelTemplate;
 import game.plugins.datatemplates.VectorTemplate;
@@ -65,7 +64,7 @@ public class CSVDatasetBuilder extends DatasetBuilder {
 					String[] tokens = line.split(separators);
 					Object input = getData(Arrays.copyOfRange(tokens, 0, inputDim), template.inputTemplate);
 					Object output = getData(Arrays.copyOfRange(tokens, inputDim, inputDim+outputDim), template.outputTemplate);
-					ret.add(new Instance(input, output));
+					ret.add(template.newInstance(input, output));
 					count++;
 				}
 				reader.close();

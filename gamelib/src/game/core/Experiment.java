@@ -12,23 +12,17 @@ package game.core;
 
 import java.io.File;
 
-
-
-public abstract class Experiment extends LongTask {
+public abstract class Experiment extends LongTask<Result, String> {
 	
 	public String name;
 	
 	public InstanceTemplate template;
 	
-	public Result startExperiment(String prefixDirectory) {
-		return startTask(prefixDirectory);
-	}
-	
 	protected abstract Result runExperiment(String outputDirectory);
 
 	@Override
-	protected Object execute(Object... params) {
-		String outputDirectory = params[0] + "/" + name;
+	public Result execute(String resultsDirectory) {
+		String outputDirectory = resultsDirectory + "/" + name;
 		File dir = new File(outputDirectory);
 		if (!dir.exists())
 			dir.mkdirs();

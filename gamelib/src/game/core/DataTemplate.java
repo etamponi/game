@@ -12,10 +12,30 @@ package game.core;
 
 import game.configuration.Configurable;
 
+import java.util.ArrayList;
+
 public abstract class DataTemplate extends Configurable {
+	
+	public static class Data<T, DT> extends ArrayList<T> {
+		
+		private DT template;
+		
+		protected Data() {}
+
+		protected Data(DT template) {
+			this.template = template;
+		}
+		
+		protected DT getTemplate() {
+			return template;
+		}
+		
+	}
 	
 	public boolean sequence = false;
 	
 	public abstract int getDescriptionLength();
+	
+	public abstract Data newDataInstance();
 	
 }

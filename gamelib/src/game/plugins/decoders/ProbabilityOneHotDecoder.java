@@ -13,21 +13,21 @@ package game.plugins.decoders;
 import game.core.Decoder;
 import game.core.Encoding;
 import game.core.blocks.Encoder;
+import game.plugins.datatemplates.LabelTemplate.LabelData;
 import game.plugins.encoders.OneHotEncoder;
-
-import java.util.ArrayList;
-import java.util.List;
 
 import org.apache.commons.math3.linear.RealVector;
 
 public class ProbabilityOneHotDecoder extends Decoder<OneHotEncoder> {
 
 	@Override
-	protected List baseDecode(Encoding outputEncoded) {
-		List ret = new ArrayList<>(outputEncoded.length());
+	protected LabelData baseDecode(Encoding outputEncoded) {
+		LabelData ret = encoder.template.newDataInstance();
+		
 		for (RealVector element: outputEncoded) {
-			ret.add(encoder.template.labels.get(element.getMaxIndex()));
+			ret.add(encoder.template.labels.get(element.getMaxIndex(), String.class));
 		}
+		
 		return ret;
 	}
 

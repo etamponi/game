@@ -12,9 +12,8 @@ package game.core.blocks;
 
 import game.configuration.errorchecks.SizeCheck;
 import game.core.Block;
+import game.core.DataTemplate.Data;
 import game.core.Encoding;
-
-import java.util.List;
 
 
 public abstract class Classifier extends Transducer {
@@ -26,7 +25,7 @@ public abstract class Classifier extends Transducer {
 	protected abstract Encoding classify(Encoding inputEncoded);
 
 	@Override
-	public Encoding transform(List input) {
+	public Encoding transform(Data input) {
 		return classify(getParentEncoding(input));
 	}
 	
@@ -36,7 +35,7 @@ public abstract class Classifier extends Transducer {
 		return (Block)parents.get(0);
 	}
 	
-	protected Encoding getParentEncoding(List input) {
+	protected Encoding getParentEncoding(Data input) {
 		return getParent().transform(input);
 	}
 

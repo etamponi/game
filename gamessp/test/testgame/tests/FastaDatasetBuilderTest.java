@@ -13,7 +13,10 @@ package testgame.tests;
 import static org.junit.Assert.assertEquals;
 import game.core.Dataset;
 import game.core.Instance;
+import game.core.InstanceTemplate;
 import game.plugins.datasetbuilders.FastaDatasetBuilder;
+import game.plugins.datatemplates.ProteinHECStructure;
+import game.plugins.datatemplates.ProteinPrimaryStructure;
 
 import java.io.File;
 import java.util.List;
@@ -24,8 +27,13 @@ public class FastaDatasetBuilderTest {
 
 	@Test
 	public void test() {
+		InstanceTemplate template = new InstanceTemplate();
+		template.inputTemplate = new ProteinPrimaryStructure();
+		template.outputTemplate = new ProteinHECStructure();
 		FastaDatasetBuilder builder = new FastaDatasetBuilder();
-		builder.setOption("datasetFile", new File("testdata/fastadataset.txt"));
+		builder.setOption("file", new File("testdata/fastadataset.txt"));
+		builder.setOption("template", template);
+		builder.setOption("shuffle", false);
 		Dataset dataset = builder.buildDataset();
 		
 		Instance inst = dataset.instanceIterator().next();

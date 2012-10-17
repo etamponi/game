@@ -15,7 +15,7 @@ import java.util.Observer;
 
 import game.configuration.Configurable;
 
-public abstract class LongTask extends Configurable {
+public abstract class LongTask<R, P> extends Configurable {
 	
 	public static class LongTaskUpdate {}
 
@@ -24,16 +24,9 @@ public abstract class LongTask extends Configurable {
 
 	public abstract String getTaskDescription();
 	
-	protected abstract Object execute(Object... params);
+	public abstract R execute(P param);
 	
-	protected <T> T startTask(Object... params) {
-		updateStatus(0.0, "start task " + getTaskDescription());
-		Object ret = execute(params);
-		updateStatus(1.0, "task finished (" + getTaskDescription() + ")");
-		return (T)ret;
-	}
-	
-	protected <T> T startAnotherTaskAndWait(double percentAtEnd, LongTask task, Object... params) {
+	protected <RR, PP> RR executeAnotherTaskAndWait(double percentAtEnd, LongTask<RR, PP> task, PP param) {
 		final double percentAtStart = currentPercent;
 		final double ratio = percentAtEnd - percentAtStart;
 		Observer temp = new Observer() {
@@ -46,7 +39,7 @@ public abstract class LongTask extends Configurable {
 			}
 		};
 		task.addObserver(temp);
-		T ret = task.startTask(params);
+		RR ret = task.execute(param);
 		task.deleteObserver(temp);
 		return ret;
 	}

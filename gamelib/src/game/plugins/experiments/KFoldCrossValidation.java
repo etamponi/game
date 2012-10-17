@@ -47,7 +47,7 @@ public class KFoldCrossValidation extends FullExperiment {
 		for(int i = 0; i < folds; i++) {
 			Graph graphClone = graph.cloneConfiguration(graph.name+"_"+i);
 			updateStatus(getOverallStatus(0.01, i), "training graph for fold " + (i+1) + "/" + folds);
-			startAnotherTaskAndWait(getOverallStatus(0.70, i), graphClone, trainings.get(i));
+			executeAnotherTaskAndWait(getOverallStatus(0.70, i), graphClone.trainingAlgorithm, trainings.get(i));
 			updateStatus(getOverallStatus(0.70, i), "training complete, testing phase...");
 			ret.testedDatasets.add(classifyDataset(getOverallStatus(0.99, i), graphClone, testings.get(i), outputDirectory, "tested_"+i));
 			ret.trainedGraphs.add(graphClone);

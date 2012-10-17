@@ -10,10 +10,22 @@
  ******************************************************************************/
 package game.plugins.datatemplates;
 
+import org.apache.commons.math3.linear.RealVector;
+
 import game.configuration.errorchecks.PositivenessCheck;
 import game.core.DataTemplate;
 
 public class VectorTemplate extends DataTemplate {
+	
+	public static class VectorData extends Data<RealVector, VectorTemplate> {
+		
+		protected VectorData() {}
+
+		protected VectorData(VectorTemplate template) {
+			super(template);
+		}
+		
+	}
 
 	public int dimension;
 	
@@ -24,6 +36,11 @@ public class VectorTemplate extends DataTemplate {
 	@Override
 	public int getDescriptionLength() {
 		return dimension;
+	}
+
+	@Override
+	public VectorData newDataInstance() {
+		return new VectorData(this);
 	}
 	
 }

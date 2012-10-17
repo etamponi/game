@@ -283,29 +283,50 @@ public abstract class Configurable extends Observable implements Observer {
 	
 	@Override
 	public boolean equals(Object object) {
-		if (object == this)
+		if (object == this) {
 			return true;
-		if (object == null)
+		}
+		if (object == null) {
 			return false;
-		if (!object.getClass().equals(this.getClass()))
+		}
+		if (!object.getClass().equals(this.getClass())) {
 			return false;
+		}
 		Configurable other = (Configurable)object;
-		for(String option: getAllOptionNames()) {
+		return recursiveEquals(this, other, new HashSet<Configurable>());
+	}
+	
+	private static boolean recursiveEquals(Configurable c1, Configurable c2, Set<Configurable> seen) {
+		seen.add(c1);
+		seen.add(c2);
+		
+		for(String option: c1.getAllOptionNames()) {
 			if (option.equals("name"))
 				continue;
+
+			Object option1 = c1.getOption(option);
+			Object option2 = c2.getOption(option);
 			
-			Object otherOption = other.getOption(option);
-			Object myOption = this.getOption(option);
-			
-			if (otherOption == null && myOption == null)
+			if (option2 == null && option1 == null)
 				continue;
 			
-			if (otherOption == null && myOption != null ||
-					myOption == null && otherOption != null)
+			if (option2 == null && option1 != null ||
+				option1 == null && option2 != null) {
 				return false;
+			}
 			
-			if (!otherOption.equals(myOption))
-				return false;
+			if (option1 instanceof Configurable && seen.contains(option1))
+				continue;
+			if (option2 instanceof Configurable && seen.contains(option2))
+				continue;
+			
+			if (option1 instanceof Configurable && option2 instanceof Configurable) {
+				if (!recursiveEquals((Configurable)option1, (Configurable)option2, seen))
+					return false;
+			} else {
+				if (!option2.equals(option1))
+					return false;
+			}
 		}
 		return true;
 	}

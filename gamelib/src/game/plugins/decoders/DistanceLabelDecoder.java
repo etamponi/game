@@ -13,11 +13,10 @@ package game.plugins.decoders;
 import game.core.Decoder;
 import game.core.Encoding;
 import game.core.blocks.Encoder;
+import game.plugins.datatemplates.LabelTemplate.LabelData;
 import game.plugins.encoders.LabelEncoder;
 import game.utils.Utils;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Map.Entry;
 
 import org.apache.commons.math3.linear.RealVector;
@@ -27,8 +26,8 @@ public class DistanceLabelDecoder extends Decoder<LabelEncoder> {
 	public String distanceType = "L2"; 
 
 	@Override
-	protected List baseDecode(Encoding outputEncoded) {
-		List ret = new ArrayList<>(outputEncoded.length());
+	protected LabelData baseDecode(Encoding outputEncoded) {
+		LabelData ret = encoder.template.newDataInstance();
 		
 		for(RealVector element: outputEncoded) {
 			String label = null;

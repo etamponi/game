@@ -12,11 +12,13 @@ package game.core;
 
 import game.configuration.Configurable;
 import game.configuration.ConfigurableList;
+import game.core.DataTemplate.Data;
+import game.plugins.constraints.CompatibleWith;
 
 import java.util.LinkedList;
 import java.util.List;
 
-public abstract class Block extends LongTask {
+public abstract class Block extends Configurable {
 	
 	public static class Position extends Configurable {
 		public int x = -1;
@@ -27,44 +29,31 @@ public abstract class Block extends LongTask {
 		}
 	}
 	
+	public Position position = new Position();
+	
 	public String name;
 	
 	public ConfigurableList parents = new ConfigurableList(this, Block.class);
 	
-	public Position position = new Position();
+	public boolean trained = false;
+	
+	public TrainingAlgorithm trainingAlgorithm = new NoTraining();
 	
 	public Block() {
-		omitFromErrorCheck("parents");
+		setOptionBinding("self", "trainingAlgorithm.block");
+		setOptionConstraints("trainingAlgorithm", new CompatibleWith(this));
 		
 		setPrivateOptions("position");
+		omitFromErrorCheck("parents");
 	}
 	
-	public abstract boolean isTrained();
-	
-	protected abstract void train(Dataset trainingSet);
-	
-	public abstract Encoding transform(List input);
+	public abstract Encoding transform(Data input);
 	
 	public abstract boolean acceptsParents();
 	
 	public abstract int getFeatureNumber();
 	
-	@Override
-	public String getTaskDescription() {
-		return "training of " + this;
-	}
-
-	public void startTraining(Dataset trainingSet) {
-		startTask(trainingSet);
-	}
-	
-	@Override
-	protected Object execute(Object... params) {
-		train((Dataset)params[0]);
-		return null;
-	}
-	
-	protected List<Encoding> getParentsEncodings(List input) {
+	protected List<Encoding> getParentsEncodings(Data input) {
 		List<Encoding> ret = new LinkedList<>();
 		
 		for (Block parent: parents.getList(Block.class)) {
@@ -74,13 +63,13 @@ public abstract class Block extends LongTask {
 		return ret;
 	}
 	
-	public Block getParent(int i) {
-		return (Block)parents.get(i);
-	}
-	
-	public Encoding getParentEncoding(int i, List input) {
+	public Encoding getParentEncoding(int i, Data input) {
 		assert(i >= 0 && i < parents.size());
 		return ((Block)parents.get(i)).transform(input);
+	}
+	
+	public Block getParent(int i) {
+		return (Block)parents.get(i);
 	}
 
 }

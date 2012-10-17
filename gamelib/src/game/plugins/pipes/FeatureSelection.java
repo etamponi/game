@@ -1,10 +1,9 @@
 package game.plugins.pipes;
 
 import game.configuration.ErrorCheck;
+import game.core.DataTemplate.Data;
 import game.core.Encoding;
 import game.core.blocks.Pipe;
-
-import java.util.List;
 
 import org.apache.commons.math3.linear.RealVector;
 
@@ -25,7 +24,7 @@ public class FeatureSelection extends Pipe {
 	}
 
 	@Override
-	public Encoding transform(List input) {
+	public Encoding transform(Data input) {
 		Encoding ret = new Encoding(getFeatureNumber(), input.size());
 		Encoding base = getParentEncoding(0, input);
 		

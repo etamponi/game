@@ -11,18 +11,17 @@
 package game.plugins.encoders;
 
 import game.core.DataTemplate;
+import game.core.DataTemplate.Data;
 import game.core.Encoding;
 import game.core.blocks.Encoder;
 import game.plugins.datatemplates.VectorTemplate;
-
-import java.util.List;
 
 import org.apache.commons.math3.linear.RealVector;
 
 public class VectorEncoder extends Encoder<VectorTemplate> {
 
 	@Override
-	public Encoding baseEncode(List input) {
+	public Encoding baseEncode(Data input) {
 		Encoding ret = new Encoding(getFeatureNumber(), input.size());
 		int j = 0;
 		for(Object element: input)

@@ -12,13 +12,13 @@ package game.plugins.encoders;
 
 import game.configuration.Change;
 import game.core.DataTemplate;
+import game.core.DataTemplate.Data;
 import game.core.Encoding;
 import game.core.blocks.Encoder;
 import game.plugins.datatemplates.LabelTemplate;
 
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Observable;
 import java.util.Observer;
 
@@ -46,7 +46,7 @@ public abstract class LabelEncoder extends Encoder<LabelTemplate> {
 	protected abstract void updateLabelMapping();
 
 	@Override
-	public Encoding baseEncode(List input) {
+	public Encoding baseEncode(Data input) {
 		Encoding ret = new Encoding(getFeatureNumber(), input.size());
 		for (int j = 0; j < input.size(); j++) {
 			Object element = input.get(j);

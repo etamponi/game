@@ -24,7 +24,11 @@ class OptionBinding {
 	}
 	
 	void updateOnChange(String changedOption) {
-		Object masterContent = owner.getOption(masterPath);
+		Object masterContent;
+		if (masterPath.equals("self"))
+			masterContent = owner;
+		else
+			masterContent = owner.getOption(masterPath);
 		if (isOnPath(masterPath, changedOption)) {
 			for (String slave: slaves) {
 				owner.setOption(slave, masterContent);

@@ -10,6 +10,7 @@
  ******************************************************************************/
 package game.plugins.classifiers;
 
+import game.core.DataTemplate.Data;
 import game.core.Encoding;
 import game.core.InstanceTemplate;
 import game.core.blocks.Combiner;
@@ -26,7 +27,7 @@ public class AveragingCombiner extends Combiner {
 	}
 
 	@Override
-	public Encoding transform(List input) {
+	public Encoding transform(Data input) {
 		List<Encoding> encs = getParentsEncodings(input);
 		
 		if (encs.size() == 1)

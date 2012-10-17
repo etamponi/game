@@ -8,7 +8,7 @@
  * Contributors:
  *     Emanuele Tamponi - initial API and implementation
  ******************************************************************************/
-package game;
+package game.main;
 
 import game.plugins.PluginManager;
 import game.utils.Log;

@@ -12,10 +12,9 @@ package game.core;
 
 import game.configuration.Configurable;
 import game.configuration.errorchecks.CompatibilityCheck;
+import game.core.DataTemplate.Data;
 import game.core.blocks.Encoder;
 import game.plugins.constraints.Compatible;
-
-import java.util.List;
 
 public abstract class Decoder<E extends Encoder> extends Configurable implements Compatible<Encoder> {
 	
@@ -27,9 +26,9 @@ public abstract class Decoder<E extends Encoder> extends Configurable implements
 		setOptionChecks("encoder", new CompatibilityCheck(this));
 	}
 	
-	protected abstract List baseDecode(Encoding outputEncoded);
+	protected abstract <D extends Data> D baseDecode(Encoding outputEncoded);
 	
-	public List decode(Encoding outputEncoded) {
+	public <D extends Data> D decode(Encoding outputEncoded) {
 		if (interpolate)
 			return baseDecode(outputEncoded.makeInterpolatedEncoding(encoder.windowSize));
 		else

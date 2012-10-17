@@ -27,10 +27,12 @@ public class BlockEditor extends ConfigurableEditor {
 
 	@Override
 	public void connect(Option model) {
+		/*
 		if (model.getContent() != null) {
-			if (((Block)model.getContent()).isTrained())
+			if (((Block)model.getContent()).trained)
 				setReadOnly(true);
 		}
+		*/
 		super.connect(model);
 	}
 	

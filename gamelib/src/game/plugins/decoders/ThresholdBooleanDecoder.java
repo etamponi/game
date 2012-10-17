@@ -14,10 +14,8 @@ import game.configuration.errorchecks.RangeCheck;
 import game.core.Decoder;
 import game.core.Encoding;
 import game.core.blocks.Encoder;
+import game.plugins.datatemplates.LabelTemplate.LabelData;
 import game.plugins.encoders.BooleanEncoder;
-
-import java.util.ArrayList;
-import java.util.List;
 
 import org.apache.commons.math3.linear.RealVector;
 
@@ -35,8 +33,8 @@ public class ThresholdBooleanDecoder extends Decoder<BooleanEncoder> {
 	}
 
 	@Override
-	protected List baseDecode(Encoding outputEncoded) {
-		List ret = new ArrayList<>(outputEncoded.length());
+	protected LabelData baseDecode(Encoding outputEncoded) {
+		LabelData ret = encoder.template.newDataInstance();
 		for(RealVector element: outputEncoded) {
 			double positiveScore = element.getEntry(BooleanEncoder.POSITIVEINDEX);
 			if (positiveScore >= threshold)

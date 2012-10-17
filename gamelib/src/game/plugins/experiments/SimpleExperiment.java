@@ -34,7 +34,7 @@ public class SimpleExperiment extends FullExperiment {
 		FullResult ret = new FullResult();
 		Graph graphClone = graph.cloneConfiguration(graph.name + "_trained");
 		updateStatus(0.01, "training graph...");
-		startAnotherTaskAndWait(0.50, graphClone, trainingDataset.buildDataset());
+		executeAnotherTaskAndWait(0.50, graphClone.trainingAlgorithm, trainingDataset.buildDataset());
 		updateStatus(0.71, "training complete, testing phase...");
 		ret.testedDatasets.add(classifyDataset(0.90, graphClone, testingDataset.buildDataset(), outputDirectory, "tested"));
 		ret.trainedGraphs.add(graphClone);

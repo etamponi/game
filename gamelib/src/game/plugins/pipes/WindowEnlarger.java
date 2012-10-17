@@ -12,10 +12,9 @@ package game.plugins.pipes;
 
 import game.configuration.errorchecks.PositivenessCheck;
 import game.configuration.errorchecks.SizeCheck;
+import game.core.DataTemplate.Data;
 import game.core.Encoding;
 import game.core.blocks.Pipe;
-
-import java.util.List;
 
 public class WindowEnlarger extends Pipe {
 	
@@ -28,7 +27,7 @@ public class WindowEnlarger extends Pipe {
 	}
 
 	@Override
-	public Encoding transform(List input) {
+	public Encoding transform(Data input) {
 		return getParent(0).transform(input).makeWindowedEncoding(windowSize);
 	}
 

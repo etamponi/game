@@ -10,7 +10,6 @@
  ******************************************************************************/
 package game.main;
 
-import game.Settings;
 import game.configuration.Change;
 import game.configuration.Configurable;
 import game.configuration.ConfigurableList;

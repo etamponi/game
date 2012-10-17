@@ -12,9 +12,9 @@ package game.plugins.datasetbuilders;
 
 import game.configuration.errorchecks.FileExistsCheck;
 import game.core.DataTemplate;
+import game.core.DataTemplate.Data;
 import game.core.Dataset;
 import game.core.DatasetBuilder;
-import game.core.Instance;
 import game.core.InstanceTemplate;
 import game.plugins.datatemplates.LabelTemplate;
 import game.plugins.datatemplates.VectorTemplate;
@@ -25,8 +25,6 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.Arrays;
-import java.util.LinkedList;
-import java.util.List;
 
 public class SequenceCSVDatasetBuilder extends DatasetBuilder {
 
@@ -60,8 +58,8 @@ public class SequenceCSVDatasetBuilder extends DatasetBuilder {
 				int count = 0, index = 0;
 				BufferedReader reader = new BufferedReader(new FileReader(file));
 				for(String line = reader.readLine(); line != null && count < instanceNumber; line = reader.readLine(), index++) {
-					List inputSequence = new LinkedList<>();
-					List outputSequence = new LinkedList<>();
+					Data inputSequence = template.inputTemplate.newDataInstance();
+					Data outputSequence = template.outputTemplate.newDataInstance();
 					while (line != null && !line.matches("^$")) {
 						String[] tokens = line.split(separators);
 						inputSequence.add(getData(Arrays.copyOfRange(tokens, 0, inputDim), template.inputTemplate));
@@ -71,7 +69,7 @@ public class SequenceCSVDatasetBuilder extends DatasetBuilder {
 					if (index < startIndex)
 						continue;
 //					System.out.println(inputSequence.size() + " " + outputSequence.size());
-					ret.add(new Instance(inputSequence, outputSequence));
+					ret.add(template.newInstance(inputSequence, outputSequence));
 					count++;
 				}
 				reader.close();

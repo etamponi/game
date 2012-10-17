@@ -10,7 +10,6 @@
  ******************************************************************************/
 package game.main;
 
-import game.Settings;
 
 import java.net.URL;
 

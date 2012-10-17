@@ -87,7 +87,7 @@ public class BlockNode extends VBox implements Observer {
 		setOnDragDetected(new EventHandler<MouseEvent>() {
 			@Override
 			public void handle(MouseEvent event) {
-				if (b.isTrained() || pane.isReadOnly())
+				if (pane.isReadOnly())
 					return;
 				
 				Dragboard db = startDragAndDrop(isTemplate ? TransferMode.COPY : TransferMode.MOVE);

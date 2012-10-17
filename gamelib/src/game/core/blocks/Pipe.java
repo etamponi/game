@@ -12,26 +12,11 @@ package game.core.blocks;
 
 import game.configuration.errorchecks.SizeCheck;
 import game.core.Block;
-import game.core.Dataset;
 
 public abstract class Pipe extends Block {
 	
-	public boolean trained = false;
-	
 	public Pipe() {
 		setOptionChecks("parents", new SizeCheck(1));
-		
-		setPrivateOptions("trained");
-	}
-	
-	@Override
-	public boolean isTrained() {
-		return trained;
-	}
-
-	@Override
-	protected void train(Dataset trainingSet) {
-		trained = true;
 	}
 
 	@Override

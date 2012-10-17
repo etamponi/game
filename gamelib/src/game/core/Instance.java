@@ -10,59 +10,48 @@
  ******************************************************************************/
 package game.core;
 
-import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.List;
+import game.core.DataTemplate.Data;
 
-public class Instance implements Serializable {
+public class Instance {
 	
-	private static final long serialVersionUID = -9123652705641571185L;
-
-	private List input;
+	private Data input;
 	
-	private List output;
+	private Data output;
 	
-	private List prediction;
+	private Data prediction;
 	
 	private Encoding predictionEncoding;
 	
-	public Instance() {
+	Instance() {
 		
 	}
 	
-	public Instance(List input, List output) {
+	Instance(Data input, Data output) {
 		this.input = input;
 		this.output = output;
 	}
 	
-	public Instance(Object singleInput, Object singleOutput) {
-		this.input = new ArrayList<>();
-		this.output = new ArrayList<>();
-		this.input.add(singleInput);
-		this.output.add(singleOutput);
+	public <D extends Data> D getInput() {
+		return (D)input;
 	}
 
-	public List getInput() {
-		return input;
-	}
-
-	public void setInput(List input) {
+	public void setInput(Data input) {
 		this.input = input;
 	}
 
-	public List getOutput() {
-		return output;
+	public <D extends Data> D getOutput() {
+		return (D)output;
 	}
 
-	public void setOutput(List output) {
+	public void setOutput(Data output) {
 		this.output = output;
 	}
 
-	public List getPrediction() {
-		return prediction;
+	public <D extends Data> D getPrediction() {
+		return (D)prediction;
 	}
 
-	public void setPrediction(List prediction) {
+	public void setPrediction(Data prediction) {
 		this.prediction = prediction;
 	}
 

@@ -64,9 +64,10 @@ public class OuterGraphEditor extends Editor {
 
 	@Override
 	public void updateView() {
-		if (((Graph)getModel().getContent()).isTrained())
+		/*
+		if (((Graph)getModel().getContent()).trained)
 			setReadOnly(true);
-		
+		*/
 		if (getModel() != null) {
 			editorButton.setText((isReadOnly() ? "View" : "Edit") + " graph: " + getModel().getContent());
 		}

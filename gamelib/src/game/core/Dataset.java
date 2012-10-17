@@ -13,12 +13,8 @@ package game.core;
 import game.configuration.Configurable;
 import game.utils.Utils;
 
-import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
-import java.io.IOException;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
@@ -33,9 +29,15 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
-public class Dataset extends Configurable {
+import com.esotericsoftware.kryo.Kryo;
+import com.esotericsoftware.kryo.io.Input;
+import com.esotericsoftware.kryo.io.Output;
+
+public class Dataset extends Configurable implements Iterable<Instance> {
 	
 	private static final int COMMITCYCLE = 100;
+	
+	private static Kryo kryo = new Kryo();
 	
 	static {
 		try {
@@ -137,10 +139,17 @@ public class Dataset extends Configurable {
 		if (readOnly)
 			return; // Cannot add instances once a dataset is readOnly
 		try {
+			/*
 			ByteArrayOutputStream baos = new ByteArrayOutputStream();
 		    ObjectOutputStream oout = new ObjectOutputStream(baos);
 		    oout.writeObject(instance);
 		    oout.close();
+		    */
+			ByteArrayOutputStream baos = new ByteArrayOutputStream();
+			Output output = new Output(baos);
+			kryo.writeObject(output, instance);
+			output.close();
+			
 			PreparedStatement statement = connection.prepareStatement("INSERT INTO Data(id, content) VALUES (?, ?);");
 			statement.setInt(1, indices.size());
 			statement.setBytes(2, baos.toByteArray());
@@ -148,7 +157,7 @@ public class Dataset extends Configurable {
 			indices.add(indices.size());
 			if (indices.size() % COMMITCYCLE == 0)
 				connection.commit();
-		} catch (SQLException | IOException e) {
+		} catch (SQLException e) {
 			e.printStackTrace();
 		}
 	}
@@ -187,13 +196,16 @@ public class Dataset extends Configurable {
 				currentId = idIterator.next();
 				ResultSet result = statement.executeQuery("SELECT content FROM Data WHERE id = " + currentId + ";");
 				result.next();
-				byte[] buf = result.getBytes("content");
-			    if (buf != null) {
-			    	ObjectInputStream objectIn = new ObjectInputStream(new ByteArrayInputStream(buf));
-			    	ret = (Instance)objectIn.readObject();
-			    }
+				/*
+				ByteArrayInputStream bais = new ByteArrayInputStream(result.getBytes("content"));
+				ObjectInputStream oin = new ObjectInputStream(bais);
+			    ret = (Instance)oin.readObject();
+			    */
+				Input input = new Input(result.getBytes("content"));
+				ret = kryo.readObject(input, Instance.class);
+				
 				statement.close();
-			} catch (SQLException | IOException | ClassNotFoundException e) {
+			} catch (SQLException e) {
 				e.printStackTrace();
 			}
 			return ret;
@@ -394,6 +406,11 @@ public class Dataset extends Configurable {
 		List<Integer> temp = new ArrayList<>(indices);
 		Collections.shuffle(temp);
 		return new Dataset(this, temp.subList(0, (int)(percent*temp.size())));
+	}
+
+	@Override
+	public Iterator<Instance> iterator() {
+		return instanceIterator();
 	}
 	
 }

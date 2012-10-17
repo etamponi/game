@@ -11,6 +11,7 @@
 package game.plugins.pipes;
 
 import game.core.Block;
+import game.core.DataTemplate.Data;
 import game.core.Encoding;
 import game.core.blocks.Pipe;
 
@@ -19,7 +20,7 @@ import java.util.List;
 public class Concatenator extends Pipe {
 
 	@Override
-	public Encoding transform(List input) {
+	public Encoding transform(Data input) {
 		List<Encoding> encs = getParentsEncodings(input);
 		
 		Encoding ret = new Encoding(getFeatureNumber(), input.size());

@@ -14,7 +14,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 import game.configuration.Configurable;
 import game.core.DataTemplate;
-import game.core.Dataset;
+import game.core.DataTemplate.Data;
 import game.core.Decoder;
 import game.core.Encoding;
 import game.core.InstanceTemplate;
@@ -27,7 +27,6 @@ import game.plugins.datatemplates.LabelTemplate;
 import game.plugins.datatemplates.VectorTemplate;
 
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 
 import org.junit.Test;
@@ -36,7 +35,7 @@ public class GraphTest {
 	
 	public static class EncoderImplA extends Encoder<VectorTemplate> {
 		@Override
-		public Encoding baseEncode(List inputData) {
+		public Encoding baseEncode(Data inputData) {
 			return null;
 		}
 
@@ -53,7 +52,7 @@ public class GraphTest {
 	
 	public static class EncoderImplB extends Encoder<LabelTemplate> {
 		@Override
-		public Encoding baseEncode(List inputData) {
+		public Encoding baseEncode(Data inputData) {
 			return null;
 		}
 
@@ -74,7 +73,7 @@ public class GraphTest {
 	
 	public static class DecoderImplA extends Decoder<EncoderImplA> {
 		@Override
-		protected List baseDecode(Encoding outputEncoded) {
+		protected Data baseDecode(Encoding outputEncoded) {
 			return null;
 		}
 
@@ -86,7 +85,7 @@ public class GraphTest {
 	
 	public static class DecoderImplB extends Decoder<EncoderImplB> {
 		@Override
-		protected List baseDecode(Encoding outputEncoded) {
+		protected Data baseDecode(Encoding outputEncoded) {
 			return null;
 		}
 
@@ -98,15 +97,7 @@ public class GraphTest {
 	
 	public static class ClassifierImplA extends Transducer {
 		@Override
-		public boolean isTrained() {
-			return false;
-		}
-		@Override
-		protected void train(Dataset trainingSet) {
-			
-		}
-		@Override
-		public Encoding transform(List inputData) {
+		public Encoding transform(Data inputData) {
 			return null;
 		}
 		@Override
@@ -117,15 +108,7 @@ public class GraphTest {
 	
 	public static class ClassifierImplB extends Transducer {
 		@Override
-		public boolean isTrained() {
-			return false;
-		}
-		@Override
-		protected void train(Dataset trainingSet) {
-			
-		}
-		@Override
-		public Encoding transform(List inputData) {
+		public Encoding transform(Data inputData) {
 			return null;
 		}
 		@Override

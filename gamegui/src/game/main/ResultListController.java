@@ -10,7 +10,6 @@
  ******************************************************************************/
 package game.main;
 
-import game.Settings;
 import game.configuration.Configurable;
 import game.core.Metric;
 import game.core.Result;

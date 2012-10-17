@@ -13,10 +13,8 @@ package game.plugins.decoders;
 import game.core.Decoder;
 import game.core.Encoding;
 import game.core.blocks.Encoder;
+import game.plugins.datatemplates.VectorTemplate.VectorData;
 import game.plugins.encoders.VectorEncoder;
-
-import java.util.ArrayList;
-import java.util.List;
 
 import org.apache.commons.math3.linear.RealVector;
 
@@ -28,8 +26,8 @@ public class VectorDecoder extends Decoder<VectorEncoder> {
 	}
 
 	@Override
-	protected List baseDecode(Encoding outputEncoded) {
-		List ret = new ArrayList<>(outputEncoded.length());
+	protected VectorData baseDecode(Encoding outputEncoded) {
+		VectorData ret = encoder.template.newDataInstance();
 		for(RealVector element: outputEncoded)
 			ret.add(element);
 		return ret;

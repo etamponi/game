@@ -11,6 +11,7 @@
 package game.plugins.datasetbuilders;
 
 import game.configuration.errorchecks.FileExistsCheck;
+import game.core.DataTemplate.Data;
 import game.core.Dataset;
 import game.core.DatasetBuilder;
 import game.core.Instance;
@@ -24,8 +25,6 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
-import java.util.LinkedList;
-import java.util.List;
 
 public class FastaDatasetBuilder extends DatasetBuilder {
 	
@@ -51,18 +50,18 @@ public class FastaDatasetBuilder extends DatasetBuilder {
 				int index = 0, count = 0;
 				BufferedReader reader = new BufferedReader(new FileReader(file));
 				boolean primary = true;
-				List<String> sequence = null;
+				Data sequence = null;
 				Instance instance = null;
 				for (String line = reader.readLine(); line != null && count < instanceNumber; line = reader.readLine()) {
 					if (line.startsWith(">")) {
-						sequence = new LinkedList<>();
-						instance = new Instance();
+						sequence = template.inputTemplate.newDataInstance();
+						instance = template.newInstance();
 					} else {
 						for (int i = 0; i < line.length(); i++)
 							sequence.add(String.valueOf(line.charAt(i)));
 						if (primary) {
 							instance.setInput(sequence);
-							sequence = new LinkedList<>();
+							sequence = template.outputTemplate.newDataInstance();
 						} else {
 							instance.setOutput(sequence);
 							if (index++ >= startIndex) {

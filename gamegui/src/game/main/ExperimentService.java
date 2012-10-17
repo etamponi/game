@@ -10,7 +10,6 @@
  ******************************************************************************/
 package game.main;
 
-import game.Settings;
 import game.core.Experiment;
 import game.core.LongTask.LongTaskUpdate;
 import game.core.Result;
@@ -150,7 +149,7 @@ public class ExperimentService extends Service<Result> {
 					}
 				};
 				currentExperiment.addObserver(experimentObserver);
-				Result ret = currentExperiment.startExperiment(Settings.RESULTSDIR);
+				Result ret = currentExperiment.execute(Settings.RESULTSDIR);
 				currentExperiment.deleteObserver(experimentObserver);
 				currentExperiment = null;
 				experimentObserver = null;

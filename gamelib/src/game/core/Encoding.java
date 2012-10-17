@@ -11,6 +11,9 @@ public class Encoding extends Array2DRowRealMatrix implements Iterable<RealVecto
 
 	private static final long serialVersionUID = -2301854648600245030L;
 	
+	@SuppressWarnings("unused")
+	private Encoding() {}
+	
 	public Encoding(int featureNumber, int length) {
 		super(featureNumber, length);
 	}

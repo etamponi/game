@@ -10,21 +10,17 @@
  ******************************************************************************/
 package game.core.blocks;
 
-import java.util.List;
-
 import game.configuration.ErrorCheck;
 import game.configuration.errorchecks.CompatibilityCheck;
 import game.configuration.errorchecks.PositivenessCheck;
 import game.configuration.errorchecks.SizeCheck;
 import game.core.Block;
-import game.core.Dataset;
 import game.core.DataTemplate;
+import game.core.DataTemplate.Data;
 import game.core.Encoding;
 import game.plugins.constraints.Compatible;
 
 public abstract class Encoder<DT extends DataTemplate> extends Block implements Compatible<DataTemplate> {
-	
-	public boolean trained = false;
 	
 	public DT template;
 	
@@ -43,11 +39,9 @@ public abstract class Encoder<DT extends DataTemplate> extends Block implements 
 					return null;
 			}
 		});
-		
-		setPrivateOptions("trained");
 	}
 
-	protected abstract Encoding baseEncode(List input);
+	protected abstract Encoding baseEncode(Data input);
 	
 	protected abstract int getBaseFeatureNumber();
 	
@@ -57,18 +51,8 @@ public abstract class Encoder<DT extends DataTemplate> extends Block implements 
 	}
 
 	@Override
-	public Encoding transform(List input) {
+	public Encoding transform(Data input) {
 		return baseEncode(input).makeWindowedEncoding(windowSize);
-	}
-
-	@Override
-	public boolean isTrained() {
-		return trained;
-	}
-
-	@Override
-	protected void train(Dataset trainingSet) {
-		trained = true;
 	}
 	
 	@Override
