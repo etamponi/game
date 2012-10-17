@@ -29,7 +29,7 @@ public class RandomSplitTraining extends TrainingAlgorithm<Graph> {
 
 	@Override
 	public boolean isCompatible(Block block) {
-		return true;
+		return block instanceof Graph;
 	}
 
 	@Override
