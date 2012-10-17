@@ -98,11 +98,11 @@ public class LongTaskTest {
 					else if (count > 4 && count < 10)
 						assertEquals("LongTaskImplB slept for " + (count-4) + " seconds", observed.getCurrentMessage());
 					else if (count == 10)
-						assertEquals("task finished", observed.getCurrentMessage());
+						assertEquals("task finished (test task B)", observed.getCurrentMessage());
 					else if (count == 11)
 						assertEquals("slept for a lot of seconds", observed.getCurrentMessage());
 					else
-						assertEquals("task finished", observed.getCurrentMessage());
+						assertEquals("task finished (test task A)", observed.getCurrentMessage());
 					count++;
 				}
 			}
