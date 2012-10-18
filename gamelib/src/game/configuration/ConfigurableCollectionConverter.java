@@ -64,10 +64,7 @@ public class ConfigurableCollectionConverter extends BaseConverter {
 				String className = reader.getAttribute("class");
 				
 				Class optionType = className != null ? getClassLoader().loadClass(className) : col.getOptionType(optionName);
-				if (optionName.matches("^\\d+$"))
-					col.setOption("add", context.convertAnother(col, optionType));
-				else
-					col.setOption(optionName, context.convertAnother(col, optionType)/*, false, null*/);
+				col.setOption(optionName, context.convertAnother(col, optionType));
 				reader.moveUp();
 			}
 		} catch (ClassNotFoundException | InstantiationException | IllegalAccessException e) {

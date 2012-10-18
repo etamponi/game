@@ -41,7 +41,7 @@ public class PluginManagerTest {
 	@Test
 	public void test() {
 		PluginManager manager = new PluginManager();
-		manager.setOption("packages.add", "testgame");
+		manager.packages.add("testgame");
 		PluginManager.updateManager(manager);
 		
 		Set<Class> set = classSet(PluginManager.getImplementationsOf(Parent.class));

@@ -33,18 +33,18 @@ public class DatasetTest {
 		template.inputTemplate = new VectorTemplate();
 		template.outputTemplate = new LabelTemplate();
 		template.inputTemplate.setOption("dimension", 4);
-		template.outputTemplate.setOption("labels.add", "Iris-setosa");
-		template.outputTemplate.setOption("labels.add", "Iris-versicolor");
-		template.outputTemplate.setOption("labels.add", "Iris-virginica");
+		template.outputTemplate.getOption("labels", List.class).add("Iris-setosa");
+		template.outputTemplate.getOption("labels", List.class).add("Iris-versicolor");
+		template.outputTemplate.getOption("labels", List.class).add("Iris-virginica");
 		
 		sequenceTpl.inputTemplate = new VectorTemplate();
 		sequenceTpl.outputTemplate = new LabelTemplate();
 		sequenceTpl.inputTemplate.setOption("sequence", true);
 		sequenceTpl.inputTemplate.setOption("dimension", 20);
 		sequenceTpl.outputTemplate.setOption("sequence", true);
-		sequenceTpl.outputTemplate.setOption("labels.add", "H");
-		sequenceTpl.outputTemplate.setOption("labels.add", "E");
-		sequenceTpl.outputTemplate.setOption("labels.add", "C");
+		sequenceTpl.outputTemplate.getOption("labels", List.class).add("H");
+		sequenceTpl.outputTemplate.getOption("labels", List.class).add("E");
+		sequenceTpl.outputTemplate.getOption("labels", List.class).add("C");
 	}
 
 	@Test

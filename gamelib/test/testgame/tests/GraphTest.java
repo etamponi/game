@@ -27,6 +27,7 @@ import game.plugins.datatemplates.LabelTemplate;
 import game.plugins.datatemplates.VectorTemplate;
 
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 import org.junit.Test;
@@ -120,8 +121,8 @@ public class GraphTest {
 	@Test
 	public void test() {
 		PluginManager manager = new PluginManager();
-		manager.setOption("packages.remove", "game");
-		manager.setOption("packages.add", "testgame");
+		manager.packages.remove("game");
+		manager.packages.add("testgame");
 		PluginManager.updateManager(manager);
 		
 		Graph graph = new Graph();
@@ -130,9 +131,9 @@ public class GraphTest {
 		graph.setOption("template.inputTemplate", new VectorTemplate());
 		graph.setOption("template.inputTemplate.dimension", 3);
 		graph.setOption("template.outputTemplate", new LabelTemplate());
-		graph.setOption("template.outputTemplate.labels.add", "A");
-		graph.setOption("template.outputTemplate.labels.add", "B");
-		graph.setOption("template.outputTemplate.labels.add", "C");
+		graph.getOption("template.outputTemplate.labels", List.class).add("A");
+		graph.getOption("template.outputTemplate.labels", List.class).add("B");
+		graph.getOption("template.outputTemplate.labels", List.class).add("C");
 		
 		Configurable classifiers = graph.getOption("classifiers");
 		Set<Class> set = classSet(classifiers.getCompatibleOptionImplementations("*"));
@@ -141,7 +142,7 @@ public class GraphTest {
 		assertEquals(real.size(), set.size());
 		assertTrue(set.containsAll(real));
 		
-		graph.setOption("classifiers.add", new ClassifierImplA());
+		graph.classifiers.add(new ClassifierImplA());
 		assertEquals(graph.getOption("template"), graph.getOption("classifiers.0.template"));
 		
 		graph.setOption("outputClassifier", graph.getOption("classifiers.0"));
@@ -172,7 +173,7 @@ public class GraphTest {
 		assertEquals(real.size(), set.size());
 		assertTrue(set.containsAll(real));
 		
-		graph.setOption("inputEncoders.add", new EncoderImplA());
+		graph.inputEncoders.add(new EncoderImplA());
 		set = classSet(object.getCompatibleOptionImplementations("0"));
 		assertEquals(real.size(), set.size());
 		assertTrue(set.containsAll(real));

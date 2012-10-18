@@ -12,6 +12,7 @@ package testgame.tests;
 
 import static org.junit.Assert.assertEquals;
 import game.configuration.Configurable;
+import game.configuration.ConfigurableList;
 import game.core.DataTemplate;
 import game.core.DataTemplate.Data;
 import game.core.Encoding;
@@ -180,7 +181,7 @@ public class EditorSystemTest extends Application {
 	@Test
 	public void test() throws Exception {
 		PluginManager manager = PluginManager.get();
-		manager.setOption("packages.add", "testgame");
+		manager.packages.add("testgame");
 		PluginManager.updateManager(manager);
 		launch();
 	}
@@ -224,27 +225,33 @@ public class EditorSystemTest extends Application {
 		best.disconnect();
 		
 		final Graph graph = new Graph();
-		graph.setOption("classifiers.add", new ClassifierA());
-		graph.setOption("classifiers.add", new ClassifierB());
-		graph.setOption("classifiers.add", new ClassifierB());
-		graph.setOption("classifiers.add", new ClassifierA());
-		graph.setOption("classifiers.add", new ClassifierA());
-		graph.setOption("classifiers.add", new ClassifierB());
-		graph.setOption("classifiers.add", new ClassifierA());
-		graph.setOption("classifiers.add", new ClassifierB());
-		graph.setOption("inputEncoders.add", new EncoderA());
-		graph.setOption("inputEncoders.add", new EncoderA());
+		graph.classifiers.add(new ClassifierA());
+		graph.classifiers.add(new ClassifierB());
+		graph.classifiers.add(new ClassifierB());
+		graph.classifiers.add(new ClassifierA());
+		graph.classifiers.add(new ClassifierA());
+		graph.classifiers.add(new ClassifierB());
+		graph.classifiers.add(new ClassifierA());
+		graph.classifiers.add(new ClassifierB());
+		graph.inputEncoders.add(new EncoderA());
+		graph.inputEncoders.add(new EncoderA());
 		
 		graph.setOption("outputClassifier", graph.getOption("classifiers.0"));
-		graph.setOption("classifiers.0.parents.add", graph.getOption("classifiers.1"));
-		graph.setOption("classifiers.0.parents.add", graph.getOption("classifiers.2"));
-		graph.setOption("classifiers.1.parents.add", graph.getOption("classifiers.3"));
-		graph.setOption("classifiers.2.parents.add", graph.getOption("classifiers.3"));
-		graph.setOption("classifiers.3.parents.add", graph.getOption("classifiers.4"));
-		graph.setOption("classifiers.3.parents.add", graph.getOption("classifiers.5"));
-		graph.setOption("classifiers.4.parents.add", graph.getOption("inputEncoders.0"));
-		graph.setOption("classifiers.5.parents.add", graph.getOption("inputEncoders.0"));
-		graph.setOption("classifiers.4.parents.add", graph.getOption("classifiers.2"));
+		ConfigurableList parents = graph.getOption("classifiers.0.parents");
+		parents.add(graph.getOption("classifiers.1"));
+		parents.add(graph.getOption("classifiers.2"));
+		parents = graph.getOption("classifiers.1.parents");
+		parents.add(graph.getOption("classifiers.3"));
+		parents = graph.getOption("classifiers.2.parents");
+		parents.add(graph.getOption("classifiers.3"));
+		parents = graph.getOption("classifiers.3.parents");
+		parents.add(graph.getOption("classifiers.3"));
+		parents.add(graph.getOption("classifiers.4"));
+		parents = graph.getOption("classifiers.4.parents");
+		parents.add(graph.getOption("inputEncoders.0"));
+		parents.add(graph.getOption("classifiers.2"));
+		parents = graph.getOption("classifiers.5.parents");
+		parents.add(graph.getOption("inputEncoders.0"));
 		
 		object = new ConfigurableImplA();
 		object.setOption("graph", graph);

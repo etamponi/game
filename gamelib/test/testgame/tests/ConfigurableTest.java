@@ -37,8 +37,8 @@ public class ConfigurableTest {
 		object.setOption("optionA3", "This is optionA3");
 		object.setOption("optionA4.optionB3", "This is optionB3");
 		object.setOption("optionA5.optionC3", "This is optionC3");
-		object.setOption("optionList.add", new ConfigurableImplB());
-		object.setOption("optionList.add", new ConfigurableImplB());
+		object.getOption("optionList", List.class).add(new ConfigurableImplB());
+		object.getOption("optionList", List.class).add(new ConfigurableImplB());
 		object.setOption("optionList.0.optionB1", "This is optionB1 on list.0");
 		object.setOption("optionList.1.optionB1", "This is optionB1 on list.1");
 
@@ -53,10 +53,10 @@ public class ConfigurableTest {
 		object.setOption("optionList.1", new ConfigurableImplB());
 		assertEquals("This is optionA3", object.getOption("optionList.1.optionB3"));
 
-		object.setOption("optionList.remove", 1);
-		object.setOption("optionList.remove", object.getOption("optionList.0"));
+		object.getOption("optionList", List.class).remove(1);
+		object.getOption("optionList", List.class).remove(object.getOption("optionList.0"));
 		assertEquals(0, object.getOption("optionList", List.class).size());
-		object.setOption("optionList.add", new ConfigurableImplB());
+		object.getOption("optionList", List.class).add(new ConfigurableImplB());
 
 		object2 = object.getOption("optionA4");
 		LinkedList<String> unbound = new LinkedList<>();
@@ -129,7 +129,7 @@ public class ConfigurableTest {
 		assertEquals(2, object.getConfigurationErrors().size());
 		assertTrue(object.getConfigurationErrors().containsAll(errors));
 		
-		object.setOption("optionList.add", new ConfigurableImplB());
+		object.getOption("optionList", List.class).add(new ConfigurableImplB());
 		errors.add("optionList.0.optionB1: is null");
 		errors.add("optionList.0.optionB2: is null");
 		assertEquals(4, object.getConfigurationErrors().size());

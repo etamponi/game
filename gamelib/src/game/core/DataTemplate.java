@@ -20,6 +20,10 @@ public abstract class DataTemplate extends Configurable {
 		
 		protected Data() {}
 		
+		public int length() {
+			return size();
+		}
+		
 	}
 	
 	public boolean sequence = false;

@@ -87,7 +87,7 @@ public class Connection extends CubicCurve {
 	}
 
 	public void removeFromModel() {
-		to.getBlock().setOption("parents.remove", from.getBlock());
+		to.getBlock().parents.remove(from.getBlock());
 	}
 	
 }

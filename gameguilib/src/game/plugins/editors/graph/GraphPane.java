@@ -151,11 +151,11 @@ public class GraphPane extends ScrollPane {
 					
 					Block block = node.getBlock();
 					if (block instanceof Transducer && !graph.classifiers.contains(block))
-						graph.setOption("classifiers.add", block);
+						graph.classifiers.add(block);
 					if (block instanceof Encoder && !graph.inputEncoders.contains(block))
-						graph.setOption("inputEncoders.add", block);
+						graph.inputEncoders.add(block);
 					if (block instanceof Pipe && !graph.pipes.contains(block))
-						graph.setOption("pipes.add", block);
+						graph.pipes.add(block);
 					
 					setDragging(null);
 					event.setDropCompleted(true);
@@ -401,10 +401,10 @@ public class GraphPane extends ScrollPane {
 				@Override
 				public void handle(MouseEvent event) {
 					if (node.getBlock().parents.contains(other.getBlock())) {
-						node.getBlock().setOption("parents.remove", other.getBlock());
+						node.getBlock().parents.remove(other.getBlock());
 						removeConnection(other, node);
 					} else {
-						node.getBlock().setOption("parents.add", other.getBlock());
+						node.getBlock().parents.add(other.getBlock());
 						addConnection(other, node);
 					}
 					endConnection();
@@ -448,14 +448,14 @@ public class GraphPane extends ScrollPane {
 
 	public void removeBlock(Block block) {
 		if (block instanceof Transducer) {
-			graph.setOption("classifiers.remove", block);
+			graph.classifiers.remove(block);
 			if (graph.outputClassifier == block)
 				graph.setOption("outputClassifier", null);
 		}
 		if (block instanceof Encoder)
-			graph.setOption("inputEncoders.remove", block);
+			graph.inputEncoders.remove(block);
 		if (block instanceof Pipe)
-			graph.setOption("pipes.remove", block);
+			graph.pipes.remove(block);
 	}
 	
 	public BlockNode getDragging() {

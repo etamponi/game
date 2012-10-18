@@ -267,7 +267,11 @@ public class ConfigurableList extends Configurable implements List {
 			int index = Integer.parseInt(optionName);
 			if (index < size())
 				set(index, (Object)content);
+			if (index == size())
+				add(content);
 		} else {
+			super.setLocalOption(optionName, content, setter);
+			/*
 			switch (optionName) {
 			case "add":
 				add((Object)content);
@@ -281,6 +285,7 @@ public class ConfigurableList extends Configurable implements List {
 			default:
 				super.setLocalOption(optionName, content, setter);
 			}
+			*/
 		}
 		
 		this.setter = null;
