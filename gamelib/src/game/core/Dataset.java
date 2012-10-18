@@ -13,8 +13,12 @@ package game.core;
 import game.configuration.Configurable;
 import game.utils.Utils;
 
+import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
@@ -29,15 +33,9 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
-import com.esotericsoftware.kryo.Kryo;
-import com.esotericsoftware.kryo.io.Input;
-import com.esotericsoftware.kryo.io.Output;
-
 public class Dataset extends Configurable implements Iterable<Instance> {
 	
 	private static final int COMMITCYCLE = 100;
-	
-	private static Kryo kryo = new Kryo();
 	
 	static {
 		try {
@@ -52,7 +50,9 @@ public class Dataset extends Configurable implements Iterable<Instance> {
 	
 	private Connection connection = null;
 	
-	public String databaseName = null;
+	public InstanceTemplate template;
+	
+	public String databaseCacheFile = null;
 	
 	public boolean readOnly = false;
 	
@@ -61,38 +61,40 @@ public class Dataset extends Configurable implements Iterable<Instance> {
 	public boolean shuffle = true;
 	
 	public Dataset() {
-		setPrivateOptions("databaseName", "indices", "readOnly", "shuffle");
+		setPrivateOptions("databaseCacheFile", "indices", "readOnly", "shuffle", "template");
 	}
 	
-	public Dataset(String datasetDirectory, String cacheName, boolean shuffle) {
+	public Dataset(InstanceTemplate template, String datasetDirectory, String cacheName, boolean shuffle) {
 		this();
+		this.template = template;
 		this.shuffle = shuffle;
-		createDatabase(datasetDirectory, cacheName);
+		createDatabaseCache(datasetDirectory, cacheName);
 	}
 	
 	private Dataset(Dataset base, List<Integer> indices) {
 		this();
+		this.template = base.template;
 		this.indices = new ArrayList<>(indices);
 		this.readOnly = true;
 		this.connection = base.connection;
-		this.databaseName = base.databaseName;
+		this.databaseCacheFile = base.databaseCacheFile;
 	}
 	
 	public int size() {
 		return indices.size();
 	}
 	
-	private void createDatabase(String datasetDirectory, String cacheName) {
+	private void createDatabaseCache(String datasetDirectory, String cacheName) {
 		File dir = new File(datasetDirectory);
 		if (!dir.exists())
 			dir.mkdirs();
 		try {
 			String fileName = Utils.relativize(new File(datasetDirectory))+"/dataset_"+cacheName+".db";
-			databaseName = fileName;
+			databaseCacheFile = fileName;
 			File file = new File(fileName);
 			if (file.exists()) {
-				if (connectionRegistry.containsKey(databaseName)) {
-					connectionRegistry.get(databaseName).close();
+				if (connectionRegistry.containsKey(databaseCacheFile)) {
+					connectionRegistry.get(databaseCacheFile).close();
 				}
 				file.delete();
 				if (file.exists())
@@ -103,23 +105,23 @@ public class Dataset extends Configurable implements Iterable<Instance> {
 			Statement statement = connection.createStatement();
 			statement.executeUpdate("CREATE TABLE Data (id INTEGER PRIMARY KEY AUTOINCREMENT, content BLOB NOT NULL);");
 			statement.close();
-			connectionRegistry.put(databaseName, connection);
+			connectionRegistry.put(databaseCacheFile, connection);
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
 	}
 	
-	public void setDatabaseName(String databaseName) {
-		this.databaseName = databaseName;
+	public void setDatabaseCacheFile(String databaseCacheFile) {
+		this.databaseCacheFile = databaseCacheFile;
 		
 		if (connection != null)
 			return;
 		
-		if (connectionRegistry.containsKey(databaseName)) {
-			connection = connectionRegistry.get(databaseName);
+		if (connectionRegistry.containsKey(databaseCacheFile)) {
+			connection = connectionRegistry.get(databaseCacheFile);
 		} else {
 			try {
-				connection = DriverManager.getConnection("jdbc:sqlite:"+databaseName);
+				connection = DriverManager.getConnection("jdbc:sqlite:"+databaseCacheFile);
 				connection.setAutoCommit(false);
 				Statement statement = connection.createStatement();
 				ResultSet res = statement.executeQuery("SELECT COUNT(*) AS count FROM Data;");
@@ -128,7 +130,7 @@ public class Dataset extends Configurable implements Iterable<Instance> {
 				for(int i = 0; i < count; i++)
 					indices.add(i);
 				statement.close();
-				connectionRegistry.put(databaseName, connection);
+				connectionRegistry.put(databaseCacheFile, connection);
 			} catch (SQLException e) {
 				e.printStackTrace();
 			}
@@ -139,17 +141,16 @@ public class Dataset extends Configurable implements Iterable<Instance> {
 		if (readOnly)
 			return; // Cannot add instances once a dataset is readOnly
 		try {
-			/*
 			ByteArrayOutputStream baos = new ByteArrayOutputStream();
 		    ObjectOutputStream oout = new ObjectOutputStream(baos);
-		    oout.writeObject(instance);
+		    oout.writeObject(template.serialize(instance));
 		    oout.close();
-		    */
+			/*
 			ByteArrayOutputStream baos = new ByteArrayOutputStream();
 			Output output = new Output(baos);
 			kryo.writeObject(output, instance);
 			output.close();
-			
+			*/
 			PreparedStatement statement = connection.prepareStatement("INSERT INTO Data(id, content) VALUES (?, ?);");
 			statement.setInt(1, indices.size());
 			statement.setBytes(2, baos.toByteArray());
@@ -157,7 +158,7 @@ public class Dataset extends Configurable implements Iterable<Instance> {
 			indices.add(indices.size());
 			if (indices.size() % COMMITCYCLE == 0)
 				connection.commit();
-		} catch (SQLException e) {
+		} catch (SQLException | IOException e) {
 			e.printStackTrace();
 		}
 	}
@@ -196,16 +197,16 @@ public class Dataset extends Configurable implements Iterable<Instance> {
 				currentId = idIterator.next();
 				ResultSet result = statement.executeQuery("SELECT content FROM Data WHERE id = " + currentId + ";");
 				result.next();
-				/*
+				
 				ByteArrayInputStream bais = new ByteArrayInputStream(result.getBytes("content"));
 				ObjectInputStream oin = new ObjectInputStream(bais);
-			    ret = (Instance)oin.readObject();
-			    */
+			    ret = template.deserialize(oin.readObject());
+			    /*
 				Input input = new Input(result.getBytes("content"));
 				ret = kryo.readObject(input, Instance.class);
-				
+				*/
 				statement.close();
-			} catch (SQLException e) {
+			} catch (SQLException | IOException | ClassNotFoundException e) {
 				e.printStackTrace();
 			}
 			return ret;

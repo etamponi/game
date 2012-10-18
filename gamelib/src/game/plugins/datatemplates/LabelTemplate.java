@@ -17,13 +17,7 @@ import game.core.DataTemplate;
 
 public class LabelTemplate extends DataTemplate {
 	
-	public static class LabelData extends Data<String, LabelTemplate> {
-		
-		protected LabelData() {}
-
-		protected LabelData(LabelTemplate template) {
-			super(template);
-		}
+	public class LabelData extends Data<String> {
 		
 	}
 
@@ -40,7 +34,7 @@ public class LabelTemplate extends DataTemplate {
 
 	@Override
 	public LabelData newDataInstance() {
-		return new LabelData(this);
+		return new LabelData();
 	}
 	
 }

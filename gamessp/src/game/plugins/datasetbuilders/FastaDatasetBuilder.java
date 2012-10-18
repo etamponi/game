@@ -43,7 +43,7 @@ public class FastaDatasetBuilder extends DatasetBuilder {
 
 	@Override
 	public Dataset buildDataset() {
-		Dataset ret = new Dataset(CACHEDIRECTORY, Utils.randomString(), shuffle);
+		Dataset ret = new Dataset(template, CACHEDIRECTORY, Utils.randomString(), shuffle);
 		
 		if (file.exists()) {
 			try {

@@ -25,7 +25,7 @@ public abstract class FullExperiment extends Experiment {
 	}
 	
 	protected Dataset classifyDataset(double finalPercent, Graph graphClone, Dataset dataset, String outputDirectory, String cacheName) {
-		Dataset ret = new Dataset(outputDirectory, cacheName, false);
+		Dataset ret = new Dataset(template, outputDirectory, cacheName, false);
 		double singleIncrease = (finalPercent - getCurrentPercent()) / dataset.size();
 		int count = 1;
 		InstanceIterator it = dataset.instanceIterator();

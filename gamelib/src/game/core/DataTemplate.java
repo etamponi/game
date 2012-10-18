@@ -16,19 +16,9 @@ import java.util.ArrayList;
 
 public abstract class DataTemplate extends Configurable {
 	
-	public static class Data<T, DT> extends ArrayList<T> {
-		
-		private DT template;
+	public class Data<T> extends ArrayList<T> {
 		
 		protected Data() {}
-
-		protected Data(DT template) {
-			this.template = template;
-		}
-		
-		protected DT getTemplate() {
-			return template;
-		}
 		
 	}
 	

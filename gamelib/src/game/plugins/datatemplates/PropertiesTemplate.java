@@ -9,18 +9,14 @@ import java.util.Map;
 
 public class PropertiesTemplate extends DataTemplate {
 	
-	public static class PropertiesData extends Data<Map<String, Data>, PropertiesTemplate> {
+	public class PropertiesData extends Data<Map<String, Data>> {
 		
 		protected PropertiesData() {}
-		
-		protected PropertiesData(PropertiesTemplate template) {
-			super(template);
-		}
 
 		public Map<String, Data> addEmptyElement() {
 			Map<String, Data> map = new HashMap<>();
-			for (String key: getTemplate().properties.keySet())
-				map.put(key, ((DataTemplate)getTemplate().properties.get(key)).newDataInstance());
+			for (String key: properties.keySet())
+				map.put(key, ((DataTemplate)properties.get(key)).newDataInstance());
 			add(map);
 			return map;
 		}
@@ -43,7 +39,7 @@ public class PropertiesTemplate extends DataTemplate {
 
 	@Override
 	public Data newDataInstance() {
-		return new PropertiesData(this);
+		return new PropertiesData();
 	}
 
 }
