@@ -12,7 +12,7 @@ package game.plugins.editors.graph;
 
 import game.core.Block;
 import game.core.blocks.Encoder;
-import game.core.blocks.Graph;
+import game.core.blocks.PredictionGraph;
 import game.core.blocks.Pipe;
 import game.core.blocks.Transducer;
 
@@ -40,7 +40,7 @@ import javafx.scene.transform.Scale;
 
 public class GraphPane extends ScrollPane {
 
-	private Graph graph;
+	private PredictionGraph graph;
 	
 	private AnchorPane parent = new AnchorPane();
 	
@@ -176,7 +176,7 @@ public class GraphPane extends ScrollPane {
 		return content;
 	}
 	
-	public void setGraph(Graph g) {
+	public void setGraph(PredictionGraph g) {
 		this.graph = g;
 	}
 	

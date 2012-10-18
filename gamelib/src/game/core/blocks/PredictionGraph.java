@@ -21,7 +21,7 @@ import game.plugins.constraints.CompatibleWith;
 
 import java.util.LinkedList;
 
-public class Graph extends Transducer {
+public class PredictionGraph extends Transducer {
 
 	public ConfigurableList classifiers = new ConfigurableList(this, Transducer.class);
 	
@@ -33,7 +33,7 @@ public class Graph extends Transducer {
 	
 	public Transducer outputClassifier;
 	
-	public Graph() {
+	public PredictionGraph() {
 		setOptionBinding("template", "classifiers.*.template");
 		setOptionConstraints("classifiers.*", new CompatibleWith(this, "template"));
 		

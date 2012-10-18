@@ -19,7 +19,7 @@ import game.core.Decoder;
 import game.core.Encoding;
 import game.core.InstanceTemplate;
 import game.core.blocks.Encoder;
-import game.core.blocks.Graph;
+import game.core.blocks.PredictionGraph;
 import game.core.blocks.Transducer;
 import game.plugins.Implementation;
 import game.plugins.PluginManager;
@@ -125,7 +125,7 @@ public class GraphTest {
 		manager.packages.add("testgame");
 		PluginManager.updateManager(manager);
 		
-		Graph graph = new Graph();
+		PredictionGraph graph = new PredictionGraph();
 		
 		graph.setOption("template", new InstanceTemplate());
 		graph.setOption("template.inputTemplate", new VectorTemplate());

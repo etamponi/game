@@ -11,7 +11,7 @@
 package game.plugins.experiments;
 
 import game.core.DatasetBuilder;
-import game.core.blocks.Graph;
+import game.core.blocks.PredictionGraph;
 import game.core.experiments.FullExperiment;
 import game.core.experiments.FullResult;
 import game.plugins.constraints.CompatibleWith;
@@ -32,7 +32,7 @@ public class SimpleExperiment extends FullExperiment {
 	@Override
 	protected FullResult runExperiment(String outputDirectory) {
 		FullResult ret = new FullResult();
-		Graph graphClone = graph.cloneConfiguration(graph.name + "_trained");
+		PredictionGraph graphClone = graph.cloneConfiguration(graph.name + "_trained");
 		updateStatus(0.01, "training graph...");
 		executeAnotherTaskAndWait(0.50, graphClone.trainingAlgorithm, trainingDataset.buildDataset());
 		updateStatus(0.71, "training complete, testing phase...");

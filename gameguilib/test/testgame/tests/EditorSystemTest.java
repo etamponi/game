@@ -18,7 +18,7 @@ import game.core.DataTemplate.Data;
 import game.core.Encoding;
 import game.core.InstanceTemplate;
 import game.core.blocks.Encoder;
-import game.core.blocks.Graph;
+import game.core.blocks.PredictionGraph;
 import game.core.blocks.Transducer;
 import game.editorsystem.Editor;
 import game.editorsystem.Option;
@@ -224,7 +224,7 @@ public class EditorSystemTest extends Application {
 		assertEquals(option.getContent(), cb.getValue().getContent());
 		best.disconnect();
 		
-		final Graph graph = new Graph();
+		final PredictionGraph graph = new PredictionGraph();
 		graph.classifiers.add(new ClassifierA());
 		graph.classifiers.add(new ClassifierB());
 		graph.classifiers.add(new ClassifierB());

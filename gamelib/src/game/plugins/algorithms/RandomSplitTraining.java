@@ -14,12 +14,12 @@ import game.configuration.errorchecks.RangeCheck;
 import game.core.Block;
 import game.core.Dataset;
 import game.core.TrainingAlgorithm;
-import game.core.blocks.Graph;
+import game.core.blocks.PredictionGraph;
 
 import java.util.HashSet;
 import java.util.Set;
 
-public class RandomSplitTraining extends TrainingAlgorithm<Graph> {
+public class RandomSplitTraining extends TrainingAlgorithm<PredictionGraph> {
 	
 	public double splitPercent = 1.0;
 	
@@ -29,7 +29,7 @@ public class RandomSplitTraining extends TrainingAlgorithm<Graph> {
 
 	@Override
 	public boolean isCompatible(Block block) {
-		return block instanceof Graph;
+		return block instanceof PredictionGraph;
 	}
 
 	@Override
@@ -46,7 +46,7 @@ public class RandomSplitTraining extends TrainingAlgorithm<Graph> {
 		}
 	}
 	
-	private int blocksToTrain(Graph graph) {
+	private int blocksToTrain(PredictionGraph graph) {
 		Set<Block> blocks = new HashSet<>();
 		countBlocks(graph.outputClassifier, blocks);
 		int count = 0;

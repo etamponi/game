@@ -10,14 +10,17 @@
  ******************************************************************************/
 package game.plugins.experiments;
 
+import game.configuration.ErrorCheck;
 import game.configuration.errorchecks.RangeCheck;
 import game.configuration.errorchecks.RangeCheck.RangeType;
 import game.configuration.errorchecks.SubclassCheck;
+import game.core.Block;
 import game.core.Dataset;
+import game.core.Dataset.SampleIterator;
 import game.core.DatasetBuilder;
 import game.core.Experiment;
-import game.core.Dataset.SampleIterator;
 import game.core.blocks.Encoder;
+import game.core.blocks.PredictionGraph;
 import game.plugins.constraints.CompatibleWith;
 import game.plugins.correlation.CorrelationMeasure;
 import game.plugins.datatemplates.LabelTemplate;
@@ -32,7 +35,7 @@ public class CorrelationExperiment extends Experiment {
 	
 	public CorrelationMeasure measure;
 	
-	public Encoder inputEncoder;
+	public PredictionGraph graph;
 	
 	public int folds = 10;
 	
@@ -49,6 +52,15 @@ public class CorrelationExperiment extends Experiment {
 		setOptionBinding("template.outputTemplate", "outputEncoder.template");
 		setOptionConstraints("outputEncoder", new CompatibleWith(this, "template.outputTemplate"));
 		
+		setOptionChecks("graph.outputClassifier", new ErrorCheck<Block>() {
+			@Override public String getError(Block value) {
+				if (value.parents.size() > 1)
+					return "must have only one parent";
+				else
+					return null;
+			}
+		});
+		
 		setOptionChecks("folds", new RangeCheck(RangeType.LOWER, 2.0));
 		setOptionChecks("samples", new RangeCheck(RangeType.LOWER, 10.0));
 	}
@@ -59,6 +71,9 @@ public class CorrelationExperiment extends Experiment {
 		
 		Dataset complete = dataset.buildDataset();
 		List<Dataset> split = complete.getFolds(folds);
+		
+		Block inputEncoder = graph.outputClassifier.getParent(0);
+		
 		for(Dataset d: split) {
 			SampleIterator it;
 			Encoder encoder = new OneHotEncoder();
@@ -76,7 +91,7 @@ public class CorrelationExperiment extends Experiment {
 
 	@Override
 	public String getTaskDescription() {
-		return "correlation experiment with " + folds + " folds, " + samples + " samples per fold and " + inputEncoder.getClass().getSimpleName() + " as encoder.";
+		return "correlation experiment with " + folds + " folds, " + samples + " samples per fold for " + graph;
 	}
 
 }

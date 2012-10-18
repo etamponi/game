@@ -10,7 +10,7 @@
  ******************************************************************************/
 package game.plugins.editors.graph;
 
-import game.core.blocks.Graph;
+import game.core.blocks.PredictionGraph;
 import game.editorsystem.ControlledEditor;
 import game.editorsystem.EditorWindow;
 import game.editorsystem.Editor;
@@ -49,7 +49,7 @@ public class OuterGraphEditor extends Editor {
 
 	@Override
 	public Class getBaseEditableClass() {
-		return Graph.class;
+		return PredictionGraph.class;
 	}
 
 	@Override

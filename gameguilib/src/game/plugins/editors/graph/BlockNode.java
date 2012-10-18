@@ -13,7 +13,7 @@ package game.plugins.editors.graph;
 
 import game.configuration.Change;
 import game.core.Block;
-import game.core.blocks.Graph;
+import game.core.blocks.PredictionGraph;
 import game.editorsystem.EditorWindow;
 import game.editorsystem.Option;
 import game.editorsystem.Editor;
@@ -120,7 +120,7 @@ public class BlockNode extends VBox implements Observer {
 				public void handle(MouseEvent event) {
 					if (event.getClickCount() > 1) {
 						Editor editor;
-						if (Graph.class.isAssignableFrom(model.getType(true)))
+						if (PredictionGraph.class.isAssignableFrom(model.getType(true)))
 							editor = new GraphEditor();
 						else
 							editor = model.getBestEditor(true);

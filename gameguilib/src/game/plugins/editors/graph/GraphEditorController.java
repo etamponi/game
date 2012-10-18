@@ -12,7 +12,7 @@ package game.plugins.editors.graph;
 
 import game.configuration.Configurable;
 import game.core.Block;
-import game.core.blocks.Graph;
+import game.core.blocks.PredictionGraph;
 import game.editorsystem.Editor;
 import game.editorsystem.EditorController;
 import game.editorsystem.Option;
@@ -133,7 +133,7 @@ public class GraphEditorController implements EditorController {
 
 	@Override
 	public void updateView() {
-		Graph graph = graphModel.getContent();
+		PredictionGraph graph = graphModel.getContent();
 		if (graph != null) {
 			graphPane.setGraph(graph);
 			graphPane.parseGraph();
@@ -174,7 +174,7 @@ public class GraphEditorController implements EditorController {
 	
 	private void fillPool(FlowPane pool, String listOptionName) {
 		pool.getChildren().clear();
-		Configurable list = ((Graph)graphModel.getContent()).getOption(listOptionName);
+		Configurable list = ((PredictionGraph)graphModel.getContent()).getOption(listOptionName);
 		if (list == null)
 			return;
 		Set<Implementation<Block>> blocks = list.getCompatibleOptionImplementations("*");

@@ -14,17 +14,17 @@ import game.core.Dataset;
 import game.core.Dataset.InstanceIterator;
 import game.core.Experiment;
 import game.core.Instance;
-import game.core.blocks.Graph;
+import game.core.blocks.PredictionGraph;
 
 public abstract class FullExperiment extends Experiment {
 	
-	public Graph graph;
+	public PredictionGraph graph;
 	
 	public FullExperiment() {
 		setOptionBinding("template", "graph.template");
 	}
 	
-	protected Dataset classifyDataset(double finalPercent, Graph graphClone, Dataset dataset, String outputDirectory, String cacheName) {
+	protected Dataset classifyDataset(double finalPercent, PredictionGraph graphClone, Dataset dataset, String outputDirectory, String cacheName) {
 		Dataset ret = new Dataset(template, outputDirectory, cacheName, false);
 		double singleIncrease = (finalPercent - getCurrentPercent()) / dataset.size();
 		int count = 1;
