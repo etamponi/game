@@ -170,9 +170,22 @@ public abstract class Configurable extends Observable implements Observer {
 	
 	public List<String> getAllOptionNames() {
 		List<String> ret = new LinkedList<>();
-		for (Field f: getClass().getFields())
-			if (!Modifier.isStatic(f.getModifiers()) && !Modifier.isFinal(f.getModifiers()))
-				ret.add(f.getName());
+		List<String> perClass = new LinkedList<>();
+		Class currentClass = getClass();
+		int fieldCount = 0;
+		for (Field f: getClass().getFields()) {
+			if (f.getDeclaringClass() != currentClass) {
+				ret.addAll(0, perClass);
+				currentClass = f.getDeclaringClass();
+				perClass.clear();
+			}
+			if (!Modifier.isStatic(f.getModifiers()) && !Modifier.isFinal(f.getModifiers())) {
+				perClass.add(f.getName());
+				fieldCount++;
+			}
+		}
+		if (fieldCount != ret.size())
+			ret.addAll(0, perClass);
 		return ret;
 	}
 	

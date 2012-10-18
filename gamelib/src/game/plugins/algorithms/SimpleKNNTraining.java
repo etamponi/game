@@ -30,7 +30,7 @@ public class SimpleKNNTraining extends TrainingAlgorithm<KNNClassifier> {
 	}
 
 	@Override
-	protected String[] getBlockFixedOptions() {
+	public String[] getBlockFixedOptions() {
 		return new String[]{"reference"};
 	}
 

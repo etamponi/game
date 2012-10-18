@@ -19,7 +19,7 @@ public class NoTraining extends TrainingAlgorithm<Block> {
 	}
 
 	@Override
-	protected String[] getBlockFixedOptions() {
+	public String[] getBlockFixedOptions() {
 		return new String[0];
 	}
 

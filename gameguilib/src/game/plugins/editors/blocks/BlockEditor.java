@@ -12,10 +12,13 @@ package game.plugins.editors.blocks;
 
 import game.configuration.Change;
 import game.core.Block;
+import game.editorsystem.Editor;
 import game.editorsystem.Option;
 import game.plugins.editors.ConfigurableEditor;
 
 import java.util.Observable;
+
+import javafx.scene.control.Label;
 
 public class BlockEditor extends ConfigurableEditor {
 
@@ -39,6 +42,27 @@ public class BlockEditor extends ConfigurableEditor {
 		super.connect(model);
 	}
 	
+	
+	@Override
+	public void updateView() {
+		super.updateView();
+		
+		if (getModel() != null && getModel().getContent() != null) {
+			Block content = (Block)getModel().getContent();
+			int count = 0;
+			for (String optionName: content.trainingAlgorithm.getBlockFixedOptions()) {
+				Editor editor = addSubEditor(getSubEditorCount()+2, optionName);
+				if (editor != null) {
+					editor.setReadOnly(true);
+					count++;
+				}
+			}
+			if (count > 0)
+				getPane().addRow(getSubEditorCount()+1, new Label(""), new Label("Trainable options (read-only):"));
+		}
+		
+	}
+
 	@Override
 	public void update(Observable observed, Object message) {
 		super.update(observed, message);

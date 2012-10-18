@@ -69,7 +69,7 @@ public class RandomSplitTraining extends TrainingAlgorithm<Graph> {
 	}
 
 	@Override
-	protected String[] getBlockFixedOptions() {
+	public String[] getBlockFixedOptions() {
 		return new String[]{};
 	}
 

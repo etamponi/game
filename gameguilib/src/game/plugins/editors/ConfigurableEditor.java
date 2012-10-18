@@ -58,6 +58,14 @@ public class ConfigurableEditor extends Editor {
 		
 		pane.setMinWidth(500);
 	}
+	
+	protected GridPane getPane() {
+		return pane;
+	}
+	
+	protected int getSubEditorCount() {
+		return subEditors.size();
+	}
 
 	@Override
 	public Node getView() {
@@ -85,15 +93,10 @@ public class ConfigurableEditor extends Editor {
 				if (hiddenOptions.contains(optionName))
 					continue;
 				
-				Option option = new Option(content, optionName);
-				Label label = new Label(optionName+": ");
-				
-				Editor editor = prepareEditor(option);
-				if (editor == null)
-					continue;
-				editor.setReadOnly(isReadOnly());
-				pane.addRow(optionName.equals("name") ? 1 : count++, label, editor.getView());
-				applyRowLayout(label, editor.getView(), editor.isInline());
+				if (optionName.equals("name"))
+					addSubEditor(1, optionName);
+				else
+					addSubEditor(count++, optionName);
 			}
 			
 			if (!isReadOnly()) {
@@ -109,6 +112,19 @@ public class ConfigurableEditor extends Editor {
 		}
 	}
 	
+	protected Editor addSubEditor(int row, String optionName) {
+		Option option = new Option((Configurable)getModel().getContent(), optionName);
+		Label label = new Label(optionName+": ");
+		
+		Editor editor = prepareEditor(option);
+		if (editor == null)
+			return null;
+		editor.setReadOnly(isReadOnly());
+		pane.addRow(optionName.equals("name") ? 1 : row, label, editor.getView());
+		applyRowLayout(label, editor.getView(), editor.isInline());
+		return editor;
+	}
+
 	@Override
 	public void disconnect() {
 		for(Editor editor: subEditors)

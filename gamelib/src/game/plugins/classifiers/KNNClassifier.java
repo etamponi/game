@@ -58,9 +58,9 @@ public class KNNClassifier extends Classifier {
 	
 	public int k;
 	
-	public ConfigurableList reference = new ConfigurableList(this, ReferenceSample.class);
-	
 	public String distanceType = "L2";
+
+	public ConfigurableList reference = new ConfigurableList(this, ReferenceSample.class);
 	
 	public KNNClassifier() {
 		setOption("outputEncoder", new OneHotEncoder());
