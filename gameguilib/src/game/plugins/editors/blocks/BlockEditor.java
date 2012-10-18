@@ -1,19 +1,18 @@
 /*******************************************************************************
- * Copyright (c) 2012 Emanuele Tamponi.
+ * Copyright (c) 2012 Emanuele.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the GNU Public License v3.0
  * which accompanies this distribution, and is available at
  * http://www.gnu.org/licenses/gpl.html
  * 
  * Contributors:
- *     Emanuele Tamponi - initial API and implementation
+ *     Emanuele - initial API and implementation
  ******************************************************************************/
 package game.plugins.editors.blocks;
 
 import game.configuration.Change;
 import game.core.Block;
 import game.editorsystem.Editor;
-import game.editorsystem.Option;
 import game.plugins.editors.ConfigurableEditor;
 
 import java.util.Observable;
@@ -30,18 +29,6 @@ public class BlockEditor extends ConfigurableEditor {
 	public Class getBaseEditableClass() {
 		return Block.class;
 	}
-
-	@Override
-	public void connect(Option model) {
-		/*
-		if (model.getContent() != null) {
-			if (((Block)model.getContent()).trained)
-				setReadOnly(true);
-		}
-		*/
-		super.connect(model);
-	}
-	
 	
 	@Override
 	public void updateView() {
