@@ -19,6 +19,7 @@ import game.core.Dataset;
 import game.core.Dataset.SampleIterator;
 import game.core.DatasetBuilder;
 import game.core.Experiment;
+import game.core.NoTraining;
 import game.core.blocks.Encoder;
 import game.core.blocks.PredictionGraph;
 import game.plugins.constraints.CompatibleWith;
@@ -58,6 +59,15 @@ public class CorrelationExperiment extends Experiment {
 					return "must have only one parent";
 				else
 					return null;
+			}
+		});
+		
+		setOptionChecks("graph", new ErrorCheck<Block>() {
+			@Override public String getError(Block value) {
+				if (value.trainingAlgorithm instanceof NoTraining || value.trained == true)
+					return null;
+				else
+					return "cannot be trained inside this experiment";
 			}
 		});
 		
