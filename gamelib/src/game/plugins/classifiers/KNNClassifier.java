@@ -79,12 +79,10 @@ public class KNNClassifier extends Classifier {
 				if (value.equals("l2") || value.equals("l1") || value.equals("linf"))
 					return null;
 				else
-					return "can only be L1, L2 or linf";
+					return "can only be L1, L2 or Linf";
 			}
 			
 		});
-
-		setPrivateOptions("reference");
 	}
 
 	@Override

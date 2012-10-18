@@ -64,10 +64,10 @@ public class PluginManager extends Configurable {
 		packages.add("game");
 	}
 	
-	public void setAsManager() {
+	public static void updateManager(PluginManager newManager) {
 		ConfigurationBuilder conf = new ConfigurationBuilder();
 		
-		List<File> paths = getExistentPaths(this.paths.getList(File.class));
+		List<File> paths = getExistentPaths(newManager.paths.getList(File.class));
 		if (!paths.isEmpty()) {
 			ClassLoader loader = null;
 			try {
@@ -75,7 +75,7 @@ public class PluginManager extends Configurable {
 				int i = 0;
 				for(File path: paths)
 					urls[i++] = new URL("file", "localhost", path.getAbsolutePath());
-				loader = new URLClassLoader(urls, getClass().getClassLoader());
+				loader = new URLClassLoader(urls, newManager.getClass().getClassLoader());
 				conf.addUrls(urls);
 			} catch (IOException e) {
 				e.printStackTrace();
@@ -85,7 +85,7 @@ public class PluginManager extends Configurable {
 		}
 		
 		FilterBuilder filter = new FilterBuilder();
-		for (String p: packages.getList(String.class)) {
+		for (String p: newManager.packages.getList(String.class)) {
 			if (p != null && !p.isEmpty())
 				filter.include(FilterBuilder.prefix(p));
 		}
@@ -93,12 +93,12 @@ public class PluginManager extends Configurable {
 		
 		conf.addUrls(ClasspathHelper.forClassLoader());
 		
-		internal = new Reflections(conf);
+		newManager.internal = new Reflections(conf);
 		
-		manager = this;
+		manager = newManager;
 	}
 	
-	private List<File> getExistentPaths(List<File> paths) {
+	private static List<File> getExistentPaths(List<File> paths) {
 		List<File> ret = new LinkedList<>();
 		
 		for (File file: paths) {

@@ -17,7 +17,7 @@ public class PreEncodedPrimaryStructure extends VectorTemplate {
 	public PreEncodedPrimaryStructure() {
 		dimension = 20;
 		sequence = true;
-		setPrivateOptions("sequence", "dimension");
+		setFixedOptions("sequence", "dimension");
 	}
 	
 }

@@ -24,7 +24,7 @@ public class CorrelationResult extends Result {
 	public List<Double> overallMeasures = new ArrayList<>();
 	
 	public CorrelationResult() {
-		setPrivateOptions("perClassMeasures", "overallMeasures");
+		setFixedOptions("perClassMeasures", "overallMeasures");
 	}
 
 	public List<RealVector> getPerClassMeasures() {

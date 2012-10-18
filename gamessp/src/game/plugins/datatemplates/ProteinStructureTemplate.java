@@ -16,7 +16,7 @@ public abstract class ProteinStructureTemplate extends LabelTemplate {
 	
 	public ProteinStructureTemplate() {
 		sequence = true;
-		setPrivateOptions("labels", "sequence");
+		setFixedOptions("labels", "sequence");
 	}
 
 }

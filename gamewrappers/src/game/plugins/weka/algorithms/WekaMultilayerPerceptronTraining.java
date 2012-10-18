@@ -83,4 +83,9 @@ public class WekaMultilayerPerceptronTraining extends TrainingAlgorithm<WekaMult
 		return "training Weka Multilayer Perceptron " + block;
 	}
 
+	@Override
+	protected String[] getBlockFixedOptions() {
+		return new String[]{"nn"};
+	}
+
 }

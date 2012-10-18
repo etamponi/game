@@ -12,7 +12,7 @@ package game.configuration;
 
 import java.util.LinkedList;
 
-class OptionBinding {
+public class OptionBinding {
 	private final Configurable owner;
 	private final String masterPath;
 	private final String[] slaves;
@@ -25,6 +25,8 @@ class OptionBinding {
 	
 	void updateOnChange(String changedOption) {
 		Object masterContent;
+		if (masterPath.equals("none"))
+			return;
 		if (masterPath.equals("self"))
 			masterContent = owner;
 		else

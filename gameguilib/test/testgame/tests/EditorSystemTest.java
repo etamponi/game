@@ -181,7 +181,7 @@ public class EditorSystemTest extends Application {
 	public void test() throws Exception {
 		PluginManager manager = PluginManager.get();
 		manager.setOption("packages.add", "testgame");
-		manager.setAsManager();
+		PluginManager.updateManager(manager);
 		launch();
 	}
 

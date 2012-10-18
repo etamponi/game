@@ -20,7 +20,7 @@ public class BooleanEncoder extends LabelEncoder {
 	public static final int POSITIVEINDEX = 0;
 
 	public BooleanEncoder() {
-		setPrivateOptions("labelMapping");
+		setFixedOptions("labelMapping");
 	}
 
 	@Override

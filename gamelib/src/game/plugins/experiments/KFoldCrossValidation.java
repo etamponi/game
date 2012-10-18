@@ -33,7 +33,7 @@ public class KFoldCrossValidation extends FullExperiment {
 		
 		setOptionChecks("folds", new RangeCheck(RangeType.LOWER, 2));
 		
-		setPrivateOptions("trainedGraphs");
+		setFixedOptions("trainedGraphs");
 	}
 
 	@Override

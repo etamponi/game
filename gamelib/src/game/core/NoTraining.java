@@ -1,5 +1,6 @@
 package game.core;
 
+
 public class NoTraining extends TrainingAlgorithm<Block> {
 
 	@Override
@@ -15,6 +16,11 @@ public class NoTraining extends TrainingAlgorithm<Block> {
 	@Override
 	public String getTaskDescription() {
 		return "no training for " + block;
+	}
+
+	@Override
+	protected String[] getBlockFixedOptions() {
+		return new String[0];
 	}
 
 }

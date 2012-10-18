@@ -43,6 +43,8 @@ public class ListEditor extends ControlledEditor {
 	public void update(Observable observed, Object m) {
 		super.update(observed, m);
 		if (m instanceof Change) {
+			if (getModel() == null)
+				return;
 			Change change = (Change)m;
 			if (change.getPath().matches(getModel().getOptionName() + "\\.\\d+")
 					|| change.getPath().matches(getModel().getOptionName() + "\\.\\d+\\.name")) {

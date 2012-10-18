@@ -27,8 +27,10 @@ class ConfigurableConverter extends BaseConverter {
 		Configurable object = (Configurable)o;
 		
 		for (String optionName: object.getAllOptionNames()) {
+			/*
 			if (object.isOmittedFromConfiguration(optionName))
 				continue;
+			*/
 			Object option = object.getOption(optionName);
 			if (option != null) {
 				writer.startNode(optionName);

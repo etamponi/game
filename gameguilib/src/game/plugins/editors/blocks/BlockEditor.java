@@ -10,9 +10,12 @@
  ******************************************************************************/
 package game.plugins.editors.blocks;
 
+import game.configuration.Change;
 import game.core.Block;
 import game.editorsystem.Option;
 import game.plugins.editors.ConfigurableEditor;
+
+import java.util.Observable;
 
 public class BlockEditor extends ConfigurableEditor {
 
@@ -34,6 +37,15 @@ public class BlockEditor extends ConfigurableEditor {
 		}
 		*/
 		super.connect(model);
+	}
+	
+	@Override
+	public void update(Observable observed, Object message) {
+		super.update(observed, message);
+		if (message instanceof Change) {
+			if (((Change)message).getPath().matches("(.)+\\.trainingAlgorithm"))
+				updateView();
+		}
 	}
 	
 }

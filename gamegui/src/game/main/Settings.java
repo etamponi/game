@@ -28,7 +28,7 @@ public class Settings {
 			manager.saveConfiguration(CONFIGFILE);
 		else
 			manager.loadConfiguration(CONFIGFILE);
-		manager.setAsManager();
+		PluginManager.updateManager(manager);
 		
 		Log.setLogsDirectory(LOGSDIR);
 	}

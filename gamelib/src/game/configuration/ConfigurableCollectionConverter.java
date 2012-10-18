@@ -14,8 +14,10 @@ public class ConfigurableCollectionConverter extends BaseConverter {
 		Configurable col = (Configurable)o;
 		
 		for (String optionName: col.getAllOptionNames()) {
+			/*
 			if (col.isOmittedFromConfiguration(optionName))
 				continue;
+			*/
 			Object option = col.getOption(optionName);
 			if (option != null) {
 				if (optionName.matches("^\\d+$")) {

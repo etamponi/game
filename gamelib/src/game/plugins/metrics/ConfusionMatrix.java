@@ -29,7 +29,7 @@ public class ConfusionMatrix extends FullMetric {
 	public List<String> labels;
 	
 	public ConfusionMatrix() {
-		setPrivateOptions("matrix", "labels");
+		setFixedOptions("matrix", "labels");
 	}
 	
 	@Override

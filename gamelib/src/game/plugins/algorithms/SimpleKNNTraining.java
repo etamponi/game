@@ -29,4 +29,9 @@ public class SimpleKNNTraining extends TrainingAlgorithm<KNNClassifier> {
 		return "training KNNClassifier using whole training set";
 	}
 
+	@Override
+	protected String[] getBlockFixedOptions() {
+		return new String[]{"reference"};
+	}
+
 }

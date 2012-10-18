@@ -70,14 +70,14 @@ public abstract class Configurable extends Observable implements Observer {
 		public String getPath() { return path; }
 	}
 	
-//	public String name;
-	
 	private List<OptionBinding> optionBindings = new LinkedList<>();
 	private Map<String, List<ErrorCheck>> optionChecks = new HashMap<>();
-	protected Map<String, List<Constraint>> optionConstraints = new HashMap<>();
 	private List<String> omittedFromErrorCheck = new LinkedList<>();
-	private List<String> omittedFromConfiguration = new LinkedList<>();
-	private List<String> privateOptions = new LinkedList<>();
+	private List<String> fixedOptions = new LinkedList<>();
+	
+	protected Map<String, List<Constraint>> optionConstraints = new HashMap<>();
+	
+	//private List<String> omittedFromConfiguration = new LinkedList<>();
 	protected boolean notify = true;
 	
 	static {
@@ -178,7 +178,7 @@ public abstract class Configurable extends Observable implements Observer {
 	
 	public List<String> getPublicOptionNames() {
 		List<String> ret = getAllOptionNames();
-		ret.removeAll(privateOptions);
+		ret.removeAll(fixedOptions);
 		return ret;
 	}
 	
@@ -203,7 +203,7 @@ public abstract class Configurable extends Observable implements Observer {
 		LinkedList<String> ret = new LinkedList<>();
 		seen.add(this);
 		for (Map.Entry<String, Object> entry: getOptionsMap().entrySet()) {
-			if (entry.getValue() == null && !privateOptions.contains(entry.getKey())) {
+			if (entry.getValue() == null && !fixedOptions.contains(entry.getKey())) {
 				ret.add(entry.getKey() + ": is null");
 			} else {
 				if (optionChecks.containsKey(entry.getKey())) {
@@ -396,11 +396,11 @@ public abstract class Configurable extends Observable implements Observer {
 			observedOption.addObserver(this);
 		}
 	}
-
+	/*
 	public boolean isOmittedFromConfiguration(String optionName) {
 		return omittedFromConfiguration.contains(optionName);
 	}
-	
+	*/
 	@Override
 	public String toString() {
 		String name = getOption("name");
@@ -426,9 +426,14 @@ public abstract class Configurable extends Observable implements Observer {
 		}
 	}
 	
-	protected void setPrivateOptions(String... optionNames) {
+	protected void setFixedOptions(String... optionNames) {
 		for (String optionName: optionNames)
-			privateOptions.add(optionName);
+			fixedOptions.add(optionName);
+	}
+	
+	protected void unfixOptions(String... optionNames) {
+		for (String optionName: optionNames)
+			fixedOptions.remove(optionName);
 	}
 	
 	protected void omitFromErrorCheck(String... optionNames) {

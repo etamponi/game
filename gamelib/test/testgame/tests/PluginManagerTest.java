@@ -42,7 +42,7 @@ public class PluginManagerTest {
 	public void test() {
 		PluginManager manager = new PluginManager();
 		manager.setOption("packages.add", "testgame");
-		manager.setAsManager();
+		PluginManager.updateManager(manager);
 		
 		Set<Class> set = classSet(PluginManager.getImplementationsOf(Parent.class));
 		Set<Class> real = new HashSet<>();

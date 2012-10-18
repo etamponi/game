@@ -68,4 +68,9 @@ public class RandomSplitTraining extends TrainingAlgorithm<Graph> {
 		return String.format("graph training with random splits (dataset percent per split: %.2f%%)", splitPercent*100); 
 	}
 
+	@Override
+	protected String[] getBlockFixedOptions() {
+		return new String[]{};
+	}
+
 }

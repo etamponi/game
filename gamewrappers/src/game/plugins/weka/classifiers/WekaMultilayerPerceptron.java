@@ -25,7 +25,7 @@ public class WekaMultilayerPerceptron extends WekaClassifier {
 
 	public WekaMultilayerPerceptron() {
 		outputEncoder = new OneHotEncoder();
-		setPrivateOptions("nn", "outputEncoder");
+		setFixedOptions("outputEncoder");
 	}
 
 	@Override

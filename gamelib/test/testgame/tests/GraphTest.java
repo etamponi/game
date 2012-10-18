@@ -122,7 +122,7 @@ public class GraphTest {
 		PluginManager manager = new PluginManager();
 		manager.setOption("packages.remove", "game");
 		manager.setOption("packages.add", "testgame");
-		manager.setAsManager();
+		PluginManager.updateManager(manager);
 		
 		Graph graph = new Graph();
 		

@@ -110,8 +110,10 @@ public class ListEditorController implements EditorController {
 		int index = listView.getSelectionModel().getSelectedIndex();
 		if (index >= 0) {
 			Editor editor = listView.getItems().get(index).getBestEditor(true);
-			editor.setReadOnly(this.editor.isReadOnly());
-			new EditorWindow(editor).startEdit(listView.getItems().get(index));
+			if (editor != null) {
+				editor.setReadOnly(this.editor.isReadOnly());
+				new EditorWindow(editor).startEdit(listView.getItems().get(index));
+			}
 		}
 	}
 

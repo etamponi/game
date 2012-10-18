@@ -128,7 +128,7 @@ public class MainController extends Configurable implements Initializable {
 				PluginManager manager = PluginManager.get();
 				new EditorWindow(new ConfigurableEditor()).startEdit(new Option(manager));
 				manager.saveConfiguration(Settings.CONFIGFILE);
-				manager.setAsManager();
+				PluginManager.updateManager(manager);
 			}
 		});
 		toolbar.getItems().addAll(new Separator(), pmButton);

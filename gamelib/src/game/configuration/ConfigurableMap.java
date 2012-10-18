@@ -21,7 +21,7 @@ public class ConfigurableMap extends Configurable implements Map<String, Object>
 		// Can be used only by ConfigurationConverter
 		elementType = Object.class;
 		
-		setPrivateOptions("elementType");
+		setFixedOptions("elementType");
 	}
 	
 	public ConfigurableMap(Configurable owner, Class elementType) {

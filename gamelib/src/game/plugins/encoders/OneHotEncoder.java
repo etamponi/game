@@ -17,7 +17,7 @@ import org.apache.commons.math3.linear.RealVector;
 public class OneHotEncoder extends LabelEncoder {
 
 	public OneHotEncoder() {
-		setPrivateOptions("labelMapping");
+		setFixedOptions("labelMapping");
 	}
 
 	@Override

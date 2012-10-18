@@ -12,6 +12,8 @@ public abstract class TrainingAlgorithm<B extends Block> extends LongTask<Void, 
 	}
 	
 	protected abstract void train(Dataset dataset);
+	
+	protected abstract String[] getBlockFixedOptions();
 
 	@Override
 	public Void execute(Dataset dataset) {

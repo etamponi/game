@@ -61,7 +61,7 @@ public class Dataset extends Configurable implements Iterable<Instance> {
 	public boolean shuffle = true;
 	
 	public Dataset() {
-		setPrivateOptions("databaseCacheFile", "indices", "readOnly", "shuffle", "template");
+		setFixedOptions("databaseCacheFile", "indices", "readOnly", "shuffle", "template");
 	}
 	
 	public Dataset(InstanceTemplate template, String datasetDirectory, String cacheName, boolean shuffle) {

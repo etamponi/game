@@ -29,7 +29,7 @@ public class PerProteinStatistics extends FullMetric {
 	public List<Dataset> testedDatasets;
 	
 	public PerProteinStatistics() {
-		setPrivateOptions("inputTemplate", "dataset");
+		setFixedOptions("inputTemplate", "dataset");
 	}
 
 	@Override
