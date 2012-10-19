@@ -15,16 +15,64 @@ import game.configuration.errorchecks.RangeCheck;
 import game.configuration.errorchecks.RangeCheck.RangeType;
 import game.configuration.errorchecks.SubclassCheck;
 import game.core.Block;
+import game.core.DataTemplate;
 import game.core.Dataset;
 import game.core.DatasetBuilder;
+import game.core.Encoding;
 import game.core.Experiment;
 import game.core.NoTraining;
+import game.core.DataTemplate.Data;
+import game.core.Dataset.SampleIterator;
+import game.core.blocks.Encoder;
 import game.core.blocks.PredictionGraph;
 import game.plugins.constraints.CompatibleWith;
 import game.plugins.correlation.CorrelationMeasure;
 import game.plugins.datatemplates.LabelTemplate;
+import game.plugins.encoders.IntegerEncoder;
+import game.plugins.encoders.OneHotEncoder;
+import game.plugins.pipes.Concatenator;
 
 public class CorrelationExperiment extends Experiment {
+	
+	public static class HelperEncoder extends Encoder<LabelTemplate> {
+		
+		public OneHotEncoder oneHot;
+		public IntegerEncoder integer;
+		public Concatenator concatenator = new Concatenator();
+		
+		public HelperEncoder() {
+			setAsInternalOptions("oneHot", "integer", "concatenator");
+
+			setOptionBinding("template", "oneHot.template", "integer.template");
+			
+			setOption("oneHot", new OneHotEncoder());
+			setOption("integer", new IntegerEncoder());
+			
+			concatenator.parents.add(oneHot);
+			concatenator.parents.add(integer);
+		}
+
+		@Override
+		public boolean isCompatible(DataTemplate object) {
+			return object instanceof LabelTemplate;
+		}
+
+		@Override
+		protected Encoding baseEncode(Data input) {
+			return null;
+		}
+
+		@Override
+		public Encoding transform(Data input) {
+			return concatenator.transform(input);
+		}
+
+		@Override
+		protected int getBaseFeatureNumber() {
+			return oneHot.getFeatureNumber() + integer.getFeatureNumber();
+		}
+		
+	}
 	
 	public DatasetBuilder dataset;
 	
@@ -81,11 +129,14 @@ public class CorrelationExperiment extends Experiment {
 		Block inputEncoder = graph.outputClassifier.getParent(0);
 
 		Dataset complete = dataset.buildDataset();
+		HelperEncoder outputEncoder = new HelperEncoder();
+		outputEncoder.setOption("template", template.outputTemplate);
 		
 		for(int count = 0; count < runs; count++) {
 			Dataset d = complete.getRandomSubset(runPercent);
-			CorrelationMeasure m = measure.cloneConfiguration(measure + "_" + count++);
-			m.evaluateEverything(d, inputEncoder, samples);
+			CorrelationMeasure m = measure.cloneConfiguration(measure + "_" + count);
+			SampleIterator it = d.encodedSampleIterator(inputEncoder, outputEncoder, false);
+			m.evaluateEverything(it, samples);
 			ret.measures.add(m);
 		}
 		

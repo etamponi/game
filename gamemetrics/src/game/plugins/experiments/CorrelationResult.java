@@ -17,9 +17,5 @@ import game.plugins.correlation.CorrelationMeasure;
 public class CorrelationResult extends Result {
 	
 	public ConfigurableList measures = new ConfigurableList(this, CorrelationMeasure.class);
-	
-	public CorrelationResult() {
-		setAsInternalOptions("measures");
-	}
 
 }

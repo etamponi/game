@@ -78,6 +78,7 @@ public class Dataset extends Configurable implements Iterable<Instance> {
 		this.readOnly = true;
 		this.connection = base.connection;
 		this.databaseCacheFile = base.databaseCacheFile;
+		this.shuffle = base.shuffle;
 	}
 	
 	public int size() {

@@ -42,6 +42,7 @@ public class CorrelationMetric extends Metric<CorrelationResult> {
 	public String prettyPrint() {
 		StringBuilder builder = new StringBuilder();
 		List<String> labels = result.experiment.template.outputTemplate.getOption("labels");
+		labels.add("Overall");
 		
 		String row = "%15s%15.2f%15.2f%15.2f\n";
 		
@@ -54,21 +55,14 @@ public class CorrelationMetric extends Metric<CorrelationResult> {
 			double stddev = stat.getStandardDeviation();
 			builder.append(String.format(row, label, mean, stddev, 0.0));
 		}
-		
-		double[] data = new double[result.measures.size()];
-		for(int i = 0; i < data.length; i++) data[i] = result.measures.get(i, CorrelationMeasure.class).syntheticValue;
-		DescriptiveStatistics stat = new DescriptiveStatistics(data);
-		double mean = stat.getMean();
-		double stddev = stat.getStandardDeviation();
-		builder.append(String.format(row, "Overall", mean, stddev, 0.0));
-		
+
 		return builder.toString();
 	}
 
 	private double[] getData(int i) {
 		double[] ret = new double[result.measures.size()];
 		for(int j = 0; j < ret.length; j++)
-			ret[j] = result.measures.get(j, CorrelationMeasure.class).syntheticValuesPerClass.getEntry(i);
+			ret[j] = result.measures.get(j, CorrelationMeasure.class).syntheticValues.getEntry(i);
 		return ret;
 	}
 
