@@ -37,7 +37,7 @@ public class BlockEditor extends ConfigurableEditor {
 		if (getModel() != null && getModel().getContent() != null) {
 			Block content = (Block)getModel().getContent();
 			int count = 0;
-			for (String optionName: content.trainingAlgorithm.getBlockFixedOptions()) {
+			for (String optionName: content.trainingAlgorithm.getManagedBlockOptions()) {
 				Editor editor = addSubEditor(getSubEditorCount()+2, optionName);
 				if (editor != null) {
 					editor.setReadOnly(true);

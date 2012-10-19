@@ -37,13 +37,15 @@ public abstract class Block extends Configurable {
 	
 	public boolean trained = false;
 	
-	public TrainingAlgorithm trainingAlgorithm = new NoTraining();
+	public TrainingAlgorithm trainingAlgorithm;
 	
 	public Block() {
 		setOptionBinding("self", "trainingAlgorithm.block");
 		setOptionConstraints("trainingAlgorithm", new CompatibleWith(this));
 		
-		setFixedOptions("position");
+		setOption("trainingAlgorithm", new NoTraining());
+		
+		setAsInternalOptions("position");
 		omitFromErrorCheck("parents");
 	}
 	
@@ -74,9 +76,9 @@ public abstract class Block extends Configurable {
 	
 	public void setTrainingAlgorithm(TrainingAlgorithm algorithm) {
 		if (trainingAlgorithm != null) {
-			unfixOptions(trainingAlgorithm.getBlockFixedOptions());
+			unsetAsInternalOptions(trainingAlgorithm.getManagedBlockOptions());
 		}
-		setFixedOptions(algorithm.getBlockFixedOptions());
+		setAsInternalOptions(algorithm.getManagedBlockOptions());
 		trainingAlgorithm = algorithm;
 	}
 

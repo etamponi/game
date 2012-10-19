@@ -33,7 +33,7 @@ public class KFoldCrossValidation extends FullExperiment {
 		
 		setOptionChecks("folds", new RangeCheck(RangeType.LOWER, 2));
 		
-		setFixedOptions("trainedGraphs");
+		setAsInternalOptions("trainedGraphs");
 	}
 
 	@Override
@@ -61,9 +61,9 @@ public class KFoldCrossValidation extends FullExperiment {
 		return (foldStatus + fold) / folds;
 	}
 
-	@Override
-	public String getTaskDescription() {
-		return "k-fold cross-validation using " + folds + " folds";
-	}
+//	@Override
+//	public String getTaskDescription() {
+//		return "k-fold cross-validation using " + folds + " folds";
+//	}
 
 }

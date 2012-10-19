@@ -16,19 +16,13 @@ import game.configuration.errorchecks.RangeCheck.RangeType;
 import game.configuration.errorchecks.SubclassCheck;
 import game.core.Block;
 import game.core.Dataset;
-import game.core.Dataset.SampleIterator;
 import game.core.DatasetBuilder;
 import game.core.Experiment;
 import game.core.NoTraining;
-import game.core.blocks.Encoder;
 import game.core.blocks.PredictionGraph;
 import game.plugins.constraints.CompatibleWith;
 import game.plugins.correlation.CorrelationMeasure;
 import game.plugins.datatemplates.LabelTemplate;
-import game.plugins.encoders.IntegerEncoder;
-import game.plugins.encoders.OneHotEncoder;
-
-import java.util.List;
 
 public class CorrelationExperiment extends Experiment {
 	
@@ -38,20 +32,24 @@ public class CorrelationExperiment extends Experiment {
 	
 	public PredictionGraph graph;
 	
-	public int folds = 10;
+	public int runs = 10;
 	
-	public int samples = 10000;
+	public double runPercent = 0.5;
+	
+	public int samples = 1000;
 	
 	public CorrelationExperiment() {
 		setOptionChecks("template.outputTemplate", new SubclassCheck(LabelTemplate.class));
 		
-		setOptionBinding("template", "dataset.template");
+		setOptionBinding("template", "dataset.template", "graph.template");
 		setOptionConstraints("dataset", new CompatibleWith(this, "template"));
 		
 		setOptionBinding("template.inputTemplate", "inputEncoder.template");
 		setOptionConstraints("inputEncoder", new CompatibleWith(this, "template.inputTemplate"));
 		setOptionBinding("template.outputTemplate", "outputEncoder.template");
 		setOptionConstraints("outputEncoder", new CompatibleWith(this, "template.outputTemplate"));
+		
+		setOptionBinding("none", "dataset.shuffle");
 		
 		setOptionChecks("graph.outputClassifier", new ErrorCheck<Block>() {
 			@Override public String getError(Block value) {
@@ -79,29 +77,24 @@ public class CorrelationExperiment extends Experiment {
 	protected CorrelationResult runExperiment(String outputDirectory) {
 		CorrelationResult ret = new CorrelationResult();
 		
-		Dataset complete = dataset.buildDataset();
-		List<Dataset> split = complete.getFolds(folds);
-		
+		dataset.shuffle = false;
 		Block inputEncoder = graph.outputClassifier.getParent(0);
+
+		Dataset complete = dataset.buildDataset();
 		
-		for(Dataset d: split) {
-			SampleIterator it;
-			Encoder encoder = new OneHotEncoder();
-			encoder.setOption("template", template.outputTemplate);
-			it = d.encodedSampleIterator(inputEncoder, encoder, false);
-			ret.getPerClassMeasures().add(measure.evaluate(it, samples));
-			encoder = new IntegerEncoder();
-			encoder.setOption("template", template.outputTemplate);
-			it = d.encodedSampleIterator(inputEncoder, encoder, false);
-			ret.getOverallMeasures().add(measure.evaluate(it, samples).getEntry(0));
+		for(int count = 0; count < runs; count++) {
+			Dataset d = complete.getRandomSubset(runPercent);
+			CorrelationMeasure m = measure.cloneConfiguration(measure + "_" + count++);
+			m.evaluateEverything(d, inputEncoder, samples);
+			ret.measures.add(m);
 		}
 		
 		return ret;
 	}
 
-	@Override
-	public String getTaskDescription() {
-		return "correlation experiment with " + folds + " folds, " + samples + " samples per fold for " + graph;
-	}
+//	@Override
+//	public String getTaskDescription() {
+//		return "correlation experiment with " + folds + " folds, " + samples + " samples per fold for " + graph;
+//	}
 
 }

@@ -30,7 +30,7 @@ public class ConfigurableList extends Configurable implements List {
 		// DO NOT USE NEVER NEVER NEVER
 		elementType = Object.class;
 		
-		setFixedOptions("elementType");
+		setAsInternalOptions("elementType");
 	}
 	
 	public ConfigurableList(Configurable owner, Class elementType) {

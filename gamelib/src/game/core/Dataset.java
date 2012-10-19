@@ -61,7 +61,7 @@ public class Dataset extends Configurable implements Iterable<Instance> {
 	public boolean shuffle = true;
 	
 	public Dataset() {
-		setFixedOptions("databaseCacheFile", "indices", "readOnly", "shuffle", "template");
+		setAsInternalOptions("databaseCacheFile", "indices", "readOnly", "shuffle", "template");
 	}
 	
 	public Dataset(InstanceTemplate template, String datasetDirectory, String cacheName, boolean shuffle) {
@@ -219,14 +219,13 @@ public class Dataset extends Configurable implements Iterable<Instance> {
 
 	}
 	
+	public enum SampleType {
+		EVERYTHING, IN_OUT, IN_ENC, IN_OUT_PRED, IN_OUT_ENC
+	}
+	
 	public class SampleIterator implements Iterator<Sample> {
-
-		public static final int EVERYTHING = 1;
-		public static final int IN_OUT = 2;
-		public static final int IN_OUT_PRED = 3;
-		public static final int IN_OUT_ENC = 4;
 		
-		private int type;
+		private SampleType type;
 		private Block inputEncoder;
 		private Block outputEncoder;
 		private InstanceIterator instanceIterator = instanceIterator();
@@ -238,14 +237,14 @@ public class Dataset extends Configurable implements Iterable<Instance> {
 		private Encoding currentPredictionEncoding;
 		private int indexInInstance;
 		
-		public SampleIterator(int type) {
-			if (type == IN_OUT_ENC || type == EVERYTHING)
+		public SampleIterator(SampleType type) {
+			if (type == SampleType.IN_OUT_ENC || type == SampleType.EVERYTHING)
 				throw new UnsupportedOperationException("Cannot use a sample iterator with encoding if you don't specify the encoders");
 			this.type = type;
 			prepareForNextInstance();
 		}
 		
-		public SampleIterator(int type, Block inputEncoder, Block outputEncoder) {
+		public SampleIterator(SampleType type, Block inputEncoder, Block outputEncoder) {
 			this.type = type;
 			this.inputEncoder = inputEncoder;
 			this.outputEncoder = outputEncoder;
@@ -312,10 +311,16 @@ public class Dataset extends Configurable implements Iterable<Instance> {
 						currentOutputSequence.get(indexInInstance),
 						currentOutputEncoding.getElement(indexInInstance));
 				break;
+			default:
+				break;
 			}
 			
 			indexInInstance++;
 			return ret;
+		}
+		
+		public Block getOutputEncoder() {
+			return outputEncoder;
 		}
 
 		@Override
@@ -331,16 +336,16 @@ public class Dataset extends Configurable implements Iterable<Instance> {
 	
 	public SampleIterator sampleIterator(boolean includePrediction) {
 		if (includePrediction)
-			return new SampleIterator(SampleIterator.IN_OUT_PRED);
+			return new SampleIterator(SampleType.IN_OUT_PRED);
 		else
-			return new SampleIterator(SampleIterator.IN_OUT);
+			return new SampleIterator(SampleType.IN_OUT);
 	}
 	
 	public SampleIterator encodedSampleIterator(Block inputEncoder, Block outputEncoder, boolean includePrediction) {
 		if (includePrediction)
-			return new SampleIterator(SampleIterator.EVERYTHING, inputEncoder, outputEncoder);
+			return new SampleIterator(SampleType.EVERYTHING, inputEncoder, outputEncoder);
 		else
-			return new SampleIterator(SampleIterator.IN_OUT_ENC, inputEncoder, outputEncoder);
+			return new SampleIterator(SampleType.IN_OUT_ENC, inputEncoder, outputEncoder);
 	}
 	
 	public static class EncodedSamples extends ArrayList<Sample> {

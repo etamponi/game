@@ -42,9 +42,9 @@ public class SimpleExperiment extends FullExperiment {
 		return ret;
 	}
 
-	@Override
-	public String getTaskDescription() {
-		return "simple experiment " + this;
-	}
+//	@Override
+//	public String getTaskDescription() {
+//		return "simple experiment " + this;
+//	}
 
 }

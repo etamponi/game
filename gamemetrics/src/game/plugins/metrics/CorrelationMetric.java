@@ -12,11 +12,11 @@ package game.plugins.metrics;
 
 import game.core.Metric;
 import game.core.Result;
+import game.plugins.correlation.CorrelationMeasure;
 import game.plugins.experiments.CorrelationResult;
 
 import java.util.List;
 
-import org.apache.commons.math3.linear.RealVector;
 import org.apache.commons.math3.stat.descriptive.DescriptiveStatistics;
 
 public class CorrelationMetric extends Metric<CorrelationResult> {
@@ -48,15 +48,15 @@ public class CorrelationMetric extends Metric<CorrelationResult> {
 		builder.append(String.format("%15s%15s%15s%15s\n", "", "Mean", "Deviation", "95% conf."));
 		for(int i = 0; i < labels.size(); i++) {
 			String label = labels.get(i);
-			double[] data = getData(result.getPerClassMeasures(), i);
+			double[] data = getData(i);
 			DescriptiveStatistics stat = new DescriptiveStatistics(data);
 			double mean = stat.getMean();
 			double stddev = stat.getStandardDeviation();
 			builder.append(String.format(row, label, mean, stddev, 0.0));
 		}
 		
-		double[] data = new double[result.getOverallMeasures().size()];
-		for(int i = 0; i < data.length; i++) data[i] = result.getOverallMeasures().get(i);
+		double[] data = new double[result.measures.size()];
+		for(int i = 0; i < data.length; i++) data[i] = result.measures.get(i, CorrelationMeasure.class).syntheticValue;
 		DescriptiveStatistics stat = new DescriptiveStatistics(data);
 		double mean = stat.getMean();
 		double stddev = stat.getStandardDeviation();
@@ -65,10 +65,10 @@ public class CorrelationMetric extends Metric<CorrelationResult> {
 		return builder.toString();
 	}
 
-	private double[] getData(List<RealVector> list, int i) {
-		double[] ret = new double[list.size()];
+	private double[] getData(int i) {
+		double[] ret = new double[result.measures.size()];
 		for(int j = 0; j < ret.length; j++)
-			ret[j] = list.get(j).getEntry(i);
+			ret[j] = result.measures.get(j, CorrelationMeasure.class).syntheticValuesPerClass.getEntry(i);
 		return ret;
 	}
 

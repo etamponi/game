@@ -34,13 +34,13 @@ public class SimpleKNNTraining extends TrainingAlgorithm<KNNClassifier> {
 		}
 	}
 
-	@Override
-	public String getTaskDescription() {
-		return "training KNNClassifier using whole training set";
-	}
+//	@Override
+//	public String getTaskDescription() {
+//		return "training KNNClassifier using whole training set";
+//	}
 
 	@Override
-	public String[] getBlockFixedOptions() {
+	public String[] getManagedBlockOptions() {
 		return new String[]{"reference"};
 	}
 

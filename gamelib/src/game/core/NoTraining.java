@@ -23,13 +23,13 @@ public class NoTraining extends TrainingAlgorithm<Block> {
 		
 	}
 
-	@Override
-	public String getTaskDescription() {
-		return "no training for " + block;
-	}
+//	@Override
+//	public String getTaskDescription() {
+//		return "no training for " + block;
+//	}
 
 	@Override
-	public String[] getBlockFixedOptions() {
+	public String[] getManagedBlockOptions() {
 		return new String[0];
 	}
 

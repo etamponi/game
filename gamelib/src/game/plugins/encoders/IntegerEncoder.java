@@ -15,7 +15,7 @@ import org.apache.commons.math3.linear.ArrayRealVector;
 public class IntegerEncoder extends LabelEncoder {
 	
 	public IntegerEncoder() {
-		setFixedOptions("labelMapping");
+		setAsInternalOptions("labelMapping");
 	}
 
 	@Override

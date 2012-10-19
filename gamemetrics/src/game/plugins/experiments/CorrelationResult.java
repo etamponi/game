@@ -10,29 +10,16 @@
  ******************************************************************************/
 package game.plugins.experiments;
 
+import game.configuration.ConfigurableList;
 import game.core.Result;
-
-import java.util.ArrayList;
-import java.util.List;
-
-import org.apache.commons.math3.linear.RealVector;
+import game.plugins.correlation.CorrelationMeasure;
 
 public class CorrelationResult extends Result {
 	
-	public List<RealVector> perClassMeasures = new ArrayList<>();
-	
-	public List<Double> overallMeasures = new ArrayList<>();
+	public ConfigurableList measures = new ConfigurableList(this, CorrelationMeasure.class);
 	
 	public CorrelationResult() {
-		setFixedOptions("perClassMeasures", "overallMeasures");
-	}
-
-	public List<RealVector> getPerClassMeasures() {
-		return perClassMeasures;
-	}
-
-	public List<Double> getOverallMeasures() {
-		return overallMeasures;
+		setAsInternalOptions("measures");
 	}
 
 }

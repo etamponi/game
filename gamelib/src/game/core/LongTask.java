@@ -22,8 +22,6 @@ public abstract class LongTask<R, P> extends Configurable {
 	private double currentPercent;
 	private String currentMessage;
 
-	public abstract String getTaskDescription();
-	
 	public abstract R execute(P param);
 	
 	protected <RR, PP> RR executeAnotherTaskAndWait(double percentAtEnd, LongTask<RR, PP> task, PP param) {

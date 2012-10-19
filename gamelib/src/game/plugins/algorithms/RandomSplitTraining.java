@@ -63,13 +63,13 @@ public class RandomSplitTraining extends TrainingAlgorithm<PredictionGraph> {
 		}
 	}
 
-	@Override
-	public String getTaskDescription() {
-		return String.format("graph training with random splits (dataset percent per split: %.2f%%)", splitPercent*100); 
-	}
+//	@Override
+//	public String getTaskDescription() {
+//		return String.format("graph training with random splits (dataset percent per split: %.2f%%)", splitPercent*100); 
+//	}
 
 	@Override
-	public String[] getBlockFixedOptions() {
+	public String[] getManagedBlockOptions() {
 		return new String[]{};
 	}
 

@@ -40,11 +40,6 @@ public class LongTaskTest {
 			} catch (InterruptedException e) {}
 			return null;
 		}
-
-		@Override
-		public String getTaskDescription() {
-			return "test task B";
-		}
 		
 	}
 	
@@ -53,7 +48,7 @@ public class LongTaskTest {
 		@Override
 		public Void execute(Void empty) {
 			try {
-				updateStatus(0.0, "start task " + getTaskDescription());
+				updateStatus(0.0, "start task A");
 				Thread.sleep(100);
 				updateStatus(0.1, "slept for 1 seconds");
 				Thread.sleep(100);
@@ -65,14 +60,9 @@ public class LongTaskTest {
 				executeAnotherTaskAndWait(0.8, other, null);
 				Thread.sleep(100);
 				updateStatus(1.0, "slept for a lot of seconds");
-				updateStatus(1.0, "task finished (" + getTaskDescription() + ")");
+				updateStatus(1.0, "task finished (A)");
 			} catch (InterruptedException e) {}
 			return null;
-		}
-
-		@Override
-		public String getTaskDescription() {
-			return "test task A";
 		}
 		
 	}
@@ -88,7 +78,7 @@ public class LongTaskTest {
 					LongTask observed = (LongTask)o;
 					System.out.println(String.format("%5.1f%% of %s: %s", observed.getCurrentPercent()*100, observed, observed.getCurrentMessage()));
 					if (count == 0)
-						assertEquals("start task test task A", observed.getCurrentMessage());
+						assertEquals("start task A", observed.getCurrentMessage());
 					else if (count > 0 && count < 4)
 						assertEquals("slept for " + count + " seconds", observed.getCurrentMessage());
 					else if (count > 3 && count < 9)
@@ -96,7 +86,7 @@ public class LongTaskTest {
 					else if (count == 9)
 						assertEquals("slept for a lot of seconds", observed.getCurrentMessage());
 					else
-						assertEquals("task finished (test task A)", observed.getCurrentMessage());
+						assertEquals("task finished (A)", observed.getCurrentMessage());
 					count++;
 				}
 			}

@@ -32,7 +32,7 @@ public class AccuracyPrecisionRecall extends FullMetric {
 	public List<String> labels;
 	
 	public AccuracyPrecisionRecall() {
-		setFixedOptions("singleTP", "singleT", "singleP", "ready", "labels");
+		setAsInternalOptions("singleTP", "singleT", "singleP", "ready", "labels");
 	}
 	
 	@Override

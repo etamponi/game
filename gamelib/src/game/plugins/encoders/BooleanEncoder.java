@@ -12,15 +12,18 @@ package game.plugins.encoders;
 
 import org.apache.commons.math3.linear.ArrayRealVector;
 
+import game.configuration.errorchecks.RangeCheck;
 import game.core.DataTemplate;
 import game.plugins.datatemplates.LabelTemplate;
 
 public class BooleanEncoder extends LabelEncoder {
 	
-	public static final int POSITIVEINDEX = 0;
+	public int positiveIndex = 0;
 
 	public BooleanEncoder() {
-		setFixedOptions("labelMapping");
+		setAsInternalOptions("labelMapping");
+		
+		setOptionChecks("positiveIndex", new RangeCheck(0, 1));
 	}
 
 	@Override
@@ -36,11 +39,11 @@ public class BooleanEncoder extends LabelEncoder {
 	}
 	
 	public String positiveLabel() {
-		return (String)template.labels.get(0);
+		return (String)template.labels.get(positiveIndex);
 	}
 	
 	public String negativeLabel() {
-		return (String)template.labels.get(1);
+		return (String)template.labels.get(1 - positiveIndex);
 	}
 
 }

@@ -22,6 +22,7 @@ public abstract class Experiment extends LongTask<Result, String> {
 
 	@Override
 	public Result execute(String resultsDirectory) {
+		updateStatus(0.0, "Starting " + getClass().getSimpleName() + " " + name);
 		String outputDirectory = resultsDirectory + "/" + name;
 		File dir = new File(outputDirectory);
 		if (!dir.exists())
@@ -30,6 +31,7 @@ public abstract class Experiment extends LongTask<Result, String> {
 		Result result = runExperiment(outputDirectory);
 		result.experiment = this;
 		result.saveConfiguration(outputDirectory + "/result_"+name+".config.xml");
+		updateStatus(1.0, "Experiment " + getClass().getSimpleName() + " " + name + " finished");
 		return result;
 	}
 

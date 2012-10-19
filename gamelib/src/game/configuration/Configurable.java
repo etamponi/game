@@ -73,7 +73,7 @@ public abstract class Configurable extends Observable implements Observer {
 	private List<OptionBinding> optionBindings = new LinkedList<>();
 	private Map<String, List<ErrorCheck>> optionChecks = new HashMap<>();
 	private List<String> omittedFromErrorCheck = new LinkedList<>();
-	private List<String> fixedOptions = new LinkedList<>();
+	private List<String> internalOptions = new LinkedList<>();
 	
 	protected Map<String, List<Constraint>> optionConstraints = new HashMap<>();
 	
@@ -191,7 +191,7 @@ public abstract class Configurable extends Observable implements Observer {
 	
 	public List<String> getPublicOptionNames() {
 		List<String> ret = getAllOptionNames();
-		ret.removeAll(fixedOptions);
+		ret.removeAll(internalOptions);
 		return ret;
 	}
 	
@@ -216,7 +216,7 @@ public abstract class Configurable extends Observable implements Observer {
 		LinkedList<String> ret = new LinkedList<>();
 		seen.add(this);
 		for (Map.Entry<String, Object> entry: getOptionsMap().entrySet()) {
-			if (entry.getValue() == null && !fixedOptions.contains(entry.getKey())) {
+			if (entry.getValue() == null && !internalOptions.contains(entry.getKey())) {
 				ret.add(entry.getKey() + ": is null");
 			} else {
 				if (optionChecks.containsKey(entry.getKey())) {
@@ -439,14 +439,14 @@ public abstract class Configurable extends Observable implements Observer {
 		}
 	}
 	
-	protected void setFixedOptions(String... optionNames) {
+	protected void setAsInternalOptions(String... optionNames) {
 		for (String optionName: optionNames)
-			fixedOptions.add(optionName);
+			internalOptions.add(optionName);
 	}
 	
-	protected void unfixOptions(String... optionNames) {
+	protected void unsetAsInternalOptions(String... optionNames) {
 		for (String optionName: optionNames)
-			fixedOptions.remove(optionName);
+			internalOptions.remove(optionName);
 	}
 	
 	protected void omitFromErrorCheck(String... optionNames) {
