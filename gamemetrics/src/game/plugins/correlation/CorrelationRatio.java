@@ -19,7 +19,7 @@ import org.apache.commons.math3.stat.descriptive.MultivariateSummaryStatistics;
 
 import Jama.Matrix;
 
-public class CorrelationRatio extends CorrelationMeasure {
+public class CorrelationRatio extends CorrelationCoefficient {
 	
 	public boolean unbiased = true;
 
@@ -35,14 +35,16 @@ public class CorrelationRatio extends CorrelationMeasure {
 		int inputDim = sample.getEncodedInput().getDimension();
 		int outputDim = sample.getEncodedOutput().getDimension();
 		
-		ioCorrelationMatrix = new Array2DRowRealMatrix(inputDim, outputDim);
+		RealMatrix M = new Array2DRowRealMatrix(inputDim, outputDim);
 		
 		for(int i = 0; i < inputDim; i++) {
 			for(int j = 0; j < outputDim; j++) {
 				it.reset();
-				ioCorrelationMatrix.setEntry(i, j, correlationRatio(it, i, j, samples));
+				M.setEntry(i, j, correlationRatio(it, i, j, samples));
 			}
 		}
+		
+		getSummary().setIOCorrelationMatrix(M);
 	}
 
 	private double correlationRatio(SampleIterator it, int in, int out, int samples) {
@@ -91,11 +93,13 @@ public class CorrelationRatio extends CorrelationMeasure {
 		int inputDim = sample.getEncodedInput().getDimension();
 		int outputDim = sample.getEncodedOutput().getDimension();
 		
-		syntheticValues = new ArrayRealVector(outputDim);
+		RealVector v = new ArrayRealVector(outputDim);
 		for(int out = 0; out < outputDim; out++) {
 			it.reset();
-			syntheticValues.setEntry(out, generalizedCorrelationRatio(it, inputDim, out, samples));
+			v.setEntry(out, generalizedCorrelationRatio(it, inputDim, out, samples));
 		}
+		
+		getSummary().setSyntheticValues(v);
 	}
 	
 	private double generalizedCorrelationRatio(SampleIterator it, int inputDim, int out, int samples) {

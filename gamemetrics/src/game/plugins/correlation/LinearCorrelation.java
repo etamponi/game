@@ -23,7 +23,7 @@ import org.apache.commons.math3.linear.RealMatrix;
 import org.apache.commons.math3.linear.RealVector;
 import org.apache.commons.math3.stat.correlation.PearsonsCorrelation;
 
-public class LinearCorrelation extends CorrelationMeasure {
+public class LinearCorrelation extends CorrelationCoefficient {
 	
 	public boolean adjust = true;
 	
@@ -41,7 +41,7 @@ public class LinearCorrelation extends CorrelationMeasure {
 			X[i] = sample.getEncodedInput().toArray();
 		}
 		
-		inputCorrelationMatrix = correlation.computeCorrelationMatrix(X);
+		getSummary().setInputCorrelationMatrix(correlation.computeCorrelationMatrix(X));
 	}
 
 	@Override
@@ -52,7 +52,7 @@ public class LinearCorrelation extends CorrelationMeasure {
 		int outputDim = it.next().getEncodedOutput().getDimension();
 		int inputDim = it.next().getEncodedInput().getDimension();
 		
-		ioCorrelationMatrix = new Array2DRowRealMatrix(inputDim, outputDim);
+		RealMatrix M = new Array2DRowRealMatrix(inputDim, outputDim);
 
 		for(int col = 0; col < outputDim; col++) {
 			it.reset();
@@ -64,32 +64,37 @@ public class LinearCorrelation extends CorrelationMeasure {
 					X[i] = sample.getEncodedInput().toArray();
 			}
 			
-			ioCorrelationMatrix.setColumnVector(col, computeIOCorrelation(X, y, new ArrayList<Integer>()));
+			M.setColumnVector(col, computeIOCorrelation(X, y, new ArrayList<Integer>()));
 		}
+		
+		getSummary().setIOCorrelationMatrix(M);
 	}
 
 	@Override
 	public void computeSyntheticValues(SampleIterator it, int samples) {
-		if (inputCorrelationMatrix == null)
+		if (getSummary().getInputCorrelationMatrix() == null)
 			computeInputCorrelationMatrix(it, samples);
 		
-		List<Integer> nanIndices = findNanIndices(inputCorrelationMatrix);
-		RealMatrix adjustedInput = removeNaNIndices(inputCorrelationMatrix, nanIndices);
+		List<Integer> nanIndices = findNanIndices(getSummary().getInputCorrelationMatrix());
+		RealMatrix adjustedInput = removeNaNIndices(getSummary().getInputCorrelationMatrix(), nanIndices);
 		
-		if (ioCorrelationMatrix == null)
+		if (getSummary().getIOCorrelationMatrix() == null)
 			computeIOCorrelationMatrix(it, samples);
+		RealMatrix ioM = getSummary().getIOCorrelationMatrix();
 		
 		RealMatrix inverse = new LUDecomposition(adjustedInput).getSolver().getInverse();
 
-		syntheticValues = new ArrayRealVector(ioCorrelationMatrix.getColumnDimension());
-		for(int col = 0; col < ioCorrelationMatrix.getColumnDimension(); col++)
-			syntheticValues.setEntry(col, determination(inverse, removeNanIndices(ioCorrelationMatrix.getColumnVector(col), nanIndices), samples));
+		RealVector v = new ArrayRealVector(ioM.getColumnDimension());
+		for(int col = 0; col < v.getDimension(); col++)
+			v.setEntry(col, determination(inverse, removeNanIndices(ioM.getColumnVector(col), nanIndices), samples));
+		
+		getSummary().setSyntheticValues(v);
 	}
 	
 	private double determination(RealMatrix inverse, RealVector corrVec, int samples) {
 		double R2 = inverse.preMultiply(corrVec).dotProduct(corrVec);
 		if (adjust) {
-			R2 = 1 - (1-R2)*(samples - 1)/(samples - inputCorrelationMatrix.getColumnDimension() - 1);
+			R2 = 1 - (1-R2)*(samples - 1)/(samples - inverse.getColumnDimension() - 1);
 		}
 		return Math.sqrt(R2);
 	}

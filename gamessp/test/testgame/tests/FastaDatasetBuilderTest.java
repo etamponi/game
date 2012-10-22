@@ -31,7 +31,7 @@ public class FastaDatasetBuilderTest {
 		template.inputTemplate = new ProteinPrimaryStructure();
 		template.outputTemplate = new ProteinHECStructure();
 		FastaDatasetBuilder builder = new FastaDatasetBuilder();
-		builder.setOption("file", new File("testdata/fastadataset.txt"));
+		builder.setOption("file", new File("testdata/fasta.txt"));
 		builder.setOption("template", template);
 		builder.setOption("shuffle", false);
 		Dataset dataset = builder.buildDataset();

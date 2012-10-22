@@ -10,9 +10,10 @@
  ******************************************************************************/
 package game.plugins.metrics;
 
+import game.configuration.ConfigurableList;
 import game.core.Metric;
 import game.core.Result;
-import game.plugins.correlation.CorrelationMeasure;
+import game.plugins.correlation.CorrelationSummary;
 import game.plugins.experiments.CorrelationResult;
 
 import java.util.List;
@@ -41,7 +42,7 @@ public class CorrelationMetric extends Metric<CorrelationResult> {
 	@Override
 	public String prettyPrint() {
 		StringBuilder builder = new StringBuilder();
-		List<String> labels = result.experiment.template.outputTemplate.getOption("labels");
+		List<String> labels = (List<String>)result.experiment.template.outputTemplate.getOption("labels", ConfigurableList.class).cloneConfiguration();
 		labels.add("Overall");
 		
 		String row = "%15s%15.2f%15.2f%15.2f\n";
@@ -60,9 +61,9 @@ public class CorrelationMetric extends Metric<CorrelationResult> {
 	}
 
 	private double[] getData(int i) {
-		double[] ret = new double[result.measures.size()];
+		double[] ret = new double[result.summaries.size()];
 		for(int j = 0; j < ret.length; j++)
-			ret[j] = result.measures.get(j, CorrelationMeasure.class).syntheticValues.getEntry(i);
+			ret[j] = result.summaries.get(j, CorrelationSummary.class).getSyntheticValues().getEntry(i);
 		return ret;
 	}
 

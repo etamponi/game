@@ -26,7 +26,7 @@ import game.core.Dataset.SampleIterator;
 import game.core.blocks.Encoder;
 import game.core.blocks.PredictionGraph;
 import game.plugins.constraints.CompatibleWith;
-import game.plugins.correlation.CorrelationMeasure;
+import game.plugins.correlation.CorrelationCoefficient;
 import game.plugins.datatemplates.LabelTemplate;
 import game.plugins.encoders.IntegerEncoder;
 import game.plugins.encoders.OneHotEncoder;
@@ -76,7 +76,7 @@ public class CorrelationExperiment extends Experiment {
 	
 	public DatasetBuilder dataset;
 	
-	public CorrelationMeasure measure;
+	public CorrelationCoefficient measure;
 	
 	public PredictionGraph graph;
 	
@@ -133,10 +133,10 @@ public class CorrelationExperiment extends Experiment {
 		
 		for(int count = 0; count < runs; count++) {
 			Dataset d = complete.getRandomSubset(runPercent);
-			CorrelationMeasure m = measure.cloneConfiguration(measure + "_" + count);
+			CorrelationCoefficient m = measure.cloneConfiguration(measure + "_" + count);
 			SampleIterator it = d.encodedSampleIterator(inputEncoder, outputEncoder, false);
 			m.evaluateEverything(it, samples);
-			ret.measures.add(m);
+			ret.summaries.add(m.getSummary());
 		}
 		
 		return ret;

@@ -12,10 +12,10 @@ package game.plugins.experiments;
 
 import game.configuration.ConfigurableList;
 import game.core.Result;
-import game.plugins.correlation.CorrelationMeasure;
+import game.plugins.correlation.CorrelationSummary;
 
 public class CorrelationResult extends Result {
 	
-	public ConfigurableList measures = new ConfigurableList(this, CorrelationMeasure.class);
+	public ConfigurableList summaries = new ConfigurableList(this, CorrelationSummary.class);
 
 }
