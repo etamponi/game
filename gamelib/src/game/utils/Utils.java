@@ -178,6 +178,6 @@ public class Utils {
 	private static Random generator = new Random();
 
 	public static String randomString() {
-		return new BigInteger(130, generator).toString(32);
+		return new BigInteger(130, generator).toString(10);
 	}
 }

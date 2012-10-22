@@ -34,11 +34,16 @@ public class EditorWindow extends Stage {
 	private Button cancelButton;
 	
 	public EditorWindow(Editor e) {
+		this(e, true);
+	}
+	
+	public EditorWindow(Editor e, boolean modal) {
 		assert(e != null);
 		
 		this.editor = e;
 		
-		initModality(Modality.APPLICATION_MODAL);
+		if (modal)
+			initModality(Modality.APPLICATION_MODAL);
 		
 		VBox layout = new VBox(5);
 		layout.setPadding(new Insets(5));

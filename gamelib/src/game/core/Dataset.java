@@ -58,16 +58,13 @@ public class Dataset extends Configurable implements Iterable<Instance> {
 	
 	public List<Integer> indices = new ArrayList<>();
 	
-	public boolean shuffle = true;
-	
 	public Dataset() {
-		setAsInternalOptions("databaseCacheFile", "indices", "readOnly", "shuffle", "template");
+		setAsInternalOptions("databaseCacheFile", "indices", "readOnly", "template");
 	}
 	
-	public Dataset(InstanceTemplate template, String datasetDirectory, String cacheName, boolean shuffle) {
+	public Dataset(InstanceTemplate template, String datasetDirectory, String cacheName) {
 		this();
 		this.template = template;
-		this.shuffle = shuffle;
 		createDatabaseCache(datasetDirectory, cacheName);
 	}
 	
@@ -78,7 +75,6 @@ public class Dataset extends Configurable implements Iterable<Instance> {
 		this.readOnly = true;
 		this.connection = base.connection;
 		this.databaseCacheFile = base.databaseCacheFile;
-		this.shuffle = base.shuffle;
 	}
 	
 	public int size() {
@@ -175,19 +171,16 @@ public class Dataset extends Configurable implements Iterable<Instance> {
 	
 	public class InstanceIterator implements Iterator<Instance> {
 		
-		private Iterator<Integer> idIterator;
+		private Iterator<Integer> indexIterator;
 		private int currentId;
 
 		public InstanceIterator() {
-			ArrayList<Integer> temp = new ArrayList<>(indices);
-			if (shuffle)
-				Collections.shuffle(temp);
-			idIterator = temp.iterator();
+			indexIterator = indices.iterator();
 		}
 		
 		@Override
 		public boolean hasNext() {
-			return idIterator.hasNext();
+			return indexIterator.hasNext();
 		}
 
 		@Override
@@ -195,7 +188,7 @@ public class Dataset extends Configurable implements Iterable<Instance> {
 			Instance ret = null;
 			try {
 				Statement statement = connection.createStatement();
-				currentId = idIterator.next();
+				currentId = indexIterator.next();
 				ResultSet result = statement.executeQuery("SELECT content FROM Data WHERE id = " + currentId + ";");
 				result.next();
 				
@@ -376,7 +369,7 @@ public class Dataset extends Configurable implements Iterable<Instance> {
 		return ret;
 	}
 	
-	public List<Dataset> getFolds(int folds) {
+	public List<Dataset> getFolds(int folds, boolean shuffle) {
 		if (!readOnly)
 			return null;
 		

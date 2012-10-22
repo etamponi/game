@@ -25,8 +25,6 @@ public abstract class DatasetBuilder extends Configurable implements Compatible<
 	
 	public int instanceNumber = 1000;
 	
-	public boolean shuffle = true;
-	
 	public DatasetBuilder() {
 		setOptionChecks("template", new CompatibilityCheck(this));
 		setOptionChecks("instanceNumber", new PositivenessCheck(false));

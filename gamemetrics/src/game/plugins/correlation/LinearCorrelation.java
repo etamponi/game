@@ -18,9 +18,9 @@ import java.util.List;
 
 import org.apache.commons.math3.linear.Array2DRowRealMatrix;
 import org.apache.commons.math3.linear.ArrayRealVector;
+import org.apache.commons.math3.linear.LUDecomposition;
 import org.apache.commons.math3.linear.RealMatrix;
 import org.apache.commons.math3.linear.RealVector;
-import org.apache.commons.math3.linear.SingularValueDecomposition;
 import org.apache.commons.math3.stat.correlation.PearsonsCorrelation;
 
 public class LinearCorrelation extends CorrelationMeasure {
@@ -74,12 +74,12 @@ public class LinearCorrelation extends CorrelationMeasure {
 			computeInputCorrelationMatrix(it, samples);
 		
 		List<Integer> nanIndices = findNanIndices(inputCorrelationMatrix);
-		RealMatrix adjustedInput = adjustInputCorrelation(inputCorrelationMatrix, nanIndices);
+		RealMatrix adjustedInput = removeNaNIndices(inputCorrelationMatrix, nanIndices);
 		
 		if (ioCorrelationMatrix == null)
 			computeIOCorrelationMatrix(it, samples);
 		
-		RealMatrix inverse = new SingularValueDecomposition(adjustedInput).getSolver().getInverse();
+		RealMatrix inverse = new LUDecomposition(adjustedInput).getSolver().getInverse();
 
 		syntheticValues = new ArrayRealVector(ioCorrelationMatrix.getColumnDimension());
 		for(int col = 0; col < ioCorrelationMatrix.getColumnDimension(); col++)
@@ -125,7 +125,7 @@ public class LinearCorrelation extends CorrelationMeasure {
 		return ret;
 	}
 	
-	public RealMatrix adjustInputCorrelation(RealMatrix base, List<Integer> nanIndices) {
+	private RealMatrix removeNaNIndices(RealMatrix base, List<Integer> nanIndices) {
 		int adjustedDim = base.getRowDimension()-nanIndices.size();
 		RealMatrix adjusted = new Array2DRowRealMatrix(adjustedDim, adjustedDim);
 		int i = 0, j = 0;
@@ -153,12 +153,7 @@ public class LinearCorrelation extends CorrelationMeasure {
 			if (nanIndices.contains(i))
 				continue;
 			double[] x = getColumn(X, i);
-			if (new ArrayRealVector(x).isNaN())
-				System.out.println("NAN IN INPUT!!!");
-			double corr = correlation.correlation(x, y);
-			if (Double.isNaN(corr))
-				corr = 0;
-			ret.setEntry(pos++, corr);
+			ret.setEntry(pos++, correlation.correlation(x, y));
 		}
 		
 		return ret;

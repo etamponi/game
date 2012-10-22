@@ -81,7 +81,7 @@ public class ResultListController implements Initializable {
 			Option option = new Option(selected.getValue());
 			Editor editor = option.getBestEditor(true);
 			editor.setReadOnly(true);
-			new EditorWindow(editor).startEdit(option);
+			new EditorWindow(editor, false).startEdit(option);
 		}
 		/*
 		if (selected.getValue() instanceof Metric) {

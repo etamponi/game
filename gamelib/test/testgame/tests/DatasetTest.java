@@ -56,7 +56,7 @@ public class DatasetTest {
 		Dataset dataset = builder.buildDataset();
 		
 		assertEquals(150, dataset.size());
-		List<Dataset> folds = dataset.getFolds(4);
+		List<Dataset> folds = dataset.getFolds(4, true);
 		List<Dataset> complements = dataset.getComplementaryFolds(folds);
 		assertEquals(150/4, folds.get(0).size());
 		assertEquals(150-150/4, complements.get(0).size());

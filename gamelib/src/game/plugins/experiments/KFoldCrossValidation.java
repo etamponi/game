@@ -41,7 +41,7 @@ public class KFoldCrossValidation extends FullExperiment {
 		Dataset complete = dataset.buildDataset();
 		FullResult ret = new FullResult();
 		
-		List<Dataset> testings = complete.getFolds(folds);
+		List<Dataset> testings = complete.getFolds(folds, true);
 		List<Dataset> trainings = complete.getComplementaryFolds(testings);
 		
 		for(int i = 0; i < folds; i++) {

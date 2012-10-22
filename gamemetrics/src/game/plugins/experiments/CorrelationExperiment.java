@@ -125,7 +125,6 @@ public class CorrelationExperiment extends Experiment {
 	protected CorrelationResult runExperiment(String outputDirectory) {
 		CorrelationResult ret = new CorrelationResult();
 		
-		dataset.shuffle = false;
 		Block inputEncoder = graph.outputClassifier.getParent(0);
 
 		Dataset complete = dataset.buildDataset();

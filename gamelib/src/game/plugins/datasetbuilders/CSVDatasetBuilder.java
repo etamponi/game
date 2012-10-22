@@ -49,7 +49,7 @@ public class CSVDatasetBuilder extends DatasetBuilder {
 
 	@Override
 	public Dataset buildDataset() {
-		Dataset ret = new Dataset(template, CACHEDIRECTORY, Utils.randomString(), shuffle);
+		Dataset ret = new Dataset(template, CACHEDIRECTORY, Utils.randomString());
 		
 		int inputDim = getDimension(template.inputTemplate);
 		int outputDim = getDimension(template.outputTemplate);
