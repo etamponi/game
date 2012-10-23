@@ -10,12 +10,12 @@
  ******************************************************************************/
 package game.plugins.metrics;
 
-import game.configuration.ConfigurableList;
 import game.core.Metric;
 import game.core.Result;
 import game.plugins.correlation.CorrelationSummary;
 import game.plugins.experiments.CorrelationResult;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.commons.math3.stat.descriptive.DescriptiveStatistics;
@@ -42,19 +42,19 @@ public class CorrelationMetric extends Metric<CorrelationResult> {
 	@Override
 	public String prettyPrint() {
 		StringBuilder builder = new StringBuilder();
-		List<String> labels = (List<String>)result.experiment.template.outputTemplate.getOption("labels", ConfigurableList.class).cloneConfiguration();
+		List<String> labels = new ArrayList<>(result.experiment.template.outputTemplate.getOption("labels",List.class));
 		labels.add("Overall");
 		
-		String row = "%15s%15.2f%15.2f%15.2f\n";
+		String row = "%15s%15.2f%15.2f\n";
 		
-		builder.append(String.format("%15s%15s%15s%15s\n", "", "Mean", "Deviation", "95% conf."));
+		builder.append(String.format("%15s%15s%15s\n", "", "Mean", "Std dev."));
 		for(int i = 0; i < labels.size(); i++) {
 			String label = labels.get(i);
 			double[] data = getData(i);
 			DescriptiveStatistics stat = new DescriptiveStatistics(data);
 			double mean = stat.getMean();
 			double stddev = stat.getStandardDeviation();
-			builder.append(String.format(row, label, mean, stddev, 0.0));
+			builder.append(String.format(row, label, mean, stddev));
 		}
 
 		return builder.toString();

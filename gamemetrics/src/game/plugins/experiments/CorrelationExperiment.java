@@ -76,15 +76,13 @@ public class CorrelationExperiment extends Experiment {
 	
 	public DatasetBuilder dataset;
 	
-	public CorrelationCoefficient measure;
+	public CorrelationCoefficient coefficient;
 	
 	public PredictionGraph graph;
 	
 	public int runs = 10;
 	
 	public double runPercent = 0.5;
-	
-	public int samples = 1000;
 	
 	public CorrelationExperiment() {
 		setOptionChecks("template.outputTemplate", new SubclassCheck(LabelTemplate.class));
@@ -133,11 +131,14 @@ public class CorrelationExperiment extends Experiment {
 		
 		for(int count = 0; count < runs; count++) {
 			Dataset d = complete.getRandomSubset(runPercent);
-			CorrelationCoefficient m = measure.cloneConfiguration(measure + "_" + count);
+			coefficient.clear();
 			SampleIterator it = d.encodedSampleIterator(inputEncoder, outputEncoder, false);
-			m.evaluateEverything(it, samples);
-			ret.summaries.add(m.getSummary());
+//			m.evaluateEverything(it);
+			coefficient.computeSyntheticValues(it);
+			ret.summaries.add(coefficient.getSummary());
 		}
+		
+		coefficient.clear();
 		
 		return ret;
 	}

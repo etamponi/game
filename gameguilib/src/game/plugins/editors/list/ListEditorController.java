@@ -76,6 +76,8 @@ public class ListEditorController implements EditorController {
 		boolean disable = editor.isReadOnly() || !(list instanceof ConfigurableList);
 		addButton.setDisable(disable);
 		removeButton.setDisable(disable);
+		upButton.setDisable(disable);
+		downButton.setDisable(disable);
 		if (editor.isReadOnly())
 			editButton.setText("View");
 		else

@@ -1,8 +1,18 @@
 package game.plugins.correlation;
 
+import game.core.Dataset;
 import game.core.Dataset.SampleIterator;
+import game.core.InstanceTemplate;
 import game.core.Sample;
+import game.core.blocks.Encoder;
+import game.plugins.datasetbuilders.CSVDatasetBuilder;
+import game.plugins.datatemplates.LabelTemplate;
+import game.plugins.datatemplates.VectorTemplate;
+import game.plugins.encoders.VectorEncoder;
+import game.plugins.experiments.CorrelationExperiment.HelperEncoder;
+import game.plugins.pipes.FeatureSelection;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -11,7 +21,6 @@ import java.util.Map.Entry;
 
 import org.apache.commons.math3.linear.Array2DRowRealMatrix;
 import org.apache.commons.math3.linear.ArrayRealVector;
-import org.apache.commons.math3.linear.LUDecomposition;
 import org.apache.commons.math3.linear.RealMatrix;
 import org.apache.commons.math3.linear.RealVector;
 import org.apache.commons.math3.stat.StatUtils;
@@ -22,14 +31,16 @@ import Jama.Matrix;
 public class CorrelationRatio extends CorrelationCoefficient {
 	
 	public boolean unbiased = true;
+	
+	public double zeroThreshold = 1e-12;
 
 	@Override
-	public void computeInputCorrelationMatrix(SampleIterator it, int samples) {
+	public void computeInputCorrelationMatrix(SampleIterator it) {
 		// FIXME Some correlation coefficients cannot be used for input correlation
 	}
 
 	@Override
-	public void computeIOCorrelationMatrix(SampleIterator it, int samples) {
+	public void computeIOCorrelationMatrix(SampleIterator it) {
 		it.reset();
 		Sample sample = it.next();
 		int inputDim = sample.getEncodedInput().getDimension();
@@ -40,14 +51,14 @@ public class CorrelationRatio extends CorrelationCoefficient {
 		for(int i = 0; i < inputDim; i++) {
 			for(int j = 0; j < outputDim; j++) {
 				it.reset();
-				M.setEntry(i, j, correlationRatio(it, i, j, samples));
+				M.setEntry(i, j, correlationRatio(it, i, j));
 			}
 		}
 		
 		getSummary().setIOCorrelationMatrix(M);
 	}
 
-	private double correlationRatio(SampleIterator it, int in, int out, int samples) {
+	private double correlationRatio(SampleIterator it, int in, int out) {
 		Map<Double, Integer> n_y = new HashMap<>();
 		Map<Double, RealVector> x_y = new HashMap<>();
 		double[] x = new double[samples];
@@ -87,7 +98,7 @@ public class CorrelationRatio extends CorrelationCoefficient {
 	}
 
 	@Override
-	public void computeSyntheticValues(SampleIterator it, int samples) {
+	public void computeSyntheticValues(SampleIterator it) {
 		it.reset();
 		Sample sample = it.next();
 		int inputDim = sample.getEncodedInput().getDimension();
@@ -146,22 +157,43 @@ public class CorrelationRatio extends CorrelationCoefficient {
 		List<Integer> zeroColumns = findZeroColumns(E);
 		E = removeZeroColumns(E, zeroColumns);
 		H = removeZeroColumns(H, zeroColumns);
+//		System.out.println(zeroColumns);
+//		System.out.println(toString(E));
 		
-		RealMatrix Einverse = new LUDecomposition(E).getSolver().getInverse();
+		Matrix JE = new Matrix(E.getData());
+		Matrix JH = new Matrix(H.getData());
 		
-		Matrix L = new Matrix(Einverse.multiply(H).getData());
-		double[] eigs = L.eig().getRealEigenvalues();
+//		SingularValueDecomposition svd = new SingularValueDecomposition(JE);
 		
-		double lambda = 1;
-		int nonNullEigs = n_y.keySet().size() - 1;
-		for(int i = 0; i < nonNullEigs; i++)
-			lambda *= 1.0 / (1.0 + Math.sqrt(eigs[i]));
-		
-		return Math.sqrt(1 - lambda);
+		if (JE.det() == 0) {
+//			System.out.println("NA");
+			return 0;
+		} else {
+			Matrix L = JE.inverse().times(JH);
+			double[] eigs = L.eig().getRealEigenvalues();
+//			System.out.println(Arrays.toString(eigs));
+			
+			double lambda = 1;
+			int nonNullEigs = n_y.keySet().size() - 1;
+			for(int i = 0; i < nonNullEigs; i++) {
+				lambda *= 1.0 / (1.0 + adjust(eigs[i]));
+			}
+			
+			return Math.sqrt(1 - lambda);
+		}
 	}
 	
+	private double adjust(double d) {
+		if (Math.abs(d) < zeroThreshold)
+			return 0;
+		else
+			return d;
+	}
+
 	private RealMatrix removeZeroColumns(RealMatrix base, List<Integer> zeroColumns) {
 		int adjustedDim = base.getRowDimension()-zeroColumns.size();
+		if (adjustedDim == 0)
+			return base;
 		RealMatrix adjusted = new Array2DRowRealMatrix(adjustedDim, adjustedDim);
 		int i = 0, j = 0;
 		for(int basei = 0; basei < base.getRowDimension(); basei++) {
@@ -186,7 +218,7 @@ public class CorrelationRatio extends CorrelationCoefficient {
 		}
 		return indices;
 	}
-	/*
+	
 	public static void main(String... args) {
 		InstanceTemplate template = new InstanceTemplate();
 		template.setOption("inputTemplate", new VectorTemplate());
@@ -198,26 +230,32 @@ public class CorrelationRatio extends CorrelationCoefficient {
 		CSVDatasetBuilder builder = new CSVDatasetBuilder();
 		builder.setOption("file", new File("../gamegui/sampledata/HumVar.txt"));
 		builder.setOption("template", template);
+		builder.setOption("startIndex", 0);
 		builder.setOption("instanceNumber", 3300);
 		builder.setOption("shuffle", false);
 		
 		Dataset dataset = builder.buildDataset();
 		Encoder inputEncoder = new VectorEncoder();
 		inputEncoder.setOption("template", template.inputTemplate);
+		FeatureSelection selection = new FeatureSelection();
+		selection.parents.add(inputEncoder);
+		selection.setOption("mask", "00000000101110010111111100000000010000000010110");
+		
 		Encoder outputEncoder = new HelperEncoder();
 		outputEncoder.setOption("template", template.outputTemplate);
 		
 		SampleIterator it = dataset.encodedSampleIterator(inputEncoder, outputEncoder, false);
 		
 		CorrelationRatio ratio = new CorrelationRatio();
-		ratio.computeIOCorrelationMatrix(it, 1000);
-		ratio.computeSyntheticValues(it, 1000);
+		ratio.setOption("samples", 3300);
+		ratio.computeIOCorrelationMatrix(it);
+		ratio.computeSyntheticValues(it);
 		
-		System.out.println(toString(ratio.ioCorrelationMatrix));
+		System.out.println(toString(ratio.getSummary().getIOCorrelationMatrix()));
 		
-		System.out.println(ratio.syntheticValues);
+		System.out.println(ratio.getSummary().getSyntheticValues());
 	}
-
+	
 	private static String toString(RealMatrix M) {
 		StringBuilder builder = new StringBuilder();
 		for(int i = 0; i < M.getRowDimension(); i++)
@@ -228,8 +266,8 @@ public class CorrelationRatio extends CorrelationCoefficient {
 	private static String toString(double[] row) {
 		StringBuilder builder = new StringBuilder();
 		for(double e: row)
-			builder.append(String.format("%10.2f", e));
+			builder.append(String.format("%15.2f", e));
 		return builder.toString();
 	}
-	*/
+	
 }

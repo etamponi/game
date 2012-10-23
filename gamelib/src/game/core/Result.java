@@ -15,5 +15,13 @@ import game.configuration.Configurable;
 public class Result extends Configurable {
 	
 	public Experiment experiment;
+	
+	@Override
+	public String toString() {
+		if (experiment == null)
+			return "empty " + getClass().getSimpleName();
+		else
+			return experiment.name;
+	}
 
 }

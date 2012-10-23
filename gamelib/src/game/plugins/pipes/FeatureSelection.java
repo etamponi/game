@@ -14,6 +14,7 @@ import game.configuration.ErrorCheck;
 import game.core.DataTemplate.Data;
 import game.core.Encoding;
 import game.core.blocks.Pipe;
+import game.utils.Utils;
 
 import org.apache.commons.math3.linear.RealVector;
 
@@ -24,7 +25,7 @@ public class FeatureSelection extends Pipe {
 	public FeatureSelection() {
 		setOptionChecks("mask", new ErrorCheck<String>() {
 			@Override public String getError(String value) {
-				if (count(mask, '0') + count(mask, '1') != mask.length())
+				if (Utils.count(mask, '0') + Utils.count(mask, '1') != mask.length())
 					return "can contain only 1s and 0s";
 				if (!parents.isEmpty() && getParent(0).getFeatureNumber() != mask.length())
 					return "must contain extactly " + getParent(0).getFeatureNumber() + " characters";
@@ -56,15 +57,7 @@ public class FeatureSelection extends Pipe {
 
 	@Override
 	public int getFeatureNumber() {
-		return count(mask, '1');
-	}
-
-	private int count(String s, char c) {
-		int count = 0;
-		for(char curr: s.toCharArray())
-			if (curr == c)
-				count++;
-		return count;
+		return Utils.count(mask, '1');
 	}
 
 }

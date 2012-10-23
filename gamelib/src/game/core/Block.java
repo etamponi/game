@@ -78,8 +78,8 @@ public abstract class Block extends Configurable {
 		if (trainingAlgorithm != null) {
 			unsetAsInternalOptions(trainingAlgorithm.getManagedBlockOptions());
 		}
-		setAsInternalOptions(algorithm.getManagedBlockOptions());
 		trainingAlgorithm = algorithm;
+		setAsInternalOptions(algorithm.getManagedBlockOptions());
 	}
 
 }

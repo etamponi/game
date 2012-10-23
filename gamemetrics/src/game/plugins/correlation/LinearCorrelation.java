@@ -18,10 +18,11 @@ import java.util.List;
 
 import org.apache.commons.math3.linear.Array2DRowRealMatrix;
 import org.apache.commons.math3.linear.ArrayRealVector;
-import org.apache.commons.math3.linear.LUDecomposition;
 import org.apache.commons.math3.linear.RealMatrix;
 import org.apache.commons.math3.linear.RealVector;
 import org.apache.commons.math3.stat.correlation.PearsonsCorrelation;
+
+import Jama.Matrix;
 
 public class LinearCorrelation extends CorrelationCoefficient {
 	
@@ -30,7 +31,7 @@ public class LinearCorrelation extends CorrelationCoefficient {
 //	public boolean useRegression = false;
 
 	@Override
-	public void computeInputCorrelationMatrix(SampleIterator it, int samples) {
+	public void computeInputCorrelationMatrix(SampleIterator it) {
 		double[][] X = new double[samples][];
 
 		PearsonsCorrelation correlation = new PearsonsCorrelation();
@@ -45,7 +46,7 @@ public class LinearCorrelation extends CorrelationCoefficient {
 	}
 
 	@Override
-	public void computeIOCorrelationMatrix(SampleIterator it, int samples) {
+	public void computeIOCorrelationMatrix(SampleIterator it) {
 		it.reset();
 		
 		double[][] X = new double[samples][];
@@ -71,28 +72,28 @@ public class LinearCorrelation extends CorrelationCoefficient {
 	}
 
 	@Override
-	public void computeSyntheticValues(SampleIterator it, int samples) {
+	public void computeSyntheticValues(SampleIterator it) {
 		if (getSummary().getInputCorrelationMatrix() == null)
-			computeInputCorrelationMatrix(it, samples);
+			computeInputCorrelationMatrix(it);
 		
 		List<Integer> nanIndices = findNanIndices(getSummary().getInputCorrelationMatrix());
 		RealMatrix adjustedInput = removeNaNIndices(getSummary().getInputCorrelationMatrix(), nanIndices);
 		
 		if (getSummary().getIOCorrelationMatrix() == null)
-			computeIOCorrelationMatrix(it, samples);
+			computeIOCorrelationMatrix(it);
 		RealMatrix ioM = getSummary().getIOCorrelationMatrix();
 		
-		RealMatrix inverse = new LUDecomposition(adjustedInput).getSolver().getInverse();
+		Matrix inverse = new Matrix(adjustedInput.getData()).inverse();
 
 		RealVector v = new ArrayRealVector(ioM.getColumnDimension());
 		for(int col = 0; col < v.getDimension(); col++)
-			v.setEntry(col, determination(inverse, removeNanIndices(ioM.getColumnVector(col), nanIndices), samples));
+			v.setEntry(col, determination(inverse, removeNanIndices(ioM.getColumnVector(col), nanIndices)));
 		
 		getSummary().setSyntheticValues(v);
 	}
 	
-	private double determination(RealMatrix inverse, RealVector corrVec, int samples) {
-		double R2 = inverse.preMultiply(corrVec).dotProduct(corrVec);
+	private double determination(Matrix inverse, Matrix vec) {
+		double R2 = vec.transpose().times(inverse).times(vec).get(0, 0);
 		if (adjust) {
 			R2 = 1 - (1-R2)*(samples - 1)/(samples - inverse.getColumnDimension() - 1);
 		}
@@ -120,13 +121,14 @@ public class LinearCorrelation extends CorrelationCoefficient {
 		return true;
 	}
 
-	private RealVector removeNanIndices(RealVector vec, List<Integer> nanIndices) {
-		RealVector ret = new ArrayRealVector();
+	private Matrix removeNanIndices(RealVector vec, List<Integer> nanIndices) {
+		Matrix ret = new Matrix(vec.getDimension()-nanIndices.size(), 1);
+		int j = 0;
 		for(int i = 0; i < vec.getDimension(); i++)
 			if (nanIndices.contains(i))
 				continue;
 			else
-				ret = ret.append(vec.getEntry(i));
+				ret.set(j++, 0, vec.getEntry(i));
 		return ret;
 	}
 	

@@ -17,20 +17,26 @@ public abstract class CorrelationCoefficient extends Configurable {
 	
 	private CorrelationSummary summary = new CorrelationSummary();
 	
-	public void evaluateEverything(SampleIterator it, int samples) {
-		computeInputCorrelationMatrix(it, samples);
-		computeIOCorrelationMatrix(it, samples);
-		computeSyntheticValues(it, samples);
+	public int samples = 1000;;
+	
+	public void evaluateEverything(SampleIterator it) {
+		computeInputCorrelationMatrix(it);
+		computeIOCorrelationMatrix(it);
+		computeSyntheticValues(it);
 	}
 	
 	public CorrelationSummary getSummary() {
 		return summary;
 	}
 	
-	public abstract void computeInputCorrelationMatrix(SampleIterator it, int samples);
+	public void clear() {
+		summary = new CorrelationSummary();
+	}
 	
-	public abstract void computeIOCorrelationMatrix(SampleIterator it, int samples);
+	public abstract void computeInputCorrelationMatrix(SampleIterator it);
 	
-	public abstract void computeSyntheticValues(SampleIterator it, int samples);
+	public abstract void computeIOCorrelationMatrix(SampleIterator it);
+	
+	public abstract void computeSyntheticValues(SampleIterator it);
 
 }

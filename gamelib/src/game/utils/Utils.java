@@ -107,6 +107,15 @@ public class Utils {
 		}
 		return -1;
 	}
+	
+	public static int count(String s, char c) {
+		int count = 0;
+		for(char curr: s.toCharArray())
+			if (curr == c)
+				count++;
+		return count;
+	}
+	
 	/*
 	public static void sumTo(double[] to, double[] from) {
 		for (int i = 0; i < to.length; i++)
