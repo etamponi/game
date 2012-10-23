@@ -14,6 +14,7 @@ import game.plugins.pipes.FeatureSelection;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -169,32 +170,29 @@ public class CorrelationRatio extends CorrelationCoefficient {
 		Matrix JE = new Matrix(E.getData());
 		Matrix JH = new Matrix(H.getData());
 		
-		if (JE.getRowDimension() == 1 && JE.get(0, 0) == 0)
-			return 0;
+//		if (JE.getRowDimension() == 1 && JE.get(0, 0) == 0)
+//			return 0;
 		
 		if (JE.rank() < JE.getRowDimension()) {
-			System.out.println("Some error occurred");
+			System.out.println("Some error occurred (E matrix is singular)");
 			return -1;
 		} else {
 			Matrix L = JE.inverse().times(JH);
 			double[] eigs = L.eig().getRealEigenvalues();
-//			System.out.println(Arrays.toString(eigs));
+			Arrays.sort(eigs);
 			
 			double lambda = 1;
 			int nonNullEigs = n_y.keySet().size() - 1;
-			for(int i = 0; i < nonNullEigs; i++) {
-				lambda *= 1.0 / (1.0 + adjust(eigs[i]));
+			for(int i = eigs.length-nonNullEigs; i < eigs.length; i++) {
+				if (Math.abs(eigs[i]) < zeroThreshold) {
+					System.out.println("Some error occurred (E matrix has too many null eigenvalues)");
+					return -1;
+				}
+				lambda *= 1.0 / (1.0 + eigs[i]);
 			}
 			
 			return Math.sqrt(1 - lambda);
 		}
-	}
-	
-	private double adjust(double d) {
-		if (Math.abs(d) < zeroThreshold)
-			return 0;
-		else
-			return d;
 	}
 
 	private RealMatrix removeZeroColumns(RealMatrix base, List<Integer> zeroColumns) {

@@ -111,14 +111,22 @@ public class GreedyFeatureAddition extends TrainingAlgorithm<FeatureSelection> {
 	private double evaluateMaskWeight(String mask, Dataset dataset, Encoder outputEncoder) {
 		block.mask = mask;
 		double mean = 0;
+		int count = 0;
 		for(int run = 0; run < runs; run++) {
 			coefficient.clear();
 			SampleIterator it = dataset.getRandomSubset(runPercent).encodedSampleIterator(block, outputEncoder, false);
 			boolean success = coefficient.computeSyntheticValues(it);
-			if (success)
+			if (success) {
+				count = 0;
 				mean += coefficient.getSummary().getSyntheticValues().getEntry(0);
-			else
+			} else {
+				if (count == runs) {
+					mean = 0;
+					break;
+				}
 				run--;
+				count++;
+			}
 		}
 		mean = mean / runs;
 		

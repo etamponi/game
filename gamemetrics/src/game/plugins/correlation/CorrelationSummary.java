@@ -34,5 +34,10 @@ public class CorrelationSummary {
 	public void setSyntheticValues(RealVector syntheticValues) {
 		this.syntheticValues = syntheticValues;
 	}
+	
+	@Override
+	public String toString() {
+		return syntheticValues.toString();
+	}
 
 }
