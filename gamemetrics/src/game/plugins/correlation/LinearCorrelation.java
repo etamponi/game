@@ -81,13 +81,18 @@ public class LinearCorrelation extends CorrelationCoefficient {
 			computeInputCorrelationMatrix(it);
 		
 		List<Integer> nanIndices = findNanIndices(getSummary().getInputCorrelationMatrix());
-		RealMatrix adjustedInput = removeNaNIndices(getSummary().getInputCorrelationMatrix(), nanIndices);
+		Matrix adjustedInput = new Matrix(removeNaNIndices(getSummary().getInputCorrelationMatrix(), nanIndices).getData());
 		
 		if (getSummary().getIOCorrelationMatrix() == null)
 			computeIOCorrelationMatrix(it);
 		RealMatrix ioM = getSummary().getIOCorrelationMatrix();
 		
-		Matrix inverse = new Matrix(adjustedInput.getData()).inverse();
+		if (adjustedInput.rank() < adjustedInput.getRowDimension()) {
+			System.out.println("Some error occourred (input correlation matrix is singular)");
+			return false;
+		}
+		
+		Matrix inverse = adjustedInput.inverse();
 
 		RealVector v = new ArrayRealVector(ioM.getColumnDimension());
 		for(int col = 0; col < v.getDimension(); col++)
