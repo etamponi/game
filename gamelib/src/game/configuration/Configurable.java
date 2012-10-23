@@ -245,7 +245,6 @@ public abstract class Configurable extends Observable implements Observer {
 		try {
 			return getClass().getField(optionName).getType();
 		} catch (NoSuchFieldException | SecurityException e) {
-			e.printStackTrace();
 			return null;
 		}
 	}

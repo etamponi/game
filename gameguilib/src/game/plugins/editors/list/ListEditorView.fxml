@@ -6,7 +6,7 @@
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.paint.*?>
 
-<AnchorPane id="AnchorPane" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="-Infinity" minWidth="-Infinity" xmlns:fx="http://javafx.com/fxml" fx:controller="game.plugins.editors.list.ListEditorController">
+<AnchorPane id="AnchorPane" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="-Infinity" minWidth="-Infinity" prefHeight="134.0" xmlns:fx="http://javafx.com/fxml" fx:controller="game.plugins.editors.list.ListEditorController">
   <children>
     <HBox id="HBox" alignment="CENTER" spacing="5.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
       <children>
@@ -16,6 +16,8 @@
             <Button fx:id="addButton" onAction="#addAction" prefWidth="55.0" text="+" />
             <Button fx:id="removeButton" onAction="#removeAction" prefWidth="55.0" text="-" />
             <Button fx:id="editButton" onAction="#editAction" prefWidth="55.0" text="Edit" />
+            <Button id="removeButton" fx:id="upButton" onAction="#upAction" prefWidth="55.0" text="Up" />
+            <Button id="removeButton" fx:id="downButton" onAction="#downAction" prefWidth="55.0" text="Down" />
           </children>
         </VBox>
       </children>

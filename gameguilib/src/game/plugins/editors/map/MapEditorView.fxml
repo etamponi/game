@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import java.lang.*?>
+<?import java.util.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.paint.*?>
+
+<AnchorPane id="AnchorPane" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="-Infinity" minWidth="-Infinity" prefHeight="134.0" xmlns:fx="http://javafx.com/fxml" fx:controller="game.plugins.editors.map.MapEditorController">
+  <children>
+    <HBox id="HBox" alignment="CENTER" spacing="5.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+      <children>
+        <ListView fx:id="listView" minHeight="50.0" prefHeight="134.0" prefWidth="253.0" HBox.hgrow="ALWAYS" />
+        <VBox id="VBox" alignment="TOP_CENTER" prefHeight="134.0" prefWidth="72.0" spacing="5.0">
+          <children>
+            <Button id="addButton" fx:id="addKeyButton" onAction="#addKeyAction" prefWidth="65.0" text="Add key" />
+            <Button id="editButton" fx:id="editKeyButton" onAction="#editKeyAction" prefWidth="65.0" text="Edit key" />
+            <Button id="removeButton" fx:id="editButton" onAction="#editAction" prefWidth="65.0" text="Edit" />
+            <Button fx:id="removeButton" onAction="#removeAction" prefWidth="65.0" text="Remove" />
+          </children>
+        </VBox>
+      </children>
+    </HBox>
+  </children>
+</AnchorPane>

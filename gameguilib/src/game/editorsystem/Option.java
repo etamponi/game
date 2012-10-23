@@ -58,6 +58,10 @@ public class Option {
 		return owner.getOption(optionName);
 	}
 	
+	public <T> T getContent(Class<T> type) {
+		return owner.getOption(optionName);
+	}
+	
 	public void setContent(Object content) {
 		owner.setOption(optionName, content);
 	}

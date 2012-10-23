@@ -142,9 +142,4 @@ public class CorrelationExperiment extends Experiment {
 		return ret;
 	}
 
-//	@Override
-//	public String getTaskDescription() {
-//		return "correlation experiment with " + folds + " folds, " + samples + " samples per fold for " + graph;
-//	}
-
 }

@@ -90,7 +90,7 @@ public class ConfigurableMap extends Configurable implements Map<String, Object>
 	public Object put(String key, Object value) {
 		if (key.contains("."))
 			throw new IllegalArgumentException("Key cannot contain dots");
-		if (!elementType.isAssignableFrom(value.getClass()))
+		if (value != null && !elementType.isAssignableFrom(value.getClass()))
 			throw new IllegalArgumentException("Value must be a " + elementType.getClass());
 		
 		Object oldValue = internal.put(key, value);
@@ -146,6 +146,26 @@ public class ConfigurableMap extends Configurable implements Map<String, Object>
 	public List<String> getAllOptionNames() {
 		List<String> ret = super.getAllOptionNames();
 		ret.addAll(internal.keySet());
+		return ret;
+	}
+
+	@Override
+	public Class getOptionType(String optionName) {
+		Class ret = super.getOptionType(optionName);
+		if (ret == null && internal.keySet().contains(optionName))
+			return elementType;
+		else
+			return ret;
+	}
+
+	@Override
+	public String getOptionNameFromContent(Object content) {
+		String ret = super.getOptionNameFromContent(content);
+		if (ret == null) {
+			for(String key: internal.keySet())
+				if (internal.get(key).equals(content))
+					ret = key;
+		}
 		return ret;
 	}
 

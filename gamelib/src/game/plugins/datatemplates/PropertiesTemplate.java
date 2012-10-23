@@ -11,7 +11,7 @@
 package game.plugins.datatemplates;
 
 import game.configuration.ConfigurableMap;
-import game.configuration.errorchecks.SizeCheck;
+import game.configuration.ErrorCheck;
 import game.core.DataTemplate;
 
 import java.util.HashMap;
@@ -36,7 +36,15 @@ public class PropertiesTemplate extends DataTemplate {
 	public ConfigurableMap properties = new ConfigurableMap(this, DataTemplate.class);
 	
 	public PropertiesTemplate() {
-		setOptionChecks("properties", new SizeCheck(1));
+		setOptionChecks("properties", new ErrorCheck<Map>() {
+			@Override
+			public String getError(Map value) {
+				if (value.isEmpty())
+					return "must have at least one property";
+				else
+					return null;
+			}
+		});
 	}
 
 	@Override

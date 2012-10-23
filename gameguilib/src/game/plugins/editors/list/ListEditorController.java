@@ -40,6 +40,10 @@ public class ListEditorController implements EditorController {
 	private Button removeButton;
 	@FXML
 	private Button editButton;
+	@FXML
+	private Button upButton;
+	@FXML
+	private Button downButton;
 
 	private Editor editor;
 	
@@ -114,6 +118,42 @@ public class ListEditorController implements EditorController {
 				editor.setReadOnly(this.editor.isReadOnly());
 				new EditorWindow(editor).startEdit(listView.getItems().get(index));
 			}
+		}
+	}
+	
+	@FXML
+	public void upAction(ActionEvent event) {
+		if (model.getContent() == null)
+			return;
+		
+		ConfigurableList list = model.getContent();
+		
+		int index = listView.getSelectionModel().getSelectedIndex();
+		if (index > 0) {
+			Object prev = list.get(index-1);
+			Object curr = list.get(index);
+			list.set(index-1, curr);
+			list.set(index, prev);
+			
+			listView.getSelectionModel().select(index-1);
+		}
+	}
+	
+	@FXML
+	public void downAction(ActionEvent event) {
+		if (model.getContent() == null)
+			return;
+		
+		ConfigurableList list = model.getContent();
+		
+		int index = listView.getSelectionModel().getSelectedIndex();
+		if (index < listView.getItems().size()-1) {
+			Object next = list.get(index+1);
+			Object curr = list.get(index);
+			list.set(index+1, curr);
+			list.set(index, next);
+			
+			listView.getSelectionModel().select(index+1);
 		}
 	}
 
