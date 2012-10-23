@@ -31,7 +31,7 @@ public class LinearCorrelation extends CorrelationCoefficient {
 //	public boolean useRegression = false;
 
 	@Override
-	public void computeInputCorrelationMatrix(SampleIterator it) {
+	public boolean computeInputCorrelationMatrix(SampleIterator it) {
 		double[][] X = new double[samples][];
 
 		PearsonsCorrelation correlation = new PearsonsCorrelation();
@@ -43,10 +43,12 @@ public class LinearCorrelation extends CorrelationCoefficient {
 		}
 		
 		getSummary().setInputCorrelationMatrix(correlation.computeCorrelationMatrix(X));
+		
+		return true;
 	}
 
 	@Override
-	public void computeIOCorrelationMatrix(SampleIterator it) {
+	public boolean computeIOCorrelationMatrix(SampleIterator it) {
 		it.reset();
 		
 		double[][] X = new double[samples][];
@@ -69,10 +71,12 @@ public class LinearCorrelation extends CorrelationCoefficient {
 		}
 		
 		getSummary().setIOCorrelationMatrix(M);
+		
+		return true;
 	}
 
 	@Override
-	public void computeSyntheticValues(SampleIterator it) {
+	public boolean computeSyntheticValues(SampleIterator it) {
 		if (getSummary().getInputCorrelationMatrix() == null)
 			computeInputCorrelationMatrix(it);
 		
@@ -90,6 +94,8 @@ public class LinearCorrelation extends CorrelationCoefficient {
 			v.setEntry(col, determination(inverse, removeNanIndices(ioM.getColumnVector(col), nanIndices)));
 		
 		getSummary().setSyntheticValues(v);
+		
+		return true;
 	}
 	
 	private double determination(Matrix inverse, Matrix vec) {

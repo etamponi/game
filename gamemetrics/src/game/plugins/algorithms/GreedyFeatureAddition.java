@@ -114,8 +114,11 @@ public class GreedyFeatureAddition extends TrainingAlgorithm<FeatureSelection> {
 		for(int run = 0; run < runs; run++) {
 			coefficient.clear();
 			SampleIterator it = dataset.getRandomSubset(runPercent).encodedSampleIterator(block, outputEncoder, false);
-			coefficient.computeSyntheticValues(it);
-			mean += coefficient.getSummary().getSyntheticValues().getEntry(0);
+			boolean success = coefficient.computeSyntheticValues(it);
+			if (success)
+				mean += coefficient.getSummary().getSyntheticValues().getEntry(0);
+			else
+				run--;
 		}
 		mean = mean / runs;
 		

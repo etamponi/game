@@ -134,8 +134,13 @@ public class CorrelationExperiment extends Experiment {
 			coefficient.clear();
 			SampleIterator it = d.encodedSampleIterator(inputEncoder, outputEncoder, false);
 //			m.evaluateEverything(it);
-			coefficient.computeSyntheticValues(it);
-			ret.summaries.add(coefficient.getSummary());
+			boolean success = coefficient.computeSyntheticValues(it);
+			if (success) {
+				ret.summaries.add(coefficient.getSummary());
+			} else {
+				System.out.println("Retry!");
+				count--;
+			}
 		}
 		
 		coefficient.clear();

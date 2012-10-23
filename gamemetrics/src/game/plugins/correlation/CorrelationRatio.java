@@ -30,17 +30,17 @@ import Jama.Matrix;
 
 public class CorrelationRatio extends CorrelationCoefficient {
 	
-	public boolean unbiased = true;
+	public boolean unbiased = false;
 	
 	public double zeroThreshold = 1e-12;
 
 	@Override
-	public void computeInputCorrelationMatrix(SampleIterator it) {
-		// FIXME Some correlation coefficients cannot be used for input correlation
+	public boolean computeInputCorrelationMatrix(SampleIterator it) {
+		return false;
 	}
 
 	@Override
-	public void computeIOCorrelationMatrix(SampleIterator it) {
+	public boolean computeIOCorrelationMatrix(SampleIterator it) {
 		it.reset();
 		Sample sample = it.next();
 		int inputDim = sample.getEncodedInput().getDimension();
@@ -56,6 +56,8 @@ public class CorrelationRatio extends CorrelationCoefficient {
 		}
 		
 		getSummary().setIOCorrelationMatrix(M);
+		
+		return true;
 	}
 
 	private double correlationRatio(SampleIterator it, int in, int out) {
@@ -98,7 +100,7 @@ public class CorrelationRatio extends CorrelationCoefficient {
 	}
 
 	@Override
-	public void computeSyntheticValues(SampleIterator it) {
+	public boolean computeSyntheticValues(SampleIterator it) {
 		it.reset();
 		Sample sample = it.next();
 		int inputDim = sample.getEncodedInput().getDimension();
@@ -107,10 +109,14 @@ public class CorrelationRatio extends CorrelationCoefficient {
 		RealVector v = new ArrayRealVector(outputDim);
 		for(int out = 0; out < outputDim; out++) {
 			it.reset();
-			v.setEntry(out, generalizedCorrelationRatio(it, inputDim, out, samples));
+			double eta = generalizedCorrelationRatio(it, inputDim, out, samples);
+			if (eta < 0)
+				return false;
+			v.setEntry(out, eta);
 		}
 		
 		getSummary().setSyntheticValues(v);
+		return true;
 	}
 	
 	private double generalizedCorrelationRatio(SampleIterator it, int inputDim, int out, int samples) {
@@ -163,11 +169,12 @@ public class CorrelationRatio extends CorrelationCoefficient {
 		Matrix JE = new Matrix(E.getData());
 		Matrix JH = new Matrix(H.getData());
 		
-//		SingularValueDecomposition svd = new SingularValueDecomposition(JE);
-		
-		if (JE.det() == 0) {
-//			System.out.println("NA");
+		if (JE.getRowDimension() == 1 && JE.get(0, 0) == 0)
 			return 0;
+		
+		if (JE.rank() < JE.getRowDimension()) {
+			System.out.println("Some error occurred");
+			return -1;
 		} else {
 			Matrix L = JE.inverse().times(JH);
 			double[] eigs = L.eig().getRealEigenvalues();
@@ -231,7 +238,7 @@ public class CorrelationRatio extends CorrelationCoefficient {
 		builder.setOption("file", new File("../gamegui/sampledata/HumVar.txt"));
 		builder.setOption("template", template);
 		builder.setOption("startIndex", 0);
-		builder.setOption("instanceNumber", 3300);
+		builder.setOption("instanceNumber", 1500);
 		builder.setOption("shuffle", false);
 		
 		Dataset dataset = builder.buildDataset();
@@ -239,21 +246,24 @@ public class CorrelationRatio extends CorrelationCoefficient {
 		inputEncoder.setOption("template", template.inputTemplate);
 		FeatureSelection selection = new FeatureSelection();
 		selection.parents.add(inputEncoder);
-		selection.setOption("mask", "00000000101110010111111100000000010000000010110");
+		selection.setOption("mask", "00000000000000110111001100001000010000000010100");
 		
 		Encoder outputEncoder = new HelperEncoder();
 		outputEncoder.setOption("template", template.outputTemplate);
 		
-		SampleIterator it = dataset.encodedSampleIterator(inputEncoder, outputEncoder, false);
+		SampleIterator it = dataset.encodedSampleIterator(selection, outputEncoder, false);
 		
 		CorrelationRatio ratio = new CorrelationRatio();
-		ratio.setOption("samples", 3300);
+		ratio.setOption("samples", 1500);
 		ratio.computeIOCorrelationMatrix(it);
-		ratio.computeSyntheticValues(it);
+		boolean success = ratio.computeSyntheticValues(it);
 		
 		System.out.println(toString(ratio.getSummary().getIOCorrelationMatrix()));
 		
-		System.out.println(ratio.getSummary().getSyntheticValues());
+		if (success)
+			System.out.println(ratio.getSummary().getSyntheticValues());
+		else
+			System.out.println("ERROR!");
 	}
 	
 	private static String toString(RealMatrix M) {
