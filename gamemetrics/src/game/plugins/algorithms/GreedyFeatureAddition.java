@@ -14,10 +14,13 @@ import game.plugins.datatemplates.VectorTemplate;
 import game.plugins.encoders.IntegerEncoder;
 import game.plugins.encoders.VectorEncoder;
 import game.plugins.pipes.FeatureSelection;
+import game.utils.Log;
 
 import java.io.File;
 import java.util.SortedSet;
 import java.util.TreeSet;
+
+import org.apache.commons.math3.linear.RealVector;
 
 public class GreedyFeatureAddition extends TrainingAlgorithm<FeatureSelection> {
 	
@@ -38,14 +41,14 @@ public class GreedyFeatureAddition extends TrainingAlgorithm<FeatureSelection> {
 		return object instanceof FeatureSelection;
 	}
 	
-	private static class Candidate implements Comparable<Candidate> {
+	private class Candidate implements Comparable<Candidate> {
 		
 		private double weight;
 		
 		private String mask;
 		
 		public Candidate(String mask, double weight) {
-			System.out.println(String.format("%5.2f -> %s", weight*100, mask));
+			Log.write(GreedyFeatureAddition.this, "%5.2f -> %s", weight*100, mask);
 			
 			this.mask = mask;
 			this.weight = weight;
@@ -78,7 +81,7 @@ public class GreedyFeatureAddition extends TrainingAlgorithm<FeatureSelection> {
 		SortedSet<Candidate> bestCandidates = null;
 		for(int features = 1; features <= finalFeatures; features++) {
 			bestCandidates = selectBestCandidates(candidates);
-			System.out.println("Best " + bestCandidates.size() + " with weight " + String.format("%5.2f", 100*bestCandidates.first().getWeight()));
+			Log.write(this, "Selected best %d candidates with weight %5.2f", bestCandidates.size(), 100*bestCandidates.first().getWeight());
 			
 			for(Candidate bestCandidate: bestCandidates) {
 				int index = bestCandidate.getMask().indexOf('0');
@@ -113,12 +116,11 @@ public class GreedyFeatureAddition extends TrainingAlgorithm<FeatureSelection> {
 		double mean = 0;
 		int count = 0;
 		for(int run = 0; run < runs; run++) {
-			coefficient.clear();
 			SampleIterator it = dataset.getRandomSubset(runPercent).encodedSampleIterator(block, outputEncoder, false);
-			boolean success = coefficient.computeSyntheticValues(it);
-			if (success) {
+			RealVector values = coefficient.computeSyntheticValues(it);
+			if (values != null) {
 				count = 0;
-				mean += coefficient.getSummary().getSyntheticValues().getEntry(0);
+				mean += values.getEntry(0);
 			} else {
 				if (count == runs) {
 					mean = 0;
@@ -135,7 +137,7 @@ public class GreedyFeatureAddition extends TrainingAlgorithm<FeatureSelection> {
 
 	private SortedSet<Candidate> initCandidates(Dataset dataset, Encoder outputEncoder) {
 		SortedSet<Candidate> ret = new TreeSet<>(); 
-		
+
 		int baseFeatures = block.getParent(0).getFeatureNumber();
 		for(int i = 0; i < baseFeatures; i++) {
 			StringBuilder mask = new StringBuilder();

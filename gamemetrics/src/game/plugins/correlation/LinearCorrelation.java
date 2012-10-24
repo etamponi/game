@@ -31,27 +31,26 @@ public class LinearCorrelation extends CorrelationCoefficient {
 //	public boolean useRegression = false;
 
 	@Override
-	public boolean computeInputCorrelationMatrix(SampleIterator it) {
-		double[][] X = new double[samples][];
+	public RealMatrix computeInputCorrelationMatrix(SampleIterator it) {
+		List<double[]> X = new ArrayList<>();
 
 		PearsonsCorrelation correlation = new PearsonsCorrelation();
 		
 		it.reset();
-		for(int i = 0; i < samples; i++) {
+		while(it.hasNext()) {
 			Sample sample = it.next();
-			X[i] = sample.getEncodedInput().toArray();
+			X.add(sample.getEncodedInput().toArray());
 		}
 		
-		getSummary().setInputCorrelationMatrix(correlation.computeCorrelationMatrix(X));
-		
-		return true;
+		return correlation.computeCorrelationMatrix(X.toArray(new double[][]{}));
 	}
 
 	@Override
-	public boolean computeIOCorrelationMatrix(SampleIterator it) {
+	public RealMatrix computeIOCorrelationMatrix(SampleIterator it) {
 		it.reset();
 		
-		double[][] X = new double[samples][];
+		List<double[]> Xlist = new ArrayList<>();
+		double[][] X = null;
 		int outputDim = it.next().getEncodedOutput().getDimension();
 		int inputDim = it.next().getEncodedInput().getDimension();
 		
@@ -59,51 +58,56 @@ public class LinearCorrelation extends CorrelationCoefficient {
 
 		for(int col = 0; col < outputDim; col++) {
 			it.reset();
-			double[] y = new double[samples];
-			for(int i = 0; i < samples; i++) {
+			RealVector y = new ArrayRealVector();
+			while(it.hasNext()) {
 				Sample sample = it.next();
-				y[i] = sample.getEncodedOutput().getEntry(col);
+				y = y.append(sample.getEncodedOutput().getEntry(col));
 				if (col == 0) // Do it only once
-					X[i] = sample.getEncodedInput().toArray();
+					Xlist.add(sample.getEncodedInput().toArray());
 			}
+			if (col == 0)
+				X = Xlist.toArray(new double[][]{});
 			
-			M.setColumnVector(col, computeIOCorrelation(X, y, new ArrayList<Integer>()));
+			M.setColumnVector(col, computeIOCorrelation(X, y.toArray(), new ArrayList<Integer>()));
 		}
 		
-		getSummary().setIOCorrelationMatrix(M);
-		
-		return true;
+		return M;
 	}
 
 	@Override
-	public boolean computeSyntheticValues(SampleIterator it) {
-		if (getSummary().getInputCorrelationMatrix() == null)
-			computeInputCorrelationMatrix(it);
+	public RealVector computeSyntheticValues(SampleIterator it) {
+		RealMatrix input = computeInputCorrelationMatrix(it);
 		
-		List<Integer> nanIndices = findNanIndices(getSummary().getInputCorrelationMatrix());
-		Matrix adjustedInput = new Matrix(removeNaNIndices(getSummary().getInputCorrelationMatrix(), nanIndices).getData());
+		List<Integer> nanIndices = findNanIndices(input);
+		Matrix adjustedInput = new Matrix(removeNaNIndices(input, nanIndices).getData());
 		
-		if (getSummary().getIOCorrelationMatrix() == null)
-			computeIOCorrelationMatrix(it);
-		RealMatrix ioM = getSummary().getIOCorrelationMatrix();
+		RealMatrix io = computeIOCorrelationMatrix(it);
 		
 		if (adjustedInput.rank() < adjustedInput.getRowDimension()) {
 			System.out.println("Some error occourred (input correlation matrix is singular)");
-			return false;
+			return null;
 		}
 		
 		Matrix inverse = adjustedInput.inverse();
 
-		RealVector v = new ArrayRealVector(ioM.getColumnDimension());
+		RealVector v = new ArrayRealVector(io.getColumnDimension());
 		for(int col = 0; col < v.getDimension(); col++)
-			v.setEntry(col, determination(inverse, removeNanIndices(ioM.getColumnVector(col), nanIndices)));
+			v.setEntry(col, determination(inverse, removeNanIndices(io.getColumnVector(col), nanIndices), count(it)));
 		
-		getSummary().setSyntheticValues(v);
-		
-		return true;
+		return v;
 	}
 	
-	private double determination(Matrix inverse, Matrix vec) {
+	private int count(SampleIterator it) {
+		it.reset();
+		int count = 0;
+		while(it.hasNext()) {
+			it.next();
+			count++;
+		}
+		return count;
+	}
+
+	private double determination(Matrix inverse, Matrix vec, int samples) {
 		double R2 = vec.transpose().times(inverse).times(vec).get(0, 0);
 		if (adjust) {
 			R2 = 1 - (1-R2)*(samples - 1)/(samples - inverse.getColumnDimension() - 1);

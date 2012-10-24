@@ -13,30 +13,15 @@ package game.plugins.correlation;
 import game.configuration.Configurable;
 import game.core.Dataset.SampleIterator;
 
+import org.apache.commons.math3.linear.RealMatrix;
+import org.apache.commons.math3.linear.RealVector;
+
 public abstract class CorrelationCoefficient extends Configurable {
 	
-	private CorrelationSummary summary = new CorrelationSummary();
+	public abstract RealMatrix computeInputCorrelationMatrix(SampleIterator it);
 	
-	public int samples = 1000;;
-	/*
-	public void evaluateEverything(SampleIterator it) {
-		computeInputCorrelationMatrix(it);
-		computeIOCorrelationMatrix(it);
-		computeSyntheticValues(it);
-	}
-	*/
-	public CorrelationSummary getSummary() {
-		return summary;
-	}
+	public abstract RealMatrix computeIOCorrelationMatrix(SampleIterator it);
 	
-	public void clear() {
-		summary = new CorrelationSummary();
-	}
-	
-	public abstract boolean computeInputCorrelationMatrix(SampleIterator it);
-	
-	public abstract boolean computeIOCorrelationMatrix(SampleIterator it);
-	
-	public abstract boolean computeSyntheticValues(SampleIterator it);
+	public abstract RealVector computeSyntheticValues(SampleIterator it);
 
 }

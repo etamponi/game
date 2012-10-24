@@ -26,26 +26,40 @@ public class Log {
 	
 	private static File logsDirectory = null;
 	
+	private static String currentExperiment = null;
+	
 	public static void setLogsDirectory(String logsDir) {
 		File f = new File(logsDir);
 		if (!f.exists()) {
 			f.mkdirs();
 		} else if (!f.isDirectory()) {
+			System.err.println("Could not initialize logs directory! (" + logsDir + ")");
 			return;
 		}
 		
 		logsDirectory = f;
 	}
 	
+	public static void setCurrentExperiment(String name) {
+		currentExperiment = name;
+	}
+	
 	public static void write(Object prefix, String format, Object... args) {
 		if (logsDirectory == null)
 			setLogsDirectory("logs/");
 		
-		String fileName = logsDirectory.getAbsolutePath() + "/logging_" + prefix + ".log.txt";
+		String fileName = getCompleteDirectory() + "/logging_" + prefix + ".log.txt";
 		
 		writeLog(fileName, String.format(format, args));
 	}
 	
+	private static String getCompleteDirectory() {
+		String ret = logsDirectory.getAbsolutePath();
+		if (currentExperiment != null)
+			ret += "/" + currentExperiment;
+		return ret;
+	}
+
 	public static void writeTime(Object prefix, String format, Object... args) {
 		write(prefix, DateFormat.getDateTimeInstance().format(new Date()) + ": " + format, args);
 	}

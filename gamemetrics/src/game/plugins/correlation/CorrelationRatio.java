@@ -36,12 +36,12 @@ public class CorrelationRatio extends CorrelationCoefficient {
 	public double zeroThreshold = 1e-12;
 
 	@Override
-	public boolean computeInputCorrelationMatrix(SampleIterator it) {
-		return false;
+	public RealMatrix computeInputCorrelationMatrix(SampleIterator it) {
+		return null;
 	}
 
 	@Override
-	public boolean computeIOCorrelationMatrix(SampleIterator it) {
+	public RealMatrix computeIOCorrelationMatrix(SampleIterator it) {
 		it.reset();
 		Sample sample = it.next();
 		int inputDim = sample.getEncodedInput().getDimension();
@@ -56,17 +56,15 @@ public class CorrelationRatio extends CorrelationCoefficient {
 			}
 		}
 		
-		getSummary().setIOCorrelationMatrix(M);
-		
-		return true;
+		return M;
 	}
 
 	private double correlationRatio(SampleIterator it, int in, int out) {
 		Map<Double, Integer> n_y = new HashMap<>();
 		Map<Double, RealVector> x_y = new HashMap<>();
-		double[] x = new double[samples];
+		RealVector x = new ArrayRealVector();
 		
-		for(int i = 0; i < samples; i++) {
+		while(it.hasNext()) {
 			Sample sample = it.next();
 			double input = sample.getEncodedInput().getEntry(in);
 			double output = sample.getEncodedOutput().getEntry(out);
@@ -77,10 +75,10 @@ public class CorrelationRatio extends CorrelationCoefficient {
 			
 			n_y.put(output, n_y.get(output)+1);
 			x_y.put(output, x_y.get(output).append(input));
-			x[i] = input;
+			x = x.append(input);
 		}
 		
-		double x_mean = StatUtils.mean(x);
+		double x_mean = StatUtils.mean(x.toArray());
 		Map<Double, Double> x_y_mean = new HashMap<>();
 		for(Entry<Double, RealVector> entry: x_y.entrySet()) {
 			x_y_mean.put(entry.getKey(), StatUtils.mean(entry.getValue().toArray()));
@@ -91,7 +89,7 @@ public class CorrelationRatio extends CorrelationCoefficient {
 			numerator += n_y.get(key) * (x_y_mean.get(key) - x_mean) * (x_y_mean.get(key) - x_mean);
 		}
 		double denominator = 0;
-		for(double e: x) {
+		for(double e: x.toArray()) {
 			denominator += (e - x_mean) * (e - x_mean);
 		}
 		
@@ -101,7 +99,7 @@ public class CorrelationRatio extends CorrelationCoefficient {
 	}
 
 	@Override
-	public boolean computeSyntheticValues(SampleIterator it) {
+	public RealVector computeSyntheticValues(SampleIterator it) {
 		it.reset();
 		Sample sample = it.next();
 		int inputDim = sample.getEncodedInput().getDimension();
@@ -110,23 +108,22 @@ public class CorrelationRatio extends CorrelationCoefficient {
 		RealVector v = new ArrayRealVector(outputDim);
 		for(int out = 0; out < outputDim; out++) {
 			it.reset();
-			double eta = generalizedCorrelationRatio(it, inputDim, out, samples);
+			double eta = generalizedCorrelationRatio(it, inputDim, out);
 			if (eta < 0)
-				return false;
+				return null;
 			v.setEntry(out, eta);
 		}
-		
-		getSummary().setSyntheticValues(v);
-		return true;
+
+		return v;
 	}
 	
-	private double generalizedCorrelationRatio(SampleIterator it, int inputDim, int out, int samples) {
+	private double generalizedCorrelationRatio(SampleIterator it, int inputDim, int out) {
 		Map<Double, Integer> n_y = new HashMap<>();
 		Map<Double, MultivariateSummaryStatistics> stat_y = new HashMap<>();
-		RealMatrix[] x = new RealMatrix[samples];
+		List<RealMatrix> x = new ArrayList<>();
 		MultivariateSummaryStatistics stat = new MultivariateSummaryStatistics(inputDim, unbiased);
 		
-		for(int i = 0; i < samples; i++) {
+		while(it.hasNext()) {
 			Sample sample = it.next();
 			double[] input = sample.getEncodedInput().toArray();
 			double output = sample.getEncodedOutput().getEntry(out);
@@ -137,7 +134,7 @@ public class CorrelationRatio extends CorrelationCoefficient {
 			
 			n_y.put(output, n_y.get(output)+1);
 			stat_y.get(output).addValue(input);
-			x[i] = new Array2DRowRealMatrix(input);
+			x.add(new Array2DRowRealMatrix(input));
 			stat.addValue(input);
 		}
 		
@@ -153,7 +150,7 @@ public class CorrelationRatio extends CorrelationCoefficient {
 		for(double key: n_y.keySet()) {
 			temp = temp.add(x_y_sum.get(key).multiply(x_y_sum.get(key).transpose()).scalarMultiply(1.0 / n_y.get(key)));
 		}
-		H = temp.subtract(x_sum.multiply(x_sum.transpose()).scalarMultiply(1.0 / samples));
+		H = temp.subtract(x_sum.multiply(x_sum.transpose()).scalarMultiply(1.0 / x.size()));
 		
 		RealMatrix E = new Array2DRowRealMatrix(inputDim, inputDim);
 		for(RealMatrix m: x) {
@@ -236,7 +233,7 @@ public class CorrelationRatio extends CorrelationCoefficient {
 		builder.setOption("file", new File("../gamegui/sampledata/HumVar.txt"));
 		builder.setOption("template", template);
 		builder.setOption("startIndex", 0);
-		builder.setOption("instanceNumber", 1500);
+		builder.setOption("instanceNumber", 3000);
 		builder.setOption("shuffle", false);
 		
 		Dataset dataset = builder.buildDataset();
@@ -249,17 +246,16 @@ public class CorrelationRatio extends CorrelationCoefficient {
 		Encoder outputEncoder = new HelperEncoder();
 		outputEncoder.setOption("template", template.outputTemplate);
 		
-		SampleIterator it = dataset.encodedSampleIterator(selection, outputEncoder, false);
+		SampleIterator it = dataset.getRandomSubset(0.5).encodedSampleIterator(selection, outputEncoder, false);
 		
 		CorrelationRatio ratio = new CorrelationRatio();
-		ratio.setOption("samples", 1500);
-		ratio.computeIOCorrelationMatrix(it);
-		boolean success = ratio.computeSyntheticValues(it);
+		RealMatrix ioCorr = ratio.computeIOCorrelationMatrix(it);
+		RealVector synthetic = ratio.computeSyntheticValues(it);
 		
-		System.out.println(toString(ratio.getSummary().getIOCorrelationMatrix()));
+		System.out.println(toString(ioCorr));
 		
-		if (success)
-			System.out.println(ratio.getSummary().getSyntheticValues());
+		if (synthetic != null)
+			System.out.println(synthetic);
 		else
 			System.out.println("ERROR!");
 	}

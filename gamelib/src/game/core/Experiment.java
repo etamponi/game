@@ -10,6 +10,8 @@
  ******************************************************************************/
 package game.core;
 
+import game.utils.Log;
+
 import java.io.File;
 
 public abstract class Experiment extends LongTask<Result, String> {
@@ -24,6 +26,7 @@ public abstract class Experiment extends LongTask<Result, String> {
 	public Result execute(String resultsDirectory) {
 		updateStatus(0.0, "Starting " + getClass().getSimpleName() + " " + name);
 		String outputDirectory = resultsDirectory + "/" + name;
+		Log.setCurrentExperiment(name);
 		File dir = new File(outputDirectory);
 		if (!dir.exists())
 			dir.mkdirs();
@@ -32,6 +35,7 @@ public abstract class Experiment extends LongTask<Result, String> {
 		result.experiment = this;
 		result.saveConfiguration(outputDirectory + "/result_"+name+".config.xml");
 		updateStatus(1.0, "Experiment " + getClass().getSimpleName() + " " + name + " finished");
+		Log.setCurrentExperiment(null);
 		return result;
 	}
 

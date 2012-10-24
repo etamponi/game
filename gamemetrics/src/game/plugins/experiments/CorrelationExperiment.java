@@ -16,21 +16,24 @@ import game.configuration.errorchecks.RangeCheck.RangeType;
 import game.configuration.errorchecks.SubclassCheck;
 import game.core.Block;
 import game.core.DataTemplate;
+import game.core.DataTemplate.Data;
 import game.core.Dataset;
+import game.core.Dataset.SampleIterator;
 import game.core.DatasetBuilder;
 import game.core.Encoding;
 import game.core.Experiment;
 import game.core.NoTraining;
-import game.core.DataTemplate.Data;
-import game.core.Dataset.SampleIterator;
 import game.core.blocks.Encoder;
 import game.core.blocks.PredictionGraph;
 import game.plugins.constraints.CompatibleWith;
 import game.plugins.correlation.CorrelationCoefficient;
+import game.plugins.correlation.CorrelationSummary;
 import game.plugins.datatemplates.LabelTemplate;
 import game.plugins.encoders.IntegerEncoder;
 import game.plugins.encoders.OneHotEncoder;
 import game.plugins.pipes.Concatenator;
+
+import org.apache.commons.math3.linear.RealVector;
 
 public class CorrelationExperiment extends Experiment {
 	
@@ -130,20 +133,18 @@ public class CorrelationExperiment extends Experiment {
 		outputEncoder.setOption("template", template.outputTemplate);
 		
 		for(int count = 0; count < runs; count++) {
+			CorrelationSummary summary = new CorrelationSummary();
 			Dataset d = complete.getRandomSubset(runPercent);
-			coefficient.clear();
 			SampleIterator it = d.encodedSampleIterator(inputEncoder, outputEncoder, false);
-//			m.evaluateEverything(it);
-			boolean success = coefficient.computeSyntheticValues(it);
-			if (success) {
-				ret.summaries.add(coefficient.getSummary());
+			RealVector v = coefficient.computeSyntheticValues(it);
+			if (v != null) {
+				summary.setSyntheticValues(v);
+				ret.summaries.add(summary);
 			} else {
-				System.out.println("Retry!");
+				System.out.println("Retrying!");
 				count--;
 			}
 		}
-		
-		coefficient.clear();
 		
 		return ret;
 	}
