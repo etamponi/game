@@ -42,6 +42,14 @@ public class Log {
 	
 	public static void setCurrentExperiment(String name) {
 		currentExperiment = name;
+		if (name != null) {
+			File dir = new File(getCompleteDirectory());
+			if (!dir.exists()) {
+				dir.mkdirs();
+			} else if (!dir.isDirectory()) {
+				System.err.println("Could not initialize experiment log directory! (" + dir.getPath() + ")");
+			}
+		}
 	}
 	
 	public static void write(Object prefix, String format, Object... args) {
