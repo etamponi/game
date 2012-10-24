@@ -1,3 +1,4 @@
 /dist
 /gamewrappers.jar
 /bin
+*.db

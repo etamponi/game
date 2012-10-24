@@ -6,3 +6,4 @@
 /dataset_cache
 /bin
 /plugins/*.jar
+*.db

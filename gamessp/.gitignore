@@ -2,3 +2,4 @@
 /sampledata
 /bin
 /dataset_cache
+*.db
