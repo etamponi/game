@@ -17,8 +17,6 @@ import game.plugins.constraints.Compatible;
 
 public abstract class DatasetBuilder extends Configurable implements Compatible<InstanceTemplate> {
 	
-	public static final String CACHEDIRECTORY = "dataset_cache/";
-	
 	public InstanceTemplate template;
 	
 	public int startIndex = 0;

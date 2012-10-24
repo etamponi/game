@@ -11,7 +11,6 @@
 package game.core;
 
 import game.configuration.Configurable;
-import game.utils.Utils;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -62,10 +61,10 @@ public class Dataset extends Configurable implements Iterable<Instance> {
 		setAsInternalOptions("databaseCacheFile", "indices", "readOnly", "template");
 	}
 	
-	public Dataset(InstanceTemplate template, String datasetDirectory, String cacheName) {
+	public Dataset(InstanceTemplate template, String cacheFileName) {
 		this();
 		this.template = template;
-		createDatabaseCache(datasetDirectory, cacheName);
+		createDatabaseCacheFile(cacheFileName);
 	}
 	
 	private Dataset(Dataset base, List<Integer> indices) {
@@ -81,23 +80,19 @@ public class Dataset extends Configurable implements Iterable<Instance> {
 		return indices.size();
 	}
 	
-	private void createDatabaseCache(String datasetDirectory, String cacheName) {
-		File dir = new File(datasetDirectory);
-		if (!dir.exists())
-			dir.mkdirs();
+	private void createDatabaseCacheFile(String cacheFileName) {
 		try {
-			String fileName = Utils.relativize(new File(datasetDirectory))+"/dataset_"+cacheName+".db";
-			databaseCacheFile = fileName;
-			File file = new File(fileName);
+			databaseCacheFile = cacheFileName + ".db";
+			File file = new File(databaseCacheFile);
 			if (file.exists()) {
 				if (connectionRegistry.containsKey(databaseCacheFile)) {
 					connectionRegistry.get(databaseCacheFile).close();
 				}
 				file.delete();
 				if (file.exists())
-					System.err.println("Cannot delete database cache");
+					System.err.println("Cannot delete old database cache");
 			}
-			connection = DriverManager.getConnection("jdbc:sqlite:"+fileName);
+			connection = DriverManager.getConnection("jdbc:sqlite:"+databaseCacheFile);
 			connection.setAutoCommit(false);
 			Statement statement = connection.createStatement();
 			statement.executeUpdate("CREATE TABLE Data (id INTEGER PRIMARY KEY AUTOINCREMENT, content BLOB NOT NULL);");

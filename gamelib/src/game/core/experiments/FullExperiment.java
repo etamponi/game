@@ -24,8 +24,8 @@ public abstract class FullExperiment extends Experiment {
 		setOptionBinding("template", "graph.template");
 	}
 	
-	protected Dataset classifyDataset(double finalPercent, PredictionGraph graphClone, Dataset dataset, String outputDirectory, String cacheName) {
-		Dataset ret = new Dataset(template, outputDirectory, cacheName);
+	protected Dataset classifyDataset(double finalPercent, PredictionGraph graphClone, Dataset dataset, String cacheFileName) {
+		Dataset ret = new Dataset(template, cacheFileName);
 		double startPercent = getCurrentPercent();
 		double increase = (finalPercent - startPercent) / dataset.size();
 		int count = 1;

@@ -21,7 +21,7 @@ import java.util.List;
 import org.apache.commons.math3.linear.RealVector;
 import org.apache.commons.math3.stat.descriptive.DescriptiveStatistics;
 
-public class CorrelationMetric extends Metric<CorrelationResult> {
+public class SyntheticValues extends Metric<CorrelationResult> {
 	
 	private CorrelationResult result;
 

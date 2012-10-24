@@ -49,7 +49,7 @@ public class KFoldCrossValidation extends FullExperiment {
 			updateStatus(getOverallStatus(0.01, i), "training graph for fold " + (i+1) + "/" + folds);
 			executeAnotherTaskAndWait(getOverallStatus(0.70, i), graphClone.trainingAlgorithm, trainings.get(i));
 			updateStatus(getOverallStatus(0.70, i), "training complete, testing phase...");
-			ret.testedDatasets.add(classifyDataset(getOverallStatus(0.99, i), graphClone, testings.get(i), outputDirectory, "tested_"+i));
+			ret.testedDatasets.add(classifyDataset(getOverallStatus(0.99, i), graphClone, testings.get(i), outputDirectory+"/tested_"+i));
 			ret.trainedGraphs.add(graphClone);
 			updateStatus(getOverallStatus(1.00, i), "finished fold " + (i+1) + "/" + folds);
 		}

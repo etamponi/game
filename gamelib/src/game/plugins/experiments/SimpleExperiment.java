@@ -32,19 +32,14 @@ public class SimpleExperiment extends FullExperiment {
 	@Override
 	protected FullResult runExperiment(String outputDirectory) {
 		FullResult ret = new FullResult();
-		PredictionGraph graphClone = graph.cloneConfiguration(graph.name + "_trained");
+		PredictionGraph graphClone = graph.cloneConfiguration(graph.name + "_0");
 		updateStatus(0.01, "training graph...");
 		executeAnotherTaskAndWait(0.50, graphClone.trainingAlgorithm, trainingDataset.buildDataset());
 		updateStatus(0.71, "training complete, testing phase...");
-		ret.testedDatasets.add(classifyDataset(0.90, graphClone, testingDataset.buildDataset(), outputDirectory, "tested"));
+		ret.testedDatasets.add(classifyDataset(0.90, graphClone, testingDataset.buildDataset(), outputDirectory+"/dataset_tested"));
 		ret.trainedGraphs.add(graphClone);
 		updateStatus(1.00, "experiment completed");
 		return ret;
 	}
-
-//	@Override
-//	public String getTaskDescription() {
-//		return "simple experiment " + this;
-//	}
 
 }

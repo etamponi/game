@@ -24,17 +24,15 @@ import org.apache.commons.math3.linear.RealVector;
 
 public class GreedyFeatureAddition extends TrainingAlgorithm<FeatureSelection> {
 	
-	public double featurePercent = 0.5;
+	public double featurePercent = 0.80;
 	
 	public CorrelationCoefficient coefficient;
-
-	public double selectionThreshold = 1e-3;
 	
 	public int runs = 10;
 	
 	public double runPercent = 0.5;
 
-	public int maxSelection = 5;
+	public int selectedMasks = 5;
 
 	@Override
 	public boolean isCompatible(Block object) {
@@ -58,13 +56,18 @@ public class GreedyFeatureAddition extends TrainingAlgorithm<FeatureSelection> {
 			return mask;
 		}
 		
-		public double getWeight() {
-			return weight;
-		}
-		
 		@Override
 		public int compareTo(Candidate other) {
 			return -Double.compare(this.weight, other.weight);
+		}
+		
+		@Override
+		public boolean equals(Object other) {
+			if (other instanceof Candidate) {
+				return this.mask.equals(((Candidate) other).mask);
+			} else {
+				return false;
+			}
 		}
 		
 	}
@@ -81,17 +84,17 @@ public class GreedyFeatureAddition extends TrainingAlgorithm<FeatureSelection> {
 		SortedSet<Candidate> bestCandidates = null;
 		for(int features = 1; features <= finalFeatures; features++) {
 			bestCandidates = selectBestCandidates(candidates);
-			Log.write(this, "Selected best %d candidates with weight %5.2f", bestCandidates.size(), 100*bestCandidates.first().getWeight());
+			Log.write(this, "Selected best %d candidates");
 			
 			for(Candidate bestCandidate: bestCandidates) {
 				int index = bestCandidate.getMask().indexOf('0');
 				while(index != -1) {
 					String newMask = bestCandidate.getMask().substring(0, index) + "1" + bestCandidate.getMask().substring(index+1);
-					double newWeight = evaluateMaskWeight(newMask, dataset, outputEncoder);
-					
-					candidates.add(new Candidate(newMask, newWeight));
-					
-					index = bestCandidate.getMask().indexOf('0', index+1);
+					if (!candidates.contains(new Candidate(newMask, 0))) {
+						double newWeight = evaluateMaskWeight(newMask, dataset, outputEncoder);
+						candidates.add(new Candidate(newMask, newWeight));
+						index = bestCandidate.getMask().indexOf('0', index+1);
+					}
 				}
 			}
 		}
@@ -101,11 +104,8 @@ public class GreedyFeatureAddition extends TrainingAlgorithm<FeatureSelection> {
 	private SortedSet<Candidate> selectBestCandidates(SortedSet<Candidate> candidates) {
 		SortedSet<Candidate> ret = new TreeSet<>();
 		for(Candidate candidate: candidates) {
-			if (candidates.first().getWeight() - candidate.getWeight() <= selectionThreshold)
-				ret.add(candidate);
-			else
-				break;
-			if (ret.size() == maxSelection)
+			ret.add(candidate);
+			if (ret.size() == selectedMasks)
 				break;
 		}
 		return ret;
@@ -172,7 +172,6 @@ public class GreedyFeatureAddition extends TrainingAlgorithm<FeatureSelection> {
 		builder.setOption("template", template);
 		builder.setOption("startIndex", 0);
 		builder.setOption("instanceNumber", 3000);
-		builder.setOption("shuffle", false);
 		
 		Dataset dataset = builder.buildDataset();
 		
@@ -181,7 +180,6 @@ public class GreedyFeatureAddition extends TrainingAlgorithm<FeatureSelection> {
 		
 		GreedyFeatureAddition ta = new GreedyFeatureAddition();
 		ta.setOption("coefficient", new CorrelationRatio());
-		ta.setOption("coefficient.samples", 1500);
 		
 		FeatureSelection selection = new FeatureSelection();
 		selection.setOption("trainingAlgorithm", ta);
