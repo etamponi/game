@@ -12,10 +12,16 @@ package game.plugins.experiments;
 
 import game.configuration.ConfigurableList;
 import game.core.Result;
-import game.plugins.correlation.CorrelationSummary;
+
+import org.apache.commons.math3.linear.RealMatrix;
+import org.apache.commons.math3.linear.RealVector;
 
 public class CorrelationResult extends Result {
+
+	public ConfigurableList inputCorrelationMatrices = new ConfigurableList(this, RealMatrix.class);
 	
-	public ConfigurableList summaries = new ConfigurableList(this, CorrelationSummary.class);
+	public ConfigurableList ioCorrelationMatrices = new ConfigurableList(this, RealMatrix.class);
+	
+	public ConfigurableList syntheticValueVectors = new ConfigurableList(this, RealVector.class);
 
 }

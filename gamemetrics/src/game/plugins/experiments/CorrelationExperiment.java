@@ -27,12 +27,12 @@ import game.core.blocks.Encoder;
 import game.core.blocks.PredictionGraph;
 import game.plugins.constraints.CompatibleWith;
 import game.plugins.correlation.CorrelationCoefficient;
-import game.plugins.correlation.CorrelationSummary;
 import game.plugins.datatemplates.LabelTemplate;
 import game.plugins.encoders.IntegerEncoder;
 import game.plugins.encoders.OneHotEncoder;
 import game.plugins.pipes.Concatenator;
 
+import org.apache.commons.math3.linear.RealMatrix;
 import org.apache.commons.math3.linear.RealVector;
 
 public class CorrelationExperiment extends Experiment {
@@ -132,16 +132,23 @@ public class CorrelationExperiment extends Experiment {
 		HelperEncoder outputEncoder = new HelperEncoder();
 		outputEncoder.setOption("template", template.outputTemplate);
 		
-		for(int count = 0; count < runs; count++) {
-			CorrelationSummary summary = new CorrelationSummary();
-			Dataset d = complete.getRandomSubset(runPercent);
-			SampleIterator it = d.encodedSampleIterator(inputEncoder, outputEncoder, false);
+		for(double count = 1; count <= runs; count++) {
+			updateStatus(count/runs, "running " + ((int)count) + " run of " + runs);
+			SampleIterator it = complete.getRandomSubset(runPercent).encodedSampleIterator(inputEncoder, outputEncoder, false);
+
+			updateStatus(count/runs, "evaluating input correlation matrix");
+			RealMatrix input = coefficient.computeInputCorrelationMatrix(it);
+			updateStatus((count+0.33)/runs, "evaluating I-O correlation matrix");
+			RealMatrix output = coefficient.computeIOCorrelationMatrix(it);
+			updateStatus((count+0.66)/runs, "evaluating synthetic values");
 			RealVector v = coefficient.computeSyntheticValues(it);
+			
 			if (v != null) {
-				summary.setSyntheticValues(v);
-				ret.summaries.add(summary);
+				ret.inputCorrelationMatrices.add(input);
+				ret.ioCorrelationMatrices.add(output);
+				ret.syntheticValueVectors.add(v);
 			} else {
-				System.out.println("Retrying!");
+				updateStatus(count/runs, "error during evaluation of synthetic values: retrying run " + ((int)count));
 				count--;
 			}
 		}
