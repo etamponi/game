@@ -10,12 +10,10 @@
  ******************************************************************************/
 package game.plugins.results;
 
-import game.core.DataTemplate;
 import game.core.Dataset;
 import game.core.Dataset.InstanceIterator;
 import game.core.Instance;
 import game.core.Result;
-import game.core.experiments.FullResult;
 import game.core.metrics.FullMetric;
 import game.plugins.datatemplates.ProteinDSSPStructure;
 import game.plugins.datatemplates.ProteinHECStructure;
@@ -25,13 +23,6 @@ import java.util.List;
 
 public class PerProteinStatistics extends FullMetric {
 	
-	public DataTemplate inputTemplate;
-	public List<Dataset> testedDatasets;
-	
-	public PerProteinStatistics() {
-		setAsInternalOptions("inputTemplate", "dataset");
-	}
-
 	@Override
 	public boolean isCompatible(Result result) {
 		return super.isCompatible(result) && 
@@ -40,27 +31,21 @@ public class PerProteinStatistics extends FullMetric {
 	}
 
 	@Override
-	public boolean isReady() {
-		return testedDatasets != null;
-	}
-
-	@Override
-	public void evaluate(FullResult result) {
-		testedDatasets = result.testedDatasets;
-		inputTemplate = result.experiment.template.inputTemplate;
+	protected void prepare() {
+		
 	}
 
 	@Override
 	public String prettyPrint() {
 		StringBuilder ret = new StringBuilder();
-		for (Dataset dataset: testedDatasets) {
+		for (Dataset dataset: getResult().testedDatasets.getList(Dataset.class)) {
 			InstanceIterator it = dataset.instanceIterator();
 			while(it.hasNext()) {
 				Instance i = it.next();
-				if (inputTemplate instanceof ProteinPrimaryStructure)
-					ret.append("Primary:          ").append(getFasta(i.getInput())).append("\n");
-				ret.append(	   "Secondary (obs):  ").append(getFasta(i.getOutput())).append("\n");
-				ret.append(    "Secondary (pred): ").append(getFasta(i.getPrediction())).append("\n\n");
+				if (dataset.template.inputTemplate instanceof ProteinPrimaryStructure)
+					ret.append("Primary:          ").append(i.getInput()).append("\n");
+				ret.append(	   "Secondary (obs):  ").append(i.getOutput()).append("\n");
+				ret.append(    "Secondary (pred): ").append(i.getPrediction()).append("\n\n");
 			}
 		}
 		

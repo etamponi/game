@@ -14,7 +14,6 @@ import game.core.Dataset;
 import game.core.Dataset.SampleIterator;
 import game.core.Result;
 import game.core.Sample;
-import game.core.experiments.FullResult;
 import game.core.metrics.FullMetric;
 import game.plugins.datatemplates.LabelTemplate;
 
@@ -25,12 +24,7 @@ import org.apache.commons.math3.linear.RealMatrix;
 
 public class ConfusionMatrix extends FullMetric {
 	
-	public RealMatrix matrix;
-	public List<String> labels;
-	
-	public ConfusionMatrix() {
-		setAsInternalOptions("matrix", "labels");
-	}
+	private RealMatrix matrix;
 	
 	@Override
 	public boolean isCompatible(Result r) {
@@ -39,17 +33,12 @@ public class ConfusionMatrix extends FullMetric {
 	}
 
 	@Override
-	public boolean isReady() {
-		return matrix != null;
-	}
-
-	@Override
-	public void evaluate(FullResult result) {
-		labels = result.experiment.template.outputTemplate.getOption("labels");
+	protected void prepare() {
+		List<String> labels = getResult().experiment.template.outputTemplate.getOption("labels");
 		
 		matrix = new Array2DRowRealMatrix(labels.size(), labels.size());
 		
-		for(Dataset dataset: result.testedDatasets.getList(Dataset.class)) {
+		for(Dataset dataset: getResult().testedDatasets.getList(Dataset.class)) {
 			SampleIterator it = dataset.sampleIterator(true);
 			while(it.hasNext()) {
 				Sample sample = it.next();
@@ -63,6 +52,8 @@ public class ConfusionMatrix extends FullMetric {
 	@Override
 	public String prettyPrint() {
 		StringBuilder ret = new StringBuilder();
+		
+		List<String> labels = getResult().experiment.template.outputTemplate.getOption("labels");
 		
 		ret.append(String.format("%20s |", ""));
 		for(String label: labels)

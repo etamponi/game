@@ -26,7 +26,8 @@ public abstract class FullExperiment extends Experiment {
 	
 	protected Dataset classifyDataset(double finalPercent, PredictionGraph graphClone, Dataset dataset, String outputDirectory, String cacheName) {
 		Dataset ret = new Dataset(template, outputDirectory, cacheName);
-		double singleIncrease = (finalPercent - getCurrentPercent()) / dataset.size();
+		double startPercent = getCurrentPercent();
+		double increase = (finalPercent - startPercent) / dataset.size();
 		int count = 1;
 		InstanceIterator it = dataset.instanceIterator();
 		while (it.hasNext()) {
@@ -34,7 +35,7 @@ public abstract class FullExperiment extends Experiment {
 			graphClone.classifyInstance(instance);
 			ret.add(instance);
 			if ((count-1) % 10 == 0 || count == dataset.size())
-				updateStatus(getCurrentPercent()+10*singleIncrease, "instances predicted " + count + "/" + dataset.size());
+				updateStatus(startPercent+count*increase, "instances predicted " + count + "/" + dataset.size());
 			count++;
 		}
 		ret.setReadOnly();

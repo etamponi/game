@@ -14,7 +14,6 @@ import game.core.Dataset;
 import game.core.Dataset.SampleIterator;
 import game.core.Result;
 import game.core.Sample;
-import game.core.experiments.FullResult;
 import game.core.metrics.FullMetric;
 import game.plugins.datatemplates.LabelTemplate;
 
@@ -23,17 +22,9 @@ import java.util.List;
 
 public class AccuracyPrecisionRecall extends FullMetric {
 	
-	public List<Double> singleTP = new LinkedList<>();
-	public List<Double> singleT = new LinkedList<>();
-	public List<Double> singleP = new LinkedList<>();
-	
-	public boolean ready = false;
-	
-	public List<String> labels;
-	
-	public AccuracyPrecisionRecall() {
-		setAsInternalOptions("singleTP", "singleT", "singleP", "ready", "labels");
-	}
+	private List<Double> singleTP = new LinkedList<>();
+	private List<Double> singleT = new LinkedList<>();
+	private List<Double> singleP = new LinkedList<>();
 	
 	@Override
 	public boolean isCompatible(Result result) {
@@ -42,18 +33,15 @@ public class AccuracyPrecisionRecall extends FullMetric {
 	}
 
 	@Override
-	public void evaluate(FullResult result) {
-		if (isReady())
-			return;
-		
-		labels = result.experiment.template.outputTemplate.getOption("labels");
+	protected void prepare() {
+		List<String> labels = getResult().experiment.template.outputTemplate.getOption("labels");
 		for(int k = 0; k < labels.size(); k++) {
 			singleTP.add(0.0);
 			singleP.add(0.0);
 			singleT.add(0.0);
 		}
 		
-		for(Dataset dataset: result.testedDatasets.getList(Dataset.class)) {			
+		for(Dataset dataset: getResult().testedDatasets.getList(Dataset.class)) {			
 			SampleIterator it = dataset.sampleIterator(true);
 			while(it.hasNext()) {
 				Sample sample = it.next();
@@ -68,17 +56,13 @@ public class AccuracyPrecisionRecall extends FullMetric {
 			}
 		}
 		
-		ready = true;
-	}
-
-	@Override
-	public boolean isReady() {
-		return ready;
 	}
 
 	@Override
 	public String prettyPrint() {
 		StringBuilder ret = new StringBuilder();
+		
+		List<String> labels = getResult().experiment.template.outputTemplate.getOption("labels");
 		
 		ret.append(String.format("%20s%15s%15s%15s%15s%15s\n", "", "Observed", "Classified", "Correct", "Precision", "Recall"));
 		double totalT = 0;

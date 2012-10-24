@@ -24,6 +24,11 @@ public abstract class DataTemplate extends Configurable {
 			return size();
 		}
 		
+		@Override
+		public String toString() {
+			return DataTemplate.this.toString(this);
+		}
+		
 	}
 	
 	public boolean sequence = false;
@@ -31,5 +36,13 @@ public abstract class DataTemplate extends Configurable {
 	public abstract int getDescriptionLength();
 	
 	public abstract Data newDataInstance();
+	
+	protected String toString(Data data) {
+		StringBuilder builder = new StringBuilder();
+		for (Object o: data)
+			builder.append(o).append(" ");
+		
+		return builder.toString();
+	}
 	
 }

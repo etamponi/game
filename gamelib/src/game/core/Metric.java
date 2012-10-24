@@ -15,9 +15,22 @@ import game.plugins.constraints.Compatible;
 
 public abstract class Metric<R extends Result> extends Configurable implements Compatible<Result> {
 	
-	public abstract boolean isReady();
+	private R result;
 	
-	public abstract void evaluate(R result);
+	public Metric() {
+		setAsInternalOptions("result");
+	}
+	
+	public R getResult() {
+		return result;
+	}
+	
+	public void setResult(R result) {
+		this.result = result;
+		prepare();
+	}
+	
+	protected abstract void prepare();
 	
 	public abstract String prettyPrint();
 	

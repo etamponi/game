@@ -75,8 +75,7 @@ public class ResultListController implements Initializable {
 			if (selected.getValue() instanceof Metric) {
 				Result r = (Result)selected.getParent().getValue();
 				Metric m = (Metric)selected.getValue();
-				if (!m.isReady())
-					m.evaluate(r);
+				m.setOption("result", r);
 			}
 			Option option = new Option(selected.getValue());
 			Editor editor = option.getBestEditor(true);

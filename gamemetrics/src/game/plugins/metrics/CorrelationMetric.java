@@ -31,13 +31,8 @@ public class CorrelationMetric extends Metric<CorrelationResult> {
 	}
 
 	@Override
-	public boolean isReady() {
-		return result != null;
-	}
-
-	@Override
-	public void evaluate(CorrelationResult result) {
-		this.result = result;
+	protected void prepare() {
+		
 	}
 
 	@Override

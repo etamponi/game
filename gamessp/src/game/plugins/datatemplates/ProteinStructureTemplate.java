@@ -18,5 +18,13 @@ public abstract class ProteinStructureTemplate extends LabelTemplate {
 		sequence = true;
 		setAsInternalOptions("labels", "sequence");
 	}
+	
+	@Override
+	protected String toString(Data data) {
+		StringBuilder builder = new StringBuilder();
+		for (Object o: data)
+			builder.append(o);
+		return builder.toString();
+	}
 
 }
