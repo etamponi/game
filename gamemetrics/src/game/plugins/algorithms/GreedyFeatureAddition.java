@@ -3,20 +3,13 @@ package game.plugins.algorithms;
 import game.core.Block;
 import game.core.Dataset;
 import game.core.Dataset.SampleIterator;
-import game.core.InstanceTemplate;
 import game.core.TrainingAlgorithm;
 import game.core.blocks.Encoder;
 import game.plugins.correlation.CorrelationCoefficient;
-import game.plugins.correlation.CorrelationRatio;
-import game.plugins.datasetbuilders.CSVDatasetBuilder;
-import game.plugins.datatemplates.LabelTemplate;
-import game.plugins.datatemplates.VectorTemplate;
 import game.plugins.encoders.IntegerEncoder;
-import game.plugins.encoders.VectorEncoder;
 import game.plugins.pipes.FeatureSelection;
 import game.utils.Log;
 
-import java.io.File;
 import java.util.SortedSet;
 import java.util.TreeSet;
 
@@ -157,37 +150,6 @@ public class GreedyFeatureAddition extends TrainingAlgorithm<FeatureSelection> {
 	@Override
 	public String[] getManagedBlockOptions() {
 		return new String[]{"mask"};
-	}
-	
-	public static void main(String... args) {
-		InstanceTemplate template = new InstanceTemplate();
-		template.setOption("inputTemplate", new VectorTemplate());
-		template.setOption("outputTemplate", new LabelTemplate());
-		template.setOption("inputTemplate.dimension", 47);
-		template.setOption("outputTemplate.labels.0", "pd");
-		template.setOption("outputTemplate.labels.1", "snp");
-		
-		CSVDatasetBuilder builder = new CSVDatasetBuilder();
-		builder.setOption("file", new File("../gamegui/sampledata/HumVar.txt"));
-		builder.setOption("template", template);
-		builder.setOption("startIndex", 0);
-		builder.setOption("instanceNumber", 3000);
-		
-		Dataset dataset = builder.buildDataset();
-		
-		VectorEncoder encoder = new VectorEncoder();
-		encoder.setOption("template", template.inputTemplate);
-		
-		GreedyFeatureAddition ta = new GreedyFeatureAddition();
-		ta.setOption("coefficient", new CorrelationRatio());
-		
-		FeatureSelection selection = new FeatureSelection();
-		selection.setOption("trainingAlgorithm", ta);
-		selection.setOption("parents.0", encoder);
-		
-		ta.train(dataset);
-		
-		System.out.println(selection.mask);
 	}
 
 }

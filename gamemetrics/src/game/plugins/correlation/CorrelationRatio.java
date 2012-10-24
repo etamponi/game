@@ -1,18 +1,9 @@
 package game.plugins.correlation;
 
-import game.core.Dataset;
 import game.core.Dataset.SampleIterator;
-import game.core.InstanceTemplate;
 import game.core.Sample;
-import game.core.blocks.Encoder;
-import game.plugins.datasetbuilders.CSVDatasetBuilder;
-import game.plugins.datatemplates.LabelTemplate;
-import game.plugins.datatemplates.VectorTemplate;
-import game.plugins.encoders.VectorEncoder;
-import game.plugins.experiments.CorrelationExperiment.HelperEncoder;
-import game.plugins.pipes.FeatureSelection;
+import game.utils.Log;
 
-import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -161,17 +152,12 @@ public class CorrelationRatio extends CorrelationCoefficient {
 		List<Integer> zeroColumns = findZeroColumns(E);
 		E = removeZeroColumns(E, zeroColumns);
 		H = removeZeroColumns(H, zeroColumns);
-//		System.out.println(zeroColumns);
-//		System.out.println(toString(E));
 		
 		Matrix JE = new Matrix(E.getData());
 		Matrix JH = new Matrix(H.getData());
 		
-//		if (JE.getRowDimension() == 1 && JE.get(0, 0) == 0)
-//			return 0;
-		
 		if (JE.rank() < JE.getRowDimension()) {
-			System.out.println("Some error occurred (E matrix is singular)");
+			Log.write(this, "Some error occurred (E matrix is singular)");
 			return -1;
 		} else {
 			Matrix L = JE.inverse().times(JH);
@@ -182,7 +168,7 @@ public class CorrelationRatio extends CorrelationCoefficient {
 			int nonNullEigs = n_y.keySet().size() - 1;
 			for(int i = eigs.length-nonNullEigs; i < eigs.length; i++) {
 				if (Math.abs(eigs[i]) < zeroThreshold) {
-					System.out.println("Some error occurred (E matrix has too many null eigenvalues)");
+					Log.write(this, "Some error occurred (E matrix has too many null eigenvalues)");
 					return -1;
 				}
 				lambda *= 1.0 / (1.0 + eigs[i]);
@@ -219,59 +205,6 @@ public class CorrelationRatio extends CorrelationCoefficient {
 				indices.add(i);
 		}
 		return indices;
-	}
-	
-	public static void main(String... args) {
-		InstanceTemplate template = new InstanceTemplate();
-		template.setOption("inputTemplate", new VectorTemplate());
-		template.setOption("outputTemplate", new LabelTemplate());
-		template.setOption("inputTemplate.dimension", 47);
-		template.setOption("outputTemplate.labels.0", "pd");
-		template.setOption("outputTemplate.labels.1", "snp");
-		
-		CSVDatasetBuilder builder = new CSVDatasetBuilder();
-		builder.setOption("file", new File("../gamegui/sampledata/HumVar.txt"));
-		builder.setOption("template", template);
-		builder.setOption("startIndex", 0);
-		builder.setOption("instanceNumber", 3000);
-		builder.setOption("shuffle", false);
-		
-		Dataset dataset = builder.buildDataset();
-		Encoder inputEncoder = new VectorEncoder();
-		inputEncoder.setOption("template", template.inputTemplate);
-		FeatureSelection selection = new FeatureSelection();
-		selection.parents.add(inputEncoder);
-		selection.setOption("mask", "00000000000000110111001100001000010000000010100");
-		
-		Encoder outputEncoder = new HelperEncoder();
-		outputEncoder.setOption("template", template.outputTemplate);
-		
-		SampleIterator it = dataset.getRandomSubset(0.5).encodedSampleIterator(selection, outputEncoder, false);
-		
-		CorrelationRatio ratio = new CorrelationRatio();
-		RealMatrix ioCorr = ratio.computeIOCorrelationMatrix(it);
-		RealVector synthetic = ratio.computeSyntheticValues(it);
-		
-		System.out.println(toString(ioCorr));
-		
-		if (synthetic != null)
-			System.out.println(synthetic);
-		else
-			System.out.println("ERROR!");
-	}
-	
-	private static String toString(RealMatrix M) {
-		StringBuilder builder = new StringBuilder();
-		for(int i = 0; i < M.getRowDimension(); i++)
-			builder.append(toString(M.getRow(i)) + "\n");
-		return builder.toString();
-	}
-
-	private static String toString(double[] row) {
-		StringBuilder builder = new StringBuilder();
-		for(double e: row)
-			builder.append(String.format("%15.2f", e));
-		return builder.toString();
 	}
 	
 }
