@@ -51,8 +51,8 @@ public class CSVDatasetBuilder extends DatasetBuilder {
 	public Dataset buildDataset() {
 		Dataset ret = new Dataset(template, Utils.relativize(file));
 		
-		int inputDim = getDimension(template.inputTemplate);
-		int outputDim = getDimension(template.outputTemplate);
+		int inputDim = template.inputTemplate.getDescriptionLength();
+		int outputDim = template.outputTemplate.getDescriptionLength();
 		
 		if (file.exists()) {
 			try {
@@ -94,17 +94,6 @@ public class CSVDatasetBuilder extends DatasetBuilder {
 				return null;
 		}
 		return null;
-	}
-
-	private int getDimension(DataTemplate template) {
-		if (template instanceof VectorTemplate) {
-			return ((VectorTemplate) template).dimension;
-		}
-		if (template instanceof LabelTemplate) {
-			return 1;
-		}
-		
-		return 0;
 	}
 
 }

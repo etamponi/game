@@ -27,7 +27,7 @@ public class VectorDecoder extends Decoder<VectorEncoder> {
 
 	@Override
 	protected VectorData baseDecode(Encoding outputEncoded) {
-		VectorData ret = encoder.template.newDataInstance();
+		VectorData ret = encoder.template.newData();
 		for(RealVector element: outputEncoded)
 			ret.add(element);
 		return ret;

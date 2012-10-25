@@ -18,6 +18,8 @@ import org.apache.commons.math3.linear.RealVector;
 
 public abstract class CorrelationCoefficient extends Configurable {
 	
+	public int maxSamples = 10000;
+	
 	public abstract RealMatrix computeInputCorrelationMatrix(SampleIterator it);
 	
 	public abstract RealMatrix computeIOCorrelationMatrix(SampleIterator it);

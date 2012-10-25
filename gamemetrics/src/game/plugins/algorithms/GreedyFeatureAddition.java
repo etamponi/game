@@ -1,5 +1,6 @@
 package game.plugins.algorithms;
 
+import game.configuration.ErrorCheck;
 import game.core.Block;
 import game.core.Dataset;
 import game.core.Dataset.SampleIterator;
@@ -17,7 +18,7 @@ import org.apache.commons.math3.linear.RealVector;
 
 public class GreedyFeatureAddition extends TrainingAlgorithm<FeatureSelection> {
 	
-	public double featurePercent = 0.80;
+	public int finalFeatures;
 	
 	public CorrelationCoefficient coefficient;
 	
@@ -26,6 +27,21 @@ public class GreedyFeatureAddition extends TrainingAlgorithm<FeatureSelection> {
 	public double runPercent = 0.5;
 
 	public int selectedMasks = 5;
+	
+	public GreedyFeatureAddition() {
+		setOptionChecks("finalFeatures", new ErrorCheck<Integer>() {
+			@Override
+			public String getError(Integer value) {
+				if (block != null) {
+					if (block.getParent(0) != null) {
+						if (block.getParent(0).getFeatureNumber() < value)
+							return "cannot be greater than starting feature number (" + block.getParent(0).getFeatureNumber() + ")";
+					}
+				}
+				return null;
+			}
+		});
+	}
 
 	@Override
 	public boolean isCompatible(Block object) {
@@ -67,9 +83,6 @@ public class GreedyFeatureAddition extends TrainingAlgorithm<FeatureSelection> {
 
 	@Override
 	protected void train(Dataset dataset) {
-		int baseFeatures = block.getParent(0).getFeatureNumber();
-		int finalFeatures = (int) (featurePercent*baseFeatures);
-		
 		IntegerEncoder outputEncoder = new IntegerEncoder();
 		outputEncoder.setOption("template", dataset.template.outputTemplate);
 		
@@ -77,7 +90,7 @@ public class GreedyFeatureAddition extends TrainingAlgorithm<FeatureSelection> {
 		SortedSet<Candidate> bestCandidates = null;
 		for(int features = 1; features <= finalFeatures; features++) {
 			bestCandidates = selectBestCandidates(candidates);
-			Log.write(this, "Selected best %d candidates");
+			Log.write(this, "Selected best %d candidates", selectedMasks);
 			
 			for(Candidate bestCandidate: bestCandidates) {
 				int index = bestCandidate.getMask().indexOf('0');
@@ -86,8 +99,8 @@ public class GreedyFeatureAddition extends TrainingAlgorithm<FeatureSelection> {
 					if (!candidates.contains(new Candidate(newMask, 0))) {
 						double newWeight = evaluateMaskWeight(newMask, dataset, outputEncoder);
 						candidates.add(new Candidate(newMask, newWeight));
-						index = bestCandidate.getMask().indexOf('0', index+1);
 					}
+					index = bestCandidate.getMask().indexOf('0', index+1);
 				}
 			}
 		}

@@ -27,7 +27,7 @@ public class DistanceLabelDecoder extends Decoder<LabelEncoder> {
 
 	@Override
 	protected LabelData baseDecode(Encoding outputEncoded) {
-		LabelData ret = encoder.template.newDataInstance();
+		LabelData ret = encoder.template.newData();
 		
 		for(RealVector element: outputEncoded) {
 			String label = null;

@@ -22,8 +22,6 @@ import org.apache.commons.math3.linear.RealVector;
 import org.apache.commons.math3.stat.descriptive.DescriptiveStatistics;
 
 public class SyntheticValues extends Metric<CorrelationResult> {
-	
-	private CorrelationResult result;
 
 	@Override
 	public boolean isCompatible(Result object) {
@@ -38,7 +36,7 @@ public class SyntheticValues extends Metric<CorrelationResult> {
 	@Override
 	public String prettyPrint() {
 		StringBuilder builder = new StringBuilder();
-		List<String> labels = new ArrayList<>(result.experiment.template.outputTemplate.getOption("labels",List.class));
+		List<String> labels = new ArrayList<>(getResult().experiment.template.outputTemplate.getOption("labels",List.class));
 		labels.add("Overall");
 		
 		String row = "%15s%15.3f%15.3f%15.3f%15.3f%15.3f\n";
@@ -61,9 +59,9 @@ public class SyntheticValues extends Metric<CorrelationResult> {
 	}
 
 	private double[] getData(int i) {
-		double[] ret = new double[result.syntheticValueVectors.size()];
+		double[] ret = new double[getResult().syntheticValueVectors.size()];
 		for(int j = 0; j < ret.length; j++)
-			ret[j] = result.syntheticValueVectors.get(j, RealVector.class).getEntry(i);
+			ret[j] = getResult().syntheticValueVectors.get(j, RealVector.class).getEntry(i);
 		return ret;
 	}
 

@@ -34,7 +34,8 @@ public class FeatureCombination extends Pipe {
 		
 		for (int j = 0; j < inputEnc.length(); j++) {
 			int[] indices = new int[function.operands];
-			indices[0] = 0;	indices[1] = 1; indices[2] = 2;
+			for(int i = 0; i < indices.length; i++)
+				indices[i] = i;
 			
 			for (int i = 0; i < getFeatureNumber(); i++) {
 				RealVector values = new ArrayRealVector(function.operands);

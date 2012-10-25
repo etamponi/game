@@ -32,8 +32,8 @@ public class InstanceTemplate extends Configurable {
 	}
 
 	public Instance newInstance(Object singleInput, Object singleOutput) {
-		Data input = inputTemplate.newDataInstance();
-		Data output = outputTemplate.newDataInstance();
+		Data input = inputTemplate.newData();
+		Data output = outputTemplate.newData();
 		input.add(singleInput);
 		output.add(singleOutput);
 		return new Instance(input, output);
@@ -49,15 +49,15 @@ public class InstanceTemplate extends Configurable {
 	public Instance deserialize(Object obj) {
 		SerializableInstance object = (SerializableInstance)obj;
 		
-		Data input = inputTemplate.newDataInstance();
+		Data input = inputTemplate.newData();
 		input.addAll(object.input);
-		Data output = outputTemplate.newDataInstance();
+		Data output = outputTemplate.newData();
 		output.addAll(object.output);
 		
 		Instance ret = new Instance(input, output);
 		
 		if (object.prediction != null) {
-			Data prediction = outputTemplate.newDataInstance();
+			Data prediction = outputTemplate.newData();
 			prediction.addAll(object.prediction);
 			ret.setPrediction(prediction);
 		}

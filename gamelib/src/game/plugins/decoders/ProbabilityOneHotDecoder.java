@@ -22,7 +22,7 @@ public class ProbabilityOneHotDecoder extends Decoder<OneHotEncoder> {
 
 	@Override
 	protected LabelData baseDecode(Encoding outputEncoded) {
-		LabelData ret = encoder.template.newDataInstance();
+		LabelData ret = encoder.template.newData();
 		
 		for (RealVector element: outputEncoded) {
 			ret.add(encoder.template.labels.get(element.getMaxIndex(), String.class));

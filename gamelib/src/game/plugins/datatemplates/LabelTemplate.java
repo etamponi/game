@@ -18,7 +18,10 @@ import game.core.DataTemplate;
 public class LabelTemplate extends DataTemplate {
 	
 	public class LabelData extends Data<String> {
-		
+		@Override
+		protected Class getElementType() {
+			return String.class;
+		}
 	}
 
 	public ConfigurableList labels = new ConfigurableList(this, String.class);
@@ -33,7 +36,7 @@ public class LabelTemplate extends DataTemplate {
 	}
 
 	@Override
-	public LabelData newDataInstance() {
+	public LabelData newData() {
 		return new LabelData();
 	}
 	

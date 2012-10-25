@@ -37,7 +37,7 @@ public class LinearCorrelation extends CorrelationCoefficient {
 		PearsonsCorrelation correlation = new PearsonsCorrelation();
 		
 		it.reset();
-		while(it.hasNext()) {
+		for(int i = 0; i < maxSamples && it.hasNext(); i++) {
 			Sample sample = it.next();
 			X.add(sample.getEncodedInput().toArray());
 		}
@@ -59,7 +59,7 @@ public class LinearCorrelation extends CorrelationCoefficient {
 		for(int col = 0; col < outputDim; col++) {
 			it.reset();
 			RealVector y = new ArrayRealVector();
-			while(it.hasNext()) {
+			for(int i = 0; i < maxSamples && it.hasNext(); i++) {
 				Sample sample = it.next();
 				y = y.append(sample.getEncodedOutput().getEntry(col));
 				if (col == 0) // Do it only once
@@ -100,7 +100,7 @@ public class LinearCorrelation extends CorrelationCoefficient {
 	private int count(SampleIterator it) {
 		it.reset();
 		int count = 0;
-		while(it.hasNext()) {
+		for(int i = 0; i < maxSamples && it.hasNext(); i++) {
 			it.next();
 			count++;
 		}

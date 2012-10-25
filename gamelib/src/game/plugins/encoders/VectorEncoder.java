@@ -22,7 +22,7 @@ public class VectorEncoder extends Encoder<VectorTemplate> {
 
 	@Override
 	public Encoding baseEncode(Data input) {
-		Encoding ret = new Encoding(getFeatureNumber(), input.size());
+		Encoding ret = new Encoding(getBaseFeatureNumber(), input.size());
 		int j = 0;
 		for(Object element: input)
 			ret.setElement(j++, (RealVector)element);

@@ -26,9 +26,14 @@ public class PropertiesTemplate extends DataTemplate {
 		public Map<String, Data> addEmptyElement() {
 			Map<String, Data> map = new HashMap<>();
 			for (String key: properties.keySet())
-				map.put(key, ((DataTemplate)properties.get(key)).newDataInstance());
+				map.put(key, ((DataTemplate)properties.get(key)).newData());
 			add(map);
 			return map;
+		}
+
+		@Override
+		protected Class getElementType() {
+			return Map.class;
 		}
 		
 	}
@@ -56,7 +61,7 @@ public class PropertiesTemplate extends DataTemplate {
 	}
 
 	@Override
-	public Data newDataInstance() {
+	public Data newData() {
 		return new PropertiesData();
 	}
 

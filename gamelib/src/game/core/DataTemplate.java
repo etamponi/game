@@ -16,9 +16,11 @@ import java.util.ArrayList;
 
 public abstract class DataTemplate extends Configurable {
 	
-	public class Data<T> extends ArrayList<T> {
+	public abstract class Data<T> extends ArrayList<T> {
 		
 		protected Data() {}
+		
+		protected abstract Class getElementType();
 		
 		public int length() {
 			return size();
@@ -29,13 +31,21 @@ public abstract class DataTemplate extends Configurable {
 			return DataTemplate.this.toString(this);
 		}
 		
+		@Override
+		public boolean add(T element) {
+			if (!getElementType().isAssignableFrom(element.getClass()))
+				return false;
+			else
+				return super.add(element);
+		}
+		
 	}
 	
 	public boolean sequence = false;
 	
 	public abstract int getDescriptionLength();
 	
-	public abstract Data newDataInstance();
+	public abstract Data newData();
 	
 	protected String toString(Data data) {
 		StringBuilder builder = new StringBuilder();

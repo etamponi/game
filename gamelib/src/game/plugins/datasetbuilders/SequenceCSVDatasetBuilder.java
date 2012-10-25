@@ -26,6 +26,8 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.util.Arrays;
 
+import org.apache.commons.math3.linear.ArrayRealVector;
+
 public class SequenceCSVDatasetBuilder extends DatasetBuilder {
 
 	public File file = new File("nonexistent.txt");
@@ -58,8 +60,8 @@ public class SequenceCSVDatasetBuilder extends DatasetBuilder {
 				int count = 0, index = 0;
 				BufferedReader reader = new BufferedReader(new FileReader(file));
 				for(String line = reader.readLine(); line != null && count < instanceNumber; line = reader.readLine(), index++) {
-					Data inputSequence = template.inputTemplate.newDataInstance();
-					Data outputSequence = template.outputTemplate.newDataInstance();
+					Data inputSequence = template.inputTemplate.newData();
+					Data outputSequence = template.outputTemplate.newData();
 					while (line != null && !line.matches("^$")) {
 						String[] tokens = line.split(separators);
 						inputSequence.add(getData(Arrays.copyOfRange(tokens, 0, inputDim), template.inputTemplate));
@@ -87,7 +89,7 @@ public class SequenceCSVDatasetBuilder extends DatasetBuilder {
 			for (int i = 0; i < ret.length; i++) {
 				ret[i] = Double.parseDouble(tokens[i]);
 			}
-			return ret;
+			return new ArrayRealVector(ret);
 		}
 		if (template instanceof LabelTemplate) {
 			if (((LabelTemplate) template).labels.contains(tokens[0]))

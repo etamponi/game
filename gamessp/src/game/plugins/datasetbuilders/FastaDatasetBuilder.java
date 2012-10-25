@@ -54,14 +54,14 @@ public class FastaDatasetBuilder extends DatasetBuilder {
 				Instance instance = null;
 				for (String line = reader.readLine(); line != null && count < instanceNumber; line = reader.readLine()) {
 					if (line.startsWith(">")) {
-						sequence = template.inputTemplate.newDataInstance();
+						sequence = template.inputTemplate.newData();
 						instance = template.newInstance();
 					} else {
 						for (int i = 0; i < line.length(); i++)
 							sequence.add(String.valueOf(line.charAt(i)));
 						if (primary) {
 							instance.setInput(sequence);
-							sequence = template.outputTemplate.newDataInstance();
+							sequence = template.outputTemplate.newData();
 						} else {
 							instance.setOutput(sequence);
 							if (index++ >= startIndex) {

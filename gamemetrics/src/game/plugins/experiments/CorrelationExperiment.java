@@ -57,7 +57,7 @@ public class CorrelationExperiment extends Experiment {
 
 		@Override
 		public boolean isCompatible(DataTemplate object) {
-			return object instanceof LabelTemplate;
+			return false;
 		}
 
 		@Override
@@ -86,6 +86,8 @@ public class CorrelationExperiment extends Experiment {
 	public int runs = 10;
 	
 	public double runPercent = 0.5;
+	
+	public boolean calculateMatrices = true;
 	
 	public CorrelationExperiment() {
 		setOptionChecks("template.outputTemplate", new SubclassCheck(LabelTemplate.class));
@@ -132,14 +134,17 @@ public class CorrelationExperiment extends Experiment {
 		HelperEncoder outputEncoder = new HelperEncoder();
 		outputEncoder.setOption("template", template.outputTemplate);
 		
-		for(double count = 1; count <= runs; count++) {
-			updateStatus(count/runs, "running " + ((int)count) + " run of " + runs);
+		for(double count = 0; count < runs; count++) {
+			updateStatus(count/runs, "running " + ((int)count+1) + " run of " + runs);
 			SampleIterator it = complete.getRandomSubset(runPercent).encodedSampleIterator(inputEncoder, outputEncoder, false);
 
-			updateStatus(count/runs, "evaluating input correlation matrix");
-			RealMatrix input = coefficient.computeInputCorrelationMatrix(it);
-			updateStatus((count+0.33)/runs, "evaluating I-O correlation matrix");
-			RealMatrix output = coefficient.computeIOCorrelationMatrix(it);
+			RealMatrix input = null, output = null;
+			if (calculateMatrices) {
+				updateStatus(count/runs, "evaluating input correlation matrix");
+				input = coefficient.computeInputCorrelationMatrix(it);
+				updateStatus((count+0.33)/runs, "evaluating I-O correlation matrix");
+				output = coefficient.computeIOCorrelationMatrix(it);
+			}
 			updateStatus((count+0.66)/runs, "evaluating synthetic values");
 			RealVector v = coefficient.computeSyntheticValues(it);
 			

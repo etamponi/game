@@ -27,7 +27,9 @@ public class Concatenator extends Pipe {
 		
 		int startRow = 0;
 		for (Encoding enc: encs) {
-			ret.setSubMatrix(enc.getData(), startRow, 0);
+			for (int i = 0; i < enc.length(); i++)
+				ret.setSubMatrix(enc.getSubMatrix(0, enc.getFeatureNumber()-1, i, i).getData(), startRow, i);
+			
 			startRow += enc.getFeatureNumber();
 		}
 		

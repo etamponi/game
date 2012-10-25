@@ -18,6 +18,11 @@ import game.core.DataTemplate;
 public class VectorTemplate extends DataTemplate {
 	
 	public class VectorData extends Data<RealVector> {
+
+		@Override
+		protected Class getElementType() {
+			return RealVector.class;
+		}
 		
 	}
 
@@ -33,7 +38,7 @@ public class VectorTemplate extends DataTemplate {
 	}
 
 	@Override
-	public VectorData newDataInstance() {
+	public VectorData newData() {
 		return new VectorData();
 	}
 	

@@ -34,7 +34,7 @@ public class ThresholdBooleanDecoder extends Decoder<BooleanEncoder> {
 
 	@Override
 	protected LabelData baseDecode(Encoding outputEncoded) {
-		LabelData ret = encoder.template.newDataInstance();
+		LabelData ret = encoder.template.newData();
 		for(RealVector element: outputEncoded) {
 			double score = element.getEntry(0);
 			if (score >= threshold)

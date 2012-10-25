@@ -55,7 +55,7 @@ public class CorrelationRatio extends CorrelationCoefficient {
 		Map<Double, RealVector> x_y = new HashMap<>();
 		RealVector x = new ArrayRealVector();
 		
-		while(it.hasNext()) {
+		for(int i = 0; i < maxSamples && it.hasNext(); i++) {
 			Sample sample = it.next();
 			double input = sample.getEncodedInput().getEntry(in);
 			double output = sample.getEncodedOutput().getEntry(out);
@@ -114,7 +114,7 @@ public class CorrelationRatio extends CorrelationCoefficient {
 		List<RealMatrix> x = new ArrayList<>();
 		MultivariateSummaryStatistics stat = new MultivariateSummaryStatistics(inputDim, unbiased);
 		
-		while(it.hasNext()) {
+		for(int i = 0; i < maxSamples && it.hasNext(); i++) {
 			Sample sample = it.next();
 			double[] input = sample.getEncodedInput().toArray();
 			double output = sample.getEncodedOutput().getEntry(out);
