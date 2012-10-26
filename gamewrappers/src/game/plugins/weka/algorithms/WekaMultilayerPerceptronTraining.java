@@ -88,11 +88,6 @@ public class WekaMultilayerPerceptronTraining extends TrainingAlgorithm<WekaMult
 		block.nn = nn;
 	}
 
-//	@Override
-//	public String getTaskDescription() {
-//		return "training Weka Multilayer Perceptron " + block;
-//	}
-
 	@Override
 	public String[] getManagedBlockOptions() {
 		return new String[]{"nn"};

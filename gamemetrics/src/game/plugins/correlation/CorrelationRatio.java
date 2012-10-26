@@ -24,6 +24,8 @@ public class CorrelationRatio extends CorrelationCoefficient {
 	
 	public boolean unbiased = false;
 	
+	public boolean useEigenvalues = true;
+	
 	public double zeroThreshold = 1e-12;
 
 	@Override
@@ -160,18 +162,28 @@ public class CorrelationRatio extends CorrelationCoefficient {
 			Log.write(this, "Some error occurred (E matrix is singular)");
 			return -1;
 		} else {
-			Matrix L = JE.inverse().times(JH);
-			double[] eigs = L.eig().getRealEigenvalues();
-			Arrays.sort(eigs);
-			
-			double lambda = 1;
-			int nonNullEigs = n_y.keySet().size() - 1;
-			for(int i = eigs.length-nonNullEigs; i < eigs.length; i++) {
-				if (Math.abs(eigs[i]) < zeroThreshold) {
-					Log.write(this, "Some error occurred (E matrix has too many null eigenvalues)");
+			double lambda;
+			if (useEigenvalues) {			
+				Matrix L = JE.inverse().times(JH);
+				double[] eigs = L.eig().getRealEigenvalues();
+				Arrays.sort(eigs);
+				
+				lambda = 1;
+				int nonNullEigs = n_y.keySet().size() - 1;
+				for(int i = eigs.length-nonNullEigs; i < eigs.length; i++) {
+					if (Math.abs(eigs[i]) < zeroThreshold) {
+						Log.write(this, "Some error occurred (E matrix has too many null eigenvalues)");
+						return -1;
+					}
+					lambda *= 1.0 / (1.0 + eigs[i]);
+				}
+			} else {
+				Matrix sum = JE.plus(JH);
+				if (sum.rank() < sum.getRowDimension()) {
+					Log.write(this, "Some error occourred (E+H is singular");
 					return -1;
 				}
-				lambda *= 1.0 / (1.0 + eigs[i]);
+				lambda = JE.det() / sum.det();
 			}
 			
 			return Math.sqrt(1 - lambda);

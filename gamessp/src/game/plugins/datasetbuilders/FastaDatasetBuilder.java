@@ -73,7 +73,7 @@ public class FastaDatasetBuilder extends DatasetBuilder {
 					}
 				}
 				reader.close();
-				ret.setReadOnly();
+				ret.setReadyState();
 			} catch (IOException e) {}
 		}
 		

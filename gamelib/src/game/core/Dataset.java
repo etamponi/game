@@ -25,7 +25,6 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -53,12 +52,12 @@ public class Dataset extends Configurable implements Iterable<Instance> {
 	
 	public String databaseCacheFile = null;
 	
-	public boolean readOnly = false;
+	public boolean ready = false;
 	
 	public List<Integer> indices = new ArrayList<>();
 	
 	public Dataset() {
-		setAsInternalOptions("databaseCacheFile", "indices", "readOnly", "template");
+		setAsInternalOptions("databaseCacheFile", "indices", "ready", "template");
 	}
 	
 	public Dataset(InstanceTemplate template, String cacheFileName) {
@@ -71,9 +70,9 @@ public class Dataset extends Configurable implements Iterable<Instance> {
 		this();
 		this.template = base.template;
 		this.indices = new ArrayList<>(indices);
-		this.readOnly = true;
 		this.connection = base.connection;
 		this.databaseCacheFile = base.databaseCacheFile;
+		this.ready = true;
 	}
 	
 	public int size() {
@@ -81,17 +80,9 @@ public class Dataset extends Configurable implements Iterable<Instance> {
 	}
 	
 	private void createDatabaseCacheFile(String cacheFileName) {
+		cacheFileName = getAvailableCacheFile(cacheFileName);
+		databaseCacheFile = cacheFileName + ".db";
 		try {
-			databaseCacheFile = cacheFileName + ".db";
-			File file = new File(databaseCacheFile);
-			if (file.exists()) {
-				if (connectionRegistry.containsKey(databaseCacheFile)) {
-					connectionRegistry.get(databaseCacheFile).close();
-				}
-				file.delete();
-				if (file.exists())
-					System.err.println("Cannot delete old database cache");
-			}
 			connection = DriverManager.getConnection("jdbc:sqlite:"+databaseCacheFile);
 			connection.setAutoCommit(false);
 			Statement statement = connection.createStatement();
@@ -103,6 +94,20 @@ public class Dataset extends Configurable implements Iterable<Instance> {
 		}
 	}
 	
+	private String getAvailableCacheFile(String cacheFileName) {
+		final String suffix = ".cache_";
+		if (!new File(cacheFileName + ".db").exists())
+			return cacheFileName;
+		
+		if (cacheFileName.matches(suffix + "\\d+$")) {
+			cacheFileName = cacheFileName.substring(0, cacheFileName.indexOf(suffix));
+		}
+		int number = 0;
+		while(new File(cacheFileName + suffix + number + ".db").exists())
+			number++;
+		return cacheFileName + suffix + number;
+	}
+
 	public void setDatabaseCacheFile(String databaseCacheFile) {
 		this.databaseCacheFile = databaseCacheFile;
 		
@@ -130,19 +135,14 @@ public class Dataset extends Configurable implements Iterable<Instance> {
 	}
 	
 	public void add(Instance instance) {
-		if (readOnly)
-			return; // Cannot add instances once a dataset is readOnly
+		if (ready)
+			return; // Cannot add instances once a dataset is ready
 		try {
 			ByteArrayOutputStream baos = new ByteArrayOutputStream();
 		    ObjectOutputStream oout = new ObjectOutputStream(baos);
 		    oout.writeObject(template.serialize(instance));
 		    oout.close();
-			/*
-			ByteArrayOutputStream baos = new ByteArrayOutputStream();
-			Output output = new Output(baos);
-			kryo.writeObject(output, instance);
-			output.close();
-			*/
+		    
 			PreparedStatement statement = connection.prepareStatement("INSERT INTO Data(id, content) VALUES (?, ?);");
 			statement.setInt(1, indices.size());
 			statement.setBytes(2, baos.toByteArray());
@@ -155,10 +155,10 @@ public class Dataset extends Configurable implements Iterable<Instance> {
 		}
 	}
 	
-	public void setReadOnly() {
+	public void setReadyState() {
 		try {
 			connection.commit();
-			readOnly = true;
+			ready = true;
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
@@ -169,7 +169,7 @@ public class Dataset extends Configurable implements Iterable<Instance> {
 		private Iterator<Integer> indexIterator;
 		private int currentId;
 
-		public InstanceIterator() {
+		private InstanceIterator() {
 			indexIterator = indices.iterator();
 		}
 		
@@ -190,10 +190,7 @@ public class Dataset extends Configurable implements Iterable<Instance> {
 				ByteArrayInputStream bais = new ByteArrayInputStream(result.getBytes("content"));
 				ObjectInputStream oin = new ObjectInputStream(bais);
 			    ret = template.deserialize(oin.readObject());
-			    /*
-				Input input = new Input(result.getBytes("content"));
-				ret = kryo.readObject(input, Instance.class);
-				*/
+
 				statement.close();
 			} catch (SQLException | IOException | ClassNotFoundException e) {
 				e.printStackTrace();
@@ -226,7 +223,7 @@ public class Dataset extends Configurable implements Iterable<Instance> {
 		private Encoding currentPredictionEncoding;
 		private int indexInInstance;
 		
-		public SampleIterator(SampleType type) {
+		private SampleIterator(SampleType type) {
 			if (type == SampleType.IN_OUT_ENC || type == SampleType.EVERYTHING)
 				throw new UnsupportedOperationException("Cannot use a sample iterator with encoding if you don't specify the encoders");
 			this.type = type;
@@ -320,10 +317,16 @@ public class Dataset extends Configurable implements Iterable<Instance> {
 	}
 
 	public InstanceIterator instanceIterator() {
+		if (!ready)
+			return null;
+		
 		return new InstanceIterator();
 	}
 	
 	public SampleIterator sampleIterator(boolean includePrediction) {
+		if (!ready)
+			return null;
+		
 		if (includePrediction)
 			return new SampleIterator(SampleType.IN_OUT_PRED);
 		else
@@ -331,46 +334,22 @@ public class Dataset extends Configurable implements Iterable<Instance> {
 	}
 	
 	public SampleIterator encodedSampleIterator(Block inputEncoder, Block outputEncoder, boolean includePrediction) {
+		if (!ready)
+			return null;
+		
 		if (includePrediction)
 			return new SampleIterator(SampleType.EVERYTHING, inputEncoder, outputEncoder);
 		else
 			return new SampleIterator(SampleType.IN_OUT_ENC, inputEncoder, outputEncoder);
 	}
 	
-	public static class EncodedSamples extends ArrayList<Sample> {
-		private static final long serialVersionUID = 2130556043598496819L;
-
-		public EncodedSamples() {
-			
-		}
-		
-		public EncodedSamples(int initialCapacity) {
-			super(initialCapacity);
-		}
-		
-		public EncodedSamples(Collection<Sample> other) {
-			super(other);
-		}
-		
-	}
-	
-	public EncodedSamples encode(Block inputEncoder, Block outputEncoder) {
-		EncodedSamples ret = new EncodedSamples(size());
-		
-		SampleIterator it = encodedSampleIterator(inputEncoder, outputEncoder, false);
-		while(it.hasNext())
-			ret.add(it.next());
-		
-		return ret;
-	}
-	
-	public List<Dataset> getFolds(int folds, boolean shuffle) {
-		if (!readOnly)
+	public List<Dataset> getFolds(int folds, boolean random) {
+		if (!ready)
 			return null;
 		
 		List<Dataset> ret = new ArrayList<>(folds);
 		List<Integer> temp = new ArrayList<>(indices);
-		if (shuffle)
+		if (random)
 			Collections.shuffle(temp);
 		int foldSize = indices.size() / folds;
 		for(int fold = 0; fold < folds; fold++) {
@@ -380,7 +359,7 @@ public class Dataset extends Configurable implements Iterable<Instance> {
 	}
 	
 	public List<Dataset> getComplementaryFolds(List<Dataset> folds) {
-		if (!readOnly)
+		if (!ready)
 			return null;
 		
 		List<Dataset> ret = new ArrayList<>(folds.size());
@@ -394,7 +373,7 @@ public class Dataset extends Configurable implements Iterable<Instance> {
 	}
 	
 	public Dataset getRandomSubset(double percent) {
-		if (!readOnly)
+		if (!ready)
 			return null;
 		
 		assert(percent > 0 && percent <= 1);

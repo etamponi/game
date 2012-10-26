@@ -76,7 +76,7 @@ public class SequenceCSVDatasetBuilder extends DatasetBuilder {
 				}
 				reader.close();
 //				System.out.println(count);
-				ret.setReadOnly();
+				ret.setReadyState();
 			} catch (IOException e) {}
 		}
 		

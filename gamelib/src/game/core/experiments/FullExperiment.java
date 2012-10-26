@@ -38,7 +38,7 @@ public abstract class FullExperiment extends Experiment {
 				updateStatus(startPercent+count*increase, "instances predicted " + count + "/" + dataset.size());
 			count++;
 		}
-		ret.setReadOnly();
+		ret.setReadyState();
 		return ret;
 	}
 
