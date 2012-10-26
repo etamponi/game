@@ -70,8 +70,8 @@ public abstract class Block extends Configurable {
 		return ((Block)parents.get(i)).transform(input);
 	}
 	
-	public Block getParent(int i) {
-		return (Block)parents.get(i);
+	public <T extends Block> T getParent(int i) {
+		return (T)parents.get(i);
 	}
 	
 	public void setTrainingAlgorithm(TrainingAlgorithm algorithm) {

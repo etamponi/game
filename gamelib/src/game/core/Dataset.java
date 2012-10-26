@@ -69,9 +69,9 @@ public class Dataset extends Configurable implements Iterable<Instance> {
 	private Dataset(Dataset base, List<Integer> indices) {
 		this();
 		this.template = base.template;
-		this.indices = new ArrayList<>(indices);
 		this.connection = base.connection;
 		this.databaseCacheFile = base.databaseCacheFile;
+		this.indices = new ArrayList<>(indices);
 		this.ready = true;
 	}
 	
@@ -155,6 +155,13 @@ public class Dataset extends Configurable implements Iterable<Instance> {
 		}
 	}
 	
+	public void add(int index) {
+		if (ready)
+			return;
+		
+		indices.add(index);
+	}
+	
 	public void setReadyState() {
 		try {
 			connection.commit();
@@ -196,6 +203,10 @@ public class Dataset extends Configurable implements Iterable<Instance> {
 				e.printStackTrace();
 			}
 			return ret;
+		}
+		
+		public int getCurrentIndex() {
+			return currentId;
 		}
 
 		@Override
