@@ -66,7 +66,7 @@ public class Dataset extends Configurable implements Iterable<Instance> {
 		createDatabaseCacheFile(cacheFileName);
 	}
 	
-	private Dataset(Dataset base, List<Integer> indices) {
+	public Dataset(Dataset base, List<Integer> indices) {
 		this();
 		this.template = base.template;
 		this.connection = base.connection;
@@ -155,7 +155,7 @@ public class Dataset extends Configurable implements Iterable<Instance> {
 		}
 	}
 	
-	public void add(int index) {
+	public void addIndex(int index) {
 		if (ready)
 			return;
 		

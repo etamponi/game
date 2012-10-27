@@ -22,9 +22,9 @@ import java.util.List;
 
 public class AccuracyPrecisionRecall extends FullMetric {
 	
-	private List<Double> singleTP = new LinkedList<>();
-	private List<Double> singleT = new LinkedList<>();
-	private List<Double> singleP = new LinkedList<>();
+	private List<Double> singleTP;
+	private List<Double> singleT;
+	private List<Double> singleP;
 	
 	@Override
 	public boolean isCompatible(Result result) {
@@ -34,6 +34,10 @@ public class AccuracyPrecisionRecall extends FullMetric {
 
 	@Override
 	protected void prepare() {
+		singleTP = new LinkedList<>();
+		singleT = new LinkedList<>();
+		singleP = new LinkedList<>();
+		
 		List<String> labels = getResult().experiment.template.outputTemplate.getOption("labels");
 		for(int k = 0; k < labels.size(); k++) {
 			singleTP.add(0.0);
