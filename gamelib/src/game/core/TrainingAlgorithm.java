@@ -27,8 +27,11 @@ public abstract class TrainingAlgorithm<B extends Block> extends LongTask<Void, 
 
 	@Override
 	public Void execute(Dataset dataset) {
-		if (!block.trained)
+		if (!block.trained) {
+			updateStatus(0.0, "training " + block + " using " + this.getClass().getSimpleName());
 			train(dataset);
+			updateStatus(1.0, "training of " + block + " finished");
+		}
 		block.trained = true;
 		
 		return null;

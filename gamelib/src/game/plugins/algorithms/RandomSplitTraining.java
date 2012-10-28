@@ -24,7 +24,7 @@ public class RandomSplitTraining extends TrainingAlgorithm<PredictionGraph> {
 	public double splitPercent = 1.0;
 	
 	public RandomSplitTraining() {
-		setOptionChecks("splitPercent", new RangeCheck(0.05, 1.00));
+		setOptionChecks("splitPercent", new RangeCheck(0.001, 1.00));
 	}
 
 	@Override
@@ -63,14 +63,10 @@ public class RandomSplitTraining extends TrainingAlgorithm<PredictionGraph> {
 		}
 	}
 
-//	@Override
-//	public String getTaskDescription() {
-//		return String.format("graph training with random splits (dataset percent per split: %.2f%%)", splitPercent*100); 
-//	}
-
+	static private final String[] managed = {};
 	@Override
 	public String[] getManagedBlockOptions() {
-		return new String[]{};
+		return managed;
 	}
 
 }
