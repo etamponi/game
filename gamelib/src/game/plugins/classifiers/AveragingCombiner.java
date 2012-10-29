@@ -43,4 +43,9 @@ public class AveragingCombiner extends Combiner {
 		return new Encoding(ret);
 	}
 
+	@Override
+	public FeatureType getFeatureType(int featureIndex) {
+		return FeatureType.NUMERIC;
+	}
+
 }

@@ -89,5 +89,13 @@ public class PredictionGraph extends Transducer {
 	public boolean isCompatible(InstanceTemplate object) {
 		return true;
 	}
+
+	@Override
+	public FeatureType getFeatureType(int featureIndex) {
+		if (outputClassifier != null)
+			return outputClassifier.getFeatureType(featureIndex);
+		else
+			return FeatureType.NUMERIC;
+	}
 	
 }

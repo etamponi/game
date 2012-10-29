@@ -47,4 +47,9 @@ public class WekaMultilayerPerceptron extends WekaClassifier {
 		return ret;
 	}
 
+	@Override
+	public FeatureType getFeatureType(int featureIndex) {
+		return FeatureType.NUMERIC;
+	}
+
 }

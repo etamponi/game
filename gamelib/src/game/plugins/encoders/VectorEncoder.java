@@ -39,4 +39,9 @@ public class VectorEncoder extends Encoder<VectorTemplate> {
 		return template.dimension;
 	}
 
+	@Override
+	protected FeatureType getBaseFeatureType(int featureIndex) {
+		return FeatureType.NUMERIC;
+	}
+
 }

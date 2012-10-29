@@ -60,4 +60,18 @@ public class FeatureSelection extends Pipe {
 		return Utils.count(mask, '1');
 	}
 
+	@Override
+	public FeatureType getFeatureType(int featureIndex) {
+		FeatureType ret = FeatureType.NUMERIC;
+		if (getParent(0) == null)
+			return ret;
+		int parentFeatureIndex = 0;
+		for(int i = 0; i < featureIndex; i++) {
+			parentFeatureIndex++;
+			if (mask.charAt(i) == '0')
+				i--;
+		}
+		return getParent(0).getFeatureType(parentFeatureIndex);
+	}
+
 }

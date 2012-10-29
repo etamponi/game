@@ -14,17 +14,14 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.lang.reflect.Modifier;
 import java.math.BigInteger;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Random;
 import java.util.Scanner;
 
 import org.apache.commons.math3.linear.RealVector;
 
-import com.thoughtworks.xstream.XStream;
-import com.thoughtworks.xstream.io.xml.DomDriver;
-
 public class Utils {
-	
-	private static final XStream stream = new XStream(new DomDriver());
 
 	public static boolean isConcrete(Class type) {
 		return type.isPrimitive() ||
@@ -116,77 +113,20 @@ public class Utils {
 		return count;
 	}
 	
-	/*
-	public static void sumTo(double[] to, double[] from) {
-		for (int i = 0; i < to.length; i++)
-			to[i] += from[i];
-	}
-	
-	public static void subtractTo(double[] to, double[] from) {
-		for (int i = 0; i < to.length; i++)
-			to[i] -= from[i];
-	}
-	
-	public static void scale(double[] v, double factor) {
-		for (int i = 0; i < v.length; i++)
-			v[i] *= factor;
-	}
-	
-	public static double[] normalize(double[] in) {
-		double[] ret = new double[in.length];
-		
-		double sum = sum(in);
-		for(int i = 0; i < ret.length; i++)
-			ret[i] = in[i]/sum;
-		
-		return ret;
-	}
-	
-	public static double sum(double[] v) {
-		double sum = 0;
-		
-		for(double e: v)
-			sum += e;
-		
-		return sum;
-	}
-	*/
-	public static <T> T deepClone(T object) {
-		return (T)stream.fromXML(stream.toXML(object));
-	}
-	/*
-	public static boolean checkTemplateClass(DataTemplate outputTemplate, Class<? extends DataTemplate> type) {
-		if (outputTemplate == null)
-			return false;
-		return type.isAssignableFrom(outputTemplate.getClass())
-				|| (outputTemplate instanceof SequenceTemplate 
-						&& type.isAssignableFrom(outputTemplate.getOption("atom").getClass()));
-	}
-	*/
-	/*
-	public static int maxIndex(double[] v) {
-		int maxIndex = 0;
-		double max = v[0];
-		for(int i = 1; i < v.length; i++) {
-			if (v[i] > max) {
-				max = v[i];
-				maxIndex = i;
-			}
-		}
-		return maxIndex;
-	}
-
-	public static double max(double[] v) {
-		double max = v[0];
-		for(double e: v)
-			if (e > max)
-				max = e;
-		return max;
-	}
-	*/
 	private static Random generator = new Random();
 
 	public static String randomString() {
 		return new BigInteger(130, generator).toString(10);
+	}
+
+	public static List<Integer> range(int start, int end) {
+		List<Integer> ret = new ArrayList<>();
+		for (int i = start; i < end; i++)
+			ret.add(i);
+		return ret;
+	}
+
+	public static double log2(double x) {
+		return Math.log(x) / Math.log(2);
 	}
 }

@@ -45,9 +45,17 @@ public abstract class Encoder<DT extends DataTemplate> extends Block implements 
 	
 	protected abstract int getBaseFeatureNumber();
 	
+	protected abstract FeatureType getBaseFeatureType(int featureIndex);
+	
 	@Override
 	public int getFeatureNumber() {
 		return getBaseFeatureNumber()*windowSize;
+	}
+	
+	@Override
+	public FeatureType getFeatureType(int featureIndex) {
+		assert(featureIndex >= 0 && featureIndex < getFeatureNumber());
+		return getBaseFeatureType(featureIndex % getBaseFeatureNumber());
 	}
 
 	@Override

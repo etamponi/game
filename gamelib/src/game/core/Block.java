@@ -19,6 +19,11 @@ import java.util.LinkedList;
 import java.util.List;
 
 public abstract class Block extends Configurable {
+
+	public enum FeatureType {
+		NUMERIC,
+		NOMINAL
+	}
 	
 	public static class Position extends Configurable {
 		public int x = -1;
@@ -54,6 +59,7 @@ public abstract class Block extends Configurable {
 	public abstract boolean acceptsParents();
 	
 	public abstract int getFeatureNumber();
+	public abstract FeatureType getFeatureType(int featureIndex);
 	
 	protected List<Encoding> getParentsEncodings(Data input) {
 		List<Encoding> ret = new LinkedList<>();

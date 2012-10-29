@@ -11,6 +11,7 @@
 package game.core;
 
 import game.configuration.Configurable;
+import game.core.DataTemplate.Data;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -216,32 +217,32 @@ public class Dataset extends Configurable implements Iterable<Instance> {
 
 	}
 	
-	public enum SampleType {
+	public enum IterationType {
 		EVERYTHING, IN_OUT, IN_ENC, IN_OUT_PRED, IN_OUT_ENC
 	}
 	
-	public class SampleIterator implements Iterator<Sample> {
+	public class SampleIterator<I, O> implements Iterator<Sample<I, O>> {
 		
-		private SampleType type;
+		private IterationType type;
 		private Block inputEncoder;
 		private Block outputEncoder;
 		private InstanceIterator instanceIterator = instanceIterator();
-		private List currentInputSequence;
-		private List currentOutputSequence;
-		private List currentPredictionSequence;
+		private Data currentInputSequence;
+		private Data currentOutputSequence;
+		private Data currentPredictionSequence;
 		private Encoding currentInputEncoding;
 		private Encoding currentOutputEncoding;
 		private Encoding currentPredictionEncoding;
 		private int indexInInstance;
 		
-		private SampleIterator(SampleType type) {
-			if (type == SampleType.IN_OUT_ENC || type == SampleType.EVERYTHING)
+		private SampleIterator(IterationType type) {
+			if (type == IterationType.IN_OUT_ENC || type == IterationType.EVERYTHING)
 				throw new UnsupportedOperationException("Cannot use a sample iterator with encoding if you don't specify the encoders");
 			this.type = type;
 			prepareForNextInstance();
 		}
 		
-		public SampleIterator(SampleType type, Block inputEncoder, Block outputEncoder) {
+		public SampleIterator(IterationType type, Block inputEncoder, Block outputEncoder) {
 			this.type = type;
 			this.inputEncoder = inputEncoder;
 			this.outputEncoder = outputEncoder;
@@ -274,12 +275,12 @@ public class Dataset extends Configurable implements Iterable<Instance> {
 		}
 
 		@Override
-		public Sample next() {
+		public Sample<I, O> next() {
 			if (indexInInstance == currentInputSequence.size()) {
 				prepareForNextInstance();
 			}
 			
-			Sample ret = null;
+			Sample<I, O> ret = null;
 			switch(type) {
 			case EVERYTHING:
 				ret = new Sample(
@@ -339,9 +340,9 @@ public class Dataset extends Configurable implements Iterable<Instance> {
 			return null;
 		
 		if (includePrediction)
-			return new SampleIterator(SampleType.IN_OUT_PRED);
+			return new SampleIterator(IterationType.IN_OUT_PRED);
 		else
-			return new SampleIterator(SampleType.IN_OUT);
+			return new SampleIterator(IterationType.IN_OUT);
 	}
 	
 	public SampleIterator encodedSampleIterator(Block inputEncoder, Block outputEncoder, boolean includePrediction) {
@@ -349,9 +350,9 @@ public class Dataset extends Configurable implements Iterable<Instance> {
 			return null;
 		
 		if (includePrediction)
-			return new SampleIterator(SampleType.EVERYTHING, inputEncoder, outputEncoder);
+			return new SampleIterator(IterationType.EVERYTHING, inputEncoder, outputEncoder);
 		else
-			return new SampleIterator(SampleType.IN_OUT_ENC, inputEncoder, outputEncoder);
+			return new SampleIterator(IterationType.IN_OUT_ENC, inputEncoder, outputEncoder);
 	}
 	
 	public List<Dataset> getFolds(int folds, boolean random) {

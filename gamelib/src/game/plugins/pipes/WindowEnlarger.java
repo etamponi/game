@@ -39,4 +39,9 @@ public class WindowEnlarger extends Pipe {
 			return getParent(0).getFeatureNumber()*windowSize;
 	}
 
+	@Override
+	public FeatureType getFeatureType(int featureIndex) {
+		return getParent(0).getFeatureType(featureIndex % getParent(0).getFeatureNumber());
+	}
+
 }

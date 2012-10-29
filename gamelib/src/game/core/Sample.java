@@ -12,34 +12,34 @@ package game.core;
 
 import org.apache.commons.math3.linear.RealVector;
 
-public class Sample {
+public class Sample<I, O> {
 
-	private Object input;
-	private Object output;
-	private Object prediction;
+	private I input;
+	private O output;
+	private O prediction;
 	private RealVector encodedInput;
 	private RealVector encodedOutput;
 	private RealVector encodedPrediction;
 	
-	public Sample(Object input, Object output) {
+	public Sample(I input, O output) {
 		this.input = input;
 		this.output = output;
 	}
 	
-	public Sample(Object input, Object output, Object prediction) {
+	public Sample(I input, O output, O prediction) {
 		this.input = input;
 		this.output = output;
 		this.prediction = prediction;
 	}
 	
-	public Sample(Object input, RealVector encodedInput, Object output, RealVector encodedOutput) {
+	public Sample(I input, RealVector encodedInput, O output, RealVector encodedOutput) {
 		this.input = input;
 		this.output = output;
 		this.encodedInput = encodedInput;
 		this.encodedOutput = encodedOutput;
 	}
 	
-	public Sample(Object input, RealVector encodedInput, Object output, RealVector encodedOutput, Object prediction, RealVector encodedPrediction) {
+	public Sample(I input, RealVector encodedInput, O output, RealVector encodedOutput, O prediction, RealVector encodedPrediction) {
 		this.input = input;
 		this.output = output;
 		this.prediction = prediction;
@@ -48,15 +48,15 @@ public class Sample {
 		this.encodedPrediction = encodedPrediction;
 	}
 	
-	public Object getInput() {
+	public I getInput() {
 		return input;
 	}
 	
-	public Object getOutput() {
+	public O getOutput() {
 		return output;
 	}
 	
-	public Object getPrediction() {
+	public O getPrediction() {
 		return prediction;
 	}
 

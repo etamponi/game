@@ -75,6 +75,10 @@ public class ConfigurableMap extends Configurable implements Map<String, Object>
 	public Object get(Object key) {
 		return internal.get(key);
 	}
+	
+	public <T> T get(Object key, Class<T> type) {
+		return (T)internal.get(key);
+	}
 
 	@Override
 	public boolean isEmpty() {

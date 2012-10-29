@@ -114,4 +114,9 @@ public class KNNClassifier extends Classifier {
 		return ret;
 	}
 
+	@Override
+	public FeatureType getFeatureType(int featureIndex) {
+		return FeatureType.NUMERIC;
+	}
+
 }

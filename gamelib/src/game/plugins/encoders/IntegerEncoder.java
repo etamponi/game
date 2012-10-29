@@ -24,4 +24,9 @@ public class IntegerEncoder extends LabelEncoder {
 			labelMapping.put((String)template.labels.get(i), new ArrayRealVector(new double[]{i+1}));
 	}
 
+	@Override
+	protected FeatureType getBaseFeatureType(int featureIndex) {
+		return FeatureType.NOMINAL;
+	}
+
 }

@@ -28,5 +28,10 @@ public class OneHotEncoder extends LabelEncoder {
 			labelMapping.put((String)template.labels.get(i), mapping); 
 		}
 	}
+
+	@Override
+	protected FeatureType getBaseFeatureType(int featureIndex) {
+		return FeatureType.NOMINAL;
+	}
 	
 }

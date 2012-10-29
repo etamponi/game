@@ -17,16 +17,16 @@ import game.core.DataTemplate;
 import java.util.HashMap;
 import java.util.Map;
 
-public class PropertiesTemplate extends DataTemplate {
+public class MetaTemplate extends DataTemplate {
 	
-	public class PropertiesData extends Data<Map<String, Data>> {
+	public class MetaData extends Data<Map<String, Data>> {
 		
-		protected PropertiesData() {}
+		protected MetaData() {}
 
 		public Map<String, Data> addEmptyElement() {
 			Map<String, Data> map = new HashMap<>();
-			for (String key: properties.keySet())
-				map.put(key, ((DataTemplate)properties.get(key)).newData());
+			for (String key: templates.keySet())
+				map.put(key, templates.get(key, DataTemplate.class).newData());
 			add(map);
 			return map;
 		}
@@ -38,9 +38,9 @@ public class PropertiesTemplate extends DataTemplate {
 		
 	}
 	
-	public ConfigurableMap properties = new ConfigurableMap(this, DataTemplate.class);
+	public ConfigurableMap templates = new ConfigurableMap(this, DataTemplate.class);
 	
-	public PropertiesTemplate() {
+	public MetaTemplate() {
 		setOptionChecks("properties", new ErrorCheck<Map>() {
 			@Override
 			public String getError(Map value) {
@@ -55,14 +55,14 @@ public class PropertiesTemplate extends DataTemplate {
 	@Override
 	public int getDescriptionLength() {
 		int count = 0;
-		for (DataTemplate template: properties.values(DataTemplate.class))
+		for (DataTemplate template: templates.values(DataTemplate.class))
 			count += template.getDescriptionLength();
 		return count;
 	}
 
 	@Override
 	public Data newData() {
-		return new PropertiesData();
+		return new MetaData();
 	}
 
 }

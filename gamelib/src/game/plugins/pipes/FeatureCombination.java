@@ -76,5 +76,10 @@ public class FeatureCombination extends Pipe {
 		else
 			return (int)ArithmeticUtils.binomialCoefficient(getParent(0).getFeatureNumber(), function.operands);
 	}
+
+	@Override
+	public FeatureType getFeatureType(int featureIndex) {
+		return FeatureType.NUMERIC;
+	}
 	
 }

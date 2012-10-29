@@ -13,7 +13,6 @@ package game.plugins.experiments;
 import game.configuration.ErrorCheck;
 import game.configuration.errorchecks.RangeCheck;
 import game.configuration.errorchecks.RangeCheck.RangeType;
-import game.configuration.errorchecks.SubclassCheck;
 import game.core.Block;
 import game.core.DataTemplate;
 import game.core.DataTemplate.Data;
@@ -26,6 +25,7 @@ import game.core.NoTraining;
 import game.core.blocks.Encoder;
 import game.core.blocks.PredictionGraph;
 import game.plugins.constraints.CompatibleWith;
+import game.plugins.constraints.SubclassConstraint;
 import game.plugins.correlation.CorrelationCoefficient;
 import game.plugins.datatemplates.LabelTemplate;
 import game.plugins.encoders.IntegerEncoder;
@@ -74,6 +74,11 @@ public class CorrelationExperiment extends Experiment {
 		protected int getBaseFeatureNumber() {
 			return oneHot.getFeatureNumber() + integer.getFeatureNumber();
 		}
+
+		@Override
+		protected FeatureType getBaseFeatureType(int featureIndex) {
+			return FeatureType.NOMINAL;
+		}
 		
 	}
 	
@@ -90,7 +95,7 @@ public class CorrelationExperiment extends Experiment {
 	public boolean calculateMatrices = true;
 	
 	public CorrelationExperiment() {
-		setOptionChecks("template.outputTemplate", new SubclassCheck(LabelTemplate.class));
+		setOptionConstraints("template.outputTemplate", new SubclassConstraint(LabelTemplate.class));
 		
 		setOptionBinding("template", "dataset.template", "graph.template");
 		setOptionConstraints("dataset", new CompatibleWith(this, "template"));

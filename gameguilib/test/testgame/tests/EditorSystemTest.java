@@ -104,6 +104,11 @@ public class EditorSystemTest extends Application {
 		public boolean isCompatible(InstanceTemplate object) {
 			return true;
 		}
+
+		@Override
+		public FeatureType getFeatureType(int featureIndex) {
+			return null;
+		}
 		
 	}
 	
@@ -117,6 +122,11 @@ public class EditorSystemTest extends Application {
 		@Override
 		public boolean isCompatible(InstanceTemplate object) {
 			return true;
+		}
+
+		@Override
+		public FeatureType getFeatureType(int featureIndex) {
+			return null;
 		}
 		
 	}
@@ -137,6 +147,11 @@ public class EditorSystemTest extends Application {
 		protected int getBaseFeatureNumber() {
 			return 0;
 		}
+
+		@Override
+		protected FeatureType getBaseFeatureType(int featureIndex) {
+			return null;
+		}
 		
 	}
 	
@@ -156,6 +171,11 @@ public class EditorSystemTest extends Application {
 		protected int getBaseFeatureNumber() {
 			return 0;
 		}
+
+		@Override
+		protected FeatureType getBaseFeatureType(int featureIndex) {
+			return null;
+		}
 		
 	}
 	
@@ -174,6 +194,11 @@ public class EditorSystemTest extends Application {
 		@Override
 		protected int getBaseFeatureNumber() {
 			return 0;
+		}
+
+		@Override
+		protected FeatureType getBaseFeatureType(int featureIndex) {
+			return null;
 		}
 		
 	}

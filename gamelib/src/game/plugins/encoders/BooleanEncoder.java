@@ -46,4 +46,9 @@ public class BooleanEncoder extends LabelEncoder {
 		return (String)template.labels.get(1 - positiveIndex);
 	}
 
+	@Override
+	protected FeatureType getBaseFeatureType(int featureIndex) {
+		return FeatureType.NOMINAL;
+	}
+
 }

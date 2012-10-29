@@ -49,6 +49,11 @@ public class GraphTest {
 		protected int getBaseFeatureNumber() {
 			return 0;
 		}
+
+		@Override
+		protected FeatureType getBaseFeatureType(int featureIndex) {
+			return null;
+		}
 	}
 	
 	public static class EncoderImplB extends Encoder<LabelTemplate> {
@@ -65,6 +70,11 @@ public class GraphTest {
 		@Override
 		protected int getBaseFeatureNumber() {
 			return 0;
+		}
+
+		@Override
+		protected FeatureType getBaseFeatureType(int featureIndex) {
+			return null;
 		}
 	}
 	
@@ -105,6 +115,11 @@ public class GraphTest {
 		public boolean isCompatible(InstanceTemplate object) {
 			return true;
 		}
+
+		@Override
+		public FeatureType getFeatureType(int featureIndex) {
+			return null;
+		}
 	}
 	
 	public static class ClassifierImplB extends Transducer {
@@ -115,6 +130,11 @@ public class GraphTest {
 		@Override
 		public boolean isCompatible(InstanceTemplate object) {
 			return false;
+		}
+
+		@Override
+		public FeatureType getFeatureType(int featureIndex) {
+			return null;
 		}
 	}
 
