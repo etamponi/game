@@ -14,8 +14,9 @@ import game.configuration.errorchecks.LengthCheck;
 import game.plugins.Constraint;
 import game.plugins.Implementation;
 import game.plugins.PluginManager;
-import game.utils.Utils;
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -36,11 +37,15 @@ import java.util.SortedSet;
 
 import com.thoughtworks.xstream.XStream;
 import com.thoughtworks.xstream.annotations.XStreamOmitField;
+import com.thoughtworks.xstream.io.HierarchicalStreamReader;
+import com.thoughtworks.xstream.io.binary.BinaryStreamDriver;
 
 public abstract class Configurable extends Observable implements Observer {
 	
 	@XStreamOmitField
-	private static final XStream configStream = new XStream();
+	private static final BinaryStreamDriver driver = new BinaryStreamDriver();
+	@XStreamOmitField
+	private static final XStream configStream = new XStream(driver);
 	@XStreamOmitField
 	private static Set<BaseConverter> converters = new HashSet<>();
 	
@@ -77,7 +82,6 @@ public abstract class Configurable extends Observable implements Observer {
 	
 	protected Map<String, List<Constraint>> optionConstraints = new HashMap<>();
 	
-	//private List<String> omittedFromConfiguration = new LinkedList<>();
 	protected boolean notify = true;
 	
 	static {
@@ -99,7 +103,10 @@ public abstract class Configurable extends Observable implements Observer {
 	}
 
 	public static <T> T loadFromConfiguration(File configFile) {
-		return (T)configStream.fromXML(Utils.readFile(configFile));
+		HierarchicalStreamReader reader = driver.createReader(configFile);
+		T ret = (T)configStream.unmarshal(reader);
+		reader.close();
+		return ret;
 	}
 	
 	public static void setClassLoader(ClassLoader loader) {
@@ -263,8 +270,10 @@ public abstract class Configurable extends Observable implements Observer {
 		return null;
 	}
 	
-	public String getConfiguration() {
-		return configStream.toXML(this);
+	public byte[] getConfiguration() {
+		ByteArrayOutputStream out = new ByteArrayOutputStream();
+		configStream.marshal(this, driver.createWriter(out));
+		return out.toByteArray();
 	}
 	
 	public boolean loadConfiguration(String fileName) {
@@ -288,7 +297,7 @@ public abstract class Configurable extends Observable implements Observer {
 		temporary = null;
 		
 		if (ret == true) {
-			configStream.fromXML(Utils.readFile(file), this);
+			configStream.unmarshal(driver.createReader(file), this);
 			setChanged();
 			notifyObservers(new Change("", null, new HashSet<Configurable>()));
 		}
@@ -352,7 +361,7 @@ public abstract class Configurable extends Observable implements Observer {
 	public void saveConfiguration(File file) {
 		try {
 			FileOutputStream stream = new FileOutputStream(file);
-			configStream.toXML(this, stream);
+			configStream.marshal(this, driver.createWriter(stream));
 			stream.close();
 		} catch (IOException e) {
 			e.printStackTrace();
@@ -360,12 +369,12 @@ public abstract class Configurable extends Observable implements Observer {
 	}
 	
 	public <T extends Configurable> T cloneConfiguration() {
-		T clone = (T)configStream.fromXML(this.getConfiguration());
+		T clone = (T)configStream.unmarshal(driver.createReader(new ByteArrayInputStream(this.getConfiguration())));
 		return clone;
 	}
 	
 	public <T extends Configurable> T cloneConfiguration(String newName) {
-		T clone = (T)configStream.fromXML(this.getConfiguration());
+		T clone = (T)configStream.unmarshal(driver.createReader(new ByteArrayInputStream(this.getConfiguration())));
 		clone.setOption("name", newName);
 		return clone;
 	}

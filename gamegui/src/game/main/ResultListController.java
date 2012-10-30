@@ -82,21 +82,6 @@ public class ResultListController implements Initializable {
 			editor.setReadOnly(true);
 			new EditorWindow(editor, false).startEdit(option);
 		}
-		/*
-		if (selected.getValue() instanceof Metric) {
-			Experiment e = (Experiment)selected.getParent().getValue();
-			Metric m = (Metric)selected.getValue();
-			m.evaluate(e);
-			TextMetricViewer viewer = new TextMetricViewer(m);
-			viewer.show();
-		}
-		if (selected.getValue() instanceof Experiment) {
-			Option option = new Option(selected.getValue());
-			Editor editor = option.getBestEditor(true);
-			editor.setReadOnly(true);
-			new EditorWindow(editor).startEdit(option);
-		}
-		*/
 	}
 	
 	@FXML
