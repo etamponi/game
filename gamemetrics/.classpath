@@ -6,5 +6,6 @@
 	<classpathentry combineaccessrules="false" kind="src" path="/gameguilib"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/gamelib"/>
 	<classpathentry kind="lib" path="lib/Jama-1.0.2.jar"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/gametrees"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

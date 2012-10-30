@@ -14,73 +14,21 @@ import game.configuration.ErrorCheck;
 import game.configuration.errorchecks.RangeCheck;
 import game.configuration.errorchecks.RangeCheck.RangeType;
 import game.core.Block;
-import game.core.DataTemplate;
-import game.core.DataTemplate.Data;
 import game.core.Dataset;
 import game.core.Dataset.SampleIterator;
 import game.core.DatasetBuilder;
-import game.core.Encoding;
 import game.core.Experiment;
 import game.core.NoTraining;
-import game.core.blocks.Encoder;
 import game.core.blocks.PredictionGraph;
 import game.plugins.constraints.CompatibleWith;
 import game.plugins.constraints.SubclassConstraint;
 import game.plugins.correlation.CorrelationCoefficient;
 import game.plugins.datatemplates.LabelTemplate;
-import game.plugins.encoders.IntegerEncoder;
-import game.plugins.encoders.OneHotEncoder;
-import game.plugins.pipes.Concatenator;
 
 import org.apache.commons.math3.linear.RealMatrix;
 import org.apache.commons.math3.linear.RealVector;
 
 public class CorrelationExperiment extends Experiment {
-	
-	public static class HelperEncoder extends Encoder<LabelTemplate> {
-		
-		public OneHotEncoder oneHot;
-		public IntegerEncoder integer;
-		public Concatenator concatenator = new Concatenator();
-		
-		public HelperEncoder() {
-			setAsInternalOptions("oneHot", "integer", "concatenator");
-
-			setOptionBinding("template", "oneHot.template", "integer.template");
-			
-			setOption("oneHot", new OneHotEncoder());
-			setOption("integer", new IntegerEncoder());
-			
-			concatenator.parents.add(oneHot);
-			concatenator.parents.add(integer);
-		}
-
-		@Override
-		public boolean isCompatible(DataTemplate object) {
-			return false;
-		}
-
-		@Override
-		protected Encoding baseEncode(Data input) {
-			return null;
-		}
-
-		@Override
-		public Encoding transform(Data input) {
-			return concatenator.transform(input);
-		}
-
-		@Override
-		protected int getBaseFeatureNumber() {
-			return oneHot.getFeatureNumber() + integer.getFeatureNumber();
-		}
-
-		@Override
-		protected FeatureType getBaseFeatureType(int featureIndex) {
-			return FeatureType.NOMINAL;
-		}
-		
-	}
 	
 	public DatasetBuilder dataset;
 	

@@ -77,6 +77,8 @@ public abstract class Block extends Configurable {
 	}
 	
 	public <T extends Block> T getParent(int i) {
+		if (parents.size() <= i)
+			return null;
 		return (T)parents.get(i);
 	}
 	
