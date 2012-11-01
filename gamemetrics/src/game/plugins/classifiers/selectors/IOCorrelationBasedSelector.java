@@ -18,7 +18,7 @@ import org.apache.commons.math3.linear.RealVector;
 
 public class IOCorrelationBasedSelector extends FeatureSelector {
 	
-	public double extension = 0.2;
+	public int addedFeatures = 5;
 	
 	public int runs = 10;
 	
@@ -42,10 +42,11 @@ public class IOCorrelationBasedSelector extends FeatureSelector {
 		
 		for(int i = 0; i < runs; i++) {
 			SampleIterator it = dataset.getRandomSubset(datasetPercent).encodedSampleIterator(block.getParent(0), outputEncoder, false);
-			ioCorrelation = ioCorrelation.add(coefficient.computeIOCorrelationMatrix(it).getColumnVector(0));
+			RealVector vector = coefficient.computeIOCorrelationMatrix(it).getColumnVector(0);
+			ioCorrelation = ioCorrelation.add(vector);
 		}
 		
-		ioCorrelation.mapMultiply(1.0/runs);
+		ioCorrelation = ioCorrelation.mapMultiply(1.0/runs);
 		
 		range = Utils.range(0, block.getParent(0).getFeatureNumber());
 	}
@@ -53,7 +54,7 @@ public class IOCorrelationBasedSelector extends FeatureSelector {
 	@Override
 	public List<Integer> select(int n) {
 		if (n > 0) {
-			int N = (int)(n + (range.size() - n)*extension);
+			int N = n + addedFeatures;
 			Collections.shuffle(range);
 			return selectBest(n, N);
 		} else {
