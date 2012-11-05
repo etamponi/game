@@ -12,6 +12,7 @@ package game.plugins.correlation;
 
 import game.core.Dataset.SampleIterator;
 import game.core.Sample;
+import game.utils.Log;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -27,8 +28,6 @@ import Jama.Matrix;
 public class LinearCorrelation extends CorrelationCoefficient {
 	
 	public boolean adjust = true;
-	
-//	public boolean useRegression = false;
 
 	@Override
 	public RealMatrix computeInputCorrelationMatrix(SampleIterator it) {
@@ -39,7 +38,7 @@ public class LinearCorrelation extends CorrelationCoefficient {
 		it.reset();
 		for(int i = 0; i < maxSamples && it.hasNext(); i++) {
 			Sample sample = it.next();
-			X.add(sample.getEncodedInput().toArray());
+			X.add(injectNoise(sample.getEncodedInput().toArray()));
 		}
 		
 		return correlation.computeCorrelationMatrix(X.toArray(new double[][]{}));
@@ -63,7 +62,7 @@ public class LinearCorrelation extends CorrelationCoefficient {
 				Sample sample = it.next();
 				y = y.append(sample.getEncodedOutput().getEntry(col));
 				if (col == 0) // Do it only once
-					Xlist.add(sample.getEncodedInput().toArray());
+					Xlist.add(injectNoise(sample.getEncodedInput().toArray()));
 			}
 			if (col == 0)
 				X = Xlist.toArray(new double[][]{});
@@ -84,7 +83,7 @@ public class LinearCorrelation extends CorrelationCoefficient {
 		RealMatrix io = computeIOCorrelationMatrix(it);
 		
 		if (adjustedInput.rank() < adjustedInput.getRowDimension()) {
-			System.out.println("Some error occourred (input correlation matrix is singular)");
+			Log.write(this, "Some error occourred (input correlation matrix is singular)");
 			return null;
 		}
 		
@@ -188,29 +187,5 @@ public class LinearCorrelation extends CorrelationCoefficient {
 			ret[count++] = row[i];
 		return ret;
 	}
-/*
-	private RealVector evaluateUsingRegression(SampleIterator it, int samples) {	
-		int cols = it.next().getEncodedOutput().getDimension();
-		
-		RealVector ret = new ArrayRealVector(cols);
-		
-		double[]   Y = new double[samples];
-		double[][] X = new double[samples][];
-		OLSMultipleLinearRegression regression = new OLSMultipleLinearRegression();
-		
-		for(int col = 0; col < cols; col++) {
-			it.reset();
-			for(int i = 0; i < samples && it.hasNext(); i++) {
-				Sample sample = it.next();
-				Y[i] = sample.getEncodedOutput().getEntry(col);
-				X[i] = sample.getEncodedInput().toArray();
-			}
-			regression.newSampleData(Y, X);
-			double R2 = adjust ? regression.calculateAdjustedRSquared() : regression.calculateRSquared();
-			ret.setEntry(col, Math.sqrt(R2));
-		}
-		
-		return ret;
-	}
-*/
+
 }

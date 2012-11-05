@@ -1,17 +1,19 @@
 package game.plugins.classifiers.selectors;
 
+import game.core.Block;
 import game.core.Dataset;
 import game.core.Dataset.SampleIterator;
 import game.core.blocks.Encoder;
-import game.plugins.classifiers.DecisionTree;
 import game.plugins.classifiers.FeatureSelector;
 import game.plugins.correlation.CorrelationCoefficient;
 import game.plugins.encoders.IntegerEncoder;
+import game.utils.Log;
 import game.utils.Utils;
 
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.commons.math3.analysis.function.Abs;
 import org.apache.commons.math3.distribution.AbstractIntegerDistribution;
 import org.apache.commons.math3.linear.ArrayRealVector;
 import org.apache.commons.math3.linear.RealVector;
@@ -32,7 +34,7 @@ public class IOCorrelationSelector extends FeatureSelector {
 		
 		private RealVector probabilities;
 		
-		public CustomDistribution(RealVector probabilities) {
+		public void setProbabilities(RealVector probabilities) {
 			this.probabilities = probabilities;
 		}
 
@@ -84,33 +86,36 @@ public class IOCorrelationSelector extends FeatureSelector {
 	}
 
 	@Override
-	public void prepare(Dataset dataset, DecisionTree block) {
-		if (ioCorrelation != null)
+	public void prepare(Dataset dataset, Block inputEncoder) {
+		if (ioCorrelation != null && prepareOnce)
 			return; // prepared
 		
-		ioCorrelation = new ArrayRealVector(block.getParent(0).getFeatureNumber());
+		ioCorrelation = new ArrayRealVector(inputEncoder.getFeatureNumber());
 		
 		Encoder outputEncoder = new IntegerEncoder();
 		outputEncoder.setOption("template", dataset.template.outputTemplate);
 		
 		for(int i = 0; i < runs; i++) {
-			SampleIterator it = dataset.getRandomSubset(datasetPercent).encodedSampleIterator(block.getParent(0), outputEncoder, false);
+			SampleIterator it = dataset.getRandomSubset(datasetPercent).encodedSampleIterator(inputEncoder, outputEncoder, false);
 			RealVector vector = coefficient.computeIOCorrelationMatrix(it).getColumnVector(0);
 			ioCorrelation = ioCorrelation.add(vector);
 		}
 		
-		ioCorrelation.mapDivideToSelf(runs);
+		ioCorrelation.mapDivideToSelf(runs).mapToSelf(new Abs());
+		ioCorrelation.mapDivideToSelf(ioCorrelation.getL1Norm());
+		Log.write(this, "Starting probabilities: %s", ioCorrelation);
 		
-		range = Utils.range(0, block.getParent(0).getFeatureNumber());
+		range = Utils.range(0, inputEncoder.getFeatureNumber());
 	}
 
 	@Override
-	public List<Integer> select(int n) {
+	public List<Integer> select(int n, int[] timesChoosen) {
 		if (n > 0) {
 			List<Integer> ret = new ArrayList<>(n);
-			RealVector p = ioCorrelation.copy();
+			RealVector p = adjust(ioCorrelation, timesChoosen);
+			CustomDistribution d = new CustomDistribution();
 			for(int i = 0; i < n; i++) {
-				CustomDistribution d = new CustomDistribution(p);
+				d.setProbabilities(p);
 				int index = d.sample();
 				double scale = 1.0 - p.getEntry(index);
 				p.setEntry(index, 0);

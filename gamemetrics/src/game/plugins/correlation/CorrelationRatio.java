@@ -66,6 +66,7 @@ public class CorrelationRatio extends CorrelationCoefficient {
 				x_y.put(output, new ArrayRealVector());
 			}
 			
+			input = injectNoise(input);
 			n_y.put(output, n_y.get(output)+1);
 			x_y.put(output, x_y.get(output).append(input));
 			x = x.append(input);
@@ -125,6 +126,7 @@ public class CorrelationRatio extends CorrelationCoefficient {
 				stat_y.put(output, new MultivariateSummaryStatistics(inputDim, unbiased));
 			}
 			
+			injectNoise(input);
 			n_y.put(output, n_y.get(output)+1);
 			stat_y.get(output).addValue(input);
 			x.add(new Array2DRowRealMatrix(input));

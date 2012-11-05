@@ -88,15 +88,14 @@ public class ConfigurableEditor extends Editor {
 			serializationEditor.connect(getModel());
 			subEditors.add(serializationEditor);
 			pane.add(serializationEditor.getView(), 0, 0, 2, 1);
-			
 			for (String optionName: content.getUnboundOptionNames()) {
 				if (hiddenOptions.contains(optionName))
 					continue;
 				
 				if (optionName.equals("name"))
 					addSubEditor(1, optionName);
-				else
-					addSubEditor(count++, optionName);
+				else if (addSubEditor(count, optionName) != null)
+					count++;
 			}
 			
 			if (!isReadOnly()) {

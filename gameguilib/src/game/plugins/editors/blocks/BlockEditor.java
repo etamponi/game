@@ -36,16 +36,15 @@ public class BlockEditor extends ConfigurableEditor {
 		
 		if (getModel() != null && getModel().getContent() != null) {
 			Block content = (Block)getModel().getContent();
-			int count = 0;
+			int count = getSubEditorCount();
 			for (String optionName: content.trainingAlgorithm.getManagedBlockOptions()) {
-				Editor editor = addSubEditor(getSubEditorCount()+3, optionName);
+				Editor editor = addSubEditor(getSubEditorCount()+2, optionName);
 				if (editor != null) {
 					editor.setReadOnly(true);
-					count++;
 				}
 			}
 			if (count > 0)
-				getPane().addRow(getSubEditorCount()+1, new Label(""), new Label("Trainable options (read-only):"));
+				getPane().addRow(count+1, new Label(""), new Label("Options managed by training algorithm (read-only):"));
 		}
 		
 	}
