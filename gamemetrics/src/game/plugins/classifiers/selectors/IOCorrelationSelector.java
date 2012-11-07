@@ -1,6 +1,5 @@
 package game.plugins.classifiers.selectors;
 
-import game.core.Block;
 import game.core.Dataset;
 import game.core.Dataset.SampleIterator;
 import game.core.blocks.Encoder;
@@ -26,9 +25,60 @@ public class IOCorrelationSelector extends FeatureSelector {
 	
 	public CorrelationCoefficient coefficient;
 	
-	private RealVector ioCorrelation;
+	public boolean heavy = true;
 	
-	private List<Integer> range;
+	private RealVector initialProbability;
+
+	@Override
+	public void prepare(Dataset dataset) {
+		if (initialProbability != null && prepareOnce && !heavy)
+			return; // prepared
+		
+		initialProbability = evaluateIOCorrelationProbability(dataset);
+		Log.write(this, "Starting probabilities: %s", initialProbability);
+	}
+	
+	private RealVector evaluateIOCorrelationProbability(Dataset dataset) {
+		RealVector ret = new ArrayRealVector(inputEncoder.getFeatureNumber());
+		
+		if (dataset.size() < 100) { // FIXME Use option?
+			ret.mapAddToSelf(1.0/ret.getDimension());
+		}
+		
+		Encoder outputEncoder = new IntegerEncoder();
+		outputEncoder.setOption("template", dataset.template.outputTemplate);
+		
+		for(int i = 0; i < runs; i++) {
+			SampleIterator it = dataset.getRandomSubset(datasetPercent).encodedSampleIterator(inputEncoder, outputEncoder, false);
+			RealVector vector = coefficient.computeIOCorrelationMatrix(it).getColumnVector(0);
+			ret = ret.add(vector);
+		}
+		
+		ret.mapDivideToSelf(runs).mapToSelf(new Abs());
+		ret.mapDivideToSelf(ret.getL1Norm());
+		
+		return ret;
+	}
+
+	@Override
+	public List<Integer> select(int n, int[] timesChoosen, Dataset dataset) {
+		if (n > 0) {
+			List<Integer> ret = new ArrayList<>(n);
+			RealVector p = heavy ? evaluateIOCorrelationProbability(dataset) : adjust(initialProbability, timesChoosen);
+			CustomDistribution d = new CustomDistribution();
+			for(int i = 0; i < n; i++) {
+				d.setProbabilities(p);
+				int index = d.sample();
+				double scale = 1.0 - p.getEntry(index);
+				p.setEntry(index, 0);
+				p.mapDivideToSelf(scale);
+				ret.add(index);
+			}
+			return ret;
+		} else {
+			return Utils.range(0, inputEncoder.getFeatureNumber());
+		}
+	}
 	
 	private static class CustomDistribution extends AbstractIntegerDistribution {
 		
@@ -83,49 +133,6 @@ public class IOCorrelationSelector extends FeatureSelector {
 			return probabilities.getEntry(x);
 		}
 		
-	}
-
-	@Override
-	public void prepare(Dataset dataset, Block inputEncoder) {
-		if (ioCorrelation != null && prepareOnce)
-			return; // prepared
-		
-		ioCorrelation = new ArrayRealVector(inputEncoder.getFeatureNumber());
-		
-		Encoder outputEncoder = new IntegerEncoder();
-		outputEncoder.setOption("template", dataset.template.outputTemplate);
-		
-		for(int i = 0; i < runs; i++) {
-			SampleIterator it = dataset.getRandomSubset(datasetPercent).encodedSampleIterator(inputEncoder, outputEncoder, false);
-			RealVector vector = coefficient.computeIOCorrelationMatrix(it).getColumnVector(0);
-			ioCorrelation = ioCorrelation.add(vector);
-		}
-		
-		ioCorrelation.mapDivideToSelf(runs).mapToSelf(new Abs());
-		ioCorrelation.mapDivideToSelf(ioCorrelation.getL1Norm());
-		Log.write(this, "Starting probabilities: %s", ioCorrelation);
-		
-		range = Utils.range(0, inputEncoder.getFeatureNumber());
-	}
-
-	@Override
-	public List<Integer> select(int n, int[] timesChoosen) {
-		if (n > 0) {
-			List<Integer> ret = new ArrayList<>(n);
-			RealVector p = adjust(ioCorrelation, timesChoosen);
-			CustomDistribution d = new CustomDistribution();
-			for(int i = 0; i < n; i++) {
-				d.setProbabilities(p);
-				int index = d.sample();
-				double scale = 1.0 - p.getEntry(index);
-				p.setEntry(index, 0);
-				p.mapDivideToSelf(scale);
-				ret.add(index);
-			}
-			return ret;
-		} else {
-			return range;
-		}
 	}
 
 }

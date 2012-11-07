@@ -303,7 +303,7 @@ public abstract class Configurable extends Observable implements Observer {
 		}
 		return ret;
 	}
-	
+	/*
 	@Override
 	public boolean equals(Object object) {
 		if (object == this) {
@@ -316,42 +316,74 @@ public abstract class Configurable extends Observable implements Observer {
 			return false;
 		}
 		Configurable other = (Configurable)object;
-		return recursiveEquals(this, other, new HashSet<Configurable>());
-	}
-	
-	private static boolean recursiveEquals(Configurable c1, Configurable c2, Set<Configurable> seen) {
-		seen.add(c1);
-		seen.add(c2);
+		Set<Pair> allPairs = new HashSet<>();
+		collectPairs(this, other, allPairs);
 		
-		for(String option: c1.getAllOptionNames()) {
-			if (option.equals("name"))
-				continue;
-
-			Object option1 = c1.getOption(option);
-			Object option2 = c2.getOption(option);
-			
-			if (option2 == null && option1 == null)
-				continue;
-			
-			if (option2 == null && option1 != null ||
-				option1 == null && option2 != null) {
+		for(Pair pair: allPairs) {
+			if (!pair.lazyElementEquality())
+				return false;
+		}
+		
+		return true;
+	}
+	*/
+	private static class Pair {
+		private Configurable a, b;
+		private Pair(Configurable a, Configurable b) {
+			this.a = a;
+			this.b = b;
+		}
+		@Override public boolean equals(Object o) {
+			if (o == this) return true;
+			if (o == null) return false;
+			if (o instanceof Pair) {
+				Pair other = (Pair)o;
+				return (this.a == other.a && this.b == other.b)
+						|| (this.a == other.b && this.b == other.a);
+			} else {
 				return false;
 			}
+		}
+		
+		private boolean lazyElementEquality() {
+			if (!a.getClass().equals(b.getClass()))
+				return false;
 			
-			if (option1 instanceof Configurable && seen.contains(option1))
-				continue;
-			if (option2 instanceof Configurable && seen.contains(option2))
-				continue;
-			
-			if (option1 instanceof Configurable && option2 instanceof Configurable) {
-				if (!recursiveEquals((Configurable)option1, (Configurable)option2, seen))
+			for(String option: a.getAllOptionNames()) {
+				if (option.equals("name"))
+					continue;
+				
+				Object optionA = a.getOption(option);
+				Object optionB = b.getOption(option);
+				
+				if (optionA == null && optionB == null)
+					continue;
+				if (optionA == null && optionB != null)
 					return false;
-			} else {
-				if (!option2.equals(option1))
+				if (optionA != null && optionB == null)
+					return false;
+				if (optionA instanceof Configurable)
+					continue;
+				if (!optionA.equals(optionB))
 					return false;
 			}
+			return true;
 		}
-		return true;
+	}
+	
+	private static void collectPairs(Configurable a, Configurable b, Set<Pair> seen) {
+		Pair pair = new Pair(a, b);
+		if (seen.contains(pair))
+			return;
+		seen.add(pair);
+		
+		for(String option: a.getAllOptionNames()) {
+			if (option.equals("name"))
+				continue;
+			
+			if (Configurable.class.isAssignableFrom(a.getOptionType(option)))
+				collectPairs((Configurable)a.getOption(option), (Configurable)b.getOption(option), seen);
+		}
 	}
 
 	public void saveConfiguration(String fileName) {
@@ -540,7 +572,7 @@ public abstract class Configurable extends Observable implements Observer {
 			//e.printStackTrace();
 		}
 	}
-	
+
 	protected void updateOptionBindings(String changedOption) {
 		for (OptionBinding binding: optionBindings)
 			binding.updateOnChange(changedOption);

@@ -129,4 +129,10 @@ public class Utils {
 	public static double log2(double x) {
 		return Math.log(x) / Math.log(2);
 	}
+
+	public static int sum(int[] v) {
+		int ret = 0;
+		for(int i: v) ret += i;
+		return ret;
+	}
 }
