@@ -326,7 +326,7 @@ public abstract class Configurable extends Observable implements Observer {
 		
 		return true;
 	}
-	*/
+	
 	private static class Pair {
 		private Configurable a, b;
 		private Pair(Configurable a, Configurable b) {
@@ -385,7 +385,7 @@ public abstract class Configurable extends Observable implements Observer {
 				collectPairs((Configurable)a.getOption(option), (Configurable)b.getOption(option), seen);
 		}
 	}
-
+	*/
 	public void saveConfiguration(String fileName) {
 		saveConfiguration(new File(fileName));
 	}

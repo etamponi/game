@@ -25,7 +25,44 @@ import testgame.configuration.ConfigurableImplB;
 import testgame.configuration.ConfigurableImplC;
 
 public class ConfigurableTest {
-
+	
+	public static class Node extends Configurable {
+		public Node down, right;
+		
+		public String content;
+		
+		public Node() {
+			setOptionBinding("content", "right.content");
+		}
+	}
+	
+	@Test
+	public void testCopy() {
+		final int DIM = 10;
+		final int TIMES = 1000;
+		
+		Node[][] grid = new Node[DIM][DIM];
+		
+		for(int i = DIM-1; i >= 0; i--) {
+			for(int j = DIM-1; j >= 0; j--) {
+				Node node = new Node();
+				grid[i][j] = node;
+				if (i+1 < DIM)
+					node.setOption("down",  grid[i+1][j]);
+				if (j+1 < DIM)
+					node.setOption("right", grid[i][j+1]);
+			}
+		}
+		
+		long startingTime = System.currentTimeMillis();
+		
+		for(int i = 0; i < TIMES; i++)
+			grid[4][4].cloneConfiguration();
+		
+		long elapsed = System.currentTimeMillis() - startingTime;
+		System.out.println(elapsed);
+	}
+	
 	@Test
 	public void testConfigurable() {
 		Configurable object = new ConfigurableImplA(), object2;
