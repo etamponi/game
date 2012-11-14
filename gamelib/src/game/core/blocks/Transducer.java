@@ -10,11 +10,13 @@
  ******************************************************************************/
 package game.core.blocks;
 
+import game.configuration.Compatible;
+import game.configuration.Property;
+import game.configuration.constraints.CompatibleWith;
 import game.configuration.errorchecks.CompatibilityCheck;
+import game.configuration.listeners.PropertyBinding;
 import game.core.Block;
 import game.core.InstanceTemplate;
-import game.plugins.constraints.Compatible;
-import game.plugins.constraints.CompatibleWith;
 
 public abstract class Transducer extends Block implements Compatible<InstanceTemplate> {
 	
@@ -23,10 +25,11 @@ public abstract class Transducer extends Block implements Compatible<InstanceTem
 	public Encoder outputEncoder;
 	
 	public Transducer() {
-		setOptionBinding("template.outputTemplate", "outputEncoder.template");
-		setOptionConstraints("outputEncoder", new CompatibleWith(this, "template.outputTemplate"));
+		addListener(new PropertyBinding(this, "template.outputTemplate", "outputEncoder.template"));
 		
-		setOptionChecks("template", new CompatibilityCheck(this));
+		addConstraint("outputEncoder", new CompatibleWith(new Property(this, "template.outputTemplate")));
+		
+		addErrorCheck("template", new CompatibilityCheck(this));
 	}
 
 	@Override

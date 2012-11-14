@@ -10,11 +10,13 @@
  ******************************************************************************/
 package game.plugins.experiments;
 
+import game.configuration.Property;
+import game.configuration.constraints.CompatibleWith;
+import game.configuration.listeners.PropertyBinding;
 import game.core.DatasetBuilder;
 import game.core.blocks.PredictionGraph;
 import game.core.experiments.FullExperiment;
 import game.core.experiments.FullResult;
-import game.plugins.constraints.CompatibleWith;
 
 public class SimpleExperiment extends FullExperiment {
 
@@ -23,20 +25,20 @@ public class SimpleExperiment extends FullExperiment {
 	public DatasetBuilder testingDataset;
 		
 	public SimpleExperiment() {
-		setOptionBinding("template", "trainingDataset.template",
-									 "testingDataset.template");
-		setOptionConstraints("trainingDataset", new CompatibleWith(this, "template"));
-		setOptionConstraints("testingDataset", new CompatibleWith(this, "template"));
+		addListener(new PropertyBinding(this, "template", "trainingDataset.template", "testingDataset.template"));
+		Property p = new Property(this, "template");
+		addConstraint("trainingDataset", new CompatibleWith(p));
+		addConstraint("testingDataset", new CompatibleWith(p));
 	}
 
 	@Override
 	protected FullResult runExperiment(String outputDirectory) {
 		FullResult ret = new FullResult();
-		PredictionGraph graphClone = graph.cloneConfiguration(graph.name + "_0");
+		PredictionGraph graphClone = graph.copy();
 		updateStatus(0.01, "training graph...");
 		executeAnotherTaskAndWait(0.50, graphClone.trainingAlgorithm, trainingDataset.buildDataset());
 		updateStatus(0.71, "training complete, testing phase...");
-		ret.testedDatasets.add(classifyDataset(0.90, graphClone, testingDataset.buildDataset(), outputDirectory+"/dataset_tested"));
+		ret.testedDatasets.add(classifyDataset(0.90, graphClone, testingDataset.buildDataset()));
 		ret.trainedGraphs.add(graphClone);
 		updateStatus(1.00, "experiment completed");
 		return ret;

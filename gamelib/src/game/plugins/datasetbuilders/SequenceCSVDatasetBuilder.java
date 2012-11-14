@@ -18,7 +18,6 @@ import game.core.DatasetBuilder;
 import game.core.InstanceTemplate;
 import game.plugins.datatemplates.LabelTemplate;
 import game.plugins.datatemplates.VectorTemplate;
-import game.utils.Utils;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -35,7 +34,7 @@ public class SequenceCSVDatasetBuilder extends DatasetBuilder {
 	public String separators = "[, +]";
 	
 	public SequenceCSVDatasetBuilder() {
-		setOptionChecks("file", new FileExistsCheck());
+		addErrorCheck("file", new FileExistsCheck());
 	}
 
 	@Override
@@ -50,7 +49,7 @@ public class SequenceCSVDatasetBuilder extends DatasetBuilder {
 
 	@Override
 	public Dataset buildDataset() {
-		Dataset ret = new Dataset(template, Utils.relativize(file));
+		Dataset ret = new Dataset();
 		
 		int inputDim = getDimension(template.inputTemplate);
 		int outputDim = getDimension(template.outputTemplate);
@@ -70,13 +69,10 @@ public class SequenceCSVDatasetBuilder extends DatasetBuilder {
 					}
 					if (index < startIndex)
 						continue;
-//					System.out.println(inputSequence.size() + " " + outputSequence.size());
 					ret.add(template.newInstance(inputSequence, outputSequence));
 					count++;
 				}
 				reader.close();
-//				System.out.println(count);
-				ret.setReadyState();
 			} catch (IOException e) {}
 		}
 		

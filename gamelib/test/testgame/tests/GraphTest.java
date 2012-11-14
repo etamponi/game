@@ -12,7 +12,9 @@ package testgame.tests;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
-import game.configuration.Configurable;
+import game.configuration.IObject;
+import game.configuration.PluginManager;
+import game.configuration.PluginManager.PluginConfiguration;
 import game.core.DataTemplate;
 import game.core.DataTemplate.Data;
 import game.core.Decoder;
@@ -21,8 +23,6 @@ import game.core.InstanceTemplate;
 import game.core.blocks.Encoder;
 import game.core.blocks.PredictionGraph;
 import game.core.blocks.Transducer;
-import game.plugins.Implementation;
-import game.plugins.PluginManager;
 import game.plugins.datatemplates.LabelTemplate;
 import game.plugins.datatemplates.VectorTemplate;
 
@@ -140,72 +140,65 @@ public class GraphTest {
 
 	@Test
 	public void test() {
-		PluginManager manager = new PluginManager();
-		manager.packages.remove("game");
-		manager.packages.add("testgame");
-		PluginManager.updateManager(manager);
+		PluginConfiguration conf = new PluginConfiguration();
+		conf.packages.remove("game");
+		conf.packages.add("testgame");
+		PluginManager.initialize(conf);
 		
 		PredictionGraph graph = new PredictionGraph();
 		
-		graph.setOption("template", new InstanceTemplate());
-		graph.setOption("template.inputTemplate", new VectorTemplate());
-		graph.setOption("template.inputTemplate.dimension", 3);
-		graph.setOption("template.outputTemplate", new LabelTemplate());
-		graph.getOption("template.outputTemplate.labels", List.class).add("A");
-		graph.getOption("template.outputTemplate.labels", List.class).add("B");
-		graph.getOption("template.outputTemplate.labels", List.class).add("C");
+		graph.setContent("template", new InstanceTemplate());
+		graph.setContent("template.inputTemplate", new VectorTemplate());
+		graph.setContent("template.inputTemplate.dimension", 3);
+		graph.setContent("template.outputTemplate", new LabelTemplate());
+		graph.getContent("template.outputTemplate.labels", List.class).add("A");
+		graph.getContent("template.outputTemplate.labels", List.class).add("B");
+		graph.getContent("template.outputTemplate.labels", List.class).add("C");
 		
-		Configurable classifiers = graph.getOption("classifiers");
-		Set<Class> set = classSet(classifiers.getCompatibleOptionImplementations("*"));
+		IObject classifiers = graph.getContent("classifiers");
+		Set<Class> set = classifiers.getCompatibleContentTypes("*");
 		Set<Class> real = new HashSet<>();
 		real.add(ClassifierImplA.class);
 		assertEquals(real.size(), set.size());
 		assertTrue(set.containsAll(real));
 		
 		graph.classifiers.add(new ClassifierImplA());
-		assertEquals(graph.getOption("template"), graph.getOption("classifiers.0.template"));
+		assertEquals(graph.getContent("template"), graph.getContent("classifiers.0.template"));
 		
-		graph.setOption("outputClassifier", graph.getOption("classifiers.0"));
+		graph.setContent("outputClassifier", graph.getContent("classifiers.0"));
 		
-		Configurable object = graph.getOption("outputClassifier");
-		set = classSet(object.getCompatibleOptionImplementations("outputEncoder"));
+		IObject object = graph.getContent("outputClassifier");
+		set = object.getCompatibleContentTypes("outputEncoder");
 		real.clear();
 		real.add(EncoderImplB.class);
 		real.add(EncoderImplC.class);
 		assertEquals(real.size(), set.size());
 		assertTrue(set.containsAll(real));
 		
-		graph.setOption("outputClassifier.outputEncoder", new EncoderImplB());
-		assertEquals(graph.getOption("template.outputTemplate"), graph.getOption("outputClassifier.outputEncoder.template"));
+		graph.setContent("outputClassifier.outputEncoder", new EncoderImplB());
+		assertEquals(graph.getContent("template.outputTemplate"), graph.getContent("outputClassifier.outputEncoder.template"));
 		
-		set = classSet(graph.getCompatibleOptionImplementations("decoder"));
+		set = graph.getCompatibleContentTypes("decoder");
 		real.clear();
 		real.add(DecoderImplB.class);
 		assertEquals(real.size(), set.size());
 		assertTrue(set.containsAll(real));
-		graph.setOption("decoder", new DecoderImplB());
-		assertEquals(graph.getOption("outputClassifier.outputEncoder"), graph.getOption("decoder.encoder"));
+		graph.setContent("decoder", new DecoderImplB());
+		assertEquals(graph.getContent("outputClassifier.outputEncoder"), graph.getContent("decoder.encoder"));
 		
-		object = graph.getOption("inputEncoders");
-		set = classSet(object.getCompatibleOptionImplementations("*"));
+		object = graph.getContent("inputEncoders");
+		set = object.getCompatibleContentTypes("*");
 		real.clear();
 		real.add(EncoderImplA.class);
 		assertEquals(real.size(), set.size());
 		assertTrue(set.containsAll(real));
 		
 		graph.inputEncoders.add(new EncoderImplA());
-		set = classSet(object.getCompatibleOptionImplementations("0"));
+		set = object.getCompatibleContentTypes("0");
 		assertEquals(real.size(), set.size());
 		assertTrue(set.containsAll(real));
 		
-		assertEquals(graph.getOption("template.inputTemplate"), object.getOption("0.template"));
-	}
-	
-	private <T> Set<Class> classSet(Set<Implementation<T>> set) {
-		Set<Class> ret = new HashSet<>();
-		for (Implementation o: set)
-			ret.add(o.getContent().getClass());
-		return ret;
+		assertEquals(graph.getContent("template.inputTemplate"), object.getContent("0.template"));
 	}
 
 }

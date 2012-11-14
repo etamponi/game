@@ -14,7 +14,7 @@ import game.configuration.ErrorCheck;
 
 import java.util.List;
 
-public class ListMustContainCheck implements ErrorCheck<List> {
+public class ListMustContainCheck implements ErrorCheck<List<?>> {
 	
 	private Object element;
 
@@ -23,7 +23,7 @@ public class ListMustContainCheck implements ErrorCheck<List> {
 	}
 
 	@Override
-	public String getError(List value) {
+	public String getError(List<?> value) {
 		if (!value.contains(element))
 			return "list must contain " + element;
 		else

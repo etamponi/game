@@ -1,8 +1,8 @@
 package game.plugins.pipes;
 
-import game.configuration.Configurable;
+import game.configuration.IObject;
 import game.configuration.errorchecks.RangeCheck;
-import game.configuration.errorchecks.RangeCheck.RangeType;
+import game.configuration.errorchecks.RangeCheck.Bound;
 import game.core.DataTemplate.Data;
 import game.core.Encoding;
 import game.core.blocks.Pipe;
@@ -13,12 +13,12 @@ import org.apache.commons.math3.util.ArithmeticUtils;
 
 public class FeatureCombination extends Pipe {
 	
-	public static abstract class CombinationFunction extends Configurable {
+	public static abstract class CombinationFunction extends IObject {
 		
 		public int operands = 2;
 		
 		public CombinationFunction() {
-			setOptionChecks("operands", new RangeCheck(RangeType.LOWER, 2));
+			addErrorCheck("operands", new RangeCheck(2, Bound.LOWER));
 		}
 		
 		public abstract double evaluate(RealVector values);

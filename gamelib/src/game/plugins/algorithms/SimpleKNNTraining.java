@@ -10,6 +10,7 @@
  ******************************************************************************/
 package game.plugins.algorithms;
 
+import game.configuration.listeners.BoundProperties;
 import game.core.Block;
 import game.core.Dataset;
 import game.core.Dataset.SampleIterator;
@@ -19,6 +20,10 @@ import game.plugins.classifiers.KNNClassifier;
 import game.plugins.classifiers.KNNClassifier.ReferenceSample;
 
 public class SimpleKNNTraining extends TrainingAlgorithm<KNNClassifier> {
+	
+	public SimpleKNNTraining() {
+		addListener(new BoundProperties(this, "block.reference"));
+	}
 
 	@Override
 	public boolean isCompatible(Block object) {
@@ -32,16 +37,6 @@ public class SimpleKNNTraining extends TrainingAlgorithm<KNNClassifier> {
 			Sample sample = it.next();
 			block.reference.add(new ReferenceSample(sample.getEncodedInput(), sample.getEncodedOutput()));
 		}
-	}
-
-//	@Override
-//	public String getTaskDescription() {
-//		return "training KNNClassifier using whole training set";
-//	}
-
-	@Override
-	public String[] getManagedBlockOptions() {
-		return new String[]{"reference"};
 	}
 
 }

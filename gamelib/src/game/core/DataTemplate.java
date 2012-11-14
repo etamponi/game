@@ -10,15 +10,13 @@
  ******************************************************************************/
 package game.core;
 
-import game.configuration.Configurable;
+import game.configuration.IObject;
 
 import java.util.ArrayList;
 
-public abstract class DataTemplate extends Configurable {
+public abstract class DataTemplate extends IObject {
 	
 	public abstract class Data<T> extends ArrayList<T> {
-		
-		protected Data() {}
 		
 		protected abstract Class getElementType();
 		

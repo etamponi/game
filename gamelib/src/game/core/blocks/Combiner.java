@@ -10,17 +10,17 @@
  ******************************************************************************/
 package game.core.blocks;
 
-import game.configuration.Configurable;
 import game.configuration.ErrorCheck;
 import game.configuration.errorchecks.SizeCheck;
+import game.core.Block;
 
 import java.util.List;
 
 public abstract class Combiner extends Transducer {
 	
 	public Combiner() {
-		setOptionChecks("parents", new SizeCheck(1),
-		new ErrorCheck<List>() {
+		addErrorCheck("parents", new SizeCheck(1));
+		addErrorCheck("parents", new ErrorCheck<List>() {
 			@Override public String getError(List value) {
 				for (Object element: value) {
 					if (!(element instanceof Transducer))
@@ -28,15 +28,15 @@ public abstract class Combiner extends Transducer {
 				}
 				return null;
 			}
-		},
-		new ErrorCheck<List>() {
-			@Override public String getError(List value) {
+		});
+		addErrorCheck("parents", new ErrorCheck<List<Block>>() {
+			@Override public String getError(List<Block> value) {
 				if (value.isEmpty())
 					return null;
 				if (outputEncoder == null)
 					return null;
-				for (Object parent: value) {
-					if (!outputEncoder.equals(((Configurable)parent).getOption("outputEncoder")))
+				for (Block parent: value) {
+					if (!outputEncoder.equals(parent.getContent("outputEncoder")))
 						return "parent Transducers must have the same outputEncoder as this Combiner";
 				}
 				return null;

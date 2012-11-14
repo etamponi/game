@@ -39,7 +39,7 @@ public class Concatenator extends Pipe {
 	@Override
 	public int getFeatureNumber() {
 		int ret = 0;
-		for (Block parent: parents.getList(Block.class))
+		for (Block parent: parents)
 			ret += parent.getFeatureNumber();
 		return ret;
 	}
@@ -47,7 +47,7 @@ public class Concatenator extends Pipe {
 	@Override
 	public FeatureType getFeatureType(int featureIndex) {
 		int count = 0;
-		for (Block parent: parents.getList(Block.class)) {
+		for (Block parent: parents) {
 			if (parent.getFeatureNumber() + count > featureIndex)
 				return parent.getFeatureType(featureIndex - count);
 			else

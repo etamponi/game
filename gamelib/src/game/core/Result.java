@@ -10,9 +10,9 @@
  ******************************************************************************/
 package game.core;
 
-import game.configuration.Configurable;
+import game.configuration.IObject;
 
-public class Result extends Configurable {
+public class Result extends IObject {
 	
 	public Experiment experiment;
 	

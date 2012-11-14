@@ -10,20 +10,18 @@
  ******************************************************************************/
 package game.core;
 
+import game.configuration.Compatible;
 import game.configuration.errorchecks.CompatibilityCheck;
-import game.plugins.constraints.Compatible;
 
 public abstract class TrainingAlgorithm<B extends Block> extends LongTask<Void, Dataset> implements Compatible<Block> {
 	
 	public B block;
 	
 	public TrainingAlgorithm() {
-		setOptionChecks("block", new CompatibilityCheck(this));
+		addErrorCheck("block", new CompatibilityCheck(this));
 	}
 	
 	protected abstract void train(Dataset dataset);
-	
-	public abstract String[] getManagedBlockOptions();
 
 	@Override
 	public Void execute(Dataset dataset) {

@@ -29,7 +29,7 @@ public class VectorTemplate extends DataTemplate {
 	public int dimension;
 	
 	public VectorTemplate() {
-		setOptionChecks("dimension", new PositivenessCheck(false));
+		addErrorCheck("dimension", new PositivenessCheck(false));
 	}
 
 	@Override

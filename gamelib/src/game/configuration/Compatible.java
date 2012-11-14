@@ -8,10 +8,10 @@
  * Contributors:
  *     Emanuele - initial API and implementation
  ******************************************************************************/
-package game.plugins;
+package game.configuration;
 
-public interface Constraint<T> {
+public interface Compatible<T> {
+
+	boolean isCompatible(T object);
 	
-	boolean isValid(T o);
-
 }

@@ -24,16 +24,16 @@ public abstract class Experiment extends LongTask<Result, String> {
 
 	@Override
 	public Result execute(String resultsDirectory) {
+		Log.setCurrentExperiment(name);
 		updateStatus(0.0, "Starting " + getClass().getSimpleName() + " " + name);
 		String outputDirectory = resultsDirectory + "/" + name;
-		Log.setCurrentExperiment(name);
 		File dir = new File(outputDirectory);
 		if (!dir.exists())
 			dir.mkdirs();
-		this.saveConfiguration(outputDirectory+"/experiment_"+name+".config.xml");
+		this.write(new File(outputDirectory+"/experiment_"+name+".bin"));
 		Result result = runExperiment(outputDirectory);
 		result.experiment = this;
-		result.saveConfiguration(outputDirectory + "/result_"+name+".config.xml");
+		result.write(new File(outputDirectory + "/result_"+name+".bin"));
 		updateStatus(1.0, "Experiment " + getClass().getSimpleName() + " " + name + " finished");
 		Log.setCurrentExperiment(null);
 		return result;

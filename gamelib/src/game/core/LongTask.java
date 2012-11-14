@@ -10,12 +10,9 @@
  ******************************************************************************/
 package game.core;
 
-import java.util.Observable;
-import java.util.Observer;
+import game.configuration.IObject;
 
-import game.configuration.Configurable;
-
-public abstract class LongTask<R, P> extends Configurable {
+public abstract class LongTask<R, P> extends IObject {
 	
 	public static class LongTaskUpdate {}
 
@@ -25,6 +22,7 @@ public abstract class LongTask<R, P> extends Configurable {
 	public abstract R execute(P param);
 	
 	protected <RR, PP> RR executeAnotherTaskAndWait(double percentAtEnd, LongTask<RR, PP> task, PP param) {
+		/*
 		final double percentAtStart = currentPercent;
 		final double ratio = percentAtEnd - percentAtStart;
 		Observer temp = new Observer() {
@@ -37,8 +35,9 @@ public abstract class LongTask<R, P> extends Configurable {
 			}
 		};
 		task.addObserver(temp);
+		*/
 		RR ret = task.execute(param);
-		task.deleteObserver(temp);
+//		task.deleteObserver(temp);
 		return ret;
 	}
 	
@@ -53,8 +52,8 @@ public abstract class LongTask<R, P> extends Configurable {
 	protected void updateStatus(double percentCompleted, String message) {
 		this.currentPercent = percentCompleted;
 		this.currentMessage = message;
-		setChanged();
-		notifyObservers(new LongTaskUpdate());
+//		setChanged();
+//		notifyObservers(new LongTaskUpdate());
 	}
 	
 }

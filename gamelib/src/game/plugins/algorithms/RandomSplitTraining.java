@@ -24,7 +24,7 @@ public class RandomSplitTraining extends TrainingAlgorithm<PredictionGraph> {
 	public double splitPercent = 1.0;
 	
 	public RandomSplitTraining() {
-		setOptionChecks("splitPercent", new RangeCheck(0.001, 1.00));
+		addErrorCheck("splitPercent", new RangeCheck(0.001, 1.00));
 	}
 
 	@Override
@@ -38,7 +38,7 @@ public class RandomSplitTraining extends TrainingAlgorithm<PredictionGraph> {
 	}
 
 	private void recursivelyTrainGraph(Block current, Dataset trainingSet, double increase) {
-		for (Block parent: current.parents.getList(Block.class))
+		for (Block parent: current.parents)
 			recursivelyTrainGraph(parent, trainingSet, increase);
 
 		if (!current.trained) {
@@ -58,15 +58,9 @@ public class RandomSplitTraining extends TrainingAlgorithm<PredictionGraph> {
 	private void countBlocks(Block current, Set<Block> blocks) {
 		if (!blocks.contains(current)) {
 			blocks.add(current);
-			for(Block parent: current.parents.getList(Block.class))
+			for(Block parent: current.parents)
 				countBlocks(parent, blocks);
 		}
-	}
-
-	static private final String[] managed = {};
-	@Override
-	public String[] getManagedBlockOptions() {
-		return managed;
 	}
 
 }

@@ -10,22 +10,24 @@
  ******************************************************************************/
 package game.core;
 
-import game.configuration.Configurable;
-import game.configuration.ConfigurableList;
+import game.configuration.IList;
+import game.configuration.IObject;
+import game.configuration.Property;
+import game.configuration.constraints.CompatibleWith;
+import game.configuration.listeners.PropertyBinding;
 import game.core.DataTemplate.Data;
-import game.plugins.constraints.CompatibleWith;
 
 import java.util.LinkedList;
 import java.util.List;
 
-public abstract class Block extends Configurable {
+public abstract class Block extends IObject {
 
 	public enum FeatureType {
 		NUMERIC,
 		NOMINAL
 	}
 	
-	public static class Position extends Configurable {
+	public static class Position extends IObject {
 		public int x = -1;
 		public int y = -1;
 		
@@ -38,20 +40,18 @@ public abstract class Block extends Configurable {
 	
 	public String name;
 	
-	public ConfigurableList parents = new ConfigurableList(this, Block.class);
+	public IList<Block> parents;
 	
 	public boolean trained = false;
 	
 	public TrainingAlgorithm trainingAlgorithm;
 	
 	public Block() {
-		setOptionBinding("self", "trainingAlgorithm.block");
-		setOptionConstraints("trainingAlgorithm", new CompatibleWith(this));
+		setContent("parents", new IList<>(Block.class));
+		setContent("trainingAlgorithm", new NoTraining());
 		
-		setOption("trainingAlgorithm", new NoTraining());
-		
-		setAsInternalOptions("position");
-		omitFromErrorCheck("parents");
+		addListener(new PropertyBinding(this, "", "trainingAlgorithm.block"));
+		addConstraint("trainingAlgorithm", new CompatibleWith(new Property(this, "")));
 	}
 	
 	public abstract Encoding transform(Data input);
@@ -64,7 +64,7 @@ public abstract class Block extends Configurable {
 	protected List<Encoding> getParentsEncodings(Data input) {
 		List<Encoding> ret = new LinkedList<>();
 		
-		for (Block parent: parents.getList(Block.class)) {
+		for (Block parent: parents) {
 			ret.add(parent.transform(input));
 		}
 		
@@ -80,14 +80,6 @@ public abstract class Block extends Configurable {
 		if (parents.size() <= i)
 			return null;
 		return (T)parents.get(i);
-	}
-	
-	public void setTrainingAlgorithm(TrainingAlgorithm algorithm) {
-		if (trainingAlgorithm != null) {
-			unsetAsInternalOptions(trainingAlgorithm.getManagedBlockOptions());
-		}
-		trainingAlgorithm = algorithm;
-		setAsInternalOptions(algorithm.getManagedBlockOptions());
 	}
 
 }

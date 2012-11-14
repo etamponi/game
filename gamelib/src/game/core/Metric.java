@@ -10,16 +10,12 @@
  ******************************************************************************/
 package game.core;
 
-import game.configuration.Configurable;
-import game.plugins.constraints.Compatible;
+import game.configuration.Compatible;
+import game.configuration.IObject;
 
-public abstract class Metric<R extends Result> extends Configurable implements Compatible<Result> {
+public abstract class Metric<R extends Result> extends IObject implements Compatible<Result> {
 	
 	private R result;
-	
-	public Metric() {
-		setAsInternalOptions("result");
-	}
 	
 	public R getResult() {
 		return result;

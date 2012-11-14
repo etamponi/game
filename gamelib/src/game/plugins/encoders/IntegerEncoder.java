@@ -10,12 +10,14 @@
  ******************************************************************************/
 package game.plugins.encoders;
 
+import game.configuration.listeners.BoundProperties;
+
 import org.apache.commons.math3.linear.ArrayRealVector;
 
 public class IntegerEncoder extends LabelEncoder {
 	
 	public IntegerEncoder() {
-		setAsInternalOptions("labelMapping");
+		addListener(new BoundProperties(this, "labelMapping"));
 	}
 
 	@Override

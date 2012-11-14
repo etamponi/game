@@ -17,7 +17,6 @@ import game.core.DatasetBuilder;
 import game.core.InstanceTemplate;
 import game.plugins.datatemplates.LabelTemplate;
 import game.plugins.datatemplates.VectorTemplate;
-import game.utils.Utils;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -34,7 +33,7 @@ public class CSVDatasetBuilder extends DatasetBuilder {
 	public String separators = "[, +]";
 	
 	public CSVDatasetBuilder() {
-		setOptionChecks("file", new FileExistsCheck());
+		addErrorCheck("file", new FileExistsCheck());
 	}
 
 	@Override
@@ -49,7 +48,7 @@ public class CSVDatasetBuilder extends DatasetBuilder {
 
 	@Override
 	public Dataset buildDataset() {
-		Dataset ret = new Dataset(template, Utils.relativize(file));
+		Dataset ret = new Dataset();
 		
 		int inputDim = template.inputTemplate.getDescriptionLength();
 		int outputDim = template.outputTemplate.getDescriptionLength();
@@ -68,7 +67,6 @@ public class CSVDatasetBuilder extends DatasetBuilder {
 					count++;
 				}
 				reader.close();
-				ret.setReadyState();
 			} catch (IOException e) {}
 		}
 		

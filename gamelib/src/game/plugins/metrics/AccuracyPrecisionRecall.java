@@ -38,14 +38,14 @@ public class AccuracyPrecisionRecall extends FullMetric {
 		singleT = new LinkedList<>();
 		singleP = new LinkedList<>();
 		
-		List<String> labels = getResult().experiment.template.outputTemplate.getOption("labels");
+		List<String> labels = getResult().experiment.template.outputTemplate.getContent("labels");
 		for(int k = 0; k < labels.size(); k++) {
 			singleTP.add(0.0);
 			singleP.add(0.0);
 			singleT.add(0.0);
 		}
 		
-		for(Dataset dataset: getResult().testedDatasets.getList(Dataset.class)) {			
+		for(Dataset dataset: getResult().testedDatasets) {			
 			SampleIterator it = dataset.sampleIterator(true);
 			while(it.hasNext()) {
 				Sample sample = it.next();
@@ -66,7 +66,7 @@ public class AccuracyPrecisionRecall extends FullMetric {
 	public String prettyPrint() {
 		StringBuilder ret = new StringBuilder();
 		
-		List<String> labels = getResult().experiment.template.outputTemplate.getOption("labels");
+		List<String> labels = getResult().experiment.template.outputTemplate.getContent("labels");
 		
 		ret.append(String.format("%20s%15s%15s%15s%15s%15s\n", "", "Observed", "Classified", "Correct", "Precision", "Recall"));
 		double totalT = 0;

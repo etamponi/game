@@ -10,9 +10,10 @@
  ******************************************************************************/
 package game.configuration.errorchecks;
 
+import game.configuration.Compatible;
 import game.configuration.ErrorCheck;
-import game.plugins.constraints.Compatible;
 
+@SuppressWarnings("rawtypes")
 public class CompatibilityCheck implements ErrorCheck {
 	
 	private Compatible compatible;
@@ -21,6 +22,7 @@ public class CompatibilityCheck implements ErrorCheck {
 		this.compatible = compatible;
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
 	public String getError(Object value) {
 		if (!compatible.isCompatible(value))

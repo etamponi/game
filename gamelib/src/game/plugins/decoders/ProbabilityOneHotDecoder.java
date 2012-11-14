@@ -25,7 +25,7 @@ public class ProbabilityOneHotDecoder extends Decoder<OneHotEncoder> {
 		LabelData ret = encoder.template.newData();
 		
 		for (RealVector element: outputEncoded) {
-			ret.add(encoder.template.labels.get(element.getMaxIndex(), String.class));
+			ret.add(encoder.template.labels.get(element.getMaxIndex()));
 		}
 		
 		return ret;

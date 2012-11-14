@@ -10,42 +10,44 @@
  ******************************************************************************/
 package game.core.blocks;
 
-import game.configuration.ConfigurableList;
-import game.core.Block;
+import game.configuration.IList;
+import game.configuration.Property;
+import game.configuration.constraints.CompatibleWith;
+import game.configuration.listeners.PropertyBinding;
 import game.core.DataTemplate.Data;
 import game.core.Decoder;
 import game.core.Encoding;
 import game.core.Instance;
 import game.core.InstanceTemplate;
-import game.plugins.constraints.CompatibleWith;
-
-import java.util.LinkedList;
 
 public class PredictionGraph extends Transducer {
 
-	public ConfigurableList classifiers = new ConfigurableList(this, Transducer.class);
+	public IList<Transducer> classifiers;
 	
-	public ConfigurableList inputEncoders = new ConfigurableList(this, Encoder.class);
+	public IList<Encoder> inputEncoders;
 	
-	public ConfigurableList pipes = new ConfigurableList(this, Pipe.class);
+	public IList<Pipe> pipes;
 	
 	public Decoder decoder;
 	
 	public Transducer outputClassifier;
 	
 	public PredictionGraph() {
-		setOptionBinding("template", "classifiers.*.template");
-		setOptionConstraints("classifiers.*", new CompatibleWith(this, "template"));
+		setContent("classifiers", new IList<>(Transducer.class));
+		setContent("inputEncoders", new IList<>(Encoder.class));
+		setContent("pipes", new IList<>(Pipe.class));
 		
-		setOptionBinding("template.inputTemplate", "inputEncoders.*.template");
-		setOptionConstraints("inputEncoders.*", new CompatibleWith(this, "template.inputTemplate"));
+		addListener(new PropertyBinding(this, "template", "classifiers.*.template"));
+		addConstraint("classifiers.*", new CompatibleWith(new Property(this, "template")));
 		
-		setOptionBinding("outputClassifier.outputEncoder", 	"decoder.encoder", "outputEncoder");
-		setOptionConstraints("decoder", new CompatibleWith(this, "outputClassifier.outputEncoder"));
-
-		omitFromErrorCheck("classifiers", "inputEncoders", "pipes");
+		addListener(new PropertyBinding(this, "template.inputTemplate", "inputEncoders.*.template"));
+		addConstraint("inputEncoders.*", new CompatibleWith(new Property(this, "template.inputTemplate")));
+		
+		addListener(new PropertyBinding(this, "outputClassifier.outputEncoder", "decoder.encoder", "outputEncoder"));
+		addConstraint("decoder", new CompatibleWith(new Property(this, "outputClassifier.outputEncoder")));
 	}
 
+	/* FIXME this must go as an addErrorCheck
 	@Override
 	protected LinkedList<String> getErrors() {
 		LinkedList<String> ret = super.getErrors();
@@ -64,14 +66,14 @@ public class PredictionGraph extends Transducer {
 		if (path.contains(current))
 			return "graph can not contain directed cycles.";
 		path.add(current);
-		for (Block parent: current.parents.getList(Block.class)) {
+		for (Block parent: current.parents) {
 			String ret = recursivelyAddAll(parent, new LinkedList(path));
 			if (ret != null)
 				return ret;
 		}
 		return null;
 	}
-
+	*/
 	@Override
 	public Encoding transform(Data input) {
 		return outputClassifier.transform(input);

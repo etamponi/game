@@ -8,10 +8,24 @@
  * Contributors:
  *     Emanuele - initial API and implementation
  ******************************************************************************/
-package game.plugins.constraints;
+package game.configuration.constraints;
 
-public interface Compatible<T> {
+import game.configuration.Constraint;
 
-	boolean isCompatible(T object);
+public class SubclassConstraint implements Constraint<Object> {
 	
+	private Class[] baseClasses;
+
+	public SubclassConstraint(Class... baseClasses) {
+		assert(baseClasses.length > 0);
+		this.baseClasses = baseClasses;
+	}
+
+	@Override
+	public boolean isValid(Object o) {
+		for(Class base: baseClasses)
+			if (base.isAssignableFrom(o.getClass())) return true;
+		return false;
+	}
+
 }

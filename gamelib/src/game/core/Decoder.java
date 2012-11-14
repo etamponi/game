@@ -10,20 +10,20 @@
  ******************************************************************************/
 package game.core;
 
-import game.configuration.Configurable;
+import game.configuration.Compatible;
+import game.configuration.IObject;
 import game.configuration.errorchecks.CompatibilityCheck;
 import game.core.DataTemplate.Data;
 import game.core.blocks.Encoder;
-import game.plugins.constraints.Compatible;
 
-public abstract class Decoder<E extends Encoder> extends Configurable implements Compatible<Encoder> {
+public abstract class Decoder<E extends Encoder> extends IObject implements Compatible<Encoder> {
 	
 	public E encoder;
 	
 	public boolean interpolate = false;
 	
 	public Decoder() {
-		setOptionChecks("encoder", new CompatibilityCheck(this));
+		addErrorCheck("encoder", new CompatibilityCheck(this));
 	}
 	
 	protected abstract <D extends Data> D baseDecode(Encoding outputEncoded);

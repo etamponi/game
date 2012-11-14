@@ -17,5 +17,7 @@
 	<classpathentry kind="lib" path="lib/sqlite-jdbc-3.7.2.jar"/>
 	<classpathentry kind="lib" path="lib/kxml2-2.3.0.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/commons-math3-3.0.jar"/>
+	<classpathentry kind="lib" path="lib/kryo-2.20-all.jar"/>
+	<classpathentry kind="lib" path="lib/pcollections-2.1.2.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

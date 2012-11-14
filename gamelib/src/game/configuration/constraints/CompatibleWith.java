@@ -8,16 +8,27 @@
  * Contributors:
  *     Emanuele - initial API and implementation
  ******************************************************************************/
-package testgame.configuration;
+package game.configuration.constraints;
 
-import game.configuration.Configurable;
+import game.configuration.Compatible;
+import game.configuration.Constraint;
+import game.configuration.Property;
 
-public class ConfigurableImplC extends Configurable {
+public class CompatibleWith implements Constraint<Compatible> {
+	
+	private final Property property;
 
-	public String optionC1;
-	
-	public String optionC2;
-	
-	public String optionC3;
-	
+	public CompatibleWith(Property property) {
+		this.property = property;
+	}
+
+	@Override
+	public boolean isValid(Compatible o) {
+		Object obj = property.getContent();
+		if (obj != null)
+			return o.isCompatible(obj);
+		else
+			return false;
+	}
+
 }

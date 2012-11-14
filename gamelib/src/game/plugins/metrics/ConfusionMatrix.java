@@ -34,11 +34,11 @@ public class ConfusionMatrix extends FullMetric {
 
 	@Override
 	protected void prepare() {
-		List<String> labels = getResult().experiment.template.outputTemplate.getOption("labels");
+		List<String> labels = getResult().experiment.template.outputTemplate.getContent("labels");
 		
 		matrix = new Array2DRowRealMatrix(labels.size(), labels.size());
 		
-		for(Dataset dataset: getResult().testedDatasets.getList(Dataset.class)) {
+		for(Dataset dataset: getResult().testedDatasets) {
 			SampleIterator it = dataset.sampleIterator(true);
 			while(it.hasNext()) {
 				Sample sample = it.next();
@@ -53,7 +53,7 @@ public class ConfusionMatrix extends FullMetric {
 	public String prettyPrint() {
 		StringBuilder ret = new StringBuilder();
 		
-		List<String> labels = getResult().experiment.template.outputTemplate.getOption("labels");
+		List<String> labels = getResult().experiment.template.outputTemplate.getContent("labels");
 		
 		ret.append(String.format("%20s |", ""));
 		for(String label: labels)

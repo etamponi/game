@@ -10,15 +10,20 @@
  ******************************************************************************/
 package game.core.experiments;
 
-import game.configuration.ConfigurableList;
+import game.configuration.IList;
 import game.core.Dataset;
 import game.core.Result;
 import game.core.blocks.PredictionGraph;
 
 public class FullResult extends Result {
 	
-	public ConfigurableList trainedGraphs = new ConfigurableList(this, PredictionGraph.class);
+	public IList<PredictionGraph> trainedGraphs;
 	
-	public ConfigurableList testedDatasets = new ConfigurableList(this, Dataset.class);
+	public IList<Dataset> testedDatasets;
+	
+	public FullResult() {
+		setContent("trainedGraphs", new IList<>(PredictionGraph.class));
+		setContent("testedDatasets", new IList<>(Dataset.class));
+	}
 
 }

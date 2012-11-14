@@ -14,7 +14,7 @@ import game.configuration.ErrorCheck;
 
 import java.util.Collection;
 
-public class SizeCheck implements ErrorCheck<Collection> {
+public class SizeCheck implements ErrorCheck<Collection<?>> {
 	
 	private int minimumSize, maximumSize;
 
@@ -29,7 +29,7 @@ public class SizeCheck implements ErrorCheck<Collection> {
 	}
 
 	@Override
-	public String getError(Collection value) {
+	public String getError(Collection<?> value) {
 		if (value.size() < minimumSize)
 			return "should have at least " + minimumSize + " elements";
 		else if (value.size() > maximumSize)

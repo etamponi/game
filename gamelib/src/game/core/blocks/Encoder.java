@@ -10,6 +10,7 @@
  ******************************************************************************/
 package game.core.blocks;
 
+import game.configuration.Compatible;
 import game.configuration.ErrorCheck;
 import game.configuration.errorchecks.CompatibilityCheck;
 import game.configuration.errorchecks.PositivenessCheck;
@@ -18,7 +19,6 @@ import game.core.Block;
 import game.core.DataTemplate;
 import game.core.DataTemplate.Data;
 import game.core.Encoding;
-import game.plugins.constraints.Compatible;
 
 public abstract class Encoder<DT extends DataTemplate> extends Block implements Compatible<DataTemplate> {
 	
@@ -27,10 +27,11 @@ public abstract class Encoder<DT extends DataTemplate> extends Block implements 
 	public int windowSize = 1;
 	
 	public Encoder() {
-		setOptionChecks("parents", new SizeCheck(0, 0));
-		setOptionChecks("template", new CompatibilityCheck(this));
+		addErrorCheck("parents", new SizeCheck(0, 0));
+		addErrorCheck("template", new CompatibilityCheck(this));
 		
-		setOptionChecks("windowSize", new PositivenessCheck(false), new ErrorCheck<Integer>() {
+		addErrorCheck("windowSize", new PositivenessCheck(false));
+		addErrorCheck("windowSize", new ErrorCheck<Integer>() {
 			@Override
 			public String getError(Integer value) {
 				if (template != null && !template.sequence && windowSize != 1)

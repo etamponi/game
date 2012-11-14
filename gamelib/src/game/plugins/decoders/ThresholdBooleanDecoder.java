@@ -24,7 +24,7 @@ public class ThresholdBooleanDecoder extends Decoder<BooleanEncoder> {
 	public double threshold = 0.5;
 	
 	public ThresholdBooleanDecoder() {
-		setOptionChecks("threshold", new RangeCheck(0.0, 1.0));
+		addErrorCheck("threshold", new RangeCheck(0.0, 1.0));
 	}
 
 	@Override

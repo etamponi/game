@@ -32,31 +32,30 @@ public class DatasetTest {
 	static {
 		template.inputTemplate = new VectorTemplate();
 		template.outputTemplate = new LabelTemplate();
-		template.inputTemplate.setOption("dimension", 4);
-		template.outputTemplate.getOption("labels", List.class).add("Iris-setosa");
-		template.outputTemplate.getOption("labels", List.class).add("Iris-versicolor");
-		template.outputTemplate.getOption("labels", List.class).add("Iris-virginica");
+		template.inputTemplate.setContent("dimension", 4);
+		template.outputTemplate.getContent("labels", List.class).add("Iris-setosa");
+		template.outputTemplate.getContent("labels", List.class).add("Iris-versicolor");
+		template.outputTemplate.getContent("labels", List.class).add("Iris-virginica");
 		
 		sequenceTpl.inputTemplate = new VectorTemplate();
 		sequenceTpl.outputTemplate = new LabelTemplate();
-		sequenceTpl.inputTemplate.setOption("sequence", true);
-		sequenceTpl.inputTemplate.setOption("dimension", 20);
-		sequenceTpl.outputTemplate.setOption("sequence", true);
-		sequenceTpl.outputTemplate.getOption("labels", List.class).add("H");
-		sequenceTpl.outputTemplate.getOption("labels", List.class).add("E");
-		sequenceTpl.outputTemplate.getOption("labels", List.class).add("C");
+		sequenceTpl.inputTemplate.setContent("sequence", true);
+		sequenceTpl.inputTemplate.setContent("dimension", 20);
+		sequenceTpl.outputTemplate.setContent("sequence", true);
+		sequenceTpl.outputTemplate.getContent("labels", List.class).add("H");
+		sequenceTpl.outputTemplate.getContent("labels", List.class).add("E");
+		sequenceTpl.outputTemplate.getContent("labels", List.class).add("C");
 	}
 
 	@Test
 	public void testCSV() {
 		DatasetBuilder builder = new CSVDatasetBuilder();
-		builder.setOption("template", template);
-		builder.setOption("file", new File("testdata/iris.data.txt"));
-		builder.setOption("databaseName", "test");
+		builder.setContent("template", template);
+		builder.setContent("file", new File("testdata/iris.data.txt"));
 		Dataset dataset = builder.buildDataset();
 		
 		assertEquals(150, dataset.size());
-		List<Dataset> folds = dataset.getFolds(4, true);
+		List<Dataset> folds = dataset.getFolds(4);
 		List<Dataset> complements = dataset.getComplementaryFolds(folds);
 		assertEquals(150/4, folds.get(0).size());
 		assertEquals(150-150/4, complements.get(0).size());
@@ -68,9 +67,8 @@ public class DatasetTest {
 	@Test
 	public void testCSVSequence() {
 		DatasetBuilder builder = new SequenceCSVDatasetBuilder();
-		builder.setOption("template", sequenceTpl);
-		builder.setOption("file", new File("testdata/csvsequence.txt"));
-		builder.setOption("databaseName", "sequencetest");
+		builder.setContent("template", sequenceTpl);
+		builder.setContent("file", new File("testdata/csvsequence.txt"));
 		Dataset dataset = builder.buildDataset();
 		assertEquals(5, dataset.size());
 	}

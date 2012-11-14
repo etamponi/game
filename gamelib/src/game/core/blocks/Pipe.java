@@ -16,7 +16,7 @@ import game.core.Block;
 public abstract class Pipe extends Block {
 	
 	public Pipe() {
-		setOptionChecks("parents", new SizeCheck(1));
+		addErrorCheck("parents", new SizeCheck(1));
 	}
 
 	@Override

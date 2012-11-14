@@ -8,16 +8,10 @@
  * Contributors:
  *     Emanuele - initial API and implementation
  ******************************************************************************/
-package testgame.configuration;
+package game.configuration;
 
-import game.configuration.Configurable;
+public interface Constraint<T> {
+	
+	boolean isValid(T o);
 
-public class ConfigurableImplB extends Configurable {
-
-	public String optionB1;
-	
-	public String optionB2;
-	
-	public String optionB3;
-	
 }

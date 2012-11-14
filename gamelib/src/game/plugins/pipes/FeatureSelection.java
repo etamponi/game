@@ -23,7 +23,7 @@ public class FeatureSelection extends Pipe {
 	public String mask;
 	
 	public FeatureSelection() {
-		setOptionChecks("mask", new ErrorCheck<String>() {
+		addErrorCheck("mask", new ErrorCheck<String>() {
 			@Override public String getError(String value) {
 				if (Utils.count(mask, '0') + Utils.count(mask, '1') != mask.length())
 					return "can contain only 1s and 0s";

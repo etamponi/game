@@ -10,17 +10,18 @@
  ******************************************************************************/
 package game.plugins.encoders;
 
-import game.configuration.Change;
+import game.configuration.ChangeListener;
+import game.configuration.Property;
 import game.core.DataTemplate;
 import game.core.DataTemplate.Data;
 import game.core.Encoding;
 import game.core.blocks.Encoder;
 import game.plugins.datatemplates.LabelTemplate;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Observable;
-import java.util.Observer;
+import java.util.List;
 
 import org.apache.commons.math3.linear.ArrayRealVector;
 import org.apache.commons.math3.linear.RealVector;
@@ -31,13 +32,20 @@ public abstract class LabelEncoder extends Encoder<LabelTemplate> {
 	
 	public LabelEncoder() {
 		
-		addObserver(new Observer() {
+		addListener(new ChangeListener() {
 			@Override
-			public void update(Observable observed, Object message) {
-				if (message instanceof Change) {
-					if (((Change)message).getPath().startsWith("template"))
-						updateMapping(template);
-				}
+			public void onChange(Property changedPath) {
+				updateMapping();
+			}
+			
+			@Override
+			public boolean isListeningOn(Property path) {
+				return new Property(LabelEncoder.this, "template").isPrefix(path, false);
+			}
+			
+			@Override
+			public List<Property> getBoundProperties(Property prefixPath) {
+				return new ArrayList<>();
 			}
 		});
 		
@@ -65,13 +73,8 @@ public abstract class LabelEncoder extends Encoder<LabelTemplate> {
 		return labelMapping.values().iterator().next().getDimension();
 	}
 	
-	private void updateMapping(DataTemplate tpl) {
-		if (tpl == null || !isCompatible(tpl) || tpl.getOption("labels") == null)
-			return;
-		
-		this.template = (LabelTemplate)tpl;
-		
-		for (String label: template.labels.getList(String.class)) {
+	private void updateMapping() {
+		for (String label: template.labels) {
 			if (label != null && !labelMapping.containsKey(label))
 				labelMapping.put(label, new ArrayRealVector());
 		}
@@ -79,7 +82,6 @@ public abstract class LabelEncoder extends Encoder<LabelTemplate> {
 			if (!template.labels.contains(key))
 				labelMapping.remove(key);
 		}
-		
 		updateLabelMapping();
 	}
 

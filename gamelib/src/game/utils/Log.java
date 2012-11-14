@@ -10,17 +10,12 @@
  ******************************************************************************/
 package game.utils;
 
-import game.core.LongTask;
-import game.core.LongTask.LongTaskUpdate;
-
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.text.DateFormat;
 import java.util.Date;
-import java.util.Observable;
-import java.util.Observer;
 
 public class Log {
 	
@@ -82,7 +77,7 @@ public class Log {
 			e.printStackTrace();
 		}
 	}
-	
+	/*
 	public static class Logger implements Observer {
 		
 		private LongTask task;
@@ -113,5 +108,5 @@ public class Log {
 		}
 		
 	}
-
+	*/
 }

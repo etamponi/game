@@ -10,7 +10,7 @@
  ******************************************************************************/
 package game.plugins.datatemplates;
 
-import game.configuration.ConfigurableList;
+import game.configuration.IList;
 import game.configuration.errorchecks.NoRepetitionCheck;
 import game.configuration.errorchecks.SizeCheck;
 import game.core.DataTemplate;
@@ -23,11 +23,13 @@ public class LabelTemplate extends DataTemplate {
 			return String.class;
 		}
 	}
-
-	public ConfigurableList labels = new ConfigurableList(this, String.class);
 	
+	public IList<String> labels;
+
 	public LabelTemplate() {
-		setOptionChecks("labels", new NoRepetitionCheck(), new SizeCheck(2));
+		setContent("labels", new IList<>(String.class));
+		addErrorCheck("labels", new NoRepetitionCheck());
+		addErrorCheck("labels", new SizeCheck(2));
 	}
 
 	@Override

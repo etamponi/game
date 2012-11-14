@@ -10,14 +10,14 @@
  ******************************************************************************/
 package game.core;
 
-import game.configuration.Configurable;
+import game.configuration.IObject;
 import game.core.DataTemplate.Data;
 
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
-public class InstanceTemplate extends Configurable {
+public class InstanceTemplate extends IObject {
 	
 	public DataTemplate inputTemplate;
 	

@@ -19,7 +19,7 @@ import game.core.Encoding;
 public abstract class Classifier extends Transducer {
 	
 	public Classifier() {
-		setOptionChecks("parents", new SizeCheck(1, 1));
+		addErrorCheck("parents", new SizeCheck(1, 1));
 	}
 	
 	protected abstract Encoding classify(Encoding inputEncoded);

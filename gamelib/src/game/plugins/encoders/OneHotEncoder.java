@@ -10,6 +10,8 @@
  ******************************************************************************/
 package game.plugins.encoders;
 
+import game.configuration.listeners.BoundProperties;
+
 import org.apache.commons.math3.linear.ArrayRealVector;
 import org.apache.commons.math3.linear.RealVector;
 
@@ -17,7 +19,7 @@ import org.apache.commons.math3.linear.RealVector;
 public class OneHotEncoder extends LabelEncoder {
 
 	public OneHotEncoder() {
-		setAsInternalOptions("labelMapping");
+		addListener(new BoundProperties(this, "labelMapping"));
 	}
 
 	@Override

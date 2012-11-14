@@ -1,5 +1,6 @@
 package game.core.blocks;
 
+import game.configuration.listeners.PropertyBinding;
 import game.core.DataTemplate.Data;
 import game.core.Encoding;
 import game.core.InstanceTemplate;
@@ -9,8 +10,8 @@ public class MetaEnsemble extends Transducer {
 	public Combiner combiner;
 	
 	public MetaEnsemble() {
-		setOptionBinding("outputEncoder", "combiner.outputEncoder");
-		setOptionBinding("template", "combiner.template");
+		addListener(new PropertyBinding(this, "outputEncoder", "combiner.outputEncoder"));
+		addListener(new PropertyBinding(this, "template", "combiner.template"));
 	}
 
 	@Override

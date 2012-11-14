@@ -10,26 +10,28 @@
  ******************************************************************************/
 package game.core.experiments;
 
+import game.configuration.listeners.PropertyBinding;
 import game.core.Dataset;
-import game.core.Dataset.InstanceIterator;
 import game.core.Experiment;
 import game.core.Instance;
 import game.core.blocks.PredictionGraph;
+
+import java.util.Iterator;
 
 public abstract class FullExperiment extends Experiment {
 	
 	public PredictionGraph graph;
 	
 	public FullExperiment() {
-		setOptionBinding("template", "graph.template");
+		addListener(new PropertyBinding(this, "template", "graph.template"));
 	}
 	
-	protected Dataset classifyDataset(double finalPercent, PredictionGraph graphClone, Dataset dataset, String cacheFileName) {
-		Dataset ret = new Dataset(template, cacheFileName);
+	protected Dataset classifyDataset(double finalPercent, PredictionGraph graphClone, Dataset dataset) {
+		Dataset ret = new Dataset();
 		double startPercent = getCurrentPercent();
 		double increase = (finalPercent - startPercent) / dataset.size();
 		int count = 1;
-		InstanceIterator it = dataset.instanceIterator();
+		Iterator<Instance> it = dataset.iterator();
 		while (it.hasNext()) {
 			Instance instance = it.next();
 			graphClone.classifyInstance(instance);
@@ -38,7 +40,6 @@ public abstract class FullExperiment extends Experiment {
 				updateStatus(startPercent+count*increase, "instances predicted " + count + "/" + dataset.size());
 			count++;
 		}
-		ret.setReadyState();
 		return ret;
 	}
 

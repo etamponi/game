@@ -1,10 +1,10 @@
 package game.plugins.classifiers;
 
+import game.configuration.constraints.SubclassConstraint;
 import game.core.DataTemplate.Data;
 import game.core.Encoding;
 import game.core.InstanceTemplate;
 import game.core.blocks.Combiner;
-import game.plugins.constraints.SubclassConstraint;
 import game.plugins.datatemplates.LabelTemplate;
 import game.plugins.decoders.ProbabilityOneHotDecoder;
 import game.plugins.encoders.OneHotEncoder;
@@ -16,9 +16,9 @@ import org.apache.commons.math3.linear.RealMatrix;
 public class MajorityCombiner extends Combiner {
 	
 	public MajorityCombiner() {
-		setOption("outputEncoder", new OneHotEncoder());
+		setContent("outputEncoder", new OneHotEncoder());
 		
-		setOptionConstraints("outputEncoder", new SubclassConstraint(OneHotEncoder.class));
+		addConstraint("outputEncoder", new SubclassConstraint(OneHotEncoder.class));
 	}
 
 	@Override
@@ -33,7 +33,7 @@ public class MajorityCombiner extends Combiner {
 		
 		ProbabilityOneHotDecoder decoder = new ProbabilityOneHotDecoder();
 		decoder.interpolate = false;
-		decoder.setOption("encoder", outputEncoder);
+		decoder.setContent("encoder", outputEncoder);
 		
 		for(Encoding encoding: parentsEncodings) {
 			Data output = decoder.decode(encoding);

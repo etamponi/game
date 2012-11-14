@@ -10,8 +10,8 @@
  ******************************************************************************/
 package game.plugins.datatemplates;
 
-import game.configuration.ConfigurableMap;
 import game.configuration.ErrorCheck;
+import game.configuration.IMap;
 import game.core.DataTemplate;
 
 import java.util.HashMap;
@@ -26,7 +26,7 @@ public class MetaTemplate extends DataTemplate {
 		public Map<String, Data> addEmptyElement() {
 			Map<String, Data> map = new HashMap<>();
 			for (String key: templates.keySet())
-				map.put(key, templates.get(key, DataTemplate.class).newData());
+				map.put(key, templates.get(key).newData());
 			add(map);
 			return map;
 		}
@@ -38,14 +38,16 @@ public class MetaTemplate extends DataTemplate {
 		
 	}
 	
-	public ConfigurableMap templates = new ConfigurableMap(this, DataTemplate.class);
+	public IMap<DataTemplate> templates;
 	
 	public MetaTemplate() {
-		setOptionChecks("properties", new ErrorCheck<Map>() {
+		setContent("templates", new IMap<>(DataTemplate.class));
+		
+		addErrorCheck("templates", new ErrorCheck<Map>() {
 			@Override
 			public String getError(Map value) {
 				if (value.isEmpty())
-					return "must have at least one property";
+					return "must have at least one template";
 				else
 					return null;
 			}
@@ -55,7 +57,7 @@ public class MetaTemplate extends DataTemplate {
 	@Override
 	public int getDescriptionLength() {
 		int count = 0;
-		for (DataTemplate template: templates.values(DataTemplate.class))
+		for (DataTemplate template: templates.values())
 			count += template.getDescriptionLength();
 		return count;
 	}

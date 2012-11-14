@@ -10,14 +10,14 @@
  ******************************************************************************/
 package game.plugins.classifiers;
 
-import game.configuration.ConfigurableList;
+import game.configuration.Constraint;
+import game.configuration.IList;
 import game.configuration.ErrorCheck;
 import game.configuration.errorchecks.PositivenessCheck;
 import game.core.Encoding;
 import game.core.InstanceTemplate;
 import game.core.blocks.Classifier;
 import game.core.blocks.Encoder;
-import game.plugins.Constraint;
 import game.plugins.datatemplates.LabelTemplate;
 import game.plugins.encoders.OneHotEncoder;
 import game.utils.Utils;
@@ -60,20 +60,21 @@ public class KNNClassifier extends Classifier {
 	
 	public String distanceType = "L2";
 
-	public ConfigurableList reference = new ConfigurableList(this, ReferenceSample.class);
+	public IList<ReferenceSample> reference;
 	
 	public KNNClassifier() {
-		setOption("outputEncoder", new OneHotEncoder());
+		setContent("reference", new IList<>(ReferenceSample.class));
+		setContent("outputEncoder", new OneHotEncoder());
 		
-		setOptionConstraints("outputEncoder", new Constraint<Encoder>() {
+		addConstraint("outputEncoder", new Constraint<Encoder>() {
 			@Override public boolean isValid(Encoder o) {
 				return o instanceof OneHotEncoder;
 			}
 		});
 		
-		setOptionChecks("k", new PositivenessCheck(false));
+		addErrorCheck("k", new PositivenessCheck(false));
 		
-		setOptionChecks("distanceType", new ErrorCheck<String>() {
+		addErrorCheck("distanceType", new ErrorCheck<String>() {
 			@Override public String getError(String value) {
 				value = value.toLowerCase();
 				if (value.equals("l2") || value.equals("l1") || value.equals("linf"))
@@ -81,7 +82,6 @@ public class KNNClassifier extends Classifier {
 				else
 					return "can only be L1, L2 or Linf";
 			}
-			
 		});
 	}
 
@@ -94,18 +94,16 @@ public class KNNClassifier extends Classifier {
 	protected Encoding classify(Encoding inputEncoded) {
 		Encoding ret = new Encoding(getFeatureNumber(), inputEncoded.length());
 		
-		Class<ReferenceSample> cast = ReferenceSample.class;
-		
 		for (int j = 0; j < inputEncoded.length(); j++) {
 			RealVector currentInput = inputEncoded.getElement(j);
-			for(ReferenceSample sample: reference.getList(cast))
+			for(ReferenceSample sample: reference)
 				sample.setDistance(Utils.getDistance(distanceType, currentInput, sample.getInput()));
 
 			Collections.sort(reference);
-			RealVector currentOutput = reference.get(0, cast).getOutput();
+			RealVector currentOutput = reference.get(0).getOutput();
 			if (k > 1) {
 				for(int i = 1; i < k; i++)
-					currentOutput = currentOutput.add(reference.get(i, cast).getOutput());
+					currentOutput = currentOutput.add(reference.get(i).getOutput());
 				currentOutput.mapDivideToSelf(k);
 			}
 			ret.setElement(j, currentOutput);
