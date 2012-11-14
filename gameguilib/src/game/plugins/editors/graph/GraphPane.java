@@ -151,11 +151,11 @@ public class GraphPane extends ScrollPane {
 					
 					Block block = node.getBlock();
 					if (block instanceof Transducer && !graph.classifiers.contains(block))
-						graph.classifiers.add(block);
+						graph.classifiers.add((Transducer)block);
 					if (block instanceof Encoder && !graph.inputEncoders.contains(block))
-						graph.inputEncoders.add(block);
+						graph.inputEncoders.add((Encoder)block);
 					if (block instanceof Pipe && !graph.pipes.contains(block))
-						graph.pipes.add(block);
+						graph.pipes.add((Pipe)block);
 					
 					setDragging(null);
 					event.setDropCompleted(true);
@@ -253,7 +253,7 @@ public class GraphPane extends ScrollPane {
 	private void disconnectBlockNodes() {
 		for (Node child: content.getChildren()) {
 			if (child instanceof HBox)
-				((BlockNode)((HBox)child).getChildren().get(1)).disconnect();
+				((BlockNode)((HBox)child).getChildren().get(1)).blockParent.detach();
 		}
 	}
 	
@@ -361,12 +361,12 @@ public class GraphPane extends ScrollPane {
 				public void handle(MouseEvent event) {
 					if (event.getButton() == MouseButton.SECONDARY) {
 						if (node.getBlock() == graph.outputClassifier) {
-							graph.setOption("outputClassifier", null);
+							graph.setContent("outputClassifier", null);
 							out.setOpacity(0);
 						} else {
 							if (outputBlock != null)
 								outputBlock.setOpacity(0);
-							graph.setOption("outputClassifier", node.getBlock());
+							graph.setContent("outputClassifier", node.getBlock());
 							out.setOpacity(1);
 							outputBlock = out;
 						}
@@ -437,7 +437,7 @@ public class GraphPane extends ScrollPane {
 			return 1;
 		else {
 			int max = 0;
-			for (Block parent: current.parents.getList(Block.class)) {
+			for (Block parent: current.parents) {
 				int count = levelOf(parent, seen);
 				if (count > max)
 					max = count;
@@ -450,7 +450,7 @@ public class GraphPane extends ScrollPane {
 		if (block instanceof Transducer) {
 			graph.classifiers.remove(block);
 			if (graph.outputClassifier == block)
-				graph.setOption("outputClassifier", null);
+				graph.setContent("outputClassifier", null);
 		}
 		if (block instanceof Encoder)
 			graph.inputEncoders.remove(block);

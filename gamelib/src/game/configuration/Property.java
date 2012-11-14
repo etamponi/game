@@ -17,14 +17,13 @@ public class Property {
 		this.path = path;
 	}
 	
-	public Object getContent() {
+	public <T> T getContent() {
 		if (path.isEmpty())
-			return root;
+			return (T)root;
 		else
 			return root.getContent(path);
 	}
 	
-	@SuppressWarnings("unchecked")
 	public <T> T getContent(Class<T> contentType) {
 		return (T)getContent();
 	}
@@ -68,7 +67,8 @@ public class Property {
 	
 	@Override
 	public String toString() {
-		return "<"+root+">" + (path.isEmpty() ? "" : "." + path);
+		return path;
+//		return "<"+root+">" + (path.isEmpty() ? "" : "." + path);
 	}
 	
 	public boolean isParent(Property complete) {
@@ -115,6 +115,10 @@ public class Property {
 			return this;
 		
 		return new Property(getParent(), path.substring(path.lastIndexOf('.')+1));
+	}
+	
+	public Class<?> getContentType() {
+		return getContentType(false);
 	}
 	
 	public Class<?> getContentType(boolean runtime) {

@@ -10,14 +10,15 @@
  ******************************************************************************/
 package game.plugins.editors;
 
-import game.configuration.Change;
-import game.configuration.Configurable;
+import game.configuration.IObject;
+import game.configuration.Property;
 import game.editorsystem.EditorWindow;
-import game.editorsystem.Editor;
-import game.plugins.Implementation;
+import game.editorsystem.PropertyEditor;
 import game.utils.Utils;
 
-import java.util.Observable;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 import java.util.Set;
 
 import javafx.beans.value.ChangeListener;
@@ -31,28 +32,64 @@ import javafx.scene.control.TextField;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
 
-public class ImplementationChooserEditor extends Editor {
+public class ImplementationChooserEditor extends PropertyEditor {
+	
+	public static class Implementation implements Comparable<Implementation> {
+		
+		private IObject instance;
+		
+		public Implementation(IObject instance) {
+			this.instance = instance;
+		}
+		
+		public Implementation(Class<? extends IObject> type) {
+			try {
+				instance = type.newInstance();
+			} catch (InstantiationException | IllegalAccessException e) {
+				System.out.println("Cannot instantiate implementation for " + type);
+			}
+		}
+		
+		public IObject getInstance() {
+			return instance;
+		}
+		
+		@Override
+		public String toString() {
+			if (instance == null)
+				return "<null>";
+			else
+				return instance.getClass().getSimpleName();
+		}
+
+		@Override
+		public int compareTo(Implementation o) {
+			return this.toString().compareTo(o.toString());
+		}
+		
+	}
 	
 	private ChangeListener<Implementation> listener = new ChangeListener<Implementation>() {
 		@Override
-		public void changed(
-				ObservableValue<? extends Implementation> observable,
+		public void changed(ObservableValue<? extends Implementation> observable,
 				Implementation oldValue, Implementation newValue) {
 			if (getModel() == null)
 				return;
-			Configurable selected = box.getValue().getContent();
+			IObject selected = box.getValue().getInstance();
 			if (getModel().getContent() != selected)
-				setModelContent(selected);
+				updateModel(selected);
 		}
 	};
 	
 	private HBox container = new HBox();
 	
-	private ComboBox<Implementation<Configurable>> box = new ComboBox<Implementation<Configurable>>();
+	private ComboBox<Implementation> box = new ComboBox<>();
 
 	private Button editButton;
 	
 	public ImplementationChooserEditor() {
+		getListener().getListenedPaths().add(new Property(this, "root"));
+		
 		this.editButton = new Button("Edit");
 		editButton.setPrefWidth(55);
 		editButton.setOnAction(new EventHandler<ActionEvent>() {
@@ -61,7 +98,7 @@ public class ImplementationChooserEditor extends Editor {
 				if (getModel().getContent() == null)
 					return;
 				
-				Editor editor = getModel().getBestEditor(true);
+				PropertyEditor editor = PropertyEditor.getBestEditor(getModel().getContentType(true));
 				editor.setReadOnly(isReadOnly());
 				EditorWindow window = new EditorWindow(editor);
 				window.startEdit(getModel());
@@ -88,19 +125,25 @@ public class ImplementationChooserEditor extends Editor {
 			box.getItems().clear();
 			
 			if (getModel() != null) {
-				Object current = getModel().getContent();
-				box.getItems().add(new Implementation(null));
-				if (current == null)
-					box.getSelectionModel().select(0);
+				List<Implementation> implementations = new ArrayList<>();
+				int selected = 0;
 				
-				Set<Implementation<Configurable>> implementations = getModel().getCompatibleImplementations();
-				for (Implementation<Configurable> impl: implementations) {
-					if (current != null && current.getClass().equals(impl.getContent().getClass())) {
-						box.getItems().add(new Implementation(current));
-						box.getSelectionModel().select(box.getItems().size()-1);
-					} else
-						box.getItems().add(impl);
+				IObject current = getModel().getContent();
+				implementations.add(new Implementation((IObject)null));
+				
+				Set<Class> types = getModel().getCompatibleContentTypes();
+				for (Class<? extends IObject> type: types) {
+					if (current != null && current.getClass().equals(type)) {
+						selected = implementations.size();
+						implementations.add(new Implementation(current));
+					} else {
+						implementations.add(new Implementation(type));
+					}
 				}
+				
+				Collections.sort(implementations);
+				box.getItems().addAll(implementations);
+				box.getSelectionModel().select(selected);
 	
 				box.getSelectionModel().selectedItemProperty().addListener(listener);
 			}
@@ -109,18 +152,10 @@ public class ImplementationChooserEditor extends Editor {
 	}
 
 	private Node getReadOnlyBox() {
-		TextField field = new TextField(new Implementation(getModel().getContent()).toString());
+		TextField field = new TextField(new Implementation(getModel().getContent(IObject.class)).toString());
 		field.setEditable(false);
 		HBox.setHgrow(field, Priority.ALWAYS);
 		return field;
-	}
-
-	@Override
-	public void update(Observable observed, Object message) {
-		if (message instanceof Change) {
-			if (((Change)message).getSetter() != this)
-				updateView();
-		}
 	}
 
 	@Override
@@ -130,7 +165,7 @@ public class ImplementationChooserEditor extends Editor {
 
 	@Override
 	public Class getBaseEditableClass() {
-		return Configurable.class;
+		return IObject.class;
 	}
 
 	@Override

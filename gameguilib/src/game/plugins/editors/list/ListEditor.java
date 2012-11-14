@@ -10,17 +10,17 @@
  ******************************************************************************/
 package game.plugins.editors.list;
 
-import game.configuration.Change;
-import game.configuration.ConfigurableList;
+import game.configuration.IList;
 import game.editorsystem.ControlledEditor;
-
-import java.util.Observable;
-
 import javafx.scene.Node;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Priority;
 
 public class ListEditor extends ControlledEditor {
+	
+	public ListEditor() {
+		getListener().getSubPaths().add("*.name");
+	}
 	
 	@Override
 	public Node getView() {
@@ -31,27 +31,12 @@ public class ListEditor extends ControlledEditor {
 
 	@Override
 	public Class getBaseEditableClass() {
-		return ConfigurableList.class;
+		return IList.class;
 	}
 
 	@Override
 	public boolean isInline() {
 		return false;
-	}
-
-	@Override
-	public void update(Observable observed, Object m) {
-		super.update(observed, m);
-		if (m instanceof Change) {
-			if (getModel() == null)
-				return;
-			Change change = (Change)m;
-			if (change.getPath().matches(getModel().getOptionName() + "\\.\\d+")
-					|| change.getPath().matches(getModel().getOptionName() + "\\.\\d+\\.name")) {
-				if (change.getSetter() != this)
-					updateView();
-			}
-		}
 	}
 
 }

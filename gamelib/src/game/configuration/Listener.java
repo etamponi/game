@@ -3,12 +3,12 @@ package game.configuration;
 import java.util.ArrayList;
 import java.util.List;
 
-public abstract class ChangeListener {
+public abstract class Listener {
 	
 	private final List<Property> listened = new ArrayList<>();
 	private final List<Property> slaves = new ArrayList<>();
 
-	public abstract void onChange(Property changedPath);
+	public abstract void action(Property triggerPath);
 	
 	protected List<Property> getListenedPaths() {
 		return listened;

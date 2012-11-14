@@ -10,14 +10,13 @@
  ******************************************************************************/
 package game.plugins.editors.graph;
 
-import game.configuration.Configurable;
+import game.configuration.IList;
+import game.configuration.Property;
 import game.core.Block;
 import game.core.blocks.PredictionGraph;
-import game.editorsystem.Editor;
 import game.editorsystem.EditorController;
-import game.editorsystem.Option;
-import game.plugins.Implementation;
-import game.plugins.editors.ConfigurableEditor;
+import game.editorsystem.PropertyEditor;
+import game.plugins.editors.IObjectEditor;
 
 import java.net.URL;
 import java.util.LinkedList;
@@ -40,7 +39,7 @@ import javafx.scene.layout.FlowPane;
 
 public class GraphEditorController implements EditorController {
 
-	private Option graphModel;
+	private Property graphModel;
 	
 	@FXML
 	private AnchorPane root;
@@ -61,9 +60,9 @@ public class GraphEditorController implements EditorController {
 
 	private GraphPane graphPane;
 	
-	private Editor confEditor = new GraphConfigurationEditor();
+	private PropertyEditor confEditor = new GraphConfigurationEditor();
 
-	private Editor editor;
+	private PropertyEditor editor;
 	
 	@Override
 	public void initialize(URL location, ResourceBundle resources) {
@@ -126,7 +125,7 @@ public class GraphEditorController implements EditorController {
 	}
 
 	@Override
-	public void setModel(Option model) {
+	public void setModel(Property model) {
 		this.graphModel = model;
 		confEditor.connect(graphModel);
 	}
@@ -164,7 +163,7 @@ public class GraphEditorController implements EditorController {
 		fillPool(pipesPane, "pipes");
 	}
 	
-	private static class GraphConfigurationEditor extends ConfigurableEditor {
+	private static class GraphConfigurationEditor extends IObjectEditor {
 		
 		public GraphConfigurationEditor() {
 			setHiddenOptions("classifiers", "inputEncoders", "pipes", "outputClassifier", "parents");
@@ -174,17 +173,21 @@ public class GraphEditorController implements EditorController {
 	
 	private void fillPool(FlowPane pool, String listOptionName) {
 		pool.getChildren().clear();
-		Configurable list = ((PredictionGraph)graphModel.getContent()).getOption(listOptionName);
+		IList list = ((PredictionGraph)graphModel.getContent()).getContent(listOptionName);
 		if (list == null)
 			return;
-		Set<Implementation<Block>> blocks = list.getCompatibleOptionImplementations("*");
-		for (Implementation<Block> impl: blocks) {
-			Block block = impl.getContent();
-			int index = 0;
-			while (index < pool.getChildren().size()
-					&& ((BlockNode)pool.getChildren().get(index)).getBlock().getClass().getSimpleName().compareTo(block.getClass().getSimpleName()) < 0)
-				index++;
-			pool.getChildren().add(index, new BlockNode(block, true, graphPane));
+		Set<Class> blocks = list.getCompatibleContentTypes("*");
+		for (Class<? extends Block> type: blocks) {
+			try {
+				Block block = type.newInstance();
+				int index = 0;
+				while (index < pool.getChildren().size()
+						&& ((BlockNode)pool.getChildren().get(index)).getBlock().getClass().getSimpleName().compareTo(block.getClass().getSimpleName()) < 0)
+					index++;
+				pool.getChildren().add(index, new BlockNode(block, true, graphPane));
+			} catch (InstantiationException | IllegalAccessException e) {
+				System.out.println("Cannot create instance of class " + type);
+			}
 		}
 	}
 
@@ -197,17 +200,16 @@ public class GraphEditorController implements EditorController {
 
 	@Override
 	protected void finalize() throws Throwable {
-		confEditor.disconnect();
-		super.finalize();
+		confEditor.detach();
 	}
 
 	@Override
-	public void setEditor(Editor editor) {
+	public void setEditor(PropertyEditor editor) {
 		this.editor = editor;
 	}
 
 	@Override
-	public Editor getEditor() {
+	public PropertyEditor getEditor() {
 		return editor;
 	}
 

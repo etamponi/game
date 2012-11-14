@@ -10,14 +10,16 @@
  ******************************************************************************/
 package game.editorsystem;
 
+import game.configuration.Property;
 import javafx.fxml.Initializable;
 
 public interface EditorController extends Initializable {
 	
-	public void setEditor(Editor editor);
-	public Editor getEditor();
+	public void setEditor(PropertyEditor editor);
+	
+	public PropertyEditor getEditor();
 
-	public void setModel(Option model);
+	public void setModel(Property model);
 
 	public void updateView();
 

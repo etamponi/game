@@ -10,14 +10,13 @@
  ******************************************************************************/
 package game.plugins.editors.list;
 
-import game.configuration.ConfigurableList;
-import game.editorsystem.Editor;
+import game.configuration.IList;
+import game.configuration.Property;
 import game.editorsystem.EditorController;
 import game.editorsystem.EditorWindow;
-import game.editorsystem.Option;
+import game.editorsystem.PropertyEditor;
 
 import java.net.URL;
-import java.util.List;
 import java.util.ResourceBundle;
 
 import javafx.collections.FXCollections;
@@ -30,10 +29,10 @@ import javafx.scene.control.SelectionMode;
 
 public class ListEditorController implements EditorController {
 	
-	private Option model;
+	private Property model;
 	
 	@FXML
-	private ListView<Option> listView;
+	private ListView<Property> listView;
 	@FXML
 	private Button addButton;
 	@FXML
@@ -45,7 +44,7 @@ public class ListEditorController implements EditorController {
 	@FXML
 	private Button downButton;
 
-	private Editor editor;
+	private PropertyEditor editor;
 	
 	@Override
 	public void initialize(URL location, ResourceBundle resources) {
@@ -53,27 +52,25 @@ public class ListEditorController implements EditorController {
 	}
 	
 	@Override
-	public void setModel(Option model) {
+	public void setModel(Property model) {
 		this.model = model;
 	}
 
 	@Override
 	public void updateView() {
-		List list = model.getContent();
+		IList list = model.getContent();
 		if (list == null)
 			return;
 		
-		ObservableList<Option> items = FXCollections.<Option>observableArrayList();
+		ObservableList<Property> items = FXCollections.<Property>observableArrayList();
 		for (int i = 0; i < list.size(); i++) {
-			items.add(list instanceof ConfigurableList ?
-					  new Option((ConfigurableList)list, String.valueOf(i))
-					: new Option(list.get(i)));
+			items.add(new Property(list, String.valueOf(i)));
 		}
 		//listView.getSelectionModel().select(-1);
 		listView.getSelectionModel().clearSelection();
 		listView.setItems(items);
 		
-		boolean disable = editor.isReadOnly() || !(list instanceof ConfigurableList);
+		boolean disable = editor.isReadOnly();
 		addButton.setDisable(disable);
 		removeButton.setDisable(disable);
 		upButton.setDisable(disable);
@@ -86,7 +83,7 @@ public class ListEditorController implements EditorController {
 	
 	@FXML
 	public void addAction(ActionEvent event) {
-		ConfigurableList list = model.getContent();
+		IList list = model.getContent();
 		if (list == null)
 			return;
 		
@@ -98,7 +95,7 @@ public class ListEditorController implements EditorController {
 	
 	@FXML
 	public void removeAction(ActionEvent event) {
-		ConfigurableList list = model.getContent();
+		IList list = model.getContent();
 		if (list == null)
 			return;
 		
@@ -115,7 +112,7 @@ public class ListEditorController implements EditorController {
 		
 		int index = listView.getSelectionModel().getSelectedIndex();
 		if (index >= 0) {
-			Editor editor = listView.getItems().get(index).getBestEditor(true);
+			PropertyEditor editor = PropertyEditor.getBestEditor(listView.getItems().get(index).getContentType(true));
 			if (editor != null) {
 				editor.setReadOnly(this.editor.isReadOnly());
 				new EditorWindow(editor).startEdit(listView.getItems().get(index));
@@ -128,7 +125,7 @@ public class ListEditorController implements EditorController {
 		if (model.getContent() == null)
 			return;
 		
-		ConfigurableList list = model.getContent();
+		IList list = model.getContent();
 		
 		int index = listView.getSelectionModel().getSelectedIndex();
 		if (index > 0) {
@@ -146,7 +143,7 @@ public class ListEditorController implements EditorController {
 		if (model.getContent() == null)
 			return;
 		
-		ConfigurableList list = model.getContent();
+		IList list = model.getContent();
 		
 		int index = listView.getSelectionModel().getSelectedIndex();
 		if (index < listView.getItems().size()-1) {
@@ -160,12 +157,12 @@ public class ListEditorController implements EditorController {
 	}
 
 	@Override
-	public void setEditor(Editor editor) {
+	public void setEditor(PropertyEditor editor) {
 		this.editor = editor;
 	}
 
 	@Override
-	public Editor getEditor() {
+	public PropertyEditor getEditor() {
 		return editor;
 	}
 	

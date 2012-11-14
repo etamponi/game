@@ -1,10 +1,10 @@
 package game.configuration.listeners;
 
-import game.configuration.ChangeListener;
+import game.configuration.Listener;
 import game.configuration.IObject;
 import game.configuration.Property;
 
-public class BoundProperties extends ChangeListener {
+public class BoundProperties extends Listener {
 	
 	public BoundProperties(IObject root, String... propertyNames) {
 		for(String name: propertyNames)
@@ -12,7 +12,7 @@ public class BoundProperties extends ChangeListener {
 	}
 
 	@Override
-	public void onChange(Property changedPath) {
+	public void action(Property changedPath) {
 		// Does nothing
 	}
 

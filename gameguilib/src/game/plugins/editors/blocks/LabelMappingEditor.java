@@ -10,7 +10,7 @@
  ******************************************************************************/
 package game.plugins.editors.blocks;
 
-import game.editorsystem.Editor;
+import game.editorsystem.PropertyEditor;
 import game.plugins.encoders.LabelEncoder;
 import javafx.event.EventHandler;
 import javafx.scene.Node;
@@ -22,7 +22,7 @@ import javafx.scene.layout.GridPane;
 import org.apache.commons.math3.linear.ArrayRealVector;
 import org.apache.commons.math3.linear.RealVector;
 
-public class LabelMappingEditor extends Editor {
+public class LabelMappingEditor extends PropertyEditor {
 	
 	GridPane root = new GridPane();
 
@@ -44,8 +44,8 @@ public class LabelMappingEditor extends Editor {
 		}
 		
 		int row = 0;
-		final LabelEncoder encoder = (LabelEncoder)getModel().getOwner();
-		for (final String label: encoder.template.labels.getList(String.class)) {
+		final LabelEncoder encoder = (LabelEncoder)getModel().getRoot();
+		for (final String label: encoder.template.labels) {
 			Label l = new Label(label);
 			
 			if (label == null)

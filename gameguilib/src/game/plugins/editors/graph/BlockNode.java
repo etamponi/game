@@ -10,18 +10,14 @@
  ******************************************************************************/
 package game.plugins.editors.graph;
 
-
-import game.configuration.Change;
+import game.configuration.IObject;
+import game.configuration.Listener;
+import game.configuration.Property;
 import game.core.Block;
 import game.core.blocks.PredictionGraph;
 import game.editorsystem.EditorWindow;
-import game.editorsystem.Option;
-import game.editorsystem.Editor;
+import game.editorsystem.PropertyEditor;
 import game.plugins.editors.graph.OuterGraphEditor.GraphEditor;
-
-import java.util.Observable;
-import java.util.Observer;
-
 import javafx.event.EventHandler;
 import javafx.geometry.Insets;
 import javafx.scene.image.Image;
@@ -40,7 +36,7 @@ import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Text;
 import javafx.scene.text.TextAlignment;
 
-public class BlockNode extends VBox implements Observer {
+public class BlockNode extends VBox {
 	
 	private static final double BLOCKWIDTH = 80;
 	private static final double BLOCKHEIGHT = 42;
@@ -60,15 +56,40 @@ public class BlockNode extends VBox implements Observer {
 	
 	private GraphPane pane;
 	
-	private Option model;
+	BlockParent blockParent;
+	
+	class BlockParent extends IObject {
+		
+		public Block block;
+		
+		public BlockParent(Block b) {
+			setContent("block", b);
+			
+			Listener listener = new Listener() {
+				@Override
+				public boolean isListeningOn(Property path) {
+					return path.isPrefix(new Property(BlockParent.this, "block.name"), false);
+				}
+				@Override
+				public void action(Property triggerPath) {
+					blockName.setText(block.name);
+					pane.fixPosition(BlockNode.this);
+					status.setImage(block.getErrors().isEmpty() ? STATUSOK : STATUSERRORS);
+				}
+			};
+			
+			addListener(listener);
+		}
+		
+	}
 
-	public BlockNode(final Block b, boolean isTpl, GraphPane p) { 
-		this.model = new Option(b);
+	public BlockNode(final Block b, boolean isTpl, GraphPane p) {
+		this.blockParent = new BlockParent(b);
 		this.isTemplate = isTpl;
 		this.pane = p;
 		
 		if (isTemplate)
-			b.setOption("name", b.getClass().getSimpleName());
+			b.setContent("name", b.getClass().getSimpleName());
 		
 		setStyle("-fx-border-style: solid; -fx-border-color:gray;");
 		setPadding(new Insets(5));
@@ -93,7 +114,7 @@ public class BlockNode extends VBox implements Observer {
 				Dragboard db = startDragAndDrop(isTemplate ? TransferMode.COPY : TransferMode.MOVE);
 				
 				ClipboardContent content = new ClipboardContent();
-				pane.setDragging( isTemplate ? new BlockNode((Block)b.cloneConfiguration(), false, pane) : BlockNode.this);
+				pane.setDragging( isTemplate ? new BlockNode((Block)b.copy(), false, pane) : BlockNode.this);
 				content.put(BLOCKDATA, new HandlePosition(event.getX(), event.getY()));
 				
 				db.setContent(content);
@@ -111,21 +132,19 @@ public class BlockNode extends VBox implements Observer {
 		});
 	
 		if (!isTemplate) {
-			status.setImage(b.getConfigurationErrors().isEmpty() ? STATUSOK : STATUSERRORS);
-			
-			model.getOwner().addObserver(this);
+			status.setImage(b.getErrors().isEmpty() ? STATUSOK : STATUSERRORS);
 			
 			setOnMouseClicked(new EventHandler<MouseEvent>() {
 				@Override
 				public void handle(MouseEvent event) {
 					if (event.getClickCount() > 1) {
-						Editor editor;
-						if (PredictionGraph.class.isAssignableFrom(model.getType(true)))
+						PropertyEditor editor;
+						if (PredictionGraph.class.isAssignableFrom(b.getClass()))
 							editor = new GraphEditor();
 						else
-							editor = model.getBestEditor(true);
+							editor = PropertyEditor.getBestEditor(b.getClass());
 						editor.setReadOnly(pane.isReadOnly());
-						new EditorWindow(editor).startEdit(model);
+						new EditorWindow(editor).startEdit(new Property(blockParent, "block"));
 					}
 				}
 			});
@@ -133,17 +152,12 @@ public class BlockNode extends VBox implements Observer {
 	}
 	
 	public void destroy() {
-		pane.removeBlock((Block)model.getContent());
-		disconnect();
-	}
-	
-	public void disconnect() {
-		model.getOwner().deleteObserver(this);
-		model.setContent(null);
+		pane.removeBlock(blockParent.block);
+		blockParent.detach();
 	}
 	
 	public Block getBlock() {
-		return model.getContent();
+		return blockParent.block;
 	}
 	
 	public void setWrapper(HBox wrapper) {
@@ -169,21 +183,6 @@ public class BlockNode extends VBox implements Observer {
 			(wrapper != null ? wrapper : this).setOpacity(0.3);
 		else
 			(wrapper != null ? wrapper : this).setOpacity(1.0);
-	}
-	
-	@Override
-	public void update(Observable o, Object arg) {
-		if (arg instanceof Change) {
-			Change change = (Change)arg;
-			if (change.getPath().equals("content.name")) {
-				if (!blockName.getText().equals(getBlock().name)) {
-					blockName.setText(getBlock().name);
-					pane.fixPosition(BlockNode.this);
-				}
-			}
-			
-			status.setImage(getBlock().getConfigurationErrors().isEmpty() ? STATUSOK : STATUSERRORS);
-		}
 	}
 	
 }

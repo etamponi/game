@@ -10,7 +10,7 @@
  ******************************************************************************/
 package game.plugins.encoders;
 
-import game.configuration.ChangeListener;
+import game.configuration.Listener;
 import game.configuration.Property;
 import game.core.DataTemplate;
 import game.core.DataTemplate.Data;
@@ -32,9 +32,9 @@ public abstract class LabelEncoder extends Encoder<LabelTemplate> {
 	
 	public LabelEncoder() {
 		
-		addListener(new ChangeListener() {
+		addListener(new Listener() {
 			@Override
-			public void onChange(Property changedPath) {
+			public void action(Property changedPath) {
 				updateMapping();
 			}
 			

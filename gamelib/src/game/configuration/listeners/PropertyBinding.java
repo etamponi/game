@@ -1,10 +1,10 @@
 package game.configuration.listeners;
 
-import game.configuration.ChangeListener;
+import game.configuration.Listener;
 import game.configuration.IObject;
 import game.configuration.Property;
 
-public class PropertyBinding extends ChangeListener {
+public class PropertyBinding extends Listener {
 	
 	private final Property master;
 
@@ -27,7 +27,7 @@ public class PropertyBinding extends ChangeListener {
 	}
 
 	@Override
-	public void onChange(Property changedPath) {
+	public void action(Property changedPath) {
 		Object masterContent = master.getContent();
 		if (changedPath.isPrefix(master, false)) {
 			for(Property slave: getSlaves())

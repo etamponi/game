@@ -10,6 +10,8 @@
  ******************************************************************************/
 package game.editorsystem;
 
+import game.configuration.Property;
+
 import java.io.IOException;
 import java.net.URL;
 
@@ -19,7 +21,7 @@ import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.layout.AnchorPane;
 
-public abstract class ControlledEditor extends Editor {
+public abstract class ControlledEditor extends PropertyEditor {
 	
 	private Node root;
 	
@@ -52,7 +54,7 @@ public abstract class ControlledEditor extends Editor {
 	}
 
 	@Override
-	public void connect(Option model) {
+	public void connect(Property model) {
 		controller.setModel(model);
 		super.connect(model);
 	}

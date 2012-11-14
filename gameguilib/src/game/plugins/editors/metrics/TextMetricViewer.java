@@ -11,12 +11,12 @@
 package game.plugins.editors.metrics;
 
 import game.core.Metric;
-import game.editorsystem.Editor;
+import game.editorsystem.PropertyEditor;
 import javafx.scene.Node;
 import javafx.scene.control.TextArea;
 import javafx.scene.layout.AnchorPane;
 
-public class TextMetricViewer extends Editor {
+public class TextMetricViewer extends PropertyEditor {
 	
 	private AnchorPane pane = new AnchorPane();
 	private TextArea content = new TextArea();

@@ -10,13 +10,13 @@
  ******************************************************************************/
 package game.plugins.editors;
 
-import game.editorsystem.Editor;
+import game.editorsystem.PropertyEditor;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.scene.Node;
 import javafx.scene.control.TextField;
 
-public abstract class TextFieldEditor extends Editor {
+public abstract class TextFieldEditor extends PropertyEditor {
 	
 	protected TextField textField = new TextField();
 	
@@ -29,7 +29,7 @@ public abstract class TextFieldEditor extends Editor {
 				if (getModel() != null) {
 					Object content = parseText();
 					if (content != null)
-						setModelContent(content);
+						updateModel(content);
 				}
 			}
 		});

@@ -10,6 +10,7 @@
  ******************************************************************************/
 package game.editorsystem;
 
+import game.configuration.Property;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.geometry.Insets;
@@ -27,17 +28,17 @@ import javafx.stage.WindowEvent;
 
 public class EditorWindow extends Stage {
 	
-	private Editor editor;
+	private PropertyEditor editor;
 	
 	private Object original;
 
 	private Button cancelButton;
 	
-	public EditorWindow(Editor e) {
+	public EditorWindow(PropertyEditor e) {
 		this(e, true);
 	}
 	
-	public EditorWindow(Editor e, boolean modal) {
+	public EditorWindow(PropertyEditor e, boolean modal) {
 		assert(e != null);
 		
 		this.editor = e;
@@ -63,7 +64,7 @@ public class EditorWindow extends Stage {
 		okButton.setOnAction(new EventHandler<ActionEvent>() {
 			@Override
 			public void handle(ActionEvent event) {
-				editor.disconnect();
+				editor.detach();
 				close();
 			}
 		});
@@ -74,11 +75,9 @@ public class EditorWindow extends Stage {
 		cancelButton.setOnAction(new EventHandler<ActionEvent>() {
 			@Override
 			public void handle(ActionEvent event) {
-				Option model = editor.getModel();
-				editor.disconnect();
-				if (model.getContent() != null && !model.getContent().equals(original)) {
-					model.setContent(original);
-				}
+				Property model = editor.getModel();
+				editor.detach();
+				model.setContent(original);
 				close();
 			}
 		});
@@ -96,23 +95,21 @@ public class EditorWindow extends Stage {
 		setOnCloseRequest(new EventHandler<WindowEvent>() {
 			@Override
 			public void handle(WindowEvent event) {
-				Option model = editor.getModel();
-				editor.disconnect();
-				if (model.getContent() != null && !model.getContent().equals(original)) {
-					model.setContent(original);
-				}
+				Property model = editor.getModel();
+				editor.detach();
+				model.setContent(original);
 			}
 		});
 	}
 	
-	public void startEdit(Option model) {
-		original = model.cloneContent();
+	public void startEdit(Property model) {
+		original = model.getRoot().copy().getContent(model.getPath());
 		
 		editor.connect(model);
 		if (model.getContent() != null)
 			setTitle(model.getContent().toString());
 		else
-			setTitle(model.getType().getSimpleName());
+			setTitle(model.getContentType(false).getSimpleName());
 		
 		cancelButton.setDisable(editor.isReadOnly());
 		

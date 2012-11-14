@@ -10,8 +10,8 @@
  ******************************************************************************/
 package game.plugins.editors;
 
-import game.configuration.Configurable;
-import game.editorsystem.Editor;
+import game.configuration.IObject;
+import game.editorsystem.PropertyEditor;
 
 import java.io.File;
 
@@ -33,7 +33,7 @@ import javafx.stage.FileChooser.ExtensionFilter;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 
-public class SerializationEditor extends Editor {
+public class SerializationEditor extends PropertyEditor {
 	
 	private final Image SAVECONFIGURATION = new Image(getClass().getResourceAsStream("saveConfiguration.png"));
 	private final Image LOADCONFIGURATION = new Image(getClass().getResourceAsStream("loadConfiguration.png"));
@@ -96,30 +96,31 @@ public class SerializationEditor extends Editor {
 		ret.setOnAction(new EventHandler<ActionEvent>() {
 			@Override
 			public void handle(ActionEvent event) {
-				Configurable content = getModel().getContent();
+				IObject content = getModel().getContent();
 				FileChooser chooser = new FileChooser();
 				chooser.setInitialDirectory(new File(System.getProperty("user.dir")));
-				chooser.getExtensionFilters().add(new ExtensionFilter("GAME configuration file", "*.config.xml"));
+				chooser.getExtensionFilters().add(new ExtensionFilter("GAME configuration file", "*.bin"));
 				
 				if (what.equals("SAVE")) {
 					chooser.setTitle("Save object configuration");
 					File out = chooser.showSaveDialog(line.getScene().getWindow());
 					if (out != null) {
-						if (!out.getName().endsWith(".config.xml"))
-							content.saveConfiguration(out.getPath() + ".config.xml");
+						if (!out.getName().endsWith(".bin"))
+							content.write(new File(out.getPath() + ".bin"));
 						else
-							content.saveConfiguration(out.getPath());
+							content.write(out);
 					}
 				} else {
 					chooser.setTitle("Load object configuration");
 					File out = chooser.showOpenDialog(line.getScene().getWindow());
 					if (out != null) {
-						boolean loaded = content.loadConfiguration(out);
-						if (!loaded) {
+						IObject loaded = IObject.load(out);
+						if (!loaded.getClass().equals(content.getClass())) {
 							messageDialog("Cannot load object configuration", "Object could not be loaded. Check for type and constraints.");
+						} else {
+							updateModel(loaded);
 						}
 					}
-					out = null;
 				}
 				event.consume();
 			}

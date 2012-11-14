@@ -10,15 +10,15 @@
  ******************************************************************************/
 package game.plugins.editors.map;
 
-import game.configuration.ConfigurableMap;
-import game.editorsystem.Editor;
+import game.configuration.IMap;
+import game.configuration.IObject;
+import game.configuration.Property;
 import game.editorsystem.EditorController;
 import game.editorsystem.EditorWindow;
-import game.editorsystem.Option;
+import game.editorsystem.PropertyEditor;
 import game.plugins.editors.StringEditor;
 
 import java.net.URL;
-import java.util.Map;
 import java.util.ResourceBundle;
 
 import javafx.collections.FXCollections;
@@ -31,10 +31,10 @@ import javafx.scene.control.SelectionMode;
 
 public class MapEditorController implements EditorController {
 	
-	private Option model;
+	private Property model;
 	
 	@FXML
-	private ListView<Option> listView;
+	private ListView<Property> listView;
 	@FXML
 	private Button addKeyButton;
 	@FXML
@@ -44,7 +44,7 @@ public class MapEditorController implements EditorController {
 	@FXML
 	private Button editKeyButton;
 
-	private Editor editor;
+	private PropertyEditor editor;
 	
 	@Override
 	public void initialize(URL location, ResourceBundle resources) {
@@ -52,27 +52,25 @@ public class MapEditorController implements EditorController {
 	}
 	
 	@Override
-	public void setModel(Option model) {
+	public void setModel(Property model) {
 		this.model = model;
 	}
 
 	@Override
 	public void updateView() {
-		Map map = model.getContent();
+		IMap map = model.getContent();
 		if (map == null)
 			return;
 		
-		ObservableList<Option> items = FXCollections.<Option>observableArrayList();
+		ObservableList<Property> items = FXCollections.<Property>observableArrayList();
 		for (Object key: map.keySet()) {
-			items.add(map instanceof ConfigurableMap ?
-					                 new Option((ConfigurableMap)map, key.toString())
-					               : new Option(map.get(key)));
+			items.add(new Property((IMap)map, key.toString()));
 		}
 		//listView.getSelectionModel().select(-1);
 		listView.getSelectionModel().clearSelection();
 		listView.setItems(items);
 		
-		boolean disable = editor.isReadOnly() || !(map instanceof ConfigurableMap);
+		boolean disable = editor.isReadOnly();
 		addKeyButton.setDisable(disable);
 		editKeyButton.setDisable(disable);
 		removeButton.setDisable(disable);
@@ -82,13 +80,22 @@ public class MapEditorController implements EditorController {
 			editButton.setText("Edit");
 	}
 	
+	private static class Temporary extends IObject {
+		@SuppressWarnings("unused")
+		public String key;
+		
+		public Temporary(String key) {
+			this.key = key;
+		}
+	}
+	
 	@FXML
 	public void addKeyAction(ActionEvent event) {
-		ConfigurableMap map = model.getContent();
+		IMap map = model.getContent();
 		if (map == null)
 			return;
 		
-		Option key = new Option(new String(""));
+		Property key = new Property(new Temporary(""), "key");
 		StringEditor editor = new StringEditor();
 		new EditorWindow(editor).startEdit(key);
 		
@@ -99,8 +106,8 @@ public class MapEditorController implements EditorController {
 	}
 	
 	private void selectKey(String key) {
-		for (Option option: listView.getItems()) {
-			if (option.getOptionName().equals(key)) {
+		for (Property option: listView.getItems()) {
+			if (option.getPath().equals(key)) {
 				listView.getSelectionModel().select(option);
 				return;
 			}
@@ -108,12 +115,12 @@ public class MapEditorController implements EditorController {
 	}
 	
 	public void editKeyAction(ActionEvent event) {
-		ConfigurableMap map = model.getContent();
+		IMap map = model.getContent();
 		if (map == null)
 			return;
 		
-		String oldKey = listView.getSelectionModel().getSelectedItem().getOptionName();
-		Option key = new Option(listView.getSelectionModel().getSelectedItem().getOptionName());
+		String oldKey = listView.getSelectionModel().getSelectedItem().getPath();
+		Property key = new Property(new Temporary(listView.getSelectionModel().getSelectedItem().getContent(String.class)), "key");
 		StringEditor editor = new StringEditor();
 		new EditorWindow(editor).startEdit(key);
 		
@@ -126,13 +133,13 @@ public class MapEditorController implements EditorController {
 
 	@FXML
 	public void removeAction(ActionEvent event) {
-		ConfigurableMap map = model.getContent();
+		IMap map = model.getContent();
 		if (map == null)
 			return;
 		
-		Option option = listView.getSelectionModel().getSelectedItem();
+		Property option = listView.getSelectionModel().getSelectedItem();
 		if (option != null) {
-			map.remove(option.getOptionName());
+			map.remove(option.getPath());
 		}
 	}
 	
@@ -141,9 +148,9 @@ public class MapEditorController implements EditorController {
 		if (model.getContent() == null)
 			return;
 		
-		Option option = listView.getSelectionModel().getSelectedItem();
+		Property option = listView.getSelectionModel().getSelectedItem();
 		if (option != null) {
-			Editor editor = option.getBestEditor(true);
+			PropertyEditor editor = PropertyEditor.getBestEditor(option.getContentType(true));
 			if (editor != null) {
 				editor.setReadOnly(this.editor.isReadOnly());
 				new EditorWindow(editor).startEdit(option);
@@ -152,12 +159,12 @@ public class MapEditorController implements EditorController {
 	}
 
 	@Override
-	public void setEditor(Editor editor) {
+	public void setEditor(PropertyEditor editor) {
 		this.editor = editor;
 	}
 
 	@Override
-	public Editor getEditor() {
+	public PropertyEditor getEditor() {
 		return editor;
 	}
 	

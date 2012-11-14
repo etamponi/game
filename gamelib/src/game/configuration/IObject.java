@@ -62,7 +62,7 @@ public class IObject {
 
 	private final List<Property> parentsLinkToThis = new ArrayList<>();
 
-	private final List<ChangeListener> listeners = new ArrayList<>();
+	private final List<Listener> listeners = new ArrayList<>();
 	
 	private final Map<Property, List<ErrorCheck>> errorChecks = new HashMap<>();
 	
@@ -84,11 +84,11 @@ public class IObject {
 		errorChecks.get(property).add(check);
 	}
 
-	protected void addListener(ChangeListener listener) {
+	protected void addListener(Listener listener) {
 		this.listeners.add(listener);
 	}
 
-	private Property appendChild(Property path, Property child) {
+	protected Property appendChild(Property path, Property child) {
 		if (path.getPath().isEmpty())
 			return child;
 		else
@@ -142,6 +142,15 @@ public class IObject {
 		return ret;
 	}
 	
+	public Set<Class> getCompatibleContentTypes(String propertyName) {
+		Property path = new Property(this, propertyName);
+		
+		List<Constraint> list = new ArrayList<>();
+		recursivelyFindConstraints(path, list, HashTreePSet.<Property> empty());
+		
+		return PluginManager.getCompatibleImplementationsOf(getContentType(propertyName, false), list);
+	}
+	
 	public <T> T getContent(String propertyPath) {
 		if (propertyPath.isEmpty())
 			return null;
@@ -164,14 +173,27 @@ public class IObject {
 		return (T) getContent(propertyPath);
 	}
 	
+	public Class<?> getContentType(String propertyName, boolean runtime) {
+		if (runtime) {
+			Object content = getLocal(propertyName);
+			return content == null ? null : content.getClass();
+		} else {
+			try {
+				return getClass().getField(propertyName).getType();
+			} catch (NoSuchFieldException | SecurityException e) {
+				return null;
+			}
+		}
+	}
+	
 	public Map<Property, List<String>> getErrors() {
 		Map<Property, List<String>> ret = new LinkedHashMap<>();
 
-		recursivelyGetErrors(new Property(this, ""), ret, new HashSet<IObject>());
+		recursivelyFindErrors(new Property(this, ""), ret, new HashSet<IObject>());
 		
 		return ret;
 	}
-	
+
 	public List<String> getFieldPropertyNames() {
 		List<String> ret = new ArrayList<>();
 		
@@ -191,7 +213,7 @@ public class IObject {
 		
 		return ret;
 	}
-	
+
 	protected List<Property> getInstanceProperties() {
 		return new ArrayList<>();
 	}
@@ -210,15 +232,15 @@ public class IObject {
 		FieldAccess fieldAccess = FieldAccess.get(getClass());
 		return fieldAccess.get(this, propertyName);
 	}
-
+	
 	public List<Property> getParentsLinksToThis() {
 		return Collections.unmodifiableList(parentsLinkToThis);
 	}
-
+	
 	protected List<Property> getParentsLinksToThis(boolean editable) {
 		return parentsLinkToThis;
 	}
-	
+
 	public List<Property> getProperties() {
 		List<Property> ret = new ArrayList<>();
 
@@ -227,19 +249,6 @@ public class IObject {
 		
 		ret.addAll(getInstanceProperties());
 		return ret;
-	}
-	
-	public Class<?> getContentType(String propertyName, boolean runtime) {
-		if (runtime) {
-			Object content = getLocal(propertyName);
-			return content == null ? null : content.getClass();
-		} else {
-			try {
-				return getClass().getField(propertyName).getType();
-			} catch (NoSuchFieldException | SecurityException e) {
-				return null;
-			}
-		}
 	}
 
 	public List<Property> getUnboundProperties() {
@@ -270,13 +279,13 @@ public class IObject {
 	}
 
 	private void notifyChange(Property changedPath) {
-		for (ChangeListener listener : listeners) {
+		for (Listener listener : listeners) {
 			if (listener.isListeningOn(changedPath))
-				listener.onChange(changedPath);
+				listener.action(changedPath);
 		}
 	}
 
-	private Property prependParent(Property parent, Property path) {
+	protected Property prependParent(Property parent, Property path) {
 		if (path.getPath().isEmpty())
 			return parent;
 		else
@@ -299,7 +308,7 @@ public class IObject {
 		
 		return builder.toString();
 	}
-
+	
 	protected void propagateChange(Property property) {
 		propagateChange(property, HashTreePSet.<Property> empty(), 0);
 	}
@@ -316,9 +325,9 @@ public class IObject {
 			linkToThis.getRoot().propagateChange(prependParent(linkToThis, property), seen.plus(linkToThis), level + 1);
 		}
 	}
-	
+
 	private void recursivelyFindBoundProperties(Property prefixPath, List<Property> list, PSet<Property> seen) {
-		for (ChangeListener l: listeners)
+		for (Listener l: listeners)
 			list.addAll(l.getBoundProperties(prefixPath));
 
 		for (Property linkToThis: parentsLinkToThis) {
@@ -328,7 +337,20 @@ public class IObject {
 		}
 	}
 
-	private void recursivelyGetErrors(Property basePath, Map<Property, List<String>> errors, Set<IObject> seen) {
+	private void recursivelyFindConstraints(Property path, List<Constraint> list, PSet<Property> seen) {
+		for(Property constrained: constraints.keySet()) {
+			if (constrained.includes(path))
+				list.addAll(constraints.get(constrained));
+		}
+
+		for (Property linkToThis: parentsLinkToThis) {
+			if (seen.contains(linkToThis))
+				continue;
+			linkToThis.getRoot().recursivelyFindConstraints(prependParent(linkToThis, path), list, seen.plus(linkToThis));
+		}
+	}
+
+	private void recursivelyFindErrors(Property basePath, Map<Property, List<String>> errors, Set<IObject> seen) {
 		if (seen.contains(this))
 			return;
 		else
@@ -336,10 +358,13 @@ public class IObject {
 		
 		for(Property property: getUnboundProperties()) {
 			Property complete = appendChild(basePath, property);
-			errors.put(complete, checkErrors(property));
+			
+			List<String> list = checkErrors(property);
+			if (!list.isEmpty())
+				errors.put(complete, list);
 			
 			if (property.getContent() instanceof IObject) {
-				property.getContent(IObject.class).recursivelyGetErrors(complete, errors, seen);
+				property.getContent(IObject.class).recursivelyFindErrors(complete, errors, seen);
 			}
 		}
 	}
@@ -387,13 +412,13 @@ public class IObject {
 				local.setContent(remainingPath, content);
 		}
 	}
-
+	
 	protected void setLocal(String propertyName, Object content) {
 		// TODO Access through setter
 		FieldAccess fieldAccess = FieldAccess.get(getClass());
 		fieldAccess.set(this, propertyName, content);
 	}
-
+	
 	@Override
 	public String toString() {
 		return name;
@@ -414,28 +439,6 @@ public class IObject {
 		Output output = new Output(out);
 		kryo.writeClassAndObject(output, this.copy());
 		output.close();
-	}
-	
-	public Set<Class> getCompatibleContentTypes(String propertyName) {
-		Property path = new Property(this, propertyName);
-		
-		List<Constraint> list = new ArrayList<>();
-		recursivelyFindConstraints(path, list, HashTreePSet.<Property> empty());
-		
-		return PluginManager.getCompatibleImplementationsOf(getContentType(propertyName, false), list);
-	}
-	
-	private void recursivelyFindConstraints(Property path, List<Constraint> list, PSet<Property> seen) {
-		for(Property constrained: constraints.keySet()) {
-			if (constrained.includes(path))
-				list.addAll(constraints.get(constrained));
-		}
-
-		for (Property linkToThis: parentsLinkToThis) {
-			if (seen.contains(linkToThis))
-				continue;
-			linkToThis.getRoot().recursivelyFindConstraints(prependParent(linkToThis, path), list, seen.plus(linkToThis));
-		}
 	}
 
 }

@@ -11,8 +11,13 @@
 package testgame.tests;
 
 import static org.junit.Assert.assertEquals;
-import game.configuration.Configurable;
-import game.configuration.ConfigurableList;
+import game.configuration.Constraint;
+import game.configuration.IList;
+import game.configuration.IObject;
+import game.configuration.PluginManager;
+import game.configuration.PluginManager.PluginConfiguration;
+import game.configuration.Property;
+import game.configuration.listeners.PropertyBinding;
 import game.core.DataTemplate;
 import game.core.DataTemplate.Data;
 import game.core.Encoding;
@@ -20,14 +25,11 @@ import game.core.InstanceTemplate;
 import game.core.blocks.Encoder;
 import game.core.blocks.PredictionGraph;
 import game.core.blocks.Transducer;
-import game.editorsystem.Editor;
-import game.editorsystem.Option;
-import game.plugins.Constraint;
-import game.plugins.Implementation;
-import game.plugins.PluginManager;
+import game.editorsystem.PropertyEditor;
 import game.plugins.datatemplates.LabelTemplate;
 import game.plugins.datatemplates.VectorTemplate;
 import game.plugins.editors.ImplementationChooserEditor;
+import game.plugins.editors.ImplementationChooserEditor.Implementation;
 import game.plugins.editors.NumberEditor;
 import game.plugins.editors.graph.OuterGraphEditor;
 import javafx.application.Application;
@@ -41,7 +43,7 @@ import org.junit.Test;
 
 public class EditorSystemTest extends Application {
 	
-	public static class ConfigurableImplA extends Configurable {
+	public static class ConfigurableImplA extends IObject {
 		
 		public String optionA1;
 		
@@ -53,12 +55,12 @@ public class EditorSystemTest extends Application {
 		
 		public ConfigurableAbstract optionA5;
 		
-		public Configurable graph;
+		public IObject graph;
 		
 		public ConfigurableImplA() {
-			setOptionBinding("optionA3", "optionA5.optionK1");
+			addListener(new PropertyBinding(this, "optionA3", "optionA5.optionK1"));
 			
-			setOptionConstraints("optionA5", new Constraint<ConfigurableAbstract>() {
+			addConstraint("optionA5", new Constraint<ConfigurableAbstract>() {
 				@Override
 				public boolean isValid(ConfigurableAbstract o) {
 					if (optionA2 == 1)
@@ -71,7 +73,7 @@ public class EditorSystemTest extends Application {
 		
 	}
 	
-	public static abstract class ConfigurableAbstract extends Configurable {
+	public static abstract class ConfigurableAbstract extends IObject {
 		
 		public double optionK1; 
 		
@@ -205,19 +207,19 @@ public class EditorSystemTest extends Application {
 
 	@Test
 	public void test() throws Exception {
-		PluginManager manager = PluginManager.get();
-		manager.packages.add("testgame");
-		PluginManager.updateManager(manager);
+		PluginConfiguration conf = new PluginConfiguration();
+		conf.packages.add("testgame");
+		PluginManager.initialize(conf);
 		launch();
 	}
 
 	@Override
 	public void start(Stage primaryStage) throws Exception {
-		Configurable object = new ConfigurableImplA();
+		IObject object = new ConfigurableImplA();
 		
-		Option option = new Option(object, "optionA3");
+		Property option = new Property(object, "optionA3");
 		
-		Editor best = option.getBestEditor(false);
+		PropertyEditor best = PropertyEditor.getBestEditor(option.getContentType(false));
 		assertEquals(NumberEditor.class, best.getClass());
 		best.connect(option);
 		
@@ -230,11 +232,11 @@ public class EditorSystemTest extends Application {
 		
 		tf.setText("notworking");
 		assertEquals(2.71, option.getContent());
-		best.disconnect();
+		best.detach();
 		
-		object.setOption("optionA2", 0);
-		option = new Option(object, "optionA5");
-		best = option.getBestEditor(false);
+		object.setContent("optionA2", 0);
+		option = new Property(object, "optionA5");
+		best = PropertyEditor.getBestEditor(option.getContentType(false));
 		assertEquals(ImplementationChooserEditor.class, best.getClass());
 		best.connect(option);
 		
@@ -242,12 +244,12 @@ public class EditorSystemTest extends Application {
 		assertEquals("<null>", cb.getValue().toString());
 		assertEquals(3, cb.getItems().size());
 		
-		object.setOption("optionA2", 1);
+		object.setContent("optionA2", 1);
 		assertEquals(2, cb.getItems().size());
 		
 		option.setContent(new ConfigurableImplB());
-		assertEquals(option.getContent(), cb.getValue().getContent());
-		best.disconnect();
+		assertEquals(option.getContent(), cb.getValue().getInstance());
+		best.detach();
 		
 		final PredictionGraph graph = new PredictionGraph();
 		graph.classifiers.add(new ClassifierA());
@@ -261,27 +263,27 @@ public class EditorSystemTest extends Application {
 		graph.inputEncoders.add(new EncoderA());
 		graph.inputEncoders.add(new EncoderA());
 		
-		graph.setOption("outputClassifier", graph.getOption("classifiers.0"));
-		ConfigurableList parents = graph.getOption("classifiers.0.parents");
-		parents.add(graph.getOption("classifiers.1"));
-		parents.add(graph.getOption("classifiers.2"));
-		parents = graph.getOption("classifiers.1.parents");
-		parents.add(graph.getOption("classifiers.3"));
-		parents = graph.getOption("classifiers.2.parents");
-		parents.add(graph.getOption("classifiers.3"));
-		parents = graph.getOption("classifiers.3.parents");
-		parents.add(graph.getOption("classifiers.3"));
-		parents.add(graph.getOption("classifiers.4"));
-		parents = graph.getOption("classifiers.4.parents");
-		parents.add(graph.getOption("inputEncoders.0"));
-		parents.add(graph.getOption("classifiers.2"));
-		parents = graph.getOption("classifiers.5.parents");
-		parents.add(graph.getOption("inputEncoders.0"));
+		graph.setContent("outputClassifier", graph.getContent("classifiers.0"));
+		IList parents = graph.getContent("classifiers.0.parents");
+		parents.add(graph.getContent("classifiers.1"));
+		parents.add(graph.getContent("classifiers.2"));
+		parents = graph.getContent("classifiers.1.parents");
+		parents.add(graph.getContent("classifiers.3"));
+		parents = graph.getContent("classifiers.2.parents");
+		parents.add(graph.getContent("classifiers.3"));
+		parents = graph.getContent("classifiers.3.parents");
+		parents.add(graph.getContent("classifiers.3"));
+		parents.add(graph.getContent("classifiers.4"));
+		parents = graph.getContent("classifiers.4.parents");
+		parents.add(graph.getContent("inputEncoders.0"));
+		parents.add(graph.getContent("classifiers.2"));
+		parents = graph.getContent("classifiers.5.parents");
+		parents.add(graph.getContent("inputEncoders.0"));
 		
 		object = new ConfigurableImplA();
-		object.setOption("graph", graph);
-		option = new Option(object, "graph");
-		Editor graphEditor = option.getBestEditor(true);
+		object.setContent("graph", graph);
+		option = new Property(object, "graph");
+		PropertyEditor graphEditor = PropertyEditor.getBestEditor(option.getContentType(true));
 		assertEquals(OuterGraphEditor.class, graphEditor.getClass());
 		
 		Platform.exit();

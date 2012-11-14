@@ -16,17 +16,17 @@ public class NumberEditor extends TextFieldEditor {
 	@Override
 	protected Object parseText() {
 		try {
-			if (getModel().getType() == byte.class || getModel().getType() == Byte.class)
+			if (getModel().getContentType() == byte.class || getModel().getContentType() == Byte.class)
 				return Byte.parseByte(textField.getText());
-			if (getModel().getType() == short.class || getModel().getType() == Short.class)
+			if (getModel().getContentType() == short.class || getModel().getContentType() == Short.class)
 				return Short.parseShort(textField.getText());
-			if (getModel().getType() == int.class || getModel().getType() == Integer.class)
+			if (getModel().getContentType() == int.class || getModel().getContentType() == Integer.class)
 				return Integer.parseInt(textField.getText());
-			if (getModel().getType() == long.class || getModel().getType() == Long.class)
+			if (getModel().getContentType() == long.class || getModel().getContentType() == Long.class)
 				return Long.parseLong(textField.getText());
-			if (getModel().getType() == float.class || getModel().getType() == Float.class)
+			if (getModel().getContentType() == float.class || getModel().getContentType() == Float.class)
 				return Float.parseFloat(textField.getText());
-			if (getModel().getType() == double.class || getModel().getType() == Double.class)
+			if (getModel().getContentType() == double.class || getModel().getContentType() == Double.class)
 				return Double.parseDouble(textField.getText());
 		} catch (NumberFormatException ex) {}
 		return null;

@@ -10,6 +10,8 @@
  ******************************************************************************/
 package game.configuration;
 
+import game.utils.Utils;
+
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
@@ -117,14 +119,9 @@ public class PluginManager {
 	}
 	
 	private static boolean isImplementation(Class type) {
-		return isConcrete(type)
+		return Utils.isConcrete(type)
 				&& Modifier.isPublic(type.getModifiers())
 				&& (type.getEnclosingClass() == null || Modifier.isStatic(type.getModifiers()));
-	}
-	
-	private static boolean isConcrete(Class type) {
-		return type.isPrimitive() ||
-				(!Modifier.isAbstract(type.getModifiers()) && !Modifier.isInterface(type.getModifiers()));
 	}
 	
 	public static <T> Set<Class> getCompatibleImplementationsOf(Class<T> base, Constraint constraint) {

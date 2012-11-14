@@ -13,13 +13,13 @@ package game.plugins.editors.graph;
 import game.core.blocks.PredictionGraph;
 import game.editorsystem.ControlledEditor;
 import game.editorsystem.EditorWindow;
-import game.editorsystem.Editor;
+import game.editorsystem.PropertyEditor;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.scene.Node;
 import javafx.scene.control.Button;
 
-public class OuterGraphEditor extends Editor {
+public class OuterGraphEditor extends PropertyEditor {
 	
 	public static class GraphEditor extends ControlledEditor {
 		

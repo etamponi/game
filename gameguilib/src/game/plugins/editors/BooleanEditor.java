@@ -10,13 +10,13 @@
  ******************************************************************************/
 package game.plugins.editors;
 
-import game.editorsystem.Editor;
+import game.editorsystem.PropertyEditor;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.scene.Node;
 import javafx.scene.control.CheckBox;
 
-public class BooleanEditor extends Editor {
+public class BooleanEditor extends PropertyEditor {
 	
 	private CheckBox box = new CheckBox();
 	
@@ -26,7 +26,7 @@ public class BooleanEditor extends Editor {
 			public void changed(ObservableValue<? extends Boolean> observable,
 					Boolean oldValue, Boolean newValue) {
 				if (getModel() != null) {
-					setModelContent(newValue);
+					updateModel(newValue);
 				}
 			}
 		});
