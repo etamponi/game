@@ -10,26 +10,32 @@
  ******************************************************************************/
 package game.main;
 
-import game.plugins.PluginManager;
+import game.configuration.PluginManager;
 import game.utils.Log;
 
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
 
 public class Settings {
 	
-	public static final String CONFIGFILE = "plugins.config.xml";
+	public static final String CONFIGFILE = "plugins.bin";
 	public static final String RESULTSDIR = "results";
 	public static final String LOGSDIR = "logs";
 	
 	public static void initialize() {
-		PluginManager manager = new PluginManager();
 		File config = new File(CONFIGFILE);
-		if (!config.exists())
-			manager.saveConfiguration(CONFIGFILE);
-		else
-			manager.loadConfiguration(CONFIGFILE);
-		PluginManager.updateManager(manager);
-		
+		try {
+			FileInputStream inFile = new FileInputStream(config);
+			PluginManager.initialize(inFile);
+			inFile.close();
+		} catch (FileNotFoundException e) {
+			PluginManager.initialize();
+			PluginManager.getConfiguration().write(config);
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 		Log.setLogsDirectory(LOGSDIR);
 	}
 }

@@ -19,6 +19,7 @@ import javafx.scene.layout.Priority;
 public class ListEditor extends ControlledEditor {
 	
 	public ListEditor() {
+		getListener().getSubPaths().add("*");
 		getListener().getSubPaths().add("*.name");
 	}
 	

@@ -11,6 +11,19 @@ public class Property {
 	private final IObject root;
 	
 	private final String path;
+	
+	private static class Temporary extends IObject {
+		@SuppressWarnings("unused")
+		public Object content;
+		
+		public Temporary(Object content) {
+			setContent("content", content);
+		}
+	}
+	
+	public Property(Object content) {
+		this(new Temporary(content), "content");
+	}
 
 	public Property(IObject root, String path) {
 		this.root = root;
@@ -67,8 +80,7 @@ public class Property {
 	
 	@Override
 	public String toString() {
-		return path;
-//		return "<"+root+">" + (path.isEmpty() ? "" : "." + path);
+		return path + ": " + (getContent() == null ? "<null>" : getContent());
 	}
 	
 	public boolean isParent(Property complete) {
@@ -86,7 +98,7 @@ public class Property {
 				return false;
 			
 			for(int i = 0; i < prefixTokens.length; i++) {
-				if (completeTokens[i].equals(ANY))
+				if (completeTokens[i].equals(ANY) || prefixTokens[i].equals(ANY))
 					continue;
 				if (!prefixTokens[i].equals(completeTokens[i]))
 					return false;
@@ -124,14 +136,10 @@ public class Property {
 	public Class<?> getContentType(boolean runtime) {
 		if (runtime) {
 			Object content = getContent();
-			return content == null ? null : content.getClass();
+			return content == null ? getContentType(false) : content.getClass();
 		} else {
-			try {
-				Property local = getLocalProperty();
-				return local.root.getClass().getField(local.path).getType();
-			} catch (NoSuchFieldException | SecurityException e) {
-				return null;
-			}
+			Property local = getLocalProperty();
+			return local.root.getContentType(local.path, false);
 		}
 	}
 

@@ -38,8 +38,6 @@ public abstract class Block extends IObject {
 	
 	public Position position = new Position();
 	
-	public String name;
-	
 	public IList<Block> parents;
 	
 	public boolean trained = false;

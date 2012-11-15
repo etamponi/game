@@ -114,7 +114,8 @@ public class EditorWindow extends Stage {
 		cancelButton.setDisable(editor.isReadOnly());
 		
 		showAndWait();
+		
+		editor.detach();
 	}
 
 }
-

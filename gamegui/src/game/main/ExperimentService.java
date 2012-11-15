@@ -11,11 +11,8 @@
 package game.main;
 
 import game.core.Experiment;
-import game.core.LongTask.LongTaskUpdate;
 import game.core.Result;
-import game.utils.Log;
 
-import java.util.Observable;
 import java.util.Observer;
 import java.util.concurrent.Executor;
 
@@ -94,11 +91,13 @@ public class ExperimentService extends Service<Result> {
 		executor.getThread().stop();
 		try {
 			executor.getThread().join();
+			/*
 			if (currentExperiment != null && experimentObserver != null) {
 				currentExperiment.deleteObserver(experimentObserver);
 				currentExperiment = null;
 				experimentObserver = null;
 			}
+			*/
 		} catch (InterruptedException e) {}
 	}
 	
@@ -138,6 +137,7 @@ public class ExperimentService extends Service<Result> {
 			@Override
 			protected Result call() throws Exception {
 				currentExperiment = (Experiment)controller.experimentList.get(counter.get());
+				/*
 				experimentObserver = new Observer() {
 					@Override
 					public void update(Observable obs, Object m) {
@@ -149,8 +149,9 @@ public class ExperimentService extends Service<Result> {
 					}
 				};
 				currentExperiment.addObserver(experimentObserver);
+				*/
 				Result ret = currentExperiment.execute(Settings.RESULTSDIR);
-				currentExperiment.deleteObserver(experimentObserver);
+//				currentExperiment.deleteObserver(experimentObserver);
 				currentExperiment = null;
 				experimentObserver = null;
 				return ret;

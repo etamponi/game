@@ -16,8 +16,6 @@ import java.io.File;
 
 public abstract class Experiment extends LongTask<Result, String> {
 	
-	public String name;
-	
 	public InstanceTemplate template;
 	
 	protected abstract Result runExperiment(String outputDirectory);

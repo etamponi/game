@@ -172,4 +172,13 @@ public class IObjectEditor extends PropertyEditor {
 		return editor;
 	}
 
+	@Override
+	public void detach() {
+		super.detach();
+		for (PropertyEditor editor: subEditors)
+			editor.detach();
+	}
+	
+	
+
 }

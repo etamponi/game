@@ -11,7 +11,6 @@
 package game.plugins.editors;
 
 import game.configuration.IObject;
-import game.configuration.Property;
 import game.editorsystem.EditorWindow;
 import game.editorsystem.PropertyEditor;
 import game.utils.Utils;
@@ -69,7 +68,7 @@ public class ImplementationChooserEditor extends PropertyEditor {
 		
 	}
 	
-	private ChangeListener<Implementation> listener = new ChangeListener<Implementation>() {
+	private ChangeListener<Implementation> changeListener = new ChangeListener<Implementation>() {
 		@Override
 		public void changed(ObservableValue<? extends Implementation> observable,
 				Implementation oldValue, Implementation newValue) {
@@ -88,7 +87,7 @@ public class ImplementationChooserEditor extends PropertyEditor {
 	private Button editButton;
 	
 	public ImplementationChooserEditor() {
-		getListener().getListenedPaths().add(new Property(this, "root"));
+		getListener().setListenOnRoot(true);
 		
 		this.editButton = new Button("Edit");
 		editButton.setPrefWidth(55);
@@ -121,21 +120,21 @@ public class ImplementationChooserEditor extends PropertyEditor {
 			editButton.setText("View");
 		} else {
 			container.getChildren().set(0, box);
-			box.getSelectionModel().selectedItemProperty().removeListener(listener);
+			box.getSelectionModel().selectedItemProperty().removeListener(changeListener);
 			box.getItems().clear();
 			
 			if (getModel() != null) {
 				List<Implementation> implementations = new ArrayList<>();
-				int selected = 0;
+				Implementation selected = new Implementation((IObject)null);
 				
 				IObject current = getModel().getContent();
-				implementations.add(new Implementation((IObject)null));
+				implementations.add(selected);
 				
 				Set<Class> types = getModel().getCompatibleContentTypes();
 				for (Class<? extends IObject> type: types) {
 					if (current != null && current.getClass().equals(type)) {
-						selected = implementations.size();
-						implementations.add(new Implementation(current));
+						selected = new Implementation(current);
+						implementations.add(selected);
 					} else {
 						implementations.add(new Implementation(type));
 					}
@@ -145,7 +144,7 @@ public class ImplementationChooserEditor extends PropertyEditor {
 				box.getItems().addAll(implementations);
 				box.getSelectionModel().select(selected);
 	
-				box.getSelectionModel().selectedItemProperty().addListener(listener);
+				box.getSelectionModel().selectedItemProperty().addListener(changeListener);
 			}
 			editButton.setText("Edit");
 		}

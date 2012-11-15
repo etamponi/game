@@ -10,21 +10,19 @@
  ******************************************************************************/
 package game.main;
 
-import game.configuration.Configurable;
+import game.configuration.IObject;
+import game.configuration.PluginManager;
+import game.configuration.Property;
+import game.configuration.constraints.CompatibleWith;
 import game.core.Metric;
 import game.core.Result;
-import game.editorsystem.Editor;
 import game.editorsystem.EditorWindow;
-import game.editorsystem.Option;
-import game.editorsystem.Option.Temporary;
-import game.plugins.Implementation;
-import game.plugins.PluginManager;
-import game.plugins.constraints.CompatibleWith;
+import game.editorsystem.PropertyEditor;
 
 import java.io.File;
 import java.net.URL;
 import java.util.ResourceBundle;
-import java.util.SortedSet;
+import java.util.Set;
 
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -47,12 +45,15 @@ public class ResultListController implements Initializable {
 	public void addResult(Result r) {
 		TreeItem expItem = new TreeItem(r);
 		
-		SortedSet<Implementation<Metric>> metrics = PluginManager.
-				getCompatibleImplementationsOf(Metric.class, new CompatibleWith(new Temporary(r), "content"));
+		Set<Class> metrics = PluginManager.getCompatibleImplementationsOf(Metric.class, new CompatibleWith(new Property(r, "experment")));
 		
-		for(Implementation<Metric> impl: metrics) {
-			TreeItem evaItem = new TreeItem(impl.getContent());
-			expItem.getChildren().add(evaItem);
+		for(Class<Metric> impl: metrics) {
+			try {
+				TreeItem evaItem = new TreeItem(impl.newInstance());
+				expItem.getChildren().add(evaItem);
+			} catch (InstantiationException | IllegalAccessException e) {
+				System.err.println("Cannot instantiate instance of " + impl);
+			}
 		}
 		if (!expItem.getChildren().isEmpty())
 			resultsView.getRoot().getChildren().add(expItem);
@@ -65,7 +66,7 @@ public class ResultListController implements Initializable {
 		chooser.setTitle("Load result");
 		File file = chooser.showOpenDialog(resultsView.getScene().getWindow());
 		if (file != null)
-			addResult((Result)Configurable.loadFromConfiguration(file));
+			addResult((Result)IObject.load(file));
 	}
 	
 	@FXML
@@ -75,12 +76,12 @@ public class ResultListController implements Initializable {
 			if (selected.getValue() instanceof Metric) {
 				Result r = (Result)selected.getParent().getValue();
 				Metric m = (Metric)selected.getValue();
-				m.setOption("result", r);
+				m.setResult(r);
 			}
-			Option option = new Option(selected.getValue());
-			Editor editor = option.getBestEditor(true);
+			Property property = new Property(selected.getValue());
+			PropertyEditor editor = PropertyEditor.getBestEditor(property.getContentType(true));
 			editor.setReadOnly(true);
-			new EditorWindow(editor, false).startEdit(option);
+			new EditorWindow(editor, false).startEdit(property);
 		}
 	}
 	

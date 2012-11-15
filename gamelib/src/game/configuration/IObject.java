@@ -68,7 +68,7 @@ public class IObject {
 	
 	private final Map<Property, List<Constraint>> constraints = new HashMap<>();
 
-	public String name = String.format("%s-%3d", getClass().getSimpleName(), hashCode() % 1000);
+	public String name = String.format("%s-%02d", getClass().getSimpleName(), hashCode() % 100);
 	
 	protected void addConstraint(String propertyName, Constraint constraint) {
 		Property property = new Property(this, propertyName);
@@ -111,9 +111,14 @@ public class IObject {
 	}
 
 	public <T extends IObject> T copy() {
+		List<Property> temp = new ArrayList<>(parentsLinkToThis);
+		parentsLinkToThis.clear();
+		
 		IObject copy = kryo.copy(this);
 
 		copy.removeInvalidLinks(copy, new HashSet<IObject>(), new HashSet<IObject>());
+		
+		parentsLinkToThis.addAll(temp);
 
 		return (T) copy;
 	}
@@ -176,7 +181,7 @@ public class IObject {
 	public Class<?> getContentType(String propertyName, boolean runtime) {
 		if (runtime) {
 			Object content = getLocal(propertyName);
-			return content == null ? null : content.getClass();
+			return content == null ? getContentType(propertyName, false) : content.getClass();
 		} else {
 			try {
 				return getClass().getField(propertyName).getType();
@@ -202,7 +207,8 @@ public class IObject {
 		while (!types.peek().equals(IObject.class))
 			types.push(types.peek().getSuperclass());
 
-		for (Class<?> type : types) {
+		while(!types.isEmpty()) {
+			Class<?> type = types.pop();
 			for (Field field : type.getDeclaredFields()) {
 				int mod = field.getModifiers();
 				if (Modifier.isPublic(mod) && !Modifier.isStatic(mod)

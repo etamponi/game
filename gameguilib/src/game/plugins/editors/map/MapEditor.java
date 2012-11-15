@@ -19,6 +19,7 @@ import javafx.scene.layout.Priority;
 public class MapEditor extends ControlledEditor {
 	
 	public MapEditor() {
+		getListener().getSubPaths().add("*");
 		getListener().getSubPaths().add("*.name");
 	}
 	

@@ -40,6 +40,8 @@ public class PluginManager {
 		public PluginConfiguration() {
 			setContent("packages", new IList<>(String.class));
 			setContent("paths", new IList<>(File.class));
+			
+			packages.add("game");
 		}
 		
 	}
@@ -50,6 +52,10 @@ public class PluginManager {
 	
 	public static PluginConfiguration getConfiguration() {
 		return configuration.copy();
+	}
+	
+	public static void initialize() {
+		initialize(new PluginConfiguration());
 	}
 	
 	public static void initialize(PluginConfiguration pluginConf) {

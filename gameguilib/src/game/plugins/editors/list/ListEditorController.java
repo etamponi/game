@@ -17,10 +17,10 @@ import game.editorsystem.EditorWindow;
 import game.editorsystem.PropertyEditor;
 
 import java.net.URL;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.ResourceBundle;
 
-import javafx.collections.FXCollections;
-import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
@@ -62,13 +62,13 @@ public class ListEditorController implements EditorController {
 		if (list == null)
 			return;
 		
-		ObservableList<Property> items = FXCollections.<Property>observableArrayList();
+		List<Property> items = new ArrayList<>();
 		for (int i = 0; i < list.size(); i++) {
 			items.add(new Property(list, String.valueOf(i)));
 		}
-		//listView.getSelectionModel().select(-1);
 		listView.getSelectionModel().clearSelection();
-		listView.setItems(items);
+		listView.getItems().clear();
+		listView.getItems().addAll(items);
 		
 		boolean disable = editor.isReadOnly();
 		addButton.setDisable(disable);

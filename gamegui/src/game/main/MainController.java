@@ -10,20 +10,21 @@
  ******************************************************************************/
 package game.main;
 
-import game.configuration.Change;
-import game.configuration.Configurable;
-import game.configuration.ConfigurableList;
+import game.configuration.IList;
+import game.configuration.IObject;
+import game.configuration.Listener;
+import game.configuration.PluginManager;
+import game.configuration.PluginManager.PluginConfiguration;
+import game.configuration.Property;
 import game.core.Experiment;
 import game.editorsystem.EditorWindow;
-import game.editorsystem.Option;
-import game.plugins.PluginManager;
-import game.plugins.editors.ConfigurableEditor;
+import game.plugins.editors.IObjectEditor;
 import game.plugins.editors.SerializationEditor;
 import game.plugins.editors.list.ListEditor;
 
+import java.io.File;
 import java.io.IOException;
 import java.net.URL;
-import java.util.Observable;
 import java.util.ResourceBundle;
 
 import javafx.beans.property.BooleanProperty;
@@ -53,9 +54,12 @@ import javafx.scene.layout.VBox;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
 
-public class MainController extends Configurable implements Initializable {
+import com.esotericsoftware.kryo.Kryo;
+import com.esotericsoftware.kryo.KryoCopyable;
+
+public class MainController extends IObject implements Initializable , KryoCopyable<MainController> {
 	
-	public final ConfigurableList experimentList = new ConfigurableList(this, Experiment.class);
+	public IList<Experiment> experimentList;
 	
 	private ExperimentService service;
 	
@@ -85,10 +89,25 @@ public class MainController extends Configurable implements Initializable {
 	private SerializationEditor serialization;
 
 	private ListEditor editor;
+	
+	public MainController() {
+		setContent("experimentList", new IList<>(Experiment.class));
+		
+		addListener(new Listener() {
+			@Override
+			public boolean isListeningOn(Property path) {
+				return true;
+			}
+			@Override
+			public void action(Property triggerPath) {
+				controlButtons();
+			}
+		});
+	}
 
 	@Override
 	public void initialize(URL location, ResourceBundle resources) {
-		Option model = new Option(this, "experimentList");
+		Property model = new Property(this, "experimentList");
 		this.serialization = new SerializationEditor();
 		serialization.connect(model);
 		addPluginManagerEditorToToolBar((ToolBar)serialization.getView());
@@ -120,15 +139,23 @@ public class MainController extends Configurable implements Initializable {
 		}
 	}
 	
+	private static class Temporary extends IObject {
+		public PluginConfiguration content;
+		
+		public Temporary() {
+			setContent("content", PluginManager.getConfiguration());
+		}
+	}
+	
 	private void addPluginManagerEditorToToolBar(ToolBar toolbar) {
 		Button pmButton = new Button("Plugins");
 		pmButton.setOnAction(new EventHandler<ActionEvent>() {
 			@Override
 			public void handle(ActionEvent event) {
-				PluginManager manager = PluginManager.get();
-				new EditorWindow(new ConfigurableEditor()).startEdit(new Option(manager));
-				manager.saveConfiguration(Settings.CONFIGFILE);
-				PluginManager.updateManager(manager);
+				Temporary temp = new Temporary();
+				new EditorWindow(new IObjectEditor()).startEdit(new Property(temp, "content"));
+				temp.content.write(new File(Settings.CONFIGFILE));
+				// TODO: show dialog to inform user of a restart needed
 			}
 		});
 		toolbar.getItems().addAll(new Separator(), pmButton);
@@ -239,19 +266,11 @@ public class MainController extends Configurable implements Initializable {
 				service.resume();
 		}
 	}
-
-	@Override
-	public void update(Observable observedOption, Object message) {
-		super.update(observedOption, message);
-		if (message instanceof Change) {
-			controlButtons();
-		}
-	}
 	
 	private void controlButtons() {
 		if (service != null && !service.hasFinished())
 			return;
-		if (experimentList.isEmpty() || !experimentList.getConfigurationErrors().isEmpty()) {
+		if (experimentList.isEmpty() || !experimentList.getErrors().isEmpty()) {
 			disableButtons(true, true, true);
 		} else {
 			disableButtons(false, true, true);
@@ -277,6 +296,12 @@ public class MainController extends Configurable implements Initializable {
 	
 	public boolean addToResultList() {
 		return addToResults.isSelected();
+	}
+
+	@Override
+	public MainController copy(Kryo kryo) {
+		System.out.println("Copying MainController...");
+		throw new UnsupportedOperationException();
 	}
 
 }

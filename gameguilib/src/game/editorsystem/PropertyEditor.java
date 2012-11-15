@@ -32,26 +32,33 @@ public abstract class PropertyEditor extends IObject implements KryoCopyable<Pro
 	
 	protected class EditorListener extends Listener {
 		
-		private List<String> subPaths = new ArrayList<>();
+		private boolean listenOnRoot = false;
 		
-		public List<Property> getListenedPaths() {
-			return super.getListenedPaths();
-		}
+		private List<String> subPaths = new ArrayList<>();
 		
 		public List<String> getSubPaths() {
 			return subPaths;
 		}
 		
+		public void setListenOnRoot(boolean l) {
+			this.listenOnRoot = l;
+		}
+		
 		@Override
 		public boolean isListeningOn(Property path) {
-			boolean ret = super.isListeningOn(path) || listened.includes(path);
-			if (!ret) {
-				for(String subPath: subPaths) {
-					if (path.isPrefix(new Property(listened.getRoot(), listened.getPath() + "." + subPath), false))
-						return true;
+			if (listenOnRoot) {
+				return new Property(listened.getRoot(), "root").isPrefix(path, false);
+			} else {
+				boolean ret = listened.includes(path);
+				if (!ret) {
+					for(String subPath: subPaths) {
+						Property temp = new Property(listened.getRoot(), listened.getPath() + "." + subPath);
+						if (temp.includes(path))
+							return true;
+					}
 				}
+				return ret;
 			}
-			return ret;
 		}
 
 		@Override
@@ -88,6 +95,7 @@ public abstract class PropertyEditor extends IObject implements KryoCopyable<Pro
 		this.listened = new Property(this, "root." + model.getPath());
 		
 		this.setContent("root", model.getRoot());
+		updateView();
 	}
 	
 	public Property getModel() {
@@ -122,7 +130,8 @@ public abstract class PropertyEditor extends IObject implements KryoCopyable<Pro
 
 	@Override
 	public PropertyEditor copy(Kryo kryo) {
-		return null; // Do not copy anything
+		System.out.println("Copying PropertyEditor " + getClass().getSimpleName());
+		throw new UnsupportedOperationException();
 	}
 	
 	public static PropertyEditor getBestEditor(Class type) {
