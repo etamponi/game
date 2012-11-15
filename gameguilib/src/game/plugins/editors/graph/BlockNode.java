@@ -80,7 +80,6 @@ public class BlockNode extends VBox {
 	}
 
 	public BlockNode(final Block b, boolean isTpl, GraphPane p) {
-		this.blockParent = new BlockParent(b);
 		this.isTemplate = isTpl;
 		this.pane = p;
 		
@@ -145,6 +144,8 @@ public class BlockNode extends VBox {
 				}
 			});
 		}
+
+		this.blockParent = new BlockParent(b);
 	}
 	
 	public void destroy() {

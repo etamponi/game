@@ -284,11 +284,16 @@ public class MainController extends IObject implements Initializable , KryoCopya
 	public boolean addToResultList() {
 		return addToResults.isSelected();
 	}
+	
+	private static class MainControllerDummyCopy extends MainController {
+		
+	}
 
 	@Override
 	public MainController copy(Kryo kryo) {
-		System.out.println("Copying MainController...");
-		throw new UnsupportedOperationException();
+//		System.out.println("Copying MainController...");
+//		throw new UnsupportedOperationException();
+		return new MainControllerDummyCopy();
 	}
 
 }

@@ -21,15 +21,25 @@ import java.util.Set;
 
 import javafx.scene.Node;
 
-import com.esotericsoftware.kryo.Kryo;
-import com.esotericsoftware.kryo.KryoCopyable;
 import com.ios.IObject;
+import com.ios.Listener;
 import com.ios.PluginManager;
 import com.ios.Property;
-import com.ios.Listener;
+import com.ios.Trigger;
 import com.ios.triggers.SimpleTrigger;
 
-public abstract class PropertyEditor extends IObject implements KryoCopyable<PropertyEditor> {
+public abstract class PropertyEditor {
+	
+	private static class PropertyRoot extends IObject {
+		
+		@SuppressWarnings("unused")
+		public IObject root;
+		
+		public PropertyRoot(Trigger trigger) {
+			addTrigger(trigger);
+		}
+		
+	}
 	
 	protected class UpdateTrigger extends SimpleTrigger {
 		
@@ -38,12 +48,17 @@ public abstract class PropertyEditor extends IObject implements KryoCopyable<Pro
 		private class DynamicPathListener extends Listener {
 			@Override
 			public boolean isListeningOn(Property path) {
-				for(String subPath: subPaths) {
-					Property temp = new Property(listened.getRoot(), listened.getPath() + "." + subPath);
-					if (temp.includes(path))
-						return true;
+				if (listened == null)
+					return false;
+				boolean ret = listened.includes(path);
+				if (!ret) {
+					for(String subPath: subPaths) {
+						Property temp = new Property(listened.getRoot(), listened.getPath() + "." + subPath);
+						if (temp.includes(path))
+							return true;
+					}
 				}
-				return false;
+				return ret;
 			}
 		}
 		
@@ -63,11 +78,11 @@ public abstract class PropertyEditor extends IObject implements KryoCopyable<Pro
 		
 	}
 	
-	public IObject root;
-	
 	private Property listened;
 	
 	private UpdateTrigger trigger = new UpdateTrigger();
+	
+	private PropertyRoot pRoot = new PropertyRoot(trigger);
 	
 	private boolean listening = true;
 	
@@ -81,19 +96,24 @@ public abstract class PropertyEditor extends IObject implements KryoCopyable<Pro
 	
 	public abstract Class getBaseEditableClass();
 	
-	public PropertyEditor() {
-		addTrigger(trigger);
-	}
-	
 	public void connect(Property model) {
-		this.listened = new Property(this, "root." + model.getPath());
+		this.listened = new Property(pRoot, "root." + model.getPath());
 		
-		this.setContent("root", model.getRoot());
+		pRoot.setContent("root", model.getRoot());
+		
 		updateView();
 	}
 	
+	public Property getParent() {
+		return new Property(pRoot, "root");
+	}
+	
 	public Property getModel() {
-		return root != null ? listened.getLocalProperty() : null;
+		return listened != null ? listened.getLocalProperty() : null;
+	}
+	
+	public void detach() {
+		pRoot.detach();
 	}
 	
 	protected UpdateTrigger getTrigger() {
@@ -113,19 +133,13 @@ public abstract class PropertyEditor extends IObject implements KryoCopyable<Pro
 	public void setReadOnly(boolean readOnly) {
 		if (this.readOnly != readOnly) {
 			this.readOnly = readOnly;
-			if (root != null)
+			if (pRoot != null)
 				updateView();
 		}
 	}
 	
 	public boolean isReadOnly() {
 		return readOnly;
-	}
-
-	@Override
-	public PropertyEditor copy(Kryo kryo) {
-		System.out.println("Copying PropertyEditor " + getClass().getSimpleName());
-		throw new UnsupportedOperationException();
 	}
 	
 	public static PropertyEditor getBestEditor(Class type) {

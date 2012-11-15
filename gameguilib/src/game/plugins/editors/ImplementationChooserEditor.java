@@ -19,10 +19,6 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 
-import com.ios.IObject;
-import com.ios.Property;
-import com.ios.listeners.ExactPathListener;
-
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.event.ActionEvent;
@@ -33,6 +29,9 @@ import javafx.scene.control.ComboBox;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
+
+import com.ios.IObject;
+import com.ios.listeners.SubPathListener;
 
 public class ImplementationChooserEditor extends PropertyEditor {
 	
@@ -90,7 +89,7 @@ public class ImplementationChooserEditor extends PropertyEditor {
 	private Button editButton;
 	
 	public ImplementationChooserEditor() {
-		getTrigger().getListeners().add(new ExactPathListener(new Property(this, "root")));
+		getTrigger().getListeners().add(new SubPathListener(getParent()));
 		
 		this.editButton = new Button("Edit");
 		editButton.setPrefWidth(55);

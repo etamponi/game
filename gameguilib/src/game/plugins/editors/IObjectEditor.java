@@ -17,25 +17,29 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
-
-import com.ios.IObject;
-import com.ios.Property;
+import java.util.Map;
 
 import javafx.geometry.HPos;
 import javafx.geometry.Insets;
 import javafx.geometry.VPos;
 import javafx.scene.Node;
 import javafx.scene.control.Label;
-import javafx.scene.control.ListView;
+import javafx.scene.control.TreeItem;
+import javafx.scene.control.TreeView;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.ColumnConstraints;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Priority;
 
+import com.ios.IObject;
+import com.ios.Property;
+import com.ios.listeners.SubPathListener;
+import com.ios.triggers.SimpleTrigger;
+
 public class IObjectEditor extends PropertyEditor {
 	
 	private GridPane pane = new GridPane();
-	private ListView<String> errorList = new ListView<>();
+	private TreeView<String> errorList = new TreeView<>();
 	
 	private HashSet<String> hiddenOptions = new HashSet<>();
 	private HashMap<String, Class<? extends PropertyEditor>> specificEditors = new HashMap<>();
@@ -43,6 +47,12 @@ public class IObjectEditor extends PropertyEditor {
 	private List<PropertyEditor> subEditors = new LinkedList<>();
 	
 	public IObjectEditor() {
+		getParent().getRoot().addTrigger(new SimpleTrigger(new SubPathListener(getParent())) {
+			@Override
+			public void action(Property changedPath) {
+				updateErrorList();
+			}
+		});
 		AnchorPane.setTopAnchor(pane, 0.0);
 		AnchorPane.setLeftAnchor(pane, 0.0);
 		AnchorPane.setRightAnchor(pane, 0.0);
@@ -97,19 +107,37 @@ public class IObjectEditor extends PropertyEditor {
 					count++;
 			}
 			
-			/* FIXME: error list
 			if (!isReadOnly()) {
-				errorList.getItems().clear();
-				errorList.getItems().addAll(content.getConfigurationErrors());
-				errorList.setPrefHeight(75);
-				errorList.setPrefWidth(75);
-				GridPane.setVgrow(errorList, Priority.SOMETIMES);
+				updateErrorList();
 				Label label = new Label("errors:");
 				pane.addRow(count, label, errorList);
 				applyRowLayout(label, errorList, true);
 			}
-			*/
 		}
+	}
+	
+	private void updateErrorList() {
+		if (getModel() == null)
+			return;
+		
+		IObject content = getModel().getContent();
+		if (content == null)
+			return;
+	
+		if (errorList.getRoot() != null)
+			errorList.getRoot().getChildren().clear();
+		errorList.setRoot(new TreeItem<String>("Errors"));
+		errorList.getRoot().setExpanded(true);
+		Map<Property, List<String>> errors = content.getErrors();
+		for(Property key: errors.keySet()) {
+			TreeItem<String> item = new TreeItem<>(key.getPath());
+			errorList.getRoot().getChildren().add(item);
+			for(String error: errors.get(key))
+				item.getChildren().add(new TreeItem<String>(error));
+		}
+		errorList.setPrefHeight(75);
+		errorList.setPrefWidth(75);
+		GridPane.setVgrow(errorList, Priority.SOMETIMES);
 	}
 	
 	protected PropertyEditor addSubEditor(int row, Property property) {
