@@ -1,9 +1,7 @@
 /logs
-/plugins.config.xml
 /results
 /sampledata
 /local
-/dataset_cache
 /bin
 /plugins/*.jar
-*.db
+/plugins.bin
