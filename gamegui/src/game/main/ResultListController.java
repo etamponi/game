@@ -10,10 +10,6 @@
  ******************************************************************************/
 package game.main;
 
-import game.configuration.IObject;
-import game.configuration.PluginManager;
-import game.configuration.Property;
-import game.configuration.constraints.CompatibleWith;
 import game.core.Metric;
 import game.core.Result;
 import game.editorsystem.EditorWindow;
@@ -23,6 +19,11 @@ import java.io.File;
 import java.net.URL;
 import java.util.ResourceBundle;
 import java.util.Set;
+
+import com.ios.IObject;
+import com.ios.PluginManager;
+import com.ios.Property;
+import com.ios.constraints.CompatibleWith;
 
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;

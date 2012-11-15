@@ -10,8 +10,6 @@
  ******************************************************************************/
 package game.plugins.editors.graph;
 
-import game.configuration.IList;
-import game.configuration.Property;
 import game.core.Block;
 import game.core.blocks.PredictionGraph;
 import game.editorsystem.EditorController;
@@ -22,6 +20,9 @@ import java.net.URL;
 import java.util.LinkedList;
 import java.util.ResourceBundle;
 import java.util.Set;
+
+import com.ios.IList;
+import com.ios.Property;
 
 import javafx.event.Event;
 import javafx.event.EventHandler;

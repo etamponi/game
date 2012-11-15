@@ -10,12 +10,13 @@
  ******************************************************************************/
 package game.plugins.datatemplates;
 
-import game.configuration.ErrorCheck;
-import game.configuration.IMap;
 import game.core.DataTemplate;
 
 import java.util.HashMap;
 import java.util.Map;
+
+import com.ios.ErrorCheck;
+import com.ios.IMap;
 
 public class MetaTemplate extends DataTemplate {
 	

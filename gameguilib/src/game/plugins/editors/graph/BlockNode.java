@@ -10,9 +10,6 @@
  ******************************************************************************/
 package game.plugins.editors.graph;
 
-import game.configuration.IObject;
-import game.configuration.Listener;
-import game.configuration.Property;
 import game.core.Block;
 import game.core.blocks.PredictionGraph;
 import game.editorsystem.EditorWindow;
@@ -35,6 +32,11 @@ import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Text;
 import javafx.scene.text.TextAlignment;
+
+import com.ios.IObject;
+import com.ios.Property;
+import com.ios.listeners.PrefixListener;
+import com.ios.triggers.SimpleTrigger;
 
 public class BlockNode extends VBox {
 	
@@ -65,20 +67,14 @@ public class BlockNode extends VBox {
 		public BlockParent(Block b) {
 			setContent("block", b);
 			
-			Listener listener = new Listener() {
+			addTrigger(new SimpleTrigger(new PrefixListener(new Property(this, "block.name"))) {
 				@Override
-				public boolean isListeningOn(Property path) {
-					return path.isPrefix(new Property(BlockParent.this, "block.name"), false);
-				}
-				@Override
-				public void action(Property triggerPath) {
+				public void action(Property changedPath) {
 					blockName.setText(block.name);
 					pane.fixPosition(BlockNode.this);
 					status.setImage(block.getErrors().isEmpty() ? STATUSOK : STATUSERRORS);
 				}
-			};
-			
-			addListener(listener);
+			});
 		}
 		
 	}

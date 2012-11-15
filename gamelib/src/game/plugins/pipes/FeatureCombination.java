@@ -1,8 +1,5 @@
 package game.plugins.pipes;
 
-import game.configuration.IObject;
-import game.configuration.errorchecks.RangeCheck;
-import game.configuration.errorchecks.RangeCheck.Bound;
 import game.core.DataTemplate.Data;
 import game.core.Encoding;
 import game.core.blocks.Pipe;
@@ -10,6 +7,10 @@ import game.core.blocks.Pipe;
 import org.apache.commons.math3.linear.ArrayRealVector;
 import org.apache.commons.math3.linear.RealVector;
 import org.apache.commons.math3.util.ArithmeticUtils;
+
+import com.ios.IObject;
+import com.ios.errorchecks.RangeCheck;
+import com.ios.errorchecks.RangeCheck.Bound;
 
 public class FeatureCombination extends Pipe {
 	

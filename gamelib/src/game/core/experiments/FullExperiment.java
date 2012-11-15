@@ -10,7 +10,6 @@
  ******************************************************************************/
 package game.core.experiments;
 
-import game.configuration.listeners.PropertyBinding;
 import game.core.Dataset;
 import game.core.Experiment;
 import game.core.Instance;
@@ -18,12 +17,14 @@ import game.core.blocks.PredictionGraph;
 
 import java.util.Iterator;
 
+import com.ios.triggers.MasterSlaveTrigger;
+
 public abstract class FullExperiment extends Experiment {
 	
 	public PredictionGraph graph;
 	
 	public FullExperiment() {
-		addListener(new PropertyBinding(this, "template", "graph.template"));
+		addTrigger(new MasterSlaveTrigger(this, "template", "graph.template"));
 	}
 	
 	protected Dataset classifyDataset(double finalPercent, PredictionGraph graphClone, Dataset dataset) {

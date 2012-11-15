@@ -11,13 +11,6 @@
 package testgame.tests;
 
 import static org.junit.Assert.assertEquals;
-import game.configuration.Constraint;
-import game.configuration.IList;
-import game.configuration.IObject;
-import game.configuration.PluginManager;
-import game.configuration.PluginManager.PluginConfiguration;
-import game.configuration.Property;
-import game.configuration.listeners.PropertyBinding;
 import game.core.DataTemplate;
 import game.core.DataTemplate.Data;
 import game.core.Encoding;
@@ -41,6 +34,14 @@ import javafx.stage.Stage;
 
 import org.junit.Test;
 
+import com.ios.Constraint;
+import com.ios.IList;
+import com.ios.IObject;
+import com.ios.PluginManager;
+import com.ios.Property;
+import com.ios.PluginManager.PluginConfiguration;
+import com.ios.triggers.MasterSlaveTrigger;
+
 public class EditorSystemTest extends Application {
 	
 	public static class ConfigurableImplA extends IObject {
@@ -58,7 +59,7 @@ public class EditorSystemTest extends Application {
 		public IObject graph;
 		
 		public ConfigurableImplA() {
-			addListener(new PropertyBinding(this, "optionA3", "optionA5.optionK1"));
+			addTrigger(new MasterSlaveTrigger(this, "optionA3", "optionA5.optionK1"));
 			
 			addConstraint("optionA5", new Constraint<ConfigurableAbstract>() {
 				@Override

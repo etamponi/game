@@ -10,7 +10,7 @@
  ******************************************************************************/
 package game.core;
 
-import game.configuration.IObject;
+import com.ios.IObject;
 
 public class Result extends IObject {
 	

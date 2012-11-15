@@ -10,7 +10,8 @@
  ******************************************************************************/
 package game.plugins.editors.list;
 
-import game.configuration.IList;
+import com.ios.IList;
+
 import game.editorsystem.ControlledEditor;
 import javafx.scene.Node;
 import javafx.scene.layout.GridPane;
@@ -19,8 +20,8 @@ import javafx.scene.layout.Priority;
 public class ListEditor extends ControlledEditor {
 	
 	public ListEditor() {
-		getListener().getSubPaths().add("*");
-		getListener().getSubPaths().add("*.name");
+		getTrigger().getSubPaths().add("*");
+		getTrigger().getSubPaths().add("*.name");
 	}
 	
 	@Override

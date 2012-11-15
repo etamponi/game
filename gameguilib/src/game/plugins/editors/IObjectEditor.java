@@ -10,8 +10,6 @@
  ******************************************************************************/
 package game.plugins.editors;
 
-import game.configuration.IObject;
-import game.configuration.Property;
 import game.editorsystem.PropertyEditor;
 import game.utils.Utils;
 
@@ -19,6 +17,9 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
+
+import com.ios.IObject;
+import com.ios.Property;
 
 import javafx.geometry.HPos;
 import javafx.geometry.Insets;

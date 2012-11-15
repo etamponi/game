@@ -10,10 +10,11 @@
  ******************************************************************************/
 package game.plugins.editors;
 
-import game.configuration.IObject;
 import game.editorsystem.PropertyEditor;
 
 import java.io.File;
+
+import com.ios.IObject;
 
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;

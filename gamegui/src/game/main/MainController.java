@@ -10,19 +10,12 @@
  ******************************************************************************/
 package game.main;
 
-import game.configuration.IList;
-import game.configuration.IObject;
-import game.configuration.Listener;
-import game.configuration.PluginManager;
-import game.configuration.PluginManager.PluginConfiguration;
-import game.configuration.Property;
 import game.core.Experiment;
 import game.editorsystem.EditorWindow;
 import game.plugins.editors.IObjectEditor;
 import game.plugins.editors.SerializationEditor;
 import game.plugins.editors.list.ListEditor;
 
-import java.io.File;
 import java.io.IOException;
 import java.net.URL;
 import java.util.ResourceBundle;
@@ -56,6 +49,12 @@ import javafx.stage.Stage;
 
 import com.esotericsoftware.kryo.Kryo;
 import com.esotericsoftware.kryo.KryoCopyable;
+import com.ios.IList;
+import com.ios.IObject;
+import com.ios.PluginManager;
+import com.ios.Property;
+import com.ios.listeners.SubPathListener;
+import com.ios.triggers.SimpleTrigger;
 
 public class MainController extends IObject implements Initializable , KryoCopyable<MainController> {
 	
@@ -93,11 +92,7 @@ public class MainController extends IObject implements Initializable , KryoCopya
 	public MainController() {
 		setContent("experimentList", new IList<>(Experiment.class));
 		
-		addListener(new Listener() {
-			@Override
-			public boolean isListeningOn(Property path) {
-				return true;
-			}
+		addTrigger(new SimpleTrigger(new SubPathListener(new Property(this, "experimentList"))) {
 			@Override
 			public void action(Property triggerPath) {
 				controlButtons();
@@ -139,22 +134,14 @@ public class MainController extends IObject implements Initializable , KryoCopya
 		}
 	}
 	
-	private static class Temporary extends IObject {
-		public PluginConfiguration content;
-		
-		public Temporary() {
-			setContent("content", PluginManager.getConfiguration());
-		}
-	}
-	
 	private void addPluginManagerEditorToToolBar(ToolBar toolbar) {
 		Button pmButton = new Button("Plugins");
 		pmButton.setOnAction(new EventHandler<ActionEvent>() {
 			@Override
 			public void handle(ActionEvent event) {
-				Temporary temp = new Temporary();
-				new EditorWindow(new IObjectEditor()).startEdit(new Property(temp, "content"));
-				temp.content.write(new File(Settings.CONFIGFILE));
+				Property temp = new Property(PluginManager.getConfiguration());
+				new EditorWindow(new IObjectEditor()).startEdit(temp);
+				temp.getContent(IObject.class).write(Settings.CONFIGFILE);
 				// TODO: show dialog to inform user of a restart needed
 			}
 		});

@@ -10,8 +10,8 @@
  ******************************************************************************/
 package game.core;
 
-import game.configuration.Compatible;
-import game.configuration.errorchecks.CompatibilityCheck;
+import com.ios.Compatible;
+import com.ios.errorchecks.CompatibilityCheck;
 
 public abstract class TrainingAlgorithm<B extends Block> extends LongTask<Void, Dataset> implements Compatible<Block> {
 	

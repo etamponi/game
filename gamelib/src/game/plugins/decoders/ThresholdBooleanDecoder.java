@@ -10,7 +10,6 @@
  ******************************************************************************/
 package game.plugins.decoders;
 
-import game.configuration.errorchecks.RangeCheck;
 import game.core.Decoder;
 import game.core.Encoding;
 import game.core.blocks.Encoder;
@@ -18,6 +17,8 @@ import game.plugins.datatemplates.LabelTemplate.LabelData;
 import game.plugins.encoders.BooleanEncoder;
 
 import org.apache.commons.math3.linear.RealVector;
+
+import com.ios.errorchecks.RangeCheck;
 
 public class ThresholdBooleanDecoder extends Decoder<BooleanEncoder> {
 	

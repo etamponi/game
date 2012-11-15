@@ -10,11 +10,12 @@
  ******************************************************************************/
 package game.core.blocks;
 
-import game.configuration.Compatible;
-import game.configuration.Property;
-import game.configuration.constraints.CompatibleWith;
-import game.configuration.errorchecks.CompatibilityCheck;
-import game.configuration.listeners.PropertyBinding;
+import com.ios.Compatible;
+import com.ios.Property;
+import com.ios.constraints.CompatibleWith;
+import com.ios.errorchecks.CompatibilityCheck;
+import com.ios.triggers.MasterSlaveTrigger;
+
 import game.core.Block;
 import game.core.InstanceTemplate;
 
@@ -25,7 +26,7 @@ public abstract class Transducer extends Block implements Compatible<InstanceTem
 	public Encoder outputEncoder;
 	
 	public Transducer() {
-		addListener(new PropertyBinding(this, "template.outputTemplate", "outputEncoder.template"));
+		addTrigger(new MasterSlaveTrigger(this, "template.outputTemplate", "outputEncoder.template"));
 		
 		addConstraint("outputEncoder", new CompatibleWith(new Property(this, "template.outputTemplate")));
 		

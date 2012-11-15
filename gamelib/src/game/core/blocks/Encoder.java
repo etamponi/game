@@ -10,11 +10,12 @@
  ******************************************************************************/
 package game.core.blocks;
 
-import game.configuration.Compatible;
-import game.configuration.ErrorCheck;
-import game.configuration.errorchecks.CompatibilityCheck;
-import game.configuration.errorchecks.PositivenessCheck;
-import game.configuration.errorchecks.SizeCheck;
+import com.ios.Compatible;
+import com.ios.ErrorCheck;
+import com.ios.errorchecks.CompatibilityCheck;
+import com.ios.errorchecks.PositivenessCheck;
+import com.ios.errorchecks.SizeCheck;
+
 import game.core.Block;
 import game.core.DataTemplate;
 import game.core.DataTemplate.Data;

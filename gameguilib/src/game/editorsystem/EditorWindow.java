@@ -10,7 +10,8 @@
  ******************************************************************************/
 package game.editorsystem;
 
-import game.configuration.Property;
+import com.ios.Property;
+
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.geometry.Insets;

@@ -10,11 +10,12 @@
  ******************************************************************************/
 package game.core.blocks;
 
-import game.configuration.ErrorCheck;
-import game.configuration.errorchecks.SizeCheck;
 import game.core.Block;
 
 import java.util.List;
+
+import com.ios.ErrorCheck;
+import com.ios.errorchecks.SizeCheck;
 
 public abstract class Combiner extends Transducer {
 	

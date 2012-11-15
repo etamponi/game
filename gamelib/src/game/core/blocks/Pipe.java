@@ -10,7 +10,8 @@
  ******************************************************************************/
 package game.core.blocks;
 
-import game.configuration.errorchecks.SizeCheck;
+import com.ios.errorchecks.SizeCheck;
+
 import game.core.Block;
 
 public abstract class Pipe extends Block {

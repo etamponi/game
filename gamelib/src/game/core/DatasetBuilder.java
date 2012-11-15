@@ -10,10 +10,10 @@
  ******************************************************************************/
 package game.core;
 
-import game.configuration.Compatible;
-import game.configuration.IObject;
-import game.configuration.errorchecks.CompatibilityCheck;
-import game.configuration.errorchecks.PositivenessCheck;
+import com.ios.Compatible;
+import com.ios.IObject;
+import com.ios.errorchecks.CompatibilityCheck;
+import com.ios.errorchecks.PositivenessCheck;
 
 public abstract class DatasetBuilder extends IObject implements Compatible<InstanceTemplate> {
 	

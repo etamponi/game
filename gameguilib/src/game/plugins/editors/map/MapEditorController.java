@@ -10,9 +10,6 @@
  ******************************************************************************/
 package game.plugins.editors.map;
 
-import game.configuration.IMap;
-import game.configuration.IObject;
-import game.configuration.Property;
 import game.editorsystem.EditorController;
 import game.editorsystem.EditorWindow;
 import game.editorsystem.PropertyEditor;
@@ -20,6 +17,10 @@ import game.plugins.editors.StringEditor;
 
 import java.net.URL;
 import java.util.ResourceBundle;
+
+import com.ios.IMap;
+import com.ios.IObject;
+import com.ios.Property;
 
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;

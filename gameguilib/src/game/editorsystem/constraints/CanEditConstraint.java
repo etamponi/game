@@ -10,7 +10,8 @@
  ******************************************************************************/
 package game.editorsystem.constraints;
 
-import game.configuration.Constraint;
+import com.ios.Constraint;
+
 import game.editorsystem.PropertyEditor;
 
 public class CanEditConstraint implements Constraint<PropertyEditor> {

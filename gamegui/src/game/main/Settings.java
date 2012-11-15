@@ -10,32 +10,41 @@
  ******************************************************************************/
 package game.main;
 
-import game.configuration.PluginManager;
 import game.utils.Log;
 
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.IOException;
+
+import com.ios.IObject;
+import com.ios.PluginManager;
+import com.ios.PluginManager.PluginConfiguration;
 
 public class Settings {
 	
-	public static final String CONFIGFILE = "plugins.bin";
+	public static final File CONFIGFILE = new File("plugins.bin");
 	public static final String RESULTSDIR = "results";
 	public static final String LOGSDIR = "logs";
 	
 	public static void initialize() {
-		File config = new File(CONFIGFILE);
-		try {
-			FileInputStream inFile = new FileInputStream(config);
-			PluginManager.initialize(inFile);
-			inFile.close();
-		} catch (FileNotFoundException e) {
-			PluginManager.initialize();
-			PluginManager.getConfiguration().write(config);
-		} catch (IOException e) {
-			e.printStackTrace();
+		PluginConfiguration config = null;
+		if (CONFIGFILE.exists()) {
+			config = IObject.load(CONFIGFILE);
+		} else {
+			config = new PluginConfiguration();
+			config.packages.add("game");
+			addPlugins(config);
+			config.write(CONFIGFILE);
 		}
+		PluginManager.initialize(config);
 		Log.setLogsDirectory(LOGSDIR);
+	}
+
+	private static void addPlugins(PluginConfiguration config) {
+		File dir = new File("plugins/");
+		if (dir.exists() && dir.isDirectory()) {
+			for (File plugin: dir.listFiles()) {
+				if (plugin.getName().endsWith(".jar"))
+					config.paths.add(plugin);
+			}
+		}
 	}
 }

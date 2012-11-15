@@ -10,14 +10,15 @@
  ******************************************************************************/
 package game.plugins.encoders;
 
-import game.configuration.listeners.BoundProperties;
 
 import org.apache.commons.math3.linear.ArrayRealVector;
+
+import com.ios.triggers.BoundProperties;
 
 public class IntegerEncoder extends LabelEncoder {
 	
 	public IntegerEncoder() {
-		addListener(new BoundProperties(this, "labelMapping"));
+		addTrigger(new BoundProperties(this, "labelMapping"));
 	}
 
 	@Override

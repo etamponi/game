@@ -1,6 +1,7 @@
 package game.core.blocks;
 
-import game.configuration.listeners.PropertyBinding;
+import com.ios.triggers.MasterSlaveTrigger;
+
 import game.core.DataTemplate.Data;
 import game.core.Encoding;
 import game.core.InstanceTemplate;
@@ -10,8 +11,8 @@ public class MetaEnsemble extends Transducer {
 	public Combiner combiner;
 	
 	public MetaEnsemble() {
-		addListener(new PropertyBinding(this, "outputEncoder", "combiner.outputEncoder"));
-		addListener(new PropertyBinding(this, "template", "combiner.template"));
+		addTrigger(new MasterSlaveTrigger(this, "outputEncoder", "combiner.outputEncoder"));
+		addTrigger(new MasterSlaveTrigger(this, "template", "combiner.template"));
 	}
 
 	@Override

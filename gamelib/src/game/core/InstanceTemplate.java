@@ -10,12 +10,13 @@
  ******************************************************************************/
 package game.core;
 
-import game.configuration.IObject;
 import game.core.DataTemplate.Data;
 
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
+
+import com.ios.IObject;
 
 public class InstanceTemplate extends IObject {
 	

@@ -17,7 +17,7 @@ public class BlockEditor extends IObjectEditor {
 
 	public BlockEditor() {
 		setHiddenOptions("parents", "position");
-		getListener().getSubPaths().add("trainingAlgorithm");
+		getTrigger().getSubPaths().add("trainingAlgorithm");
 	}
 
 	@Override

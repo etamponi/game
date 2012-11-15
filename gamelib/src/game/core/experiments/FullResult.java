@@ -10,7 +10,8 @@
  ******************************************************************************/
 package game.core.experiments;
 
-import game.configuration.IList;
+import com.ios.IList;
+
 import game.core.Dataset;
 import game.core.Result;
 import game.core.blocks.PredictionGraph;

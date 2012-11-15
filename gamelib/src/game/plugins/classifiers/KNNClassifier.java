@@ -10,10 +10,6 @@
  ******************************************************************************/
 package game.plugins.classifiers;
 
-import game.configuration.Constraint;
-import game.configuration.IList;
-import game.configuration.ErrorCheck;
-import game.configuration.errorchecks.PositivenessCheck;
 import game.core.Encoding;
 import game.core.InstanceTemplate;
 import game.core.blocks.Classifier;
@@ -25,6 +21,11 @@ import game.utils.Utils;
 import java.util.Collections;
 
 import org.apache.commons.math3.linear.RealVector;
+
+import com.ios.Constraint;
+import com.ios.ErrorCheck;
+import com.ios.IList;
+import com.ios.errorchecks.PositivenessCheck;
 
 public class KNNClassifier extends Classifier {
 	

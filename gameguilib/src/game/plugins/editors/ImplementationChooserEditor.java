@@ -10,7 +10,6 @@
  ******************************************************************************/
 package game.plugins.editors;
 
-import game.configuration.IObject;
 import game.editorsystem.EditorWindow;
 import game.editorsystem.PropertyEditor;
 import game.utils.Utils;
@@ -19,6 +18,10 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Set;
+
+import com.ios.IObject;
+import com.ios.Property;
+import com.ios.listeners.ExactPathListener;
 
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
@@ -87,7 +90,7 @@ public class ImplementationChooserEditor extends PropertyEditor {
 	private Button editButton;
 	
 	public ImplementationChooserEditor() {
-		getListener().setListenOnRoot(true);
+		getTrigger().getListeners().add(new ExactPathListener(new Property(this, "root")));
 		
 		this.editButton = new Button("Edit");
 		editButton.setPrefWidth(55);

@@ -10,7 +10,8 @@
  ******************************************************************************/
 package game.plugins.editors.map;
 
-import game.configuration.IMap;
+import com.ios.IMap;
+
 import game.editorsystem.ControlledEditor;
 import javafx.scene.Node;
 import javafx.scene.layout.GridPane;
@@ -19,8 +20,8 @@ import javafx.scene.layout.Priority;
 public class MapEditor extends ControlledEditor {
 	
 	public MapEditor() {
-		getListener().getSubPaths().add("*");
-		getListener().getSubPaths().add("*.name");
+		getTrigger().getSubPaths().add("*");
+		getTrigger().getSubPaths().add("*.name");
 	}
 	
 	@Override

@@ -1,6 +1,5 @@
 package game.plugins.classifiers;
 
-import game.configuration.constraints.SubclassConstraint;
 import game.core.DataTemplate.Data;
 import game.core.Encoding;
 import game.core.InstanceTemplate;
@@ -12,6 +11,8 @@ import game.plugins.encoders.OneHotEncoder;
 import java.util.List;
 
 import org.apache.commons.math3.linear.RealMatrix;
+
+import com.ios.constraints.SubclassConstraint;
 
 public class MajorityCombiner extends Combiner {
 	

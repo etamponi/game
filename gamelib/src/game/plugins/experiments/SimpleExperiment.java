@@ -10,9 +10,10 @@
  ******************************************************************************/
 package game.plugins.experiments;
 
-import game.configuration.Property;
-import game.configuration.constraints.CompatibleWith;
-import game.configuration.listeners.PropertyBinding;
+import com.ios.Property;
+import com.ios.constraints.CompatibleWith;
+import com.ios.triggers.MasterSlaveTrigger;
+
 import game.core.DatasetBuilder;
 import game.core.blocks.PredictionGraph;
 import game.core.experiments.FullExperiment;
@@ -25,7 +26,7 @@ public class SimpleExperiment extends FullExperiment {
 	public DatasetBuilder testingDataset;
 		
 	public SimpleExperiment() {
-		addListener(new PropertyBinding(this, "template", "trainingDataset.template", "testingDataset.template"));
+		addTrigger(new MasterSlaveTrigger(this, "template", "trainingDataset.template", "testingDataset.template"));
 		Property p = new Property(this, "template");
 		addConstraint("trainingDataset", new CompatibleWith(p));
 		addConstraint("testingDataset", new CompatibleWith(p));

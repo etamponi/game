@@ -12,9 +12,6 @@ package testgame.tests;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
-import game.configuration.IObject;
-import game.configuration.PluginManager;
-import game.configuration.PluginManager.PluginConfiguration;
 import game.core.DataTemplate;
 import game.core.DataTemplate.Data;
 import game.core.Decoder;
@@ -31,6 +28,10 @@ import java.util.List;
 import java.util.Set;
 
 import org.junit.Test;
+
+import com.ios.IObject;
+import com.ios.PluginManager;
+import com.ios.PluginManager.PluginConfiguration;
 
 public class GraphTest {
 	

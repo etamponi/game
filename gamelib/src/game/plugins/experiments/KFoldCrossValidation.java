@@ -10,11 +10,6 @@
  ******************************************************************************/
 package game.plugins.experiments;
 
-import game.configuration.Property;
-import game.configuration.constraints.CompatibleWith;
-import game.configuration.errorchecks.RangeCheck;
-import game.configuration.errorchecks.RangeCheck.Bound;
-import game.configuration.listeners.PropertyBinding;
 import game.core.Dataset;
 import game.core.DatasetBuilder;
 import game.core.blocks.PredictionGraph;
@@ -23,6 +18,12 @@ import game.core.experiments.FullResult;
 
 import java.util.List;
 
+import com.ios.Property;
+import com.ios.constraints.CompatibleWith;
+import com.ios.errorchecks.RangeCheck;
+import com.ios.errorchecks.RangeCheck.Bound;
+import com.ios.triggers.MasterSlaveTrigger;
+
 public class KFoldCrossValidation extends FullExperiment {
 	
 	public int folds = 10;
@@ -30,7 +31,7 @@ public class KFoldCrossValidation extends FullExperiment {
 	public DatasetBuilder dataset;
 	
 	public KFoldCrossValidation() {
-		addListener(new PropertyBinding(this, "template", "dataset.template"));
+		addTrigger(new MasterSlaveTrigger(this, "template", "dataset.template"));
 		addConstraint("dataset", new CompatibleWith(new Property(this, "template")));
 		
 		addErrorCheck("folds", new RangeCheck(2, Bound.LOWER));

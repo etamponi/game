@@ -10,15 +10,16 @@
  ******************************************************************************/
 package game.core;
 
-import game.configuration.IList;
-import game.configuration.IObject;
-import game.configuration.Property;
-import game.configuration.constraints.CompatibleWith;
-import game.configuration.listeners.PropertyBinding;
 import game.core.DataTemplate.Data;
 
 import java.util.LinkedList;
 import java.util.List;
+
+import com.ios.IList;
+import com.ios.IObject;
+import com.ios.Property;
+import com.ios.constraints.CompatibleWith;
+import com.ios.triggers.MasterSlaveTrigger;
 
 public abstract class Block extends IObject {
 
@@ -48,7 +49,7 @@ public abstract class Block extends IObject {
 		setContent("parents", new IList<>(Block.class));
 		setContent("trainingAlgorithm", new NoTraining());
 		
-		addListener(new PropertyBinding(this, "", "trainingAlgorithm.block"));
+		addTrigger(new MasterSlaveTrigger(this, "", "trainingAlgorithm.block"));
 		addConstraint("trainingAlgorithm", new CompatibleWith(new Property(this, "")));
 	}
 	

@@ -10,9 +10,10 @@
  ******************************************************************************/
 package game.core;
 
-import game.configuration.Compatible;
-import game.configuration.IObject;
-import game.configuration.errorchecks.CompatibilityCheck;
+import com.ios.Compatible;
+import com.ios.IObject;
+import com.ios.errorchecks.CompatibilityCheck;
+
 import game.core.DataTemplate.Data;
 import game.core.blocks.Encoder;
 

@@ -10,8 +10,8 @@
  ******************************************************************************/
 package game.core;
 
-import game.configuration.Compatible;
-import game.configuration.IObject;
+import com.ios.Compatible;
+import com.ios.IObject;
 
 public abstract class Metric<R extends Result> extends IObject implements Compatible<Result> {
 	

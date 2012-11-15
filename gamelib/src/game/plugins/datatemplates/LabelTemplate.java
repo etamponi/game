@@ -10,9 +10,10 @@
  ******************************************************************************/
 package game.plugins.datatemplates;
 
-import game.configuration.IList;
-import game.configuration.errorchecks.NoRepetitionCheck;
-import game.configuration.errorchecks.SizeCheck;
+import com.ios.IList;
+import com.ios.errorchecks.NoRepetitionCheck;
+import com.ios.errorchecks.SizeCheck;
+
 import game.core.DataTemplate;
 
 public class LabelTemplate extends DataTemplate {

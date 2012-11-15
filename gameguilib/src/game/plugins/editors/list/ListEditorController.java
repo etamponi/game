@@ -10,8 +10,6 @@
  ******************************************************************************/
 package game.plugins.editors.list;
 
-import game.configuration.IList;
-import game.configuration.Property;
 import game.editorsystem.EditorController;
 import game.editorsystem.EditorWindow;
 import game.editorsystem.PropertyEditor;
@@ -20,6 +18,9 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.ResourceBundle;
+
+import com.ios.IList;
+import com.ios.Property;
 
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;

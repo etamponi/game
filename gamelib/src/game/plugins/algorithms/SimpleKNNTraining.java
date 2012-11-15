@@ -10,7 +10,8 @@
  ******************************************************************************/
 package game.plugins.algorithms;
 
-import game.configuration.listeners.BoundProperties;
+import com.ios.triggers.BoundProperties;
+
 import game.core.Block;
 import game.core.Dataset;
 import game.core.Dataset.SampleIterator;
@@ -22,7 +23,7 @@ import game.plugins.classifiers.KNNClassifier.ReferenceSample;
 public class SimpleKNNTraining extends TrainingAlgorithm<KNNClassifier> {
 	
 	public SimpleKNNTraining() {
-		addListener(new BoundProperties(this, "block.reference"));
+		addTrigger(new BoundProperties(this, "block.reference"));
 	}
 
 	@Override

@@ -12,7 +12,8 @@ package game.plugins.datatemplates;
 
 import org.apache.commons.math3.linear.RealVector;
 
-import game.configuration.errorchecks.PositivenessCheck;
+import com.ios.errorchecks.PositivenessCheck;
+
 import game.core.DataTemplate;
 
 public class VectorTemplate extends DataTemplate {

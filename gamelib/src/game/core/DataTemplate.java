@@ -10,9 +10,10 @@
  ******************************************************************************/
 package game.core;
 
-import game.configuration.IObject;
 
 import java.util.ArrayList;
+
+import com.ios.IObject;
 
 public abstract class DataTemplate extends IObject {
 	

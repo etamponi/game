@@ -10,13 +10,14 @@
  ******************************************************************************/
 package game.plugins.pipes;
 
-import game.configuration.ErrorCheck;
 import game.core.DataTemplate.Data;
 import game.core.Encoding;
 import game.core.blocks.Pipe;
 import game.utils.Utils;
 
 import org.apache.commons.math3.linear.RealVector;
+
+import com.ios.ErrorCheck;
 
 public class FeatureSelection extends Pipe {
 	

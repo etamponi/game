@@ -10,10 +10,11 @@
  ******************************************************************************/
 package game.editorsystem;
 
-import game.configuration.Property;
 
 import java.io.IOException;
 import java.net.URL;
+
+import com.ios.Property;
 
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.JavaFXBuilderFactory;

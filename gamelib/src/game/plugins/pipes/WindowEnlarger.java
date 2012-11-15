@@ -10,8 +10,9 @@
  ******************************************************************************/
 package game.plugins.pipes;
 
-import game.configuration.errorchecks.PositivenessCheck;
-import game.configuration.errorchecks.SizeCheck;
+import com.ios.errorchecks.PositivenessCheck;
+import com.ios.errorchecks.SizeCheck;
+
 import game.core.DataTemplate.Data;
 import game.core.Encoding;
 import game.core.blocks.Pipe;

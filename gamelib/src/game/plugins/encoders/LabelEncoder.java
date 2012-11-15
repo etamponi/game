@@ -10,45 +10,34 @@
  ******************************************************************************/
 package game.plugins.encoders;
 
-import game.configuration.Listener;
-import game.configuration.Property;
 import game.core.DataTemplate;
 import game.core.DataTemplate.Data;
 import game.core.Encoding;
 import game.core.blocks.Encoder;
 import game.plugins.datatemplates.LabelTemplate;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.List;
 
 import org.apache.commons.math3.linear.ArrayRealVector;
 import org.apache.commons.math3.linear.RealVector;
+
+import com.ios.Property;
+import com.ios.listeners.SubPathListener;
+import com.ios.triggers.SimpleTrigger;
 
 public abstract class LabelEncoder extends Encoder<LabelTemplate> {
 	
 	public HashMap<String, RealVector> labelMapping = new HashMap<>();
 	
 	public LabelEncoder() {
-		
-		addListener(new Listener() {
+		Property prefix = new Property(LabelEncoder.this, "template");
+		addTrigger(new SimpleTrigger(new SubPathListener(prefix)) {
 			@Override
 			public void action(Property changedPath) {
 				updateMapping();
 			}
-			
-			@Override
-			public boolean isListeningOn(Property path) {
-				return new Property(LabelEncoder.this, "template").isPrefix(path, false);
-			}
-			
-			@Override
-			public List<Property> getBoundProperties(Property prefixPath) {
-				return new ArrayList<>();
-			}
 		});
-		
 	}
 	
 	protected abstract void updateLabelMapping();

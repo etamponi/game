@@ -10,7 +10,6 @@
  ******************************************************************************/
 package game.plugins.datasetbuilders;
 
-import game.configuration.errorchecks.FileExistsCheck;
 import game.core.DataTemplate;
 import game.core.Dataset;
 import game.core.DatasetBuilder;
@@ -25,6 +24,8 @@ import java.io.IOException;
 import java.util.Arrays;
 
 import org.apache.commons.math3.linear.ArrayRealVector;
+
+import com.ios.errorchecks.FileExistsCheck;
 
 public class CSVDatasetBuilder extends DatasetBuilder {
 	

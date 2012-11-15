@@ -12,8 +12,9 @@ package game.plugins.encoders;
 
 import org.apache.commons.math3.linear.ArrayRealVector;
 
-import game.configuration.errorchecks.RangeCheck;
-import game.configuration.listeners.BoundProperties;
+import com.ios.errorchecks.RangeCheck;
+import com.ios.triggers.BoundProperties;
+
 import game.core.DataTemplate;
 import game.plugins.datatemplates.LabelTemplate;
 
@@ -22,7 +23,7 @@ public class BooleanEncoder extends LabelEncoder {
 	public int positiveIndex = 0;
 
 	public BooleanEncoder() {
-		addListener(new BoundProperties(this, "labelMapping"));
+		addTrigger(new BoundProperties(this, "labelMapping"));
 		
 		addErrorCheck("positiveIndex", new RangeCheck(0, 1));
 	}

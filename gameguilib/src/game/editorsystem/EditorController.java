@@ -10,7 +10,8 @@
  ******************************************************************************/
 package game.editorsystem;
 
-import game.configuration.Property;
+import com.ios.Property;
+
 import javafx.fxml.Initializable;
 
 public interface EditorController extends Initializable {

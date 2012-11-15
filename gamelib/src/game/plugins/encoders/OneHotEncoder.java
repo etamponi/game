@@ -10,16 +10,17 @@
  ******************************************************************************/
 package game.plugins.encoders;
 
-import game.configuration.listeners.BoundProperties;
 
 import org.apache.commons.math3.linear.ArrayRealVector;
 import org.apache.commons.math3.linear.RealVector;
+
+import com.ios.triggers.BoundProperties;
 
 
 public class OneHotEncoder extends LabelEncoder {
 
 	public OneHotEncoder() {
-		addListener(new BoundProperties(this, "labelMapping"));
+		addTrigger(new BoundProperties(this, "labelMapping"));
 	}
 
 	@Override

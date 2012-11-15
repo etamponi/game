@@ -10,10 +10,11 @@
  ******************************************************************************/
 package game.core.blocks;
 
-import game.configuration.IList;
-import game.configuration.Property;
-import game.configuration.constraints.CompatibleWith;
-import game.configuration.listeners.PropertyBinding;
+import com.ios.IList;
+import com.ios.Property;
+import com.ios.constraints.CompatibleWith;
+import com.ios.triggers.MasterSlaveTrigger;
+
 import game.core.DataTemplate.Data;
 import game.core.Decoder;
 import game.core.Encoding;
@@ -37,13 +38,13 @@ public class PredictionGraph extends Transducer {
 		setContent("inputEncoders", new IList<>(Encoder.class));
 		setContent("pipes", new IList<>(Pipe.class));
 		
-		addListener(new PropertyBinding(this, "template", "classifiers.*.template"));
+		addTrigger(new MasterSlaveTrigger(this, "template", "classifiers.*.template"));
 		addConstraint("classifiers.*", new CompatibleWith(new Property(this, "template")));
 		
-		addListener(new PropertyBinding(this, "template.inputTemplate", "inputEncoders.*.template"));
+		addTrigger(new MasterSlaveTrigger(this, "template.inputTemplate", "inputEncoders.*.template"));
 		addConstraint("inputEncoders.*", new CompatibleWith(new Property(this, "template.inputTemplate")));
 		
-		addListener(new PropertyBinding(this, "outputClassifier.outputEncoder", "decoder.encoder", "outputEncoder"));
+		addTrigger(new MasterSlaveTrigger(this, "outputClassifier.outputEncoder", "decoder.encoder", "outputEncoder"));
 		addConstraint("decoder", new CompatibleWith(new Property(this, "outputClassifier.outputEncoder")));
 	}
 
