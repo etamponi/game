@@ -46,7 +46,7 @@ public class ResultListController implements Initializable {
 	public void addResult(Result r) {
 		TreeItem expItem = new TreeItem(r);
 		
-		Set<Class> metrics = PluginManager.getCompatibleImplementationsOf(Metric.class, new CompatibleWith(new Property(r, "experment")));
+		Set<Class> metrics = PluginManager.getCompatibleImplementationsOf(Metric.class, new CompatibleWith(new Property(r)));
 		
 		for(Class<Metric> impl: metrics) {
 			try {

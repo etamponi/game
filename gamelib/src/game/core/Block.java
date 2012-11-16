@@ -46,11 +46,11 @@ public abstract class Block extends IObject {
 	public TrainingAlgorithm trainingAlgorithm;
 	
 	public Block() {
-		setContent("parents", new IList<>(Block.class));
-		setContent("trainingAlgorithm", new NoTraining());
-		
 		addTrigger(new MasterSlaveTrigger(this, "", "trainingAlgorithm.block"));
 		addConstraint("trainingAlgorithm", new CompatibleWith(new Property(this, "")));
+
+		setContent("parents", new IList<>(Block.class));
+		setContent("trainingAlgorithm", new NoTraining());
 	}
 	
 	public abstract Encoding transform(Data input);

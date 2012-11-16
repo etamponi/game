@@ -108,9 +108,9 @@ public class EditorWindow extends Stage {
 		
 		editor.connect(model);
 		if (model.getContent() != null)
-			setTitle(model.getContent().toString());
+			setTitle(model.toString());
 		else
-			setTitle(model.getContentType(false).getSimpleName());
+			setTitle(model.getPath() + ": new " + model.getContentType(false).getSimpleName());
 		
 		cancelButton.setDisable(editor.isReadOnly());
 		
