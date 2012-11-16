@@ -10,6 +10,9 @@
  ******************************************************************************/
 package game.core;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import com.ios.Compatible;
 import com.ios.errorchecks.CompatibilityCheck;
 
@@ -33,6 +36,12 @@ public abstract class TrainingAlgorithm<B extends Block> extends LongTask<Void, 
 		block.trained = true;
 		
 		return null;
+	}
+
+	private final static List<String> noManaged = new ArrayList<>();
+	
+	public List<String> getManagedProperties() {
+		return noManaged;
 	}
 
 }

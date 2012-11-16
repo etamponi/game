@@ -10,8 +10,6 @@
  ******************************************************************************/
 package game.plugins.algorithms;
 
-import com.ios.triggers.BoundProperties;
-
 import game.core.Block;
 import game.core.Dataset;
 import game.core.Dataset.SampleIterator;
@@ -20,11 +18,10 @@ import game.core.TrainingAlgorithm;
 import game.plugins.classifiers.KNNClassifier;
 import game.plugins.classifiers.KNNClassifier.ReferenceSample;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class SimpleKNNTraining extends TrainingAlgorithm<KNNClassifier> {
-	
-	public SimpleKNNTraining() {
-		addTrigger(new BoundProperties(this, "block.reference"));
-	}
 
 	@Override
 	public boolean isCompatible(Block object) {
@@ -38,6 +35,15 @@ public class SimpleKNNTraining extends TrainingAlgorithm<KNNClassifier> {
 			Sample sample = it.next();
 			block.reference.add(new ReferenceSample(sample.getEncodedInput(), sample.getEncodedOutput()));
 		}
+	}
+	
+	private static final List<String> managed = new ArrayList<>();
+	static {
+		managed.add("reference");
+	}
+	@Override
+	public List<String> getManagedProperties() {
+		return managed;
 	}
 
 }

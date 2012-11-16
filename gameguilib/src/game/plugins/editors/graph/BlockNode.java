@@ -64,13 +64,14 @@ public class BlockNode extends VBox {
 		
 		public Block block;
 		
-		public BlockParent(Block b) {
+		public BlockParent(final Block b) {
 			setContent("block", b);
 			
 			addTrigger(new SimpleTrigger(new SubPathListener(new Property(this, "block"))) {
+				private BlockParent parent = BlockParent.this;
 				@Override
 				public void action(Property changedPath) {
-					if (block != null)
+					if (parent.block != null)
 						updateView(block);
 				}
 			});

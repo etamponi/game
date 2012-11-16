@@ -18,8 +18,12 @@ import java.util.List;
 import com.ios.IList;
 import com.ios.IObject;
 import com.ios.Property;
+import com.ios.Trigger;
 import com.ios.constraints.CompatibleWith;
+import com.ios.listeners.SubPathListener;
+import com.ios.triggers.BoundProperties;
 import com.ios.triggers.MasterSlaveTrigger;
+import com.ios.triggers.SimpleTrigger;
 
 public abstract class Block extends IObject {
 
@@ -47,6 +51,21 @@ public abstract class Block extends IObject {
 	
 	public Block() {
 		addTrigger(new MasterSlaveTrigger(this, "", "trainingAlgorithm.block"));
+		
+		final Trigger t = new BoundProperties(this, "nothing");
+		addTrigger(t);
+		addTrigger(new SimpleTrigger(new SubPathListener(new Property(this, "trainingAlgorithm"))) {
+			private Block block = Block.this;
+			private Trigger trigger = t;
+			@Override
+			public void action(Property changedPath) {
+				trigger.getBoundProperties().clear();
+				
+				for(Object path: block.trainingAlgorithm.getManagedProperties())
+					trigger.getBoundProperties().add(new Property(block, path.toString()));
+			}
+		});
+		
 		addConstraint("trainingAlgorithm", new CompatibleWith(new Property(this, "")));
 
 		setContent("parents", new IList<>(Block.class));
