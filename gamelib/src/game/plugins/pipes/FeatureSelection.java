@@ -25,10 +25,11 @@ public class FeatureSelection extends Pipe {
 	
 	public FeatureSelection() {
 		addErrorCheck("mask", new ErrorCheck<String>() {
+			private FeatureSelection fs = FeatureSelection.this;
 			@Override public String getError(String value) {
-				if (Utils.count(mask, '0') + Utils.count(mask, '1') != mask.length())
+				if (Utils.count(value, '0') + Utils.count(value, '1') != value.length())
 					return "can contain only 1s and 0s";
-				if (!parents.isEmpty() && getParent(0).getFeatureNumber() != mask.length())
+				if (!fs.parents.isEmpty() && fs.getParent(0).getFeatureNumber() != value.length())
 					return "must contain extactly " + getParent(0).getFeatureNumber() + " characters";
 				return null;
 			}

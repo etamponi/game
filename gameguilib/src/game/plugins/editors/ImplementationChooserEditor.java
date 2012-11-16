@@ -89,7 +89,7 @@ public class ImplementationChooserEditor extends PropertyEditor {
 	private Button editButton;
 	
 	public ImplementationChooserEditor() {
-		getTrigger().getListeners().add(new SubPathListener(getParent()));
+		getUpdateTrigger().getListeners().add(new SubPathListener(getProperty("root")));
 		
 		this.editButton = new Button("Edit");
 		editButton.setPrefWidth(55);

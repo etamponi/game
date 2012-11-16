@@ -167,7 +167,7 @@ public class GraphEditorController implements EditorController {
 	private static class GraphConfigurationEditor extends IObjectEditor {
 		
 		public GraphConfigurationEditor() {
-			setHiddenOptions("classifiers", "inputEncoders", "pipes", "outputClassifier", "parents");
+			setHiddenOptions("classifiers", "inputEncoders", "pipes", "outputClassifier", "parents", "position");
 		}
 		
 	}

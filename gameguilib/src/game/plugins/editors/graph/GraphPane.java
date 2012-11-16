@@ -157,6 +157,8 @@ public class GraphPane extends ScrollPane {
 					if (block instanceof Pipe && !graph.pipes.contains(block))
 						graph.pipes.add((Pipe)block);
 					
+					node.updateView(block);
+					
 					setDragging(null);
 					event.setDropCompleted(true);
 				} else {

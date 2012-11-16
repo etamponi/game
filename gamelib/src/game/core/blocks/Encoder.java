@@ -27,15 +27,20 @@ public abstract class Encoder<DT extends DataTemplate> extends Block implements 
 	
 	public int windowSize = 1;
 	
+//	static {
+//		getKryo().addDefaultSerializer(Encoder.class, new IObjectSerializer(Encoder.class));
+//	}
+	
 	public Encoder() {
 		addErrorCheck("parents", new SizeCheck(0, 0));
 		addErrorCheck("template", new CompatibilityCheck(this));
 		
 		addErrorCheck("windowSize", new PositivenessCheck(false));
 		addErrorCheck("windowSize", new ErrorCheck<Integer>() {
+			Encoder encoder = Encoder.this;
 			@Override
 			public String getError(Integer value) {
-				if (template != null && !template.sequence && windowSize != 1)
+				if (encoder.template != null && !encoder.template.sequence && encoder.windowSize != 1)
 					return "has to be 1 (not a sequence)";
 				else
 					return null;

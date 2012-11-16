@@ -47,7 +47,7 @@ public class IObjectEditor extends PropertyEditor {
 	private List<PropertyEditor> subEditors = new LinkedList<>();
 	
 	public IObjectEditor() {
-		getParent().getRoot().addTrigger(new SimpleTrigger(new SubPathListener(getParent())) {
+		addTrigger(new SimpleTrigger(new SubPathListener(getProperty("root"))) {
 			@Override
 			public void action(Property changedPath) {
 				updateErrorList();

@@ -20,8 +20,8 @@ import javafx.scene.layout.Priority;
 public class ListEditor extends ControlledEditor {
 	
 	public ListEditor() {
-		getTrigger().getSubPaths().add("*");
-		getTrigger().getSubPaths().add("*.name");
+		getUpdateTrigger().getSubPaths().add("*");
+		getUpdateTrigger().getSubPaths().add("*.name");
 	}
 	
 	@Override

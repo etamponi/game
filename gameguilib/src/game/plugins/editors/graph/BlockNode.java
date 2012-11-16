@@ -35,7 +35,7 @@ import javafx.scene.text.TextAlignment;
 
 import com.ios.IObject;
 import com.ios.Property;
-import com.ios.listeners.PrefixListener;
+import com.ios.listeners.SubPathListener;
 import com.ios.triggers.SimpleTrigger;
 
 public class BlockNode extends VBox {
@@ -67,16 +67,21 @@ public class BlockNode extends VBox {
 		public BlockParent(Block b) {
 			setContent("block", b);
 			
-			addTrigger(new SimpleTrigger(new PrefixListener(new Property(this, "block.name"))) {
+			addTrigger(new SimpleTrigger(new SubPathListener(new Property(this, "block"))) {
 				@Override
 				public void action(Property changedPath) {
-					blockName.setText(block.name);
-					pane.fixPosition(BlockNode.this);
-					status.setImage(block.getErrors().isEmpty() ? STATUSOK : STATUSERRORS);
+					if (block != null)
+						updateView(block);
 				}
 			});
 		}
 		
+	}
+	
+	public void updateView(Block block) {
+		blockName.setText(block.name);
+		pane.fixPosition(BlockNode.this);
+		status.setImage(block.getErrors().isEmpty() ? STATUSOK : STATUSERRORS);
 	}
 
 	public BlockNode(final Block b, boolean isTpl, GraphPane p) {

@@ -21,25 +21,18 @@ import java.util.Set;
 
 import javafx.scene.Node;
 
+import com.esotericsoftware.kryo.Kryo;
+import com.esotericsoftware.kryo.KryoCopyable;
+import com.esotericsoftware.kryo.KryoSerializable;
+import com.esotericsoftware.kryo.io.Input;
+import com.esotericsoftware.kryo.io.Output;
 import com.ios.IObject;
 import com.ios.Listener;
 import com.ios.PluginManager;
 import com.ios.Property;
-import com.ios.Trigger;
 import com.ios.triggers.SimpleTrigger;
 
-public abstract class PropertyEditor {
-	
-	private static class PropertyRoot extends IObject {
-		
-		@SuppressWarnings("unused")
-		public IObject root;
-		
-		public PropertyRoot(Trigger trigger) {
-			addTrigger(trigger);
-		}
-		
-	}
+public abstract class PropertyEditor extends IObject implements KryoSerializable, KryoCopyable<PropertyEditor> {
 	
 	protected class UpdateTrigger extends SimpleTrigger {
 		
@@ -48,12 +41,10 @@ public abstract class PropertyEditor {
 		private class DynamicPathListener extends Listener {
 			@Override
 			public boolean isListeningOn(Property path) {
-				if (listened == null)
-					return false;
-				boolean ret = listened.includes(path);
+				boolean ret = reference.includes(path);
 				if (!ret) {
 					for(String subPath: subPaths) {
-						Property temp = new Property(listened.getRoot(), listened.getPath() + "." + subPath);
+						Property temp = new Property(reference.getRoot(), reference.getPath() + "." + subPath);
 						if (temp.includes(path))
 							return true;
 					}
@@ -78,11 +69,11 @@ public abstract class PropertyEditor {
 		
 	}
 	
-	private Property listened;
+	public IObject root;
+	
+	private Property reference, model;
 	
 	private UpdateTrigger trigger = new UpdateTrigger();
-	
-	private PropertyRoot pRoot = new PropertyRoot(trigger);
 	
 	private boolean listening = true;
 	
@@ -96,27 +87,24 @@ public abstract class PropertyEditor {
 	
 	public abstract Class getBaseEditableClass();
 	
+	public PropertyEditor() {
+		addTrigger(trigger);
+	}
+	
 	public void connect(Property model) {
-		this.listened = new Property(pRoot, "root." + model.getPath());
+		this.reference = new Property(this, "root." + model.getPath());
+		this.model = model;
 		
-		pRoot.setContent("root", model.getRoot());
+		setContent("root", model.getRoot());
 		
 		updateView();
 	}
 	
-	public Property getParent() {
-		return new Property(pRoot, "root");
-	}
-	
 	public Property getModel() {
-		return listened != null ? listened.getLocalProperty() : null;
+		return root != null ? model : null;
 	}
 	
-	public void detach() {
-		pRoot.detach();
-	}
-	
-	protected UpdateTrigger getTrigger() {
+	protected UpdateTrigger getUpdateTrigger() {
 		return trigger;
 	}
 
@@ -126,14 +114,14 @@ public abstract class PropertyEditor {
 	
 	protected void updateModel(Object content) {
 		listening = false;
-		listened.setContent(content);
+		model.setContent(content);
 		listening = true;
 	}
 	
 	public void setReadOnly(boolean readOnly) {
 		if (this.readOnly != readOnly) {
 			this.readOnly = readOnly;
-			if (pRoot != null)
+			if (root != null)
 				updateView();
 		}
 	}
@@ -190,6 +178,21 @@ public abstract class PropertyEditor {
 				parents.add(i);
 		}
 		return parents;
+	}
+
+	@Override
+	public PropertyEditor copy(Kryo kryo) {
+		throw new UnsupportedOperationException("Cannot copy a " + getClass());
+	}
+
+	@Override
+	public void read(Kryo kryo, Input input) {
+		throw new UnsupportedOperationException("Cannot read a " + getClass());
+	}
+
+	@Override
+	public void write(Kryo kryo, Output output) {
+		throw new UnsupportedOperationException("Cannot write a " + getClass());
 	}
 
 }

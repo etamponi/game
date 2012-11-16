@@ -33,9 +33,10 @@ public abstract class LabelEncoder extends Encoder<LabelTemplate> {
 	public LabelEncoder() {
 		Property prefix = new Property(LabelEncoder.this, "template");
 		addTrigger(new SimpleTrigger(new SubPathListener(prefix)) {
+			LabelEncoder encoder = LabelEncoder.this;
 			@Override
 			public void action(Property changedPath) {
-				updateMapping();
+				encoder.updateMapping();
 			}
 		});
 	}
