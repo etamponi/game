@@ -10,60 +10,56 @@
  ******************************************************************************/
 package game.utils;
 
-
-import game.configuration.BaseConverter;
-
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 
-import com.thoughtworks.xstream.converters.MarshallingContext;
-import com.thoughtworks.xstream.converters.UnmarshallingContext;
-import com.thoughtworks.xstream.io.HierarchicalStreamReader;
-import com.thoughtworks.xstream.io.HierarchicalStreamWriter;
+import weka.classifiers.Classifier;
 
-public class WekaClassifierConverter extends BaseConverter {
+import com.esotericsoftware.kryo.Kryo;
+import com.esotericsoftware.kryo.Serializer;
+import com.esotericsoftware.kryo.io.Input;
+import com.esotericsoftware.kryo.io.Output;
+
+
+
+public class WekaClassifierSerializer extends Serializer<Classifier> {
 
 	@Override
-	public boolean canConvert(Class type) {
+	public Classifier read(Kryo kryo, Input input, Class<Classifier> type) {
 		try {
-			Class.forName("weka.classifiers.Classifier");
-		} catch (ClassNotFoundException e) {
+			return (Classifier)new ObjectInputStream(new ByteArrayInputStream(input.getBuffer())).readObject();
+		}  catch (ClassNotFoundException | IOException e) {
 			e.printStackTrace();
-			System.exit(1);
+			return null;
 		}
-		return weka.classifiers.Classifier.class.isAssignableFrom(type);
 	}
 
 	@Override
-	public void marshal(Object object, HierarchicalStreamWriter writer,
-			MarshallingContext context) {
+	public void write(Kryo kryo, Output output, Classifier object) {
 		try {
 			ByteArrayOutputStream stream = new ByteArrayOutputStream();
 			ObjectOutputStream oos = new ObjectOutputStream(stream);
 			oos.writeObject(object);
 			oos.flush();
 			oos.close();
-			writer.setValue(new String(Base64Coder.encode(stream.toByteArray())));
+			output.write(stream.toByteArray());
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
 	}
 
 	@Override
-	public Object unmarshal(HierarchicalStreamReader reader,
-			UnmarshallingContext context) {
-		Object object = null;
-		
+	public Classifier copy(Kryo kryo, Classifier object) {
 		try {
-			object = new ObjectInputStream(new ByteArrayInputStream(Base64Coder.decode(reader.getValue()))).readObject();
-		}  catch (ClassNotFoundException | IOException e) {
+			return Classifier.makeCopy(object);
+		} catch (Exception e) {
 			e.printStackTrace();
+			return null;
 		}
-		
-		return object;
 	}
 	
 }
+

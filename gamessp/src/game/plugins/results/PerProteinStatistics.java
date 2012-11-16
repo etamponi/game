@@ -11,7 +11,6 @@
 package game.plugins.results;
 
 import game.core.Dataset;
-import game.core.Dataset.InstanceIterator;
 import game.core.Instance;
 import game.core.Result;
 import game.core.metrics.FullMetric;
@@ -19,6 +18,7 @@ import game.plugins.datatemplates.ProteinDSSPStructure;
 import game.plugins.datatemplates.ProteinHECStructure;
 import game.plugins.datatemplates.ProteinPrimaryStructure;
 
+import java.util.Iterator;
 import java.util.List;
 
 public class PerProteinStatistics extends FullMetric {
@@ -38,11 +38,11 @@ public class PerProteinStatistics extends FullMetric {
 	@Override
 	public String prettyPrint() {
 		StringBuilder ret = new StringBuilder();
-		for (Dataset dataset: getResult().testedDatasets.getList(Dataset.class)) {
-			InstanceIterator it = dataset.instanceIterator();
+		for (Dataset dataset: getResult().testedDatasets) {
+			Iterator<Instance> it = dataset.iterator();
 			while(it.hasNext()) {
 				Instance i = it.next();
-				if (dataset.template.inputTemplate instanceof ProteinPrimaryStructure)
+				if (getResult().experiment.template.inputTemplate instanceof ProteinPrimaryStructure)
 					ret.append("Primary:          ").append(i.getInput()).append("\n");
 				ret.append(	   "Secondary (obs):  ").append(i.getOutput()).append("\n");
 				ret.append(    "Secondary (pred): ").append(i.getPrediction()).append("\n\n");

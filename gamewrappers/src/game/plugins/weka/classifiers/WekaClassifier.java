@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2012 Emanuele.
+* Copyright (c) 2012 Emanuele.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the GNU Public License v3.0
  * which accompanies this distribution, and is available at
@@ -10,16 +10,17 @@
  ******************************************************************************/
 package game.plugins.weka.classifiers;
 
-import game.configuration.Configurable;
 import game.core.blocks.Classifier;
-import game.utils.WekaClassifierConverter;
+import game.utils.WekaClassifierSerializer;
+
+import com.ios.IObject;
 
 
 
 public abstract class WekaClassifier extends Classifier {
 	
 	static {
-		Configurable.registerConverter(new WekaClassifierConverter());
+		IObject.getKryo().addDefaultSerializer(weka.classifiers.Classifier.class, WekaClassifierSerializer.class);
 	}
 	
 }

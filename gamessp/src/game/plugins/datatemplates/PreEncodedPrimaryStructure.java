@@ -10,6 +10,8 @@
  ******************************************************************************/
 package game.plugins.datatemplates;
 
+import com.ios.triggers.BoundProperties;
+
 
 
 public class PreEncodedPrimaryStructure extends VectorTemplate {
@@ -17,7 +19,7 @@ public class PreEncodedPrimaryStructure extends VectorTemplate {
 	public PreEncodedPrimaryStructure() {
 		dimension = 20;
 		sequence = true;
-		setAsInternalOptions("sequence", "dimension");
+		addTrigger(new BoundProperties(this, "dimension", "sequence"));
 	}
 	
 }

@@ -10,13 +10,15 @@
  ******************************************************************************/
 package game.plugins.datatemplates;
 
+import com.ios.triggers.BoundProperties;
+
 
 
 public abstract class ProteinStructureTemplate extends LabelTemplate {
 	
 	public ProteinStructureTemplate() {
 		sequence = true;
-		setAsInternalOptions("labels", "sequence");
+		addTrigger(new BoundProperties(this, "labels", "sequence"));
 	}
 	
 	@Override

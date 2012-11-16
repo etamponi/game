@@ -17,6 +17,8 @@ import game.plugins.encoders.OneHotEncoder;
 import weka.classifiers.functions.MultilayerPerceptron;
 import weka.core.Instance;
 
+import com.ios.triggers.BoundProperties;
+
 public class WekaMultilayerPerceptron extends WekaClassifier {
 	
 	public int hiddenNeurons = 5;
@@ -24,8 +26,8 @@ public class WekaMultilayerPerceptron extends WekaClassifier {
 	public MultilayerPerceptron nn;
 
 	public WekaMultilayerPerceptron() {
-		outputEncoder = new OneHotEncoder();
-		setAsInternalOptions("outputEncoder");
+		setContent("outputEncoder", new OneHotEncoder());
+		addTrigger(new BoundProperties(this, "outputEncoder"));
 	}
 
 	@Override

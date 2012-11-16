@@ -10,17 +10,21 @@
  ******************************************************************************/
 package game.plugins.weka.algorithms;
 
+import game.core.Block;
+import game.core.Dataset;
+import game.core.Dataset.SampleIterator;
+import game.core.Sample;
+import game.core.TrainingAlgorithm;
+import game.plugins.weka.classifiers.WekaMultilayerPerceptron;
+
+import java.util.ArrayList;
+import java.util.List;
+
 import weka.classifiers.functions.MultilayerPerceptron;
 import weka.core.Attribute;
 import weka.core.FastVector;
 import weka.core.Instance;
 import weka.core.Instances;
-import game.core.Block;
-import game.core.Dataset;
-import game.core.Sample;
-import game.core.TrainingAlgorithm;
-import game.core.Dataset.SampleIterator;
-import game.plugins.weka.classifiers.WekaMultilayerPerceptron;
 
 public class WekaMultilayerPerceptronTraining extends TrainingAlgorithm<WekaMultilayerPerceptron> {
 	
@@ -63,7 +67,7 @@ public class WekaMultilayerPerceptronTraining extends TrainingAlgorithm<WekaMult
 			attributes.addElement(new Attribute("a"+i));
 		}
 		FastVector classes = new FastVector();
-		for(String label: (Iterable<String>)block.template.outputTemplate.getOption("labels"))
+		for(String label: (Iterable<String>)block.template.outputTemplate.getContent("labels"))
 			classes.addElement(label);
 		attributes.addElement(new Attribute("class", classes));
 		Instances ts = new Instances("training", attributes, 0);
@@ -88,9 +92,13 @@ public class WekaMultilayerPerceptronTraining extends TrainingAlgorithm<WekaMult
 		block.nn = nn;
 	}
 
+	private static final List<String> managed = new ArrayList<>();
+	static {
+		managed.add("nn");
+	}
 	@Override
-	public String[] getManagedBlockOptions() {
-		return new String[]{"nn"};
+	public List<String> getManagedProperties() {
+		return managed;
 	}
 
 }

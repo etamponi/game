@@ -31,12 +31,11 @@ public class FastaDatasetBuilderTest {
 		template.inputTemplate = new ProteinPrimaryStructure();
 		template.outputTemplate = new ProteinHECStructure();
 		FastaDatasetBuilder builder = new FastaDatasetBuilder();
-		builder.setOption("file", new File("testdata/fasta.txt"));
-		builder.setOption("template", template);
-		builder.setOption("shuffle", false);
+		builder.setContent("file", new File("testdata/fasta.txt"));
+		builder.setContent("template", template);
 		Dataset dataset = builder.buildDataset();
 		
-		Instance inst = dataset.instanceIterator().next();
+		Instance inst = dataset.iterator().next();
 		assertEquals(2, dataset.size());
 		assertEquals("MKTAYIAKQRQISFVKSHFSRQLEERLGLIEVQAPILSRVGDGTQDNLSGAEKAVQVKVKALPDAQFEVVHSLAKWKRQTLGQHDFSAGEGLYTHMKALRPDEDRLSPLHSVYVDQWDWERVMGDGERQFSTLKSTVEAIWAGIKATEAAVSEEFGLAPFLPDQIHFVHSQELLSRYPDLDAKGRERAIAKDLGAVFLVGIGGKLSDGHRHDVRAPDYDDWSTPSELGHAGLNGDILVWNPVLEDAFELSSMGIRVDADTLKHQLALTGDEDRLELEWHQALLRGEMPQTIGGGIGQSRLTMLLLQLPHIGQVQAGVWPAAVRESVPSLL",
 				getFasta(inst.getInput()));

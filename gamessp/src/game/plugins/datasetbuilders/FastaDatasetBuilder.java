@@ -10,7 +10,6 @@
  ******************************************************************************/
 package game.plugins.datasetbuilders;
 
-import game.configuration.errorchecks.FileExistsCheck;
 import game.core.DataTemplate.Data;
 import game.core.Dataset;
 import game.core.DatasetBuilder;
@@ -19,19 +18,20 @@ import game.core.InstanceTemplate;
 import game.plugins.datatemplates.ProteinDSSPStructure;
 import game.plugins.datatemplates.ProteinHECStructure;
 import game.plugins.datatemplates.ProteinPrimaryStructure;
-import game.utils.Utils;
 
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 
+import com.ios.errorchecks.FileExistsCheck;
+
 public class FastaDatasetBuilder extends DatasetBuilder {
 	
 	public File file = new File("nonexistent.txt");
 	
 	public FastaDatasetBuilder() {
-		setOptionChecks("file", new FileExistsCheck());
+		addErrorCheck("file", new FileExistsCheck());
 	}
 
 	@Override
@@ -43,7 +43,7 @@ public class FastaDatasetBuilder extends DatasetBuilder {
 
 	@Override
 	public Dataset buildDataset() {
-		Dataset ret = new Dataset(template, Utils.relativize(file));
+		Dataset ret = new Dataset();
 		
 		if (file.exists()) {
 			try {
@@ -73,7 +73,6 @@ public class FastaDatasetBuilder extends DatasetBuilder {
 					}
 				}
 				reader.close();
-				ret.setReadyState();
 			} catch (IOException e) {}
 		}
 		
