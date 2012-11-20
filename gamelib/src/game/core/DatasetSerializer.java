@@ -9,11 +9,11 @@ import java.util.Collection;
 import org.objenesis.strategy.StdInstantiatorStrategy;
 
 import com.esotericsoftware.kryo.Kryo;
-import com.esotericsoftware.kryo.Serializer;
 import com.esotericsoftware.kryo.io.Input;
 import com.esotericsoftware.kryo.io.Output;
+import com.ios.IOSSerializer;
 
-public class DatasetSerializer extends Serializer<Dataset> {
+public class DatasetSerializer extends IOSSerializer<Dataset> {
 	
 	private static final Kryo internal = new Kryo();
 	static {
@@ -93,6 +93,11 @@ public class DatasetSerializer extends Serializer<Dataset> {
 		}
 		
 		return ret;
+	}
+
+	@Override
+	public Class<Dataset> getSerializingType() {
+		return Dataset.class;
 	}
 	
 }

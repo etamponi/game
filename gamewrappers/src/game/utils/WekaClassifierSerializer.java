@@ -19,18 +19,18 @@ import java.io.ObjectOutputStream;
 import weka.classifiers.Classifier;
 
 import com.esotericsoftware.kryo.Kryo;
-import com.esotericsoftware.kryo.Serializer;
 import com.esotericsoftware.kryo.io.Input;
 import com.esotericsoftware.kryo.io.Output;
+import com.ios.IOSSerializer;
 
 
 
-public class WekaClassifierSerializer extends Serializer<Classifier> {
+public class WekaClassifierSerializer extends IOSSerializer<Classifier> {
 
 	@Override
 	public Classifier read(Kryo kryo, Input input, Class<Classifier> type) {
 		try {
-			return (Classifier)new ObjectInputStream(new ByteArrayInputStream(input.getBuffer())).readObject();
+			return (Classifier)new ObjectInputStream(new ByteArrayInputStream(input.readBytes(input.readInt()))).readObject();
 		}  catch (ClassNotFoundException | IOException e) {
 			e.printStackTrace();
 			return null;
@@ -45,6 +45,7 @@ public class WekaClassifierSerializer extends Serializer<Classifier> {
 			oos.writeObject(object);
 			oos.flush();
 			oos.close();
+			output.writeInt(stream.size());
 			output.write(stream.toByteArray());
 		} catch (IOException e) {
 			e.printStackTrace();
@@ -59,6 +60,11 @@ public class WekaClassifierSerializer extends Serializer<Classifier> {
 			e.printStackTrace();
 			return null;
 		}
+	}
+
+	@Override
+	public Class<Classifier> getSerializingType() {
+		return Classifier.class;
 	}
 	
 }
