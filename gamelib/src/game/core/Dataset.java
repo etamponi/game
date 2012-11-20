@@ -13,14 +13,21 @@ package game.core;
 import game.core.DataTemplate.Data;
 import game.utils.Utils;
 
+import java.io.ByteArrayOutputStream;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 
+import org.objenesis.strategy.StdInstantiatorStrategy;
+
 import com.esotericsoftware.kryo.Kryo;
 import com.esotericsoftware.kryo.KryoCopyable;
+import com.esotericsoftware.kryo.KryoSerializable;
+import com.esotericsoftware.kryo.io.Input;
+import com.esotericsoftware.kryo.io.Output;
+import com.esotericsoftware.kryo.serializers.DefaultSerializers;
 import com.ios.IObject;
 
 public class Dataset extends ArrayList<Instance> implements KryoCopyable<Dataset> {
@@ -230,10 +237,6 @@ public class Dataset extends ArrayList<Instance> implements KryoCopyable<Dataset
 			ret.add(copy);
 		}
 		return ret;
-	}
-	
-	static {
-		IObject.getKryo().addDefaultSerializer(Dataset.class, DatasetSerializer.class);
 	}
 	
 }
