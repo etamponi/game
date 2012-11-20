@@ -12,16 +12,11 @@ package game.core;
 
 
 import java.util.ArrayList;
-import java.util.Collection;
 
-import com.esotericsoftware.kryo.Kryo;
-import com.esotericsoftware.kryo.Serializer;
-import com.esotericsoftware.kryo.io.Input;
-import com.esotericsoftware.kryo.io.Output;
 import com.ios.IObject;
 
 public abstract class DataTemplate extends IObject {
-	
+/*
 	public static class DataSerializer extends Serializer<Collection> {
 
 		@Override
@@ -34,7 +29,7 @@ public abstract class DataTemplate extends IObject {
 		}
 
 		@Override
-		public void write(Kryo kryo, Output output, Collection object) {
+		synchronized public void write(Kryo kryo, Output output, Collection object) {
 			Data data = (Data)object;
 			kryo.writeObject(output, data.template);
 			kryo.writeObject(output, new ArrayList<>(object));
@@ -44,7 +39,7 @@ public abstract class DataTemplate extends IObject {
 		public Collection copy(Kryo kryo, Collection object) {
 			DataTemplate template = ((Data)object).template;
 			Data data = template.newData();
-			data.addAll(object);
+			data.addAll(kryo.copy(new ArrayList(object)));
 			return data;
 		}
 		
@@ -53,10 +48,8 @@ public abstract class DataTemplate extends IObject {
 	static {
 		IObject.getKryo().addDefaultSerializer(Data.class, DataSerializer.class);
 	}
-
+*/
 	public abstract class Data<T> extends ArrayList<T> {
-		
-		private DataTemplate template = DataTemplate.this;
 		
 		protected abstract Class getElementType();
 		

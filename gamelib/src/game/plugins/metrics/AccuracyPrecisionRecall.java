@@ -81,6 +81,8 @@ public class AccuracyPrecisionRecall extends FullMetric {
 			totalT += singleT.get(i);
 			totalTP += singleTP.get(i);
 		}
+		
+		// FIXME average precision + average recall
 		ret.append(String.format("\n%20s%15.0f%15.0f%15.0f%15s%15.2f\n", "Overall",
 																	 totalT, totalT, totalTP,
 																	 "Accuracy", 100*totalTP/totalT));

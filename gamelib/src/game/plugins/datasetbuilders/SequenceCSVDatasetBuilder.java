@@ -50,7 +50,7 @@ public class SequenceCSVDatasetBuilder extends DatasetBuilder {
 
 	@Override
 	public Dataset buildDataset() {
-		Dataset ret = new Dataset();
+		Dataset ret = new Dataset(template);
 		
 		int inputDim = getDimension(template.inputTemplate);
 		int outputDim = getDimension(template.outputTemplate);

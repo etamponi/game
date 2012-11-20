@@ -64,24 +64,26 @@ public class BlockNode extends VBox {
 		
 		public Block block;
 		
-		public BlockParent(final Block b) {
+		public BlockParent(boolean isTemplate, final Block b) {
 			setContent("block", b);
 			
-			addTrigger(new SimpleTrigger(new SubPathListener(new Property(this, "block"))) {
-				private BlockParent parent = BlockParent.this;
-				@Override
-				public void action(Property changedPath) {
-					if (parent.block != null)
-						updateView(block);
-				}
-			});
+			if (!isTemplate) {
+				addTrigger(new SimpleTrigger(new SubPathListener(new Property(this, "block"))) {
+					private BlockParent parent = BlockParent.this;
+					@Override
+					public void action(Property changedPath) {
+						if (parent.block != null)
+							updateView(block);
+					}
+				});
+			}
 		}
 		
 	}
 	
 	public void updateView(Block block) {
 		blockName.setText(block.name);
-		pane.fixPosition(BlockNode.this);
+		pane.fixPosition(this);
 		status.setImage(block.getErrors().isEmpty() ? STATUSOK : STATUSERRORS);
 	}
 
@@ -149,9 +151,10 @@ public class BlockNode extends VBox {
 					}
 				}
 			});
+			
 		}
-
-		this.blockParent = new BlockParent(b);
+		
+		this.blockParent = new BlockParent(isTemplate, b);
 	}
 	
 	public void destroy() {

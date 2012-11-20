@@ -64,6 +64,8 @@ public abstract class LabelEncoder extends Encoder<LabelTemplate> {
 	}
 	
 	private void updateMapping() {
+		if (template == null)
+			return;
 		for (String label: template.labels) {
 			if (label != null && !labelMapping.containsKey(label))
 				labelMapping.put(label, new ArrayRealVector());

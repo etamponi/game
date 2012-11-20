@@ -10,21 +10,22 @@
  ******************************************************************************/
 package game.core.experiments;
 
-import com.ios.IList;
-
 import game.core.Dataset;
 import game.core.Result;
 import game.core.blocks.PredictionGraph;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class FullResult extends Result {
 	
-	public IList<PredictionGraph> trainedGraphs;
+	public List<PredictionGraph> trainedGraphs = new ArrayList<>();
 	
-	public IList<Dataset> testedDatasets;
+	public List<Dataset> testedDatasets = new ArrayList<>();
 	
-	public FullResult() {
-		setContent("trainedGraphs", new IList<>(PredictionGraph.class));
-		setContent("testedDatasets", new IList<>(Dataset.class));
-	}
+//	public FullResult() {
+//		setContent("trainedGraphs", new IList<>(PredictionGraph.class));
+//		setContent("testedDatasets", new IList<>(Dataset.class));
+//	}
 
 }

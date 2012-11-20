@@ -43,7 +43,7 @@ public class FastaDatasetBuilder extends DatasetBuilder {
 
 	@Override
 	public Dataset buildDataset() {
-		Dataset ret = new Dataset();
+		Dataset ret = new Dataset(template);
 		
 		if (file.exists()) {
 			try {

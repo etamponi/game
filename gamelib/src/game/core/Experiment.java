@@ -30,7 +30,7 @@ public abstract class Experiment extends LongTask<Result, String> {
 			dir.mkdirs();
 		this.write(new File(outputDirectory+"/experiment_"+name+".bin"));
 		Result result = runExperiment(outputDirectory);
-		result.experiment = this;
+		result.setContent("experiment", this);
 		result.write(new File(outputDirectory + "/result_"+name+".bin"));
 		updateStatus(1.0, "Experiment " + getClass().getSimpleName() + " " + name + " finished");
 		Log.setCurrentExperiment(null);

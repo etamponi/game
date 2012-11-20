@@ -18,11 +18,6 @@ import org.apache.commons.math3.linear.RealMatrix;
 import org.apache.commons.math3.linear.RealVector;
 
 public class Encoding extends Array2DRowRealMatrix implements Iterable<RealVector> {
-
-	private static final long serialVersionUID = -2301854648600245030L;
-	
-	@SuppressWarnings("unused")
-	private Encoding() {}
 	
 	public Encoding(int featureNumber, int length) {
 		super(featureNumber, length);

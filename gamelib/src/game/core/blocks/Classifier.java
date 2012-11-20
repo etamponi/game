@@ -30,13 +30,13 @@ public abstract class Classifier extends Transducer {
 		return classify(getParentEncoding(input));
 	}
 	
-	protected Block getParent() {
+	public Block getParent() {
 		if (parents.isEmpty())
 			return null;
 		return (Block)parents.get(0);
 	}
 	
-	protected Encoding getParentEncoding(Data input) {
+	public Encoding getParentEncoding(Data input) {
 		return getParent().transform(input);
 	}
 

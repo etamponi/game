@@ -10,6 +10,7 @@
  ******************************************************************************/
 package game.editorsystem;
 
+import com.ios.IObject;
 import com.ios.Property;
 
 import javafx.event.ActionEvent;
@@ -104,7 +105,10 @@ public class EditorWindow extends Stage {
 	}
 	
 	public void startEdit(Property model) {
-		original = model.getRoot().copy().getContent(model.getPath());
+		if (model.getContent() instanceof IObject)
+			original = model.getContent(IObject.class).copy();
+		else
+			original = IObject.getKryo().copy(model.getContent());
 		
 		editor.connect(model);
 		if (model.getContent() != null)

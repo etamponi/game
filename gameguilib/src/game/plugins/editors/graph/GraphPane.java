@@ -260,7 +260,7 @@ public class GraphPane extends ScrollPane {
 	}
 	
 	public void fixPosition(BlockNode node) {
-		if (node.getWrapper().getParent() == null)
+		if (node.getWrapper() == null || node.getWrapper().getParent() == null)
 			return;
 		
 		HBox wrapper = node.getWrapper();

@@ -19,14 +19,25 @@ import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 
-public class Dataset extends ArrayList<Instance> {
+import com.esotericsoftware.kryo.Kryo;
+import com.esotericsoftware.kryo.KryoCopyable;
+import com.ios.IObject;
+
+public class Dataset extends ArrayList<Instance> implements KryoCopyable<Dataset> {
 	
-	public Dataset() {
-		
+	private InstanceTemplate template;
+
+	public Dataset(InstanceTemplate template) {
+		this.template = template;
 	}
 	
-	public Dataset(Collection<? extends Instance> collection) {
+	public Dataset(InstanceTemplate template, Collection<? extends Instance> collection) {
 		super(collection);
+		this.template = template;
+	}
+	
+	public InstanceTemplate getTemplate() {
+		return template;
 	}
 	
 	public enum IterationType {
@@ -135,7 +146,7 @@ public class Dataset extends ArrayList<Instance> {
 
 		@Override
 		public void remove() {
-			throw new UnsupportedOperationException("Cannot remove samples from dataset");
+			throw new UnsupportedOperationException("Cannot remove samples from a dataset");
 		}
 		
 	}
@@ -163,7 +174,7 @@ public class Dataset extends ArrayList<Instance> {
 		int foldSize = size() / folds;
 		
 		for(int i = 0; i < folds; i++) {
-			Dataset fold = new Dataset();
+			Dataset fold = new Dataset(template);
 			for(int j = 0; j < foldSize; j++)
 				fold.add(get(temp.get(i*foldSize+j)));
 			ret.add(fold);
@@ -175,7 +186,7 @@ public class Dataset extends ArrayList<Instance> {
 	public List<Dataset> getComplementaryFolds(List<Dataset> folds) {
 		List<Dataset> ret = new ArrayList<>(folds.size());
 		for(Dataset fold: folds) {
-			Dataset complementary = new Dataset(this);
+			Dataset complementary = new Dataset(template, this);
 			complementary.removeAll(fold);
 			ret.add(complementary);
 		}
@@ -187,13 +198,42 @@ public class Dataset extends ArrayList<Instance> {
 		List<Integer> temp = Utils.range(0, size());
 		Collections.shuffle(temp);
 		
-		Dataset ret = new Dataset();
+		Dataset ret = new Dataset(template);
 		
 		int subsetSize = (int) (size()*percent);
 		for(int i = 0; i < subsetSize; i++)
 			ret.add(get(temp.get(i)));
 		
 		return ret;
+	}
+
+	@Override
+	public Dataset copy(Kryo kryo) {
+		InstanceTemplate copyTmp = kryo.copy(template);
+		Dataset ret = new Dataset(copyTmp);
+		for(Instance i: this) {
+			Instance copy = copyTmp.newInstance();
+			Data input = copyTmp.inputTemplate.newData();
+			input.addAll(kryo.copy(new ArrayList(i.getInput())));
+			Data output = copyTmp.outputTemplate.newData();
+			output.addAll(kryo.copy(new ArrayList(i.getOutput())));
+			copy.setInput(input);
+			copy.setOutput(output);
+			if (i.getPrediction() != null) {
+				Data prediction = copyTmp.outputTemplate.newData();
+				prediction.addAll(kryo.copy(new ArrayList(i.getPrediction())));
+				copy.setPrediction(prediction);
+			}
+			if (i.getPredictionEncoding() != null) {
+				copy.setPredictionEncoding(kryo.copy(i.getPredictionEncoding()));
+			}
+			ret.add(copy);
+		}
+		return ret;
+	}
+	
+	static {
+		IObject.getKryo().addDefaultSerializer(Dataset.class, DatasetSerializer.class);
 	}
 	
 }

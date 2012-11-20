@@ -52,6 +52,7 @@ import com.esotericsoftware.kryo.KryoCopyable;
 import com.ios.IList;
 import com.ios.IObject;
 import com.ios.PluginManager;
+import com.ios.PluginManager.PluginConfiguration;
 import com.ios.Property;
 import com.ios.listeners.SubPathListener;
 import com.ios.triggers.SimpleTrigger;
@@ -59,6 +60,8 @@ import com.ios.triggers.SimpleTrigger;
 public class MainController extends IObject implements Initializable , KryoCopyable<MainController> {
 	
 	public IList<Experiment> experimentList;
+	
+	public PluginConfiguration configuration;
 	
 	private ExperimentService service;
 	
@@ -139,9 +142,10 @@ public class MainController extends IObject implements Initializable , KryoCopya
 		pmButton.setOnAction(new EventHandler<ActionEvent>() {
 			@Override
 			public void handle(ActionEvent event) {
-				Property temp = new Property(PluginManager.getConfiguration());
+				setContent("configuration", PluginManager.getConfiguration());
+				Property temp = new Property(MainController.this, "configuration");
 				new EditorWindow(new IObjectEditor()).startEdit(temp);
-				temp.getContent(IObject.class).write(Settings.CONFIGFILE);
+				configuration.write(Settings.CONFIGFILE);
 				// TODO: show dialog to inform user of a restart needed
 			}
 		});

@@ -49,7 +49,7 @@ public class CSVDatasetBuilder extends DatasetBuilder {
 
 	@Override
 	public Dataset buildDataset() {
-		Dataset ret = new Dataset();
+		Dataset ret = new Dataset(template);
 		
 		int inputDim = template.inputTemplate.getDescriptionLength();
 		int outputDim = template.outputTemplate.getDescriptionLength();
