@@ -61,11 +61,6 @@ public class WekaClassifierSerializer extends IOSSerializer<Classifier> {
 			return null;
 		}
 	}
-
-	@Override
-	public Class<Classifier> getSerializingType() {
-		return Classifier.class;
-	}
 	
 }
 

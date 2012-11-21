@@ -16,39 +16,7 @@ import java.util.ArrayList;
 import com.ios.IObject;
 
 public abstract class DataTemplate extends IObject {
-/*
-	public static class DataSerializer extends Serializer<Collection> {
 
-		@Override
-		public Collection read(Kryo kryo, Input input, Class<Collection> type) {
-			Class templateType = type.getDeclaringClass();
-			DataTemplate template = kryo.readObject(input, templateType);
-			Data data = template.newData();
-			data.addAll(kryo.readObject(input, ArrayList.class));
-			return data;
-		}
-
-		@Override
-		synchronized public void write(Kryo kryo, Output output, Collection object) {
-			Data data = (Data)object;
-			kryo.writeObject(output, data.template);
-			kryo.writeObject(output, new ArrayList<>(object));
-		}
-
-		@Override
-		public Collection copy(Kryo kryo, Collection object) {
-			DataTemplate template = ((Data)object).template;
-			Data data = template.newData();
-			data.addAll(kryo.copy(new ArrayList(object)));
-			return data;
-		}
-		
-	}
-	
-	static {
-		IObject.getKryo().addDefaultSerializer(Data.class, DataSerializer.class);
-	}
-*/
 	public abstract class Data<T> extends ArrayList<T> {
 		
 		protected abstract Class getElementType();

@@ -94,10 +94,5 @@ public class DatasetSerializer extends IOSSerializer<Dataset> {
 		
 		return ret;
 	}
-
-	@Override
-	public Class<Dataset> getSerializingType() {
-		return Dataset.class;
-	}
 	
 }

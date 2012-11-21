@@ -38,6 +38,7 @@ public class OuterGraphEditor extends PropertyEditor {
 	public GraphEditor editor = new GraphEditor();
 	
 	public OuterGraphEditor() {
+		getUpdateTrigger().getSubPaths().add("name");
 		editorButton.setOnAction(new EventHandler<ActionEvent>() {
 			@Override
 			public void handle(ActionEvent event) {
@@ -64,10 +65,6 @@ public class OuterGraphEditor extends PropertyEditor {
 
 	@Override
 	public void updateView() {
-		/*
-		if (((Graph)getModel().getContent()).trained)
-			setReadOnly(true);
-		*/
 		if (getModel() != null) {
 			editorButton.setText((isReadOnly() ? "View" : "Edit") + " graph: " + getModel().getContent());
 		}

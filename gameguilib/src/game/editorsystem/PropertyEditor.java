@@ -63,7 +63,7 @@ public abstract class PropertyEditor extends IObject implements KryoSerializable
 		
 		@Override
 		public void action(Property changedPath) {
-			if (listening)
+			if (root != null && listening)
 				updateView();
 		}
 		
