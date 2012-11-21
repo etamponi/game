@@ -23,9 +23,4 @@ public class FullResult extends Result {
 	
 	public List<Dataset> testedDatasets = new ArrayList<>();
 	
-//	public FullResult() {
-//		setContent("trainedGraphs", new IList<>(PredictionGraph.class));
-//		setContent("testedDatasets", new IList<>(Dataset.class));
-//	}
-
 }
