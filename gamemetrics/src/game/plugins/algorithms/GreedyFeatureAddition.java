@@ -1,6 +1,5 @@
 package game.plugins.algorithms;
 
-import game.configuration.ErrorCheck;
 import game.core.Block;
 import game.core.Dataset;
 import game.core.Dataset.SampleIterator;
@@ -16,6 +15,8 @@ import java.util.TreeSet;
 
 import org.apache.commons.math3.linear.RealVector;
 
+import com.ios.ErrorCheck;
+
 public class GreedyFeatureAddition extends TrainingAlgorithm<FeatureSelection> {
 	
 	public int finalFeatures;
@@ -29,13 +30,14 @@ public class GreedyFeatureAddition extends TrainingAlgorithm<FeatureSelection> {
 	public int selectedMasks = 5;
 	
 	public GreedyFeatureAddition() {
-		setOptionChecks("finalFeatures", new ErrorCheck<Integer>() {
+		addErrorCheck("finalFeatures", new ErrorCheck<Integer>() {
+			private TrainingAlgorithm algorithm = GreedyFeatureAddition.this;
 			@Override
 			public String getError(Integer value) {
-				if (block != null) {
-					if (block.getParent(0) != null) {
-						if (block.getParent(0).getFeatureNumber() < value)
-							return "cannot be greater than starting feature number (" + block.getParent(0).getFeatureNumber() + ")";
+				if (algorithm.block != null) {
+					if (algorithm.block.getParent(0) != null) {
+						if (algorithm.block.getParent(0).getFeatureNumber() < value)
+							return "cannot be greater than starting feature number (" + algorithm.block.getParent(0).getFeatureNumber() + ")";
 					}
 				}
 				return null;
@@ -84,7 +86,7 @@ public class GreedyFeatureAddition extends TrainingAlgorithm<FeatureSelection> {
 	@Override
 	protected void train(Dataset dataset) {
 		IntegerEncoder outputEncoder = new IntegerEncoder();
-		outputEncoder.setOption("template", dataset.template.outputTemplate);
+		outputEncoder.setContent("template", dataset.getTemplate().outputTemplate);
 		
 		SortedSet<Candidate> candidates = initCandidates(dataset, outputEncoder);
 		SortedSet<Candidate> bestCandidates = null;
@@ -161,8 +163,8 @@ public class GreedyFeatureAddition extends TrainingAlgorithm<FeatureSelection> {
 	}
 
 	@Override
-	public String[] getManagedBlockOptions() {
-		return new String[]{"mask"};
+	protected String getManagedPropertyNames() {
+		return "mask";
 	}
 
 }

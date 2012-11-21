@@ -10,14 +10,15 @@
  ******************************************************************************/
 package game.plugins.correlation;
 
-import game.configuration.Configurable;
 import game.core.Dataset.SampleIterator;
 
 import org.apache.commons.math3.distribution.NormalDistribution;
 import org.apache.commons.math3.linear.RealMatrix;
 import org.apache.commons.math3.linear.RealVector;
 
-public abstract class CorrelationCoefficient extends Configurable {
+import com.ios.IObject;
+
+public abstract class CorrelationCoefficient extends IObject {
 	
 	public double noiseSd = 1e-5;
 	

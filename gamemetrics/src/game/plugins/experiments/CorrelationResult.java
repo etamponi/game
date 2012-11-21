@@ -10,18 +10,20 @@
  ******************************************************************************/
 package game.plugins.experiments;
 
-import game.configuration.ConfigurableList;
 import game.core.Result;
+
+import java.util.ArrayList;
+import java.util.List;
 
 import org.apache.commons.math3.linear.RealMatrix;
 import org.apache.commons.math3.linear.RealVector;
 
 public class CorrelationResult extends Result {
 
-	public ConfigurableList inputCorrelationMatrices = new ConfigurableList(this, RealMatrix.class);
+	public List<RealMatrix> inputCorrelationMatrices = new ArrayList<>();
 	
-	public ConfigurableList ioCorrelationMatrices = new ConfigurableList(this, RealMatrix.class);
+	public List<RealMatrix> ioCorrelationMatrices = new ArrayList<>();
 	
-	public ConfigurableList syntheticValueVectors = new ConfigurableList(this, RealVector.class);
-
+	public List<RealVector> syntheticValueVectors = new ArrayList<>();
+	
 }

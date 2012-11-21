@@ -18,9 +18,6 @@ import game.core.TrainingAlgorithm;
 import game.plugins.classifiers.KNNClassifier;
 import game.plugins.classifiers.KNNClassifier.ReferenceSample;
 
-import java.util.ArrayList;
-import java.util.List;
-
 public class SimpleKNNTraining extends TrainingAlgorithm<KNNClassifier> {
 
 	@Override
@@ -36,14 +33,10 @@ public class SimpleKNNTraining extends TrainingAlgorithm<KNNClassifier> {
 			block.reference.add(new ReferenceSample(sample.getEncodedInput(), sample.getEncodedOutput()));
 		}
 	}
-	
-	private static final List<String> managed = new ArrayList<>();
-	static {
-		managed.add("reference");
-	}
+
 	@Override
-	public List<String> getManagedProperties() {
-		return managed;
+	protected String getManagedPropertyNames() {
+		return "reference";
 	}
 
 }

@@ -1,5 +1,8 @@
 package game.plugins.experiments;
 
+import com.ios.triggers.BoundProperties;
+import com.ios.triggers.MasterSlaveTrigger;
+
 import game.core.DataTemplate;
 import game.core.DataTemplate.Data;
 import game.core.Encoding;
@@ -13,15 +16,16 @@ public class HelperEncoder extends Encoder<LabelTemplate> {
 	
 	public OneHotEncoder oneHot;
 	public IntegerEncoder integer;
-	public Concatenator concatenator = new Concatenator();
+	public Concatenator concatenator;
 	
 	public HelperEncoder() {
-		setAsInternalOptions("oneHot", "integer", "concatenator");
-
-		setOptionBinding("template", "oneHot.template", "integer.template");
+		addTrigger(new BoundProperties(this, "oneHot", "integer", "concatenator"));
 		
-		setOption("oneHot", new OneHotEncoder());
-		setOption("integer", new IntegerEncoder());
+		addTrigger(new MasterSlaveTrigger(this, "template", "oneHot.template", "integer.template"));
+		
+		setContent("oneHot", new OneHotEncoder());
+		setContent("integer", new IntegerEncoder());
+		setContent("concatenator", new Concatenator());
 		
 		concatenator.parents.add(oneHot);
 		concatenator.parents.add(integer);

@@ -64,4 +64,9 @@ public class RandomSplitTraining extends TrainingAlgorithm<PredictionGraph> {
 		}
 	}
 
+	@Override
+	protected String getManagedPropertyNames() {
+		return "";
+	}
+
 }

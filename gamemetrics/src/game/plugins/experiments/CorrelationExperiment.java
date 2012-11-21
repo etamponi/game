@@ -10,9 +10,6 @@
  ******************************************************************************/
 package game.plugins.experiments;
 
-import game.configuration.ErrorCheck;
-import game.configuration.errorchecks.RangeCheck;
-import game.configuration.errorchecks.RangeCheck.RangeType;
 import game.core.Block;
 import game.core.Dataset;
 import game.core.Dataset.SampleIterator;
@@ -20,13 +17,19 @@ import game.core.DatasetBuilder;
 import game.core.Experiment;
 import game.core.NoTraining;
 import game.core.blocks.PredictionGraph;
-import game.plugins.constraints.CompatibleWith;
-import game.plugins.constraints.SubclassConstraint;
 import game.plugins.correlation.CorrelationCoefficient;
 import game.plugins.datatemplates.LabelTemplate;
 
 import org.apache.commons.math3.linear.RealMatrix;
 import org.apache.commons.math3.linear.RealVector;
+
+import com.ios.ErrorCheck;
+import com.ios.Property;
+import com.ios.constraints.CompatibleWith;
+import com.ios.constraints.SubclassConstraint;
+import com.ios.errorchecks.RangeCheck;
+import com.ios.errorchecks.RangeCheck.Bound;
+import com.ios.triggers.MasterSlaveTrigger;
 
 public class CorrelationExperiment extends Experiment {
 	
@@ -43,19 +46,12 @@ public class CorrelationExperiment extends Experiment {
 	public boolean calculateMatrices = true;
 	
 	public CorrelationExperiment() {
-		setOptionConstraints("template.outputTemplate", new SubclassConstraint(LabelTemplate.class));
+		addConstraint("template.outputTemplate", new SubclassConstraint(LabelTemplate.class));
 		
-		setOptionBinding("template", "dataset.template", "graph.template");
-		setOptionConstraints("dataset", new CompatibleWith(this, "template"));
+		addTrigger(new MasterSlaveTrigger(this, "template", "dataset.template", "graph.template"));
+		addConstraint("dataset", new CompatibleWith(new Property(this, "template")));
 		
-		setOptionBinding("template.inputTemplate", "inputEncoder.template");
-		setOptionConstraints("inputEncoder", new CompatibleWith(this, "template.inputTemplate"));
-		setOptionBinding("template.outputTemplate", "outputEncoder.template");
-		setOptionConstraints("outputEncoder", new CompatibleWith(this, "template.outputTemplate"));
-		
-		setOptionBinding("none", "dataset.shuffle");
-		
-		setOptionChecks("graph.outputClassifier", new ErrorCheck<Block>() {
+		addErrorCheck("graph.outputClassifier", new ErrorCheck<Block>() {
 			@Override public String getError(Block value) {
 				if (value.parents.size() > 1)
 					return "must have only one parent";
@@ -64,7 +60,7 @@ public class CorrelationExperiment extends Experiment {
 			}
 		});
 		
-		setOptionChecks("graph", new ErrorCheck<Block>() {
+		addErrorCheck("graph", new ErrorCheck<Block>() {
 			@Override public String getError(Block value) {
 				if (value.trainingAlgorithm instanceof NoTraining || value.trained == true)
 					return null;
@@ -73,8 +69,7 @@ public class CorrelationExperiment extends Experiment {
 			}
 		});
 		
-		setOptionChecks("folds", new RangeCheck(RangeType.LOWER, 2.0));
-		setOptionChecks("samples", new RangeCheck(RangeType.LOWER, 10.0));
+		addErrorCheck("folds", new RangeCheck(2, Bound.LOWER));
 	}
 
 	@Override
@@ -85,7 +80,7 @@ public class CorrelationExperiment extends Experiment {
 
 		Dataset complete = dataset.buildDataset();
 		HelperEncoder outputEncoder = new HelperEncoder();
-		outputEncoder.setOption("template", template.outputTemplate);
+		outputEncoder.setContent("template", template.outputTemplate);
 		
 		for(double count = 0; count < runs; count++) {
 			updateStatus(count/runs, "running " + ((int)count+1) + " run of " + runs);

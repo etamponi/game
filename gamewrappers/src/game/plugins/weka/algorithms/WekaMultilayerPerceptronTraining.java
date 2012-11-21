@@ -16,10 +16,6 @@ import game.core.Dataset.SampleIterator;
 import game.core.Sample;
 import game.core.TrainingAlgorithm;
 import game.plugins.weka.classifiers.WekaMultilayerPerceptron;
-
-import java.util.ArrayList;
-import java.util.List;
-
 import weka.classifiers.functions.MultilayerPerceptron;
 import weka.core.Attribute;
 import weka.core.FastVector;
@@ -92,13 +88,9 @@ public class WekaMultilayerPerceptronTraining extends TrainingAlgorithm<WekaMult
 		block.nn = nn;
 	}
 
-	private static final List<String> managed = new ArrayList<>();
-	static {
-		managed.add("nn");
-	}
 	@Override
-	public List<String> getManagedProperties() {
-		return managed;
+	public String getManagedPropertyNames() {
+		return "nn";
 	}
 
 }

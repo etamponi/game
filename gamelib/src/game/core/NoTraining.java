@@ -23,4 +23,9 @@ public class NoTraining extends TrainingAlgorithm<Block> {
 		
 	}
 
+	@Override
+	protected String getManagedPropertyNames() {
+		return "";
+	}
+
 }

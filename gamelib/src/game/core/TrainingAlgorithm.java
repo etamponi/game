@@ -10,9 +10,6 @@
  ******************************************************************************/
 package game.core;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import com.ios.Compatible;
 import com.ios.errorchecks.CompatibilityCheck;
 
@@ -25,6 +22,8 @@ public abstract class TrainingAlgorithm<B extends Block> extends LongTask<Void, 
 	}
 	
 	protected abstract void train(Dataset dataset);
+	
+	protected abstract String getManagedPropertyNames();
 
 	@Override
 	public Void execute(Dataset dataset) {
@@ -38,10 +37,11 @@ public abstract class TrainingAlgorithm<B extends Block> extends LongTask<Void, 
 		return null;
 	}
 
-	private final static List<String> noManaged = new ArrayList<>();
-	
-	public List<String> getManagedProperties() {
-		return noManaged;
+	public String[] getManagedProperties() {
+		if (!getManagedPropertyNames().isEmpty())
+			return getManagedPropertyNames().split(" ");
+		else
+			return new String[0];
 	}
 
 }
