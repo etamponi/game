@@ -15,14 +15,14 @@ import game.core.Dataset;
 import game.core.Dataset.SampleIterator;
 import game.core.Sample;
 import game.core.TrainingAlgorithm;
-import game.plugins.weka.classifiers.WekaMultilayerPerceptron;
+import game.plugins.weka.classifiers.WekaClassifier;
 import weka.classifiers.functions.MultilayerPerceptron;
 import weka.core.Attribute;
 import weka.core.FastVector;
 import weka.core.Instance;
 import weka.core.Instances;
 
-public class WekaMultilayerPerceptronTraining extends TrainingAlgorithm<WekaMultilayerPerceptron> {
+public class WekaMultilayerPerceptronTraining extends TrainingAlgorithm<WekaClassifier> {
 	
 	public double momentum = 0.1;
 	
@@ -34,11 +34,13 @@ public class WekaMultilayerPerceptronTraining extends TrainingAlgorithm<WekaMult
 	
 	public int validationThreshold = 20;
 	
+	public int hiddenNeurons = 5;
+	
 	public boolean showGUI = false;
 
 	@Override
 	public boolean isCompatible(Block object) {
-		return object instanceof WekaMultilayerPerceptron;
+		return object instanceof WekaClassifier;
 	}
 
 	@Override
@@ -49,7 +51,7 @@ public class WekaMultilayerPerceptronTraining extends TrainingAlgorithm<WekaMult
 		nn.setMomentum(momentum);
 		nn.setLearningRate(learningRate);
 		nn.setTrainingTime(maxIterations);
-		nn.setHiddenLayers(String.valueOf(block.hiddenNeurons));
+		nn.setHiddenLayers(String.valueOf(hiddenNeurons));
 		nn.setValidationSetSize(validationPercent);
 		nn.setValidationThreshold(validationThreshold);
 		nn.setGUI(showGUI);
@@ -85,12 +87,12 @@ public class WekaMultilayerPerceptronTraining extends TrainingAlgorithm<WekaMult
 			e.printStackTrace();
 		}
 		
-		block.nn = nn;
+		block.setContent("internal", nn);
 	}
 
 	@Override
 	public String getManagedPropertyNames() {
-		return "nn";
+		return "internal";
 	}
 
 }

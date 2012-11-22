@@ -97,7 +97,7 @@ public class CanonicalCorrelation extends TrainingAlgorithm<LinearTransform> {
 			}
 		}
 		
-		block.transform = transform;
+		block.setContent("transform", transform);
 	}
 
 	private String invertMask(String mask) {

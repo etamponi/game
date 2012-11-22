@@ -10,17 +10,46 @@
  ******************************************************************************/
 package game.plugins.weka.classifiers;
 
+import game.core.Encoding;
+import game.core.InstanceTemplate;
 import game.core.blocks.Classifier;
-import game.utils.WekaClassifierSerializer;
+import game.plugins.datatemplates.LabelTemplate;
+import game.plugins.encoders.OneHotEncoder;
+import weka.core.Instance;
 
-import com.ios.IObject;
+import com.ios.triggers.BoundProperties;
 
-
-
-public abstract class WekaClassifier extends Classifier {
+public class WekaClassifier extends Classifier {
 	
-	static {
-		IObject.getKryo().addDefaultSerializer(weka.classifiers.Classifier.class, WekaClassifierSerializer.class);
+	public weka.classifiers.Classifier internal;
+
+	public WekaClassifier() {
+		setContent("outputEncoder", new OneHotEncoder());
+		addTrigger(new BoundProperties(this, "outputEncoder"));
 	}
-	
+
+	@Override
+	public boolean isCompatible(InstanceTemplate template) {
+		return template.outputTemplate instanceof LabelTemplate;
+	}
+
+	@Override
+	protected Encoding classify(Encoding inputEncoded) {
+		Encoding ret = new Encoding(getFeatureNumber(), inputEncoded.length());
+		for(int j = 0; j < ret.length(); j++) {
+			Instance i = new Instance(1.0, inputEncoded.getElement(j).toArray());
+			try {
+				ret.setColumn(j, internal.distributionForInstance(i));
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+		}
+		return ret;
+	}
+
+	@Override
+	public FeatureType getFeatureType(int featureIndex) {
+		return FeatureType.NUMERIC;
+	}
+
 }
