@@ -45,6 +45,7 @@ public class ImplementationChooserEditor extends PropertyEditor {
 		
 		public Implementation(Class<? extends IObject> type) {
 			try {
+				System.out.println("Here");
 				instance = type.newInstance();
 			} catch (InstantiationException | IllegalAccessException e) {
 				System.out.println("Cannot instantiate implementation for " + type);
@@ -101,8 +102,7 @@ public class ImplementationChooserEditor extends PropertyEditor {
 				
 				PropertyEditor editor = PropertyEditor.getBestEditor(getModel().getContentType(true));
 				editor.setReadOnly(isReadOnly());
-				EditorWindow window = new EditorWindow(editor);
-				window.startEdit(getModel());
+				new EditorWindow(editor).startEdit(getModel());
 			}
 		});
 		container.setSpacing(15);

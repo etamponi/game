@@ -69,4 +69,10 @@ public abstract class ControlledEditor extends PropertyEditor {
 		return getClass().getSimpleName() + "View" + ".fxml";
 	}
 
+	@Override
+	public void setReadOnly(boolean readOnly) {
+		controller.setReadOnly(readOnly);
+		super.setReadOnly(readOnly);
+	}
+
 }

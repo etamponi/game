@@ -137,7 +137,6 @@ public class GraphEditorController implements EditorController {
 		if (graph != null) {
 			graphPane.setGraph(graph);
 			graphPane.parseGraph();
-			graphPane.setReadOnly(editor.isReadOnly());
 			
 			if (!editor.isReadOnly())
 				fillPools();
@@ -154,8 +153,6 @@ public class GraphEditorController implements EditorController {
 			
 //			graphPane.setDisable(editor.isReadOnly());
 		}
-		
-		confEditor.setReadOnly(editor.isReadOnly());
 	}
 
 	private void fillPools() {
@@ -212,6 +209,12 @@ public class GraphEditorController implements EditorController {
 	@Override
 	public PropertyEditor getEditor() {
 		return editor;
+	}
+
+	@Override
+	public void setReadOnly(boolean readOnly) {
+		confEditor.setReadOnly(readOnly);
+		graphPane.setReadOnly(readOnly);
 	}
 
 }

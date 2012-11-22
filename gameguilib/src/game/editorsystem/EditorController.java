@@ -21,6 +21,8 @@ public interface EditorController extends Initializable {
 	public PropertyEditor getEditor();
 
 	public void setModel(Property model);
+	
+	public void setReadOnly(boolean readOnly);
 
 	public void updateView();
 

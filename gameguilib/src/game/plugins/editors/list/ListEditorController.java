@@ -166,5 +166,10 @@ public class ListEditorController implements EditorController {
 	public PropertyEditor getEditor() {
 		return editor;
 	}
+
+	@Override
+	public void setReadOnly(boolean readOnly) {
+		
+	}
 	
 }

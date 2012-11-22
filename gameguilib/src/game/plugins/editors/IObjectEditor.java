@@ -146,7 +146,6 @@ public class IObjectEditor extends PropertyEditor {
 		PropertyEditor editor = prepareEditor(property);
 		if (editor == null)
 			return null;
-		editor.setReadOnly(isReadOnly());
 		pane.addRow(row, label, editor.getView());
 		applyRowLayout(label, editor.getView(), editor.isInline());
 		return editor;
@@ -193,6 +192,7 @@ public class IObjectEditor extends PropertyEditor {
 				return null;
 			if (property.getContent() == null && Utils.isConcrete(property.getContentType(true)))
 				property.setContent(property.getContentType().newInstance());
+			editor.setReadOnly(isReadOnly());
 			editor.connect(property);
 			subEditors.add(editor);
 		} catch (InstantiationException | IllegalAccessException e) {
