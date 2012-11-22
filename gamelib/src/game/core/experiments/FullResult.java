@@ -18,13 +18,13 @@ import com.ios.IList;
 
 public class FullResult extends Result {
 	
-	public IList<PredictionGraph> trainedGraphs = new IList<>(PredictionGraph.class);
+	public IList<PredictionGraph> trainedGraphs;// = new IList<>(PredictionGraph.class);
 	
-	public IList<Dataset> testedDatasets = new IList<>(Dataset.class);
+	public IList<Dataset> testedDatasets;// = new IList<>(Dataset.class);
 	
-//	public FullResult() {
-//		setContent("trainedGraphs", new IList<>(PredictionGraph.class));
-//		setContent("testedDatasets", new IList<>(Dataset.class));
-//	}
+	public FullResult() {
+		setContent("trainedGraphs", new IList<>(PredictionGraph.class));
+		setContent("testedDatasets", new IList<>(Dataset.class));
+	}
 	
 }

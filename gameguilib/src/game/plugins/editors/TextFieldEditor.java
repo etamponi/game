@@ -20,20 +20,18 @@ public abstract class TextFieldEditor extends PropertyEditor {
 	
 	protected TextField textField = new TextField();
 	
-	public TextFieldEditor() {
-		textField.textProperty().addListener(new ChangeListener<String>() {
-			@Override
-			public void changed(
-					ObservableValue<? extends String> observable,
-					String oldValue, String newValue) {
-				if (getModel() != null) {
-					Object content = parseText();
-					if (content != null)
-						updateModel(content);
-				}
+	ChangeListener listener = new ChangeListener<String>() {
+		@Override
+		public void changed(
+				ObservableValue<? extends String> observable,
+				String oldValue, String newValue) {
+			if (getModel() != null) {
+				Object content = parseText();
+				if (content != null)
+					updateModel(content);
 			}
-		});
-	}
+		}
+	};
 	
 	protected abstract Object parseText();
 
@@ -49,10 +47,14 @@ public abstract class TextFieldEditor extends PropertyEditor {
 
 	@Override
 	public void updateView() {
+		textField.textProperty().removeListener(listener);
+		
 		if (getModel() != null && getModel().getContent() != null)
 			textField.setText(getModel().getContent().toString());
 		else
 			textField.setText("");
+		
+		textField.textProperty().addListener(listener);
 		
 		textField.setEditable(!isReadOnly());
 	}

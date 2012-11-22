@@ -208,6 +208,8 @@ public class Dataset extends ArrayList<Instance> implements KryoCopyable<Dataset
 
 	@Override
 	public Dataset copy(Kryo kryo) {
+		kryo.reference(this);
+		
 		InstanceTemplate copyTmp = kryo.copy(template);
 		Dataset ret = new Dataset(copyTmp);
 		for(Instance i: this) {
