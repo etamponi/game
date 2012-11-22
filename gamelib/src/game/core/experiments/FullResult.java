@@ -14,13 +14,17 @@ import game.core.Dataset;
 import game.core.Result;
 import game.core.blocks.PredictionGraph;
 
-import java.util.ArrayList;
-import java.util.List;
+import com.ios.IList;
 
 public class FullResult extends Result {
 	
-	public List<PredictionGraph> trainedGraphs = new ArrayList<>();
+	public IList<PredictionGraph> trainedGraphs = new IList<>(PredictionGraph.class);
 	
-	public List<Dataset> testedDatasets = new ArrayList<>();
+	public IList<Dataset> testedDatasets = new IList<>(Dataset.class);
+	
+//	public FullResult() {
+//		setContent("trainedGraphs", new IList<>(PredictionGraph.class));
+//		setContent("testedDatasets", new IList<>(Dataset.class));
+//	}
 	
 }

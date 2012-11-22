@@ -97,18 +97,22 @@ public class EditorWindow extends Stage {
 		setOnCloseRequest(new EventHandler<WindowEvent>() {
 			@Override
 			public void handle(WindowEvent event) {
-				Property model = editor.getModel();
-				editor.detach();
-				model.setContent(original);
+				if (!editor.isReadOnly()) {
+					Property model = editor.getModel();
+					editor.detach();
+					model.setContent(original);
+				}
 			}
 		});
 	}
 	
 	public void startEdit(Property model) {
-		if (model.getContent() instanceof IObject)
-			original = model.getContent(IObject.class).copy();
-		else
-			original = IObject.getKryo().copy(model.getContent());
+		if (!editor.isReadOnly()) {
+			if (model.getContent() instanceof IObject)
+				original = model.getContent(IObject.class).copy();
+			else
+				original = IObject.getKryo().copy(model.getContent());
+		}
 		
 		editor.connect(model);
 		if (model.getContent() != null)

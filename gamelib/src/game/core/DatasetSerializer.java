@@ -15,54 +15,56 @@ import com.ios.IOSSerializer;
 
 public class DatasetSerializer extends IOSSerializer<Dataset> {
 	
-	private static final Kryo internal = new Kryo();
+	private static final Kryo kryo = new Kryo();
 	static {
-		internal.setInstantiatorStrategy(new StdInstantiatorStrategy());
+		kryo.setInstantiatorStrategy(new StdInstantiatorStrategy());
 	}
 	
-	private byte[] serialize(Object object, Class<?> type) {
+	private byte[] serialize(Kryo kryo, Object object, Class<?> type) {
 		ByteArrayOutputStream stream = new ByteArrayOutputStream();
 		Output output = new Output(stream);
-		internal.writeObjectOrNull(output, object, type);
+		kryo.writeObjectOrNull(output, object, type);
 		output.close();
 		return stream.toByteArray();
 	}
 	
-	private <T> T deserialize(byte[] bytes, Class<T> type) {
+	private <T> T deserialize(Kryo kryo, byte[] bytes, Class<T> type) {
 		Input input = new Input(bytes);
-		T ret = internal.readObjectOrNull(input, type);
+		T ret = kryo.readObjectOrNull(input, type);
 		input.close();
 		return ret;
 	}
 	
-	private void writeBytes(Output output, Object object, Class<?> type) {
-		byte[] bytes = serialize(object, type);
+	private void writeBytes(Kryo kryo, Output output, Object object, Class<?> type) {
+		byte[] bytes = serialize(kryo, object, type);
 		output.writeInt(bytes.length);
 		output.write(bytes);
 	}
 	
-	private <T> T readBytes(Input input, Class<T> type) {
+	private <T> T readBytes(Kryo kryo, Input input, Class<T> type) {
 		int size = input.readInt();
-		return deserialize(input.readBytes(size), type);
+		return deserialize(kryo, input.readBytes(size), type);
 	}
 
 	@Override
-	public void write(Kryo kryo, Output out, Dataset object) {
-		writeBytes(out, object.getTemplate(), InstanceTemplate.class);
+	public void write(Kryo k, Output out, Dataset object) {
+		kryo.setClassLoader(k.getClassLoader());
+		
+		writeBytes(kryo, out, object.getTemplate(), InstanceTemplate.class);
 		out.writeInt(object.size());
 		for(Instance i: object) {
-			writeBytes(out, new ArrayList(i.getInput()), ArrayList.class);
-			writeBytes(out, new ArrayList(i.getOutput()), ArrayList.class);
-			writeBytes(out, i.getPrediction() == null ? null : new ArrayList(i.getPrediction()), ArrayList.class);
-			writeBytes(out, i.getPredictionEncoding(), Encoding.class);
+			writeBytes(kryo, out, new ArrayList(i.getInput()), ArrayList.class);
+			writeBytes(kryo, out, new ArrayList(i.getOutput()), ArrayList.class);
+			writeBytes(kryo, out, i.getPrediction() == null ? null : new ArrayList(i.getPrediction()), ArrayList.class);
+			writeBytes(kryo, out, i.getPredictionEncoding(), Encoding.class);
 		}
 	}
 
 	@Override
-	public Dataset read(Kryo kryo, Input in, Class<Dataset> type) {
-		internal.setClassLoader(kryo.getClassLoader());
+	public Dataset read(Kryo k, Input in, Class<Dataset> type) {
+		kryo.setClassLoader(k.getClassLoader());
 		
-		InstanceTemplate template = readBytes(in, InstanceTemplate.class);
+		InstanceTemplate template = readBytes(kryo, in, InstanceTemplate.class);
 		int size = in.readInt();
 
 		Dataset ret = new Dataset(template);
@@ -70,19 +72,19 @@ public class DatasetSerializer extends IOSSerializer<Dataset> {
 			Instance i = template.newInstance();
 			
 			Data input = template.inputTemplate.newData();
-			input.addAll(readBytes(in, ArrayList.class));
+			input.addAll(readBytes(kryo, in, ArrayList.class));
 			
 			Data output = template.outputTemplate.newData();
-			output.addAll(readBytes(in, ArrayList.class));
+			output.addAll(readBytes(kryo, in, ArrayList.class));
 			
 			Data prediction = null;
-			Collection temp = readBytes(in, ArrayList.class);
+			Collection temp = readBytes(kryo, in, ArrayList.class);
 			if (temp != null) {
 				prediction = template.outputTemplate.newData();
 				prediction.addAll(temp);
 			}
 			
-			Encoding encoding = readBytes(in, Encoding.class);
+			Encoding encoding = readBytes(kryo, in, Encoding.class);
 			
 			i.setInput(input);
 			i.setOutput(output);
