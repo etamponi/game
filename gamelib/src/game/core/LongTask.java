@@ -30,7 +30,7 @@ public abstract class LongTask<R, P> extends IObject {
 			@Override
 			protected void action(Property changedPath) {
 				if (changedPath.getPath().isEmpty()) {
-					LongTask.this.updateStatus(startingProcess + task.getProgress()*scale, task.getMessage());
+					LongTask.this.updateStatus(startingProcess + task.getProgress()*scale, getMessage() + ": " + task.getMessage());
 				}
 			}
 		};

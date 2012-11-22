@@ -30,7 +30,7 @@ public class FeatureSelection extends Pipe {
 				if (Utils.count(value, '0') + Utils.count(value, '1') != value.length())
 					return "can contain only 1s and 0s";
 				if (!fs.parents.isEmpty() && fs.getParent(0).getFeatureNumber() != value.length())
-					return "must contain extactly " + getParent(0).getFeatureNumber() + " characters";
+					return "must contain extactly " + fs.getParent(0).getFeatureNumber() + " characters";
 				return null;
 			}
 		});
@@ -59,7 +59,10 @@ public class FeatureSelection extends Pipe {
 
 	@Override
 	public int getFeatureNumber() {
-		return Utils.count(mask, '1');
+		if (mask != null)
+			return Utils.count(mask, '1');
+		else
+			return 0;
 	}
 
 	@Override

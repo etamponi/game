@@ -14,6 +14,8 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import org.apache.commons.math3.distribution.NormalDistribution;
+import org.apache.commons.math3.linear.Array2DRowRealMatrix;
 import org.apache.commons.math3.linear.LUDecomposition;
 import org.apache.commons.math3.linear.RealMatrix;
 import org.apache.commons.math3.stat.correlation.Covariance;
@@ -64,10 +66,10 @@ public class CanonicalCorrelation extends TrainingAlgorithm<LinearTransform> {
 		
 		RealMatrix cov = computeCovarianceMatrix(dataset.encodedSampleIterator(concat, null, false));
 		
-		RealMatrix Syy = cov.getSubMatrix(0, 0, half-1, half-1);
-		RealMatrix Sxx = cov.getSubMatrix(half, half, 2*half-1, 2*half-1);
-		RealMatrix Syx = cov.getSubMatrix(0, half, half-1, 2*half-1);
-		RealMatrix Sxy = cov.getSubMatrix(half, 0, 2*half-1, half-1);
+		RealMatrix Syy = cov.getSubMatrix(0, half-1, 0, half-1);
+		RealMatrix Sxx = cov.getSubMatrix(half, 2*half-1, half, 2*half-1);
+		RealMatrix Syx = cov.getSubMatrix(0, half-1, half, 2*half-1);
+		RealMatrix Sxy = cov.getSubMatrix(half, 2*half-1, 0, half-1);
 		
 		RealMatrix Syyinv = new LUDecomposition(Syy).getSolver().getInverse();
 		RealMatrix Sxxinv = new LUDecomposition(Sxx).getSolver().getInverse();
@@ -77,6 +79,25 @@ public class CanonicalCorrelation extends TrainingAlgorithm<LinearTransform> {
 		
 		Matrix A = M1.eig().getV();
 		Matrix B = M2.eig().getV();
+		
+		RealMatrix transform = new Array2DRowRealMatrix(2*half, 2*half);
+		
+		int ai = 0, bi = 0;
+		for(int j = 0; j < 2*half; j++) {
+			if (first.mask.charAt(j) == '1') {
+				for(int i = 0; i < half; i++) {
+					transform.setEntry(i, j, A.get(ai, i));
+				}
+				ai++;
+			} else {
+				for(int i = 0; i < half; i++) {
+					transform.setEntry(half+i, j, B.get(bi, i));
+				}
+				bi++;
+			}
+		}
+		
+		block.transform = transform;
 	}
 
 	private String invertMask(String mask) {
@@ -101,13 +122,21 @@ public class CanonicalCorrelation extends TrainingAlgorithm<LinearTransform> {
 	
 	public RealMatrix computeCovarianceMatrix(SampleIterator it) {
 		List<double[]> X = new ArrayList<>();
+		
+		NormalDistribution distribution = new NormalDistribution(0, 1e-6);
 
 		while(it.hasNext()) {
 			Sample sample = it.next();
-			X.add(sample.getEncodedInput().toArray());
+			X.add(injectNoise(sample.getEncodedInput().toArray(), distribution));
 		}
 		
 		return new Covariance(X.toArray(new double[][]{})).getCovarianceMatrix();
+	}
+	
+	private double[] injectNoise(double[] v, NormalDistribution distribution) {
+		for(int i = 0; i < v.length; i++)
+			v[i] = v[i] + distribution.sample();
+		return v;
 	}
 
 	@Override

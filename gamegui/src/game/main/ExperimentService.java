@@ -145,7 +145,7 @@ public class ExperimentService extends Service<Result> {
 					@Override
 					public void action(Property changedPath) {
 						if (changedPath.getPath().isEmpty()) {
-							Log.write(currentExperiment, "%6.2f%%: %s", currentExperiment.getProgress()*100, currentExperiment.getMessage());
+							Log.write(currentExperiment, "%5.1f%%: %s", currentExperiment.getProgress()*100, currentExperiment.getMessage());
 							updateMessage(currentExperiment.getMessage());
 							updateProgress((long)(currentExperiment.getProgress()*100), 100);
 						}
