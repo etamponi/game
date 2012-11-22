@@ -20,7 +20,7 @@ import com.ios.IObject;
 
 public abstract class CorrelationCoefficient extends IObject {
 	
-	public double noiseSd = 1e-5;
+	public double noiseSd = 1e-10;
 	
 	public int maxSamples = 10000;
 	

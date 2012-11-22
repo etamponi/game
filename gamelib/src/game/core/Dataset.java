@@ -82,10 +82,10 @@ public class Dataset extends ArrayList<Instance> implements KryoCopyable<Dataset
 			currentOutputSequence = inst.getOutput();
 			if (inst.getPrediction() != null)
 				currentPredictionSequence = inst.getPrediction();
-			if (inputEncoder != null && outputEncoder != null) {
+			if (inputEncoder != null)
 				currentInputEncoding = inputEncoder.transform(inst.getInput());
+			if (outputEncoder != null)
 				currentOutputEncoding = outputEncoder.transform(inst.getOutput());
-			}
 			currentPredictionEncoding = inst.getPredictionEncoding();
 			indexInInstance = 0;
 		}
@@ -129,7 +129,7 @@ public class Dataset extends ArrayList<Instance> implements KryoCopyable<Dataset
 						currentInputSequence.get(indexInInstance),
 						currentInputEncoding.getElement(indexInInstance),
 						currentOutputSequence.get(indexInInstance),
-						currentOutputEncoding.getElement(indexInInstance));
+						currentOutputEncoding != null ? currentOutputEncoding.getElement(indexInInstance) : null);
 				break;
 			default:
 				break;
