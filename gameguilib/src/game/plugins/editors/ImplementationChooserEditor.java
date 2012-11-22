@@ -45,7 +45,6 @@ public class ImplementationChooserEditor extends PropertyEditor {
 		
 		public Implementation(Class<? extends IObject> type) {
 			try {
-				System.out.println("Here");
 				instance = type.newInstance();
 			} catch (InstantiationException | IllegalAccessException e) {
 				System.out.println("Cannot instantiate implementation for " + type);

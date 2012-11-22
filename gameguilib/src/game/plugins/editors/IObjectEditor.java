@@ -59,13 +59,13 @@ public class IObjectEditor extends PropertyEditor {
 		AnchorPane.setBottomAnchor(pane, 0.0);
 		
 		ColumnConstraints c0 = new ColumnConstraints();
-		c0.setMinWidth(120);
+		c0.setMinWidth(100);
 		c0.setHgrow(Priority.SOMETIMES);
 		ColumnConstraints c1 = new ColumnConstraints();
 		c1.setHgrow(Priority.ALWAYS);
 		pane.getColumnConstraints().addAll(c0, c1);
 		
-		pane.setMinWidth(500);
+		pane.setPrefWidth(500);
 	}
 	
 	protected GridPane getPane() {

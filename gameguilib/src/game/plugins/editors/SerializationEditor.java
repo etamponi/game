@@ -42,6 +42,7 @@ public class SerializationEditor extends PropertyEditor {
 	private ToolBar line = new ToolBar();
 	
 	public SerializationEditor() {
+		line.setPrefWidth(200);
 		line.getItems().addAll(new Button(), new Button());
 		line.getItems().set(0, makeSaveAndLoadConfiguration("SAVE"));
 		line.getItems().set(1, makeSaveAndLoadConfiguration("LOAD"));
