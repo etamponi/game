@@ -11,49 +11,50 @@
 package game.core;
 
 import com.ios.IObject;
+import com.ios.Observer;
+import com.ios.Property;
 
 public abstract class LongTask<R, P> extends IObject {
+
+	private double progress;
 	
-	public static class LongTaskUpdate {}
-
-	private double currentPercent;
-	private String currentMessage;
-
+	private String message;
+	
 	public abstract R execute(P param);
 	
-	protected <RR, PP> RR executeAnotherTaskAndWait(double percentAtEnd, LongTask<RR, PP> task, PP param) {
-		/*
-		final double percentAtStart = currentPercent;
-		final double ratio = percentAtEnd - percentAtStart;
-		Observer temp = new Observer() {
+	protected <RR, PP> RR executeAnotherTaskAndWait(double endingProgress, final LongTask<RR, PP> task, PP param) {
+		final double startingProcess = progress;
+		final double scale = endingProgress - startingProcess;
+		
+		Observer obs = new Observer(task) {
 			@Override
-			public void update(Observable o, Object m) {
-				if (m instanceof LongTaskUpdate) {
-					LongTask task = (LongTask)o;
-					LongTask.this.updateStatus(percentAtStart + task.getCurrentPercent()*ratio, task.getCurrentMessage());
+			protected void action(Property changedPath) {
+				if (changedPath.getPath().isEmpty()) {
+					LongTask.this.updateStatus(startingProcess + task.getProgress()*scale, task.getMessage());
 				}
 			}
 		};
-		task.addObserver(temp);
-		*/
+		
 		RR ret = task.execute(param);
-//		task.deleteObserver(temp);
+		
+		obs.detach();
+		
 		return ret;
 	}
 	
-	public double getCurrentPercent() {
-		return currentPercent;
+	public double getProgress() {
+		return progress;
 	}
-	
-	public String getCurrentMessage() {
-		return currentMessage;
+
+	public String getMessage() {
+		return message;
 	}
-	
-	protected void updateStatus(double percentCompleted, String message) {
-		this.currentPercent = percentCompleted;
-		this.currentMessage = message;
-//		setChanged();
-//		notifyObservers(new LongTaskUpdate());
+
+	protected void updateStatus(double progress, String message) {
+		this.message = message;
+		this.progress = progress;
+		
+		notifyObservers();
 	}
 	
 }

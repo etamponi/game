@@ -29,7 +29,7 @@ public abstract class FullExperiment extends Experiment {
 	
 	protected Dataset classifyDataset(double finalPercent, PredictionGraph graph, Dataset dataset) {
 		Dataset ret = new Dataset(graph.template);
-		double startPercent = getCurrentPercent();
+		double startPercent = getProgress();
 		double increase = (finalPercent - startPercent) / dataset.size();
 		int count = 1;
 		Iterator<Instance> it = dataset.iterator();

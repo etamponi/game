@@ -12,8 +12,8 @@ package game.main;
 
 import game.core.Experiment;
 import game.core.Result;
+import game.utils.Log;
 
-import java.util.Observer;
 import java.util.concurrent.Executor;
 
 import javafx.beans.property.IntegerProperty;
@@ -24,6 +24,9 @@ import javafx.concurrent.Service;
 import javafx.concurrent.Task;
 import javafx.event.Event;
 import javafx.event.EventType;
+
+import com.ios.Observer;
+import com.ios.Property;
 
 @SuppressWarnings("deprecation")
 public class ExperimentService extends Service<Result> {
@@ -91,13 +94,13 @@ public class ExperimentService extends Service<Result> {
 		executor.getThread().stop();
 		try {
 			executor.getThread().join();
-			/*
+			
 			if (currentExperiment != null && experimentObserver != null) {
-				currentExperiment.deleteObserver(experimentObserver);
+				experimentObserver.detach();
 				currentExperiment = null;
 				experimentObserver = null;
 			}
-			*/
+			
 		} catch (InterruptedException e) {}
 	}
 	
@@ -137,21 +140,22 @@ public class ExperimentService extends Service<Result> {
 			@Override
 			protected Result call() throws Exception {
 				currentExperiment = (Experiment)controller.experimentList.get(counter.get());
-				/*
-				experimentObserver = new Observer() {
+				
+				experimentObserver = new Observer(currentExperiment) {
 					@Override
-					public void update(Observable obs, Object m) {
-						if (m instanceof LongTaskUpdate) {
-							Log.write(currentExperiment, "%6.2f%%: %s", currentExperiment.getCurrentPercent()*100, currentExperiment.getCurrentMessage());
-							updateMessage(currentExperiment.getCurrentMessage());
-							updateProgress((long)(currentExperiment.getCurrentPercent()*100), 100);
+					public void action(Property changedPath) {
+						if (changedPath.getPath().isEmpty()) {
+							Log.write(currentExperiment, "%6.2f%%: %s", currentExperiment.getProgress()*100, currentExperiment.getMessage());
+							updateMessage(currentExperiment.getMessage());
+							updateProgress((long)(currentExperiment.getProgress()*100), 100);
 						}
 					}
 				};
-				currentExperiment.addObserver(experimentObserver);
-				*/
+				
 				Result ret = currentExperiment.execute(Settings.RESULTSDIR);
-//				currentExperiment.deleteObserver(experimentObserver);
+
+				experimentObserver.detach();
+				
 				currentExperiment = null;
 				experimentObserver = null;
 				return ret;
