@@ -8,7 +8,7 @@
  * Contributors:
  *     Emanuele Tamponi - initial API and implementation
  ******************************************************************************/
-package game.utils;
+package game.plugins.weka.classifiers;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;

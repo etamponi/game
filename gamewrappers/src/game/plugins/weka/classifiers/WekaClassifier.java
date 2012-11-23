@@ -16,10 +16,13 @@ import game.core.blocks.Classifier;
 import game.plugins.datatemplates.LabelTemplate;
 import game.plugins.encoders.OneHotEncoder;
 import weka.core.Instance;
+import weka.core.Instances;
 
 import com.ios.triggers.BoundProperties;
 
 public class WekaClassifier extends Classifier {
+	
+	public Instances dataset;
 	
 	public weka.classifiers.Classifier internal;
 
@@ -38,6 +41,7 @@ public class WekaClassifier extends Classifier {
 		Encoding ret = new Encoding(getFeatureNumber(), inputEncoded.length());
 		for(int j = 0; j < ret.length(); j++) {
 			Instance i = new Instance(1.0, inputEncoded.getElement(j).toArray());
+			i.setDataset(dataset);
 			try {
 				ret.setColumn(j, internal.distributionForInstance(i));
 			} catch (Exception e) {

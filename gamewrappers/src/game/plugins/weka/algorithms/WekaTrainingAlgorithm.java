@@ -1,61 +1,27 @@
-/*******************************************************************************
- * Copyright (c) 2012 Emanuele Tamponi.
- * All rights reserved. This program and the accompanying materials
- * are made available under the terms of the GNU Public License v3.0
- * which accompanies this distribution, and is available at
- * http://www.gnu.org/licenses/gpl.html
- * 
- * Contributors:
- *     Emanuele Tamponi - initial API and implementation
- ******************************************************************************/
 package game.plugins.weka.algorithms;
 
 import game.core.Block;
 import game.core.Dataset;
-import game.core.Dataset.SampleIterator;
 import game.core.Sample;
 import game.core.TrainingAlgorithm;
+import game.core.Dataset.SampleIterator;
 import game.plugins.weka.classifiers.WekaClassifier;
-import weka.classifiers.functions.MultilayerPerceptron;
 import weka.core.Attribute;
 import weka.core.FastVector;
 import weka.core.Instance;
 import weka.core.Instances;
 
-public class WekaMultilayerPerceptronTraining extends TrainingAlgorithm<WekaClassifier> {
-	
-	public double momentum = 0.1;
-	
-	public double learningRate = 0.01;
-	
-	public int maxIterations = 1000;
-	
-	public int validationPercent = 10;
-	
-	public int validationThreshold = 20;
-	
-	public int hiddenNeurons = 5;
-	
-	public boolean showGUI = false;
+public abstract class WekaTrainingAlgorithm extends TrainingAlgorithm<WekaClassifier> {
 
 	@Override
 	public boolean isCompatible(Block object) {
 		return object instanceof WekaClassifier;
 	}
+	
+	protected abstract weka.classifiers.Classifier setupInternal(Dataset dataset, Instances instances);
 
 	@Override
 	protected void train(Dataset dataset) {
-		MultilayerPerceptron nn = new MultilayerPerceptron();
-
-		nn.setAutoBuild(true);
-		nn.setMomentum(momentum);
-		nn.setLearningRate(learningRate);
-		nn.setTrainingTime(maxIterations);
-		nn.setHiddenLayers(String.valueOf(hiddenNeurons));
-		nn.setValidationSetSize(validationPercent);
-		nn.setValidationThreshold(validationThreshold);
-		nn.setGUI(showGUI);
-		
 		updateStatus(0.01, "preparing Weka format for samples...");
 		SampleIterator it = dataset.encodedSampleIterator(block.getParent(0), block.outputEncoder, false);
 		Sample sample = it.next();
@@ -68,6 +34,7 @@ public class WekaMultilayerPerceptronTraining extends TrainingAlgorithm<WekaClas
 		for(String label: (Iterable<String>)block.template.outputTemplate.getContent("labels"))
 			classes.addElement(label);
 		attributes.addElement(new Attribute("class", classes));
+		
 		Instances ts = new Instances("training", attributes, 0);
 		
 		updateStatus(0.05, "porting samples to Weka format...");
@@ -80,19 +47,24 @@ public class WekaMultilayerPerceptronTraining extends TrainingAlgorithm<WekaClas
 			sample = it.next();
 		} 
 		ts.setClassIndex(inputSize);
-		updateStatus(0.50, "running Weka training, please wait...");
+		
+		weka.classifiers.Classifier internal = setupInternal(dataset, ts);
+		
+		updateStatus(0.10, "running Weka training, please wait...");
 		try {
-			nn.buildClassifier(ts);
+			internal.buildClassifier(ts);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
 		
-		block.setContent("internal", nn);
+		block.setContent("dataset", new Instances("training", attributes, 0));
+		block.dataset.setClassIndex(inputSize);
+		block.setContent("internal", internal);
 	}
 
 	@Override
-	public String getManagedPropertyNames() {
-		return "internal";
+	protected String getManagedPropertyNames() {
+		return "internal dataset";
 	}
 
 }
