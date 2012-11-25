@@ -33,6 +33,7 @@ public abstract class Combiner extends Transducer {
 		addErrorCheck("parents", new ErrorCheck<List<Block>>() {
 			private Combiner combiner = Combiner.this;
 			@Override public String getError(List<Block> value) {
+				/*
 				if (value.isEmpty())
 					return null;
 				if (combiner.outputEncoder == null)
@@ -41,6 +42,7 @@ public abstract class Combiner extends Transducer {
 					if (!combiner.outputEncoder.equals(parent.getContent("outputEncoder")))
 						return "parent Transducers must have the same outputEncoder as this Combiner";
 				}
+				*/
 				return null;
 			}
 		});
