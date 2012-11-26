@@ -22,7 +22,9 @@ public class CanonicalEnsemble extends TrainingAlgorithm<MetaEnsemble> {
 	
 	public int classifiers = 10;
 	
-	public Classifier base;
+	public Classifier baseClassifier;
+	
+	public CanonicalCorrelation baseCorrelation;
 	
 	public CanonicalEnsemble() {
 		addErrorCheck("bootstrapPercent", new RangeCheck(0.001, 1.0));
@@ -36,9 +38,9 @@ public class CanonicalEnsemble extends TrainingAlgorithm<MetaEnsemble> {
 			}
 		});
 		
-		addTrigger(new BoundProperties(this, "base.parents"));
-		addTrigger(new MasterSlaveTrigger(this, "block.outputEncoder", "base.outputEncoder"));
-		addTrigger(new MasterSlaveTrigger(this, "block.template", "base.template"));
+		addTrigger(new BoundProperties(this, "baseClassifier.parents", "baseCorrelation.block"));
+		addTrigger(new MasterSlaveTrigger(this, "block.outputEncoder", "baseClassifier.outputEncoder"));
+		addTrigger(new MasterSlaveTrigger(this, "block.template", "baseClassifier.template"));
 	}
 
 	@Override
@@ -48,16 +50,16 @@ public class CanonicalEnsemble extends TrainingAlgorithm<MetaEnsemble> {
 
 	@Override
 	protected void train(Dataset dataset) {
-		updateStatus(0.1, "start growing forest of " + classifiers + " " + base.getClass().getSimpleName() + " classifiers using random canonical variates.");
+		updateStatus(0.1, "start growing forest of " + classifiers + " " + baseClassifier.getClass().getSimpleName() + " classifiers using random canonical variates.");
 		
 		for(int i = 0; i < classifiers; i++) {
 			updateStatus(0.1 + 0.9*i/classifiers, "growing tree " + (i+1));
 			
 			LinearTransform transform = new LinearTransform();
-			transform.setContent("trainingAlgorithm", new CanonicalCorrelation());
+			transform.setContent("trainingAlgorithm", baseCorrelation.copy());
 			transform.parents.add(block.getParent(0));
 			
-			Classifier current = base.copy();
+			Classifier current = baseClassifier.copy();
 			current.parents.add(transform);
 			
 			Dataset subset = dataset.getRandomSubset(bootstrapPercent); // FIXME Bootstrap sample

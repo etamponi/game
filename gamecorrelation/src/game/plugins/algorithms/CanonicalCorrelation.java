@@ -34,21 +34,30 @@ import Jama.EigenvalueDecomposition;
 import Jama.Matrix;
 
 import com.ios.ErrorCheck;
+import com.ios.errorchecks.PositivenessCheck;
+import com.ios.errorchecks.RangeCheck;
 
 public class CanonicalCorrelation extends TrainingAlgorithm<LinearTransform> {
 	
+	public double selectionThreshold = 0.66;
+	
+	public int splits = 3;
+	
 	public CanonicalCorrelation() {
+		addErrorCheck("selectionThreshold", new RangeCheck(0, 1));
+		
+		addErrorCheck("splits", new PositivenessCheck(false));
+		
 		addErrorCheck("block", new ErrorCheck<Block>() {
-
+			private CanonicalCorrelation wrapper = CanonicalCorrelation.this;
 			@Override
 			public String getError(Block value) {
-				if (value.getParent(0) != null && value.getParent(0).getFeatureNumber() % 2 != 0) {
-					return "must output an even feature number";
+				if (value.getParent(0) != null && value.getParent(0).getFeatureNumber() % (2*wrapper.splits) != 0) {
+					return "must be divisible by " + (2*wrapper.splits);
 				} else {
 					return null;
 				}
 			}
-			
 		});
 	}
 
@@ -61,6 +70,57 @@ public class CanonicalCorrelation extends TrainingAlgorithm<LinearTransform> {
 	protected void train(Dataset dataset) {
 		Block inputEncoder = block.getParent(0);
 		
+		int totalFeatures = inputEncoder.getFeatureNumber();
+		int featuresPerSplit = totalFeatures / splits;
+		
+		RealMatrix transform = new Array2DRowRealMatrix(totalFeatures, totalFeatures);
+		
+		List<Integer> rowsToRemove = new ArrayList<>();
+		
+		for(int i = 0; i < splits; i++) {
+			int startIndex = i*featuresPerSplit;
+			
+			FeatureSelection selection = new FeatureSelection();
+			selection.parents.add(inputEncoder);
+			selection.setContent("mask", computeSplitMask(totalFeatures, featuresPerSplit, startIndex));
+			
+			transform = transform.add(buildTransform(dataset, selection, startIndex, totalFeatures, rowsToRemove));
+		}
+		
+		System.out.println(rowsToRemove);
+		
+		int finalFeatures = totalFeatures - rowsToRemove.size();
+		int[] cols = new int[totalFeatures];
+		for(int i = 0; i < cols.length; i++)
+			cols[i] = i;
+		int[] rows = new int[finalFeatures];
+		int row = 0;
+		for(int i = 0; i < totalFeatures; i++) {
+			if (!rowsToRemove.isEmpty() && rowsToRemove.get(0) == i) {
+				rowsToRemove.remove(0);
+				continue;
+			} else {
+				rows[row++] = i;
+			}
+		}
+		
+		transform = transform.getSubMatrix(rows, cols);
+		
+		block.setContent("transform", transform);
+		
+		new Matrix(transform.getData()).print(6, 2);
+	}
+	
+	private String computeSplitMask(int totalFeatures, int featuresPerSplit, int startIndex) {
+		StringBuilder ret = new StringBuilder();
+		for(int i = 0; i < totalFeatures; i++)
+			ret.append('0');
+		for(int i = 0; i < featuresPerSplit; i++)
+			ret.setCharAt(startIndex+i, '1');
+		return ret.toString();
+	}
+
+	protected RealMatrix buildTransform(Dataset dataset, Block inputEncoder, int subMatrixIndex, int totalFeatures, List<Integer> rowsToRemove) {
 		FeatureSelection first = new FeatureSelection();
 		first.parents.add(inputEncoder);
 		first.mask = generateRandomMask(inputEncoder.getFeatureNumber());
@@ -96,27 +156,30 @@ public class CanonicalCorrelation extends TrainingAlgorithm<LinearTransform> {
 		System.out.println(Arrays.toString(eig1.getRealEigenvalues()));
 		System.out.println(Arrays.toString(eig2.getRealEigenvalues()));
 		
-//		A.print(6, 2);
-//		B.print(6, 2);
+		Matrix D = eig1.getD();
+		for(int i = 0; i < half; i++) {
+			if (D.get(i, i) > selectionThreshold)
+				rowsToRemove.add(subMatrixIndex+i);
+		}
 		
-		RealMatrix transform = new Array2DRowRealMatrix(2*half, 2*half);
+		RealMatrix transform = new Array2DRowRealMatrix(totalFeatures, totalFeatures);
 		
 		int ai = 0, bi = 0;
 		for(int j = 0; j < 2*half; j++) {
 			if (first.mask.charAt(j) == '1') {
 				for(int i = 0; i < half; i++) {
-					transform.setEntry(i, j, A.get(ai, i));
+					transform.setEntry(subMatrixIndex+i, subMatrixIndex+j, A.get(ai, i));
 				}
 				ai++;
 			} else {
 				for(int i = 0; i < half; i++) {
-					transform.setEntry(half+i, j, B.get(bi, i));
+					transform.setEntry(subMatrixIndex+half+i, subMatrixIndex+j, B.get(bi, i));
 				}
 				bi++;
 			}
 		}
 		
-		block.setContent("transform", transform);
+		return transform;
 	}
 
 	private String invertMask(String mask) {
@@ -142,7 +205,7 @@ public class CanonicalCorrelation extends TrainingAlgorithm<LinearTransform> {
 	public RealMatrix computeCovarianceMatrix(SampleIterator it) {
 		List<double[]> X = new ArrayList<>();
 		
-		NormalDistribution distribution = new NormalDistribution(0, 1e-10);
+		NormalDistribution distribution = new NormalDistribution(0, 1e-6);
 
 		while(it.hasNext()) {
 			Sample sample = it.next();
