@@ -50,7 +50,7 @@ public class TransformationEnsemble extends TrainingAlgorithm<MetaEnsemble> {
 
 	@Override
 	protected void train(Dataset dataset) {
-		updateStatus(0.1, "start growing forest of " + classifiers + " " + baseClassifier.getClass().getSimpleName() + " classifiers using random canonical variates.");
+		updateStatus(0.1, "start growing forest of " + classifiers + " " + baseClassifier.getClass().getSimpleName() + " classifiers with a linear prefiltering.");
 		
 		for(int i = 0; i < classifiers; i++) {
 			updateStatus(0.1 + 0.9*i/classifiers, "growing tree " + (i+1));
