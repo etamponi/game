@@ -101,7 +101,7 @@ public class CorrelationExperiment extends Experiment {
 				ret.ioCorrelationMatrices.add(output);
 				ret.syntheticValueVectors.add(v);
 			} else {
-				updateStatus(count/runs, "error during evaluation of synthetic values: retrying run " + ((int)count));
+				updateStatus(count/runs, "error during evaluation of synthetic values: retrying run " + ((int)count+1));
 				count--;
 			}
 		}

@@ -77,8 +77,8 @@ public class LinearCorrelation extends CorrelationCoefficient {
 	public RealVector computeSyntheticValues(SampleIterator it) {
 		RealMatrix input = computeInputCorrelationMatrix(it);
 		
-		List<Integer> nanIndices = findNanIndices(input);
-		Matrix adjustedInput = new Matrix(removeNaNIndices(input, nanIndices).getData());
+//		List<Integer> nanIndices = findNanIndices(input);
+		Matrix adjustedInput = new Matrix(input.getData()); // new Matrix(removeNaNIndices(input, nanIndices).getData());
 		
 		RealMatrix io = computeIOCorrelationMatrix(it);
 		
@@ -91,7 +91,7 @@ public class LinearCorrelation extends CorrelationCoefficient {
 
 		RealVector v = new ArrayRealVector(io.getColumnDimension());
 		for(int col = 0; col < v.getDimension(); col++)
-			v.setEntry(col, determination(inverse, removeNanIndices(io.getColumnVector(col), nanIndices), count(it)));
+			v.setEntry(col, determination(inverse, new Matrix(io.getColumn(col), v.getDimension()) /* removeNanIndices(io.getColumnVector(col), nanIndices)*/, count(it)));
 		
 		return v;
 	}
@@ -113,7 +113,7 @@ public class LinearCorrelation extends CorrelationCoefficient {
 		}
 		return Math.sqrt(R2);
 	}
-
+/*
 	private List<Integer> findNanIndices(RealMatrix base) {
 		List<Integer> nanIndices = new ArrayList<>();
 		for(int i = 0; i < base.getColumnDimension(); i++) {
@@ -164,7 +164,7 @@ public class LinearCorrelation extends CorrelationCoefficient {
 		}
 		return adjusted;
 	}
-
+*/
 	private RealVector computeIOCorrelation(double[][] X, double[] y, List<Integer> nanIndices) {
 		RealVector ret = new ArrayRealVector(X[0].length-nanIndices.size());
 		

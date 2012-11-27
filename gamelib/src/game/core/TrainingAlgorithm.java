@@ -10,6 +10,8 @@
  ******************************************************************************/
 package game.core;
 
+import java.lang.reflect.ParameterizedType;
+
 import com.ios.Compatible;
 import com.ios.errorchecks.CompatibilityCheck;
 
@@ -42,6 +44,11 @@ public abstract class TrainingAlgorithm<B extends Block> extends LongTask<Void, 
 			return getManagedPropertyNames().split(" ");
 		else
 			return new String[0];
+	}
+
+	@Override
+	public boolean isCompatible(Block object) {
+		return ((Class)((ParameterizedType)getClass().getGenericSuperclass()).getActualTypeArguments()[0]).isAssignableFrom(object.getClass());
 	}
 
 }

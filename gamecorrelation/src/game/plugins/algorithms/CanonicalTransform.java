@@ -37,19 +37,19 @@ import com.ios.ErrorCheck;
 import com.ios.errorchecks.PositivenessCheck;
 import com.ios.errorchecks.RangeCheck;
 
-public class CanonicalCorrelation extends TrainingAlgorithm<LinearTransform> {
+public class CanonicalTransform extends TrainingAlgorithm<LinearTransform> {
 	
 	public double selectionThreshold = 0.66;
 	
 	public int splits = 3;
 	
-	public CanonicalCorrelation() {
+	public CanonicalTransform() {
 		addErrorCheck("selectionThreshold", new RangeCheck(0, 1));
 		
 		addErrorCheck("splits", new PositivenessCheck(false));
 		
 		addErrorCheck("block", new ErrorCheck<Block>() {
-			private CanonicalCorrelation wrapper = CanonicalCorrelation.this;
+			private CanonicalTransform wrapper = CanonicalTransform.this;
 			@Override
 			public String getError(Block value) {
 				if (value.getParent(0) != null && value.getParent(0).getFeatureNumber() % (2*wrapper.splits) != 0) {
@@ -205,7 +205,7 @@ public class CanonicalCorrelation extends TrainingAlgorithm<LinearTransform> {
 	public RealMatrix computeCovarianceMatrix(SampleIterator it) {
 		List<double[]> X = new ArrayList<>();
 		
-		NormalDistribution distribution = new NormalDistribution(0, 1e-6);
+		NormalDistribution distribution = new NormalDistribution(0, 1e-10);
 
 		while(it.hasNext()) {
 			Sample sample = it.next();
@@ -250,7 +250,7 @@ public class CanonicalCorrelation extends TrainingAlgorithm<LinearTransform> {
 		
 		LinearTransform transform = new LinearTransform();
 		transform.parents.add(featureSelection);
-		transform.setContent("trainingAlgorithm", new CanonicalCorrelation());
+		transform.setContent("trainingAlgorithm", new LinearTransform());
 		
 		transform.trainingAlgorithm.execute(dataset);
 	}

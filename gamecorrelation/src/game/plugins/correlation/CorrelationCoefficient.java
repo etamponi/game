@@ -32,18 +32,16 @@ public abstract class CorrelationCoefficient extends IObject {
 	
 	public abstract RealVector computeSyntheticValues(SampleIterator it);
 	
-	public void setNoiseSd(double noiseSd) {
-		this.noiseSd = noiseSd;
-		distribution = new NormalDistribution(0, noiseSd); 
-	}
-	
 	protected double injectNoise(double v) {
+		if (distribution.getStandardDeviation() != noiseSd)
+			distribution = new NormalDistribution(0, noiseSd); 
+		
 		return v + distribution.sample();
 	}
 	
 	protected double[] injectNoise(double[] v) {
 		for(int i = 0; i < v.length; i++)
-			v[i] = v[i] + distribution.sample();
+			v[i] = injectNoise(v[i]);
 		return v;
 	}
 

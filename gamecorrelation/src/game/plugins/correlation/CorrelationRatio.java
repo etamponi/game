@@ -162,18 +162,18 @@ public class CorrelationRatio extends CorrelationCoefficient {
 			E = E.add(m.multiply(m.transpose()));
 		}
 		E = E.subtract(temp);
-		
+		/*
 		List<Integer> zeroColumns = findZeroColumns(E);
 		E = removeZeroColumns(E, zeroColumns);
 		H = removeZeroColumns(H, zeroColumns);
-		
+		*/
 		Matrix JE = new Matrix(E.getData());
 		Matrix JH = new Matrix(H.getData());
 		
-		if (JE.rank() < JE.getRowDimension()) {
+		/*if (JE.rank() < JE.getRowDimension()) {
 			Log.write(this, "Some error occurred (E matrix is singular)");
 			return -1;
-		} else {
+		} else {*/
 			double lambda;
 			if (useEigenvalues) {			
 				Matrix L = JE.inverse().times(JH);
@@ -199,9 +199,9 @@ public class CorrelationRatio extends CorrelationCoefficient {
 			}
 			
 			return Math.sqrt(1 - lambda);
-		}
+//		}
 	}
-
+	/*
 	private RealMatrix removeZeroColumns(RealMatrix base, List<Integer> zeroColumns) {
 		int adjustedDim = base.getRowDimension()-zeroColumns.size();
 		if (adjustedDim == 0)
@@ -230,5 +230,5 @@ public class CorrelationRatio extends CorrelationCoefficient {
 		}
 		return indices;
 	}
-	
+	*/
 }
