@@ -31,28 +31,6 @@ public class DiscriminantTree extends TrainingAlgorithm<DecisionTree> {
 		return super.isCompatible(object) && object.getContent("template.outputTemplate.labels", List.class).size() == 2;
 	}
 
-	public static class DiscriminantCriterion extends Criterion {
-		
-		private RealVector transform;
-		
-		private double threshold;
-		
-		public DiscriminantCriterion(RealVector transform, double threshold) {
-			super();
-			this.transform = transform;
-			this.threshold = threshold;
-		}
-
-		@Override
-		public int decide(RealVector input) {
-			if (transform.dotProduct(input) <= threshold)
-				return 0;
-			else
-				return 1;
-		}
-		
-	}
-
 	@Override
 	protected void train(Dataset dataset) {
 		Block inputEncoder = block.getParent();
@@ -73,7 +51,6 @@ public class DiscriminantTree extends TrainingAlgorithm<DecisionTree> {
 			subalgo.setContent("block", this.block);
 			subalgo.setContent("featuresPerNode", featuresPerNode);
 			subalgo.recursiveTrain(dataset, current);
-//			current.setProbability(getProbability(dataset));
 			return current;
 		}
 		
@@ -118,7 +95,7 @@ public class DiscriminantTree extends TrainingAlgorithm<DecisionTree> {
 		zp = zp / cp;
 		zn = zn / cn;
 		
-		return (zp + zn)/2;
+		return (zp + zn) / 2;
 	}
 
 	private List<Dataset> split(Dataset dataset, Criterion criterion) {

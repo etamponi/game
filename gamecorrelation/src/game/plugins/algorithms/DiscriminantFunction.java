@@ -2,25 +2,14 @@ package game.plugins.algorithms;
 
 import game.core.Block;
 import game.core.Dataset;
-import game.core.DatasetBuilder;
-import game.core.InstanceTemplate;
 import game.core.Dataset.SampleIterator;
 import game.core.Sample;
 import game.core.TrainingAlgorithm;
 import game.core.blocks.Encoder;
-import game.core.blocks.Pipe;
-import game.plugins.datasetbuilders.CSVDatasetBuilder;
-import game.plugins.datatemplates.LabelTemplate;
-import game.plugins.datatemplates.VectorTemplate;
 import game.plugins.encoders.IntegerEncoder;
-import game.plugins.encoders.VectorEncoder;
-import game.plugins.pipes.FeatureSelection;
 import game.plugins.pipes.LinearTransform;
-import game.utils.Utils;
 
-import java.io.File;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -36,7 +25,7 @@ import Jama.Matrix;
 
 public class DiscriminantFunction extends TrainingAlgorithm<LinearTransform> {
 	
-	public int dimensions = 3;
+	public int dimensions = 1;
 
 	@Override
 	public boolean isCompatible(Block object) {
@@ -60,18 +49,22 @@ public class DiscriminantFunction extends TrainingAlgorithm<LinearTransform> {
 		
 		while (it.hasNext()) {
 			Sample sample = it.next();
+			
 			double[] input = sample.getEncodedInput().toArray();
+			injectNoise(input, distribution);
+			x.add(new Array2DRowRealMatrix(input));
+			stat.addValue(input);
+			
 			double output = sample.getEncodedOutput().getEntry(0);
+			
 			if (!n_y.containsKey(output)) {
 				n_y.put(output, 0);
 				stat_y.put(output, new MultivariateSummaryStatistics(inputDim, false));
 			}
 			
-			injectNoise(input, distribution);
 			n_y.put(output, n_y.get(output)+1);
+			
 			stat_y.get(output).addValue(input);
-			x.add(new Array2DRowRealMatrix(input));
-			stat.addValue(input);
 		}
 		
 		RealMatrix x_sum = new Array2DRowRealMatrix(stat.getSum());
@@ -96,30 +89,20 @@ public class DiscriminantFunction extends TrainingAlgorithm<LinearTransform> {
 		
 		Matrix JE = new Matrix(E.getData());
 		Matrix JH = new Matrix(H.getData());
-		
-//		Matrix Uinv = JE.chol().getL().transpose().inverse();
-		
 		Matrix M = JE.inverse().times(JH);
-//		Matrix M = Uinv.transpose().times(JH).times(Uinv);
 		
 		EigenvalueDecomposition dec = M.eig();
 		Matrix D = dec.getD();
-		
-//		D.print(6, 2);
-//		dec.getV().print(6, 2);
-		
-//		double[][] cols = Uinv.times(dec.getV()).transpose().getArray();
+
 		double[][] cols = dec.getV().transpose().getArray();
 		
 		RealMatrix transform = new Array2DRowRealMatrix(dimensions, inputDim);
 
 		for(int i = 0; i < transform.getRowDimension(); i++) {
 			int index = findIndex(D);
-			D.set(index, index, 0);
+			D.set(index, index, -1);
 			transform.setRow(i, cols[index]);
 		}
-
-//		new Matrix(transform.getData()).times(100).print(6, 2);
 		
 		return transform;
 	}
@@ -140,7 +123,6 @@ public class DiscriminantFunction extends TrainingAlgorithm<LinearTransform> {
 	}
 
 	private double[] injectNoise(double[] v, NormalDistribution distribution) {
-//		return v;
 		for(int i = 0; i < v.length; i++)
 			v[i] = v[i] + distribution.sample();
 		return v;
@@ -149,47 +131,6 @@ public class DiscriminantFunction extends TrainingAlgorithm<LinearTransform> {
 	@Override
 	protected String getManagedPropertyNames() {
 		return "transform";
-	}
-	
-	public static void main(String... args) {
-		InstanceTemplate template = new InstanceTemplate();
-		template.inputTemplate = new VectorTemplate();
-		template.inputTemplate.setContent("dimension", 47);
-		template.outputTemplate = new LabelTemplate();
-		template.outputTemplate.getContent("labels", List.class).add("pd");
-		template.outputTemplate.getContent("labels", List.class).add("snp");
-		
-		DatasetBuilder builder = new CSVDatasetBuilder();
-		builder.setContent("template", template);
-		builder.setContent("file", new File("../gamegui/sampledata/HumVar.txt"));
-		builder.setContent("instanceNumber", 5000);
-		
-		Dataset dataset = builder.buildDataset();
-		
-		Encoder inputEncoder = new VectorEncoder();
-		inputEncoder.setContent("template", template.inputTemplate);
-		Pipe featureSelection = new FeatureSelection();
-		featureSelection.setContent("mask", "0000000000" + generateRandomMask(36, 36) + "0");
-		featureSelection.parents.add(inputEncoder);
-		
-		LinearTransform transform = new LinearTransform();
-		transform.parents.add(featureSelection);
-		transform.setContent("trainingAlgorithm", new DiscriminantFunction());
-		
-		transform.trainingAlgorithm.execute(dataset);
-	}
-	
-	private static String generateRandomMask(int featureNumber, int n) {
-		List<Integer> range = Utils.range(0, featureNumber);
-		Collections.shuffle(range);
-		StringBuilder ret = new StringBuilder();
-		for(int i = 0; i < featureNumber; i++) {
-			ret.append('0');
-		}
-		for(int i = 0; i < n; i++) {
-			ret.setCharAt(range.get(i), '1');
-		}
-		return ret.toString();
 	}
 
 }
