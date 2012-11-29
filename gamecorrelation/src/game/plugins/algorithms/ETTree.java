@@ -2,18 +2,9 @@ package game.plugins.algorithms;
 
 import game.core.Block;
 import game.core.Dataset;
-import game.core.Dataset.SampleIterator;
-import game.core.Sample;
 import game.plugins.classifiers.Criterion;
-import game.plugins.encoders.BooleanEncoder;
-import game.plugins.pipes.FeatureSelection;
-import game.utils.Utils;
 
-import java.util.Collections;
 import java.util.List;
-
-import org.apache.commons.math3.linear.ArrayRealVector;
-import org.apache.commons.math3.linear.RealVector;
 
 public class ETTree extends C45Like {
 	
@@ -25,7 +16,7 @@ public class ETTree extends C45Like {
 	public boolean isCompatible(Block object) {
 		return super.isCompatible(object) && object.getContent("template.outputTemplate.labels", List.class).size() == 2;
 	}
-	
+/*
 	private double getThreshold(RealVector transform, Block inputEncoder, Dataset dataset) {
 		BooleanEncoder outputEncoder = new BooleanEncoder();
 		outputEncoder.setContent("template", dataset.getTemplate().outputTemplate);
@@ -51,12 +42,12 @@ public class ETTree extends C45Like {
 		
 		return (zp + zn)/2;
 	}
-
+*/
 	@Override
 	protected Criterion bestCriterion(Dataset dataset) {
 		if (dataset.size() >= minimumSize) {
 			Block inputEncoder = block.getParent();
-			
+			/*
 			FeatureSelection selection = new FeatureSelection();
 			selection.setContent("mask", generateRandomMask(inputEncoder.getFeatureNumber(),
 					featuresPerDiscriminant == 0 ? inputEncoder.getFeatureNumber() : featuresPerDiscriminant));
@@ -69,42 +60,19 @@ public class ETTree extends C45Like {
 			double threshold = getThreshold(transform, selection, dataset);
 			
 			DiscriminantCriterion criterion = new DiscriminantCriterion(adjust(transform, selection.mask), threshold);
-		
+			*/
+			DiscriminantCriterion criterion = new DiscriminantCriterion(dataset, inputEncoder,
+					featuresPerDiscriminant == 0 ? inputEncoder.getFeatureNumber() : featuresPerDiscriminant);
+			
 			return criterion;
 		} else {
 			return super.bestCriterion(dataset);
 		}
 	}
 
-	private RealVector adjust(RealVector transform, String mask) {
-		RealVector ret = new ArrayRealVector();
-		int i = 0;
-		for(char c: mask.toCharArray()) {
-			if (c == '1')
-				ret = ret.append(transform.getEntry(i++));
-			else
-				ret = ret.append(0);
-		}
-		return ret;
-	}
-
 	@Override
 	protected String getManagedPropertyNames() {
 		return "root";
-	}
-	
-	private static String generateRandomMask(int featureNumber, int n) {
-		List<Integer> range = Utils.range(0, featureNumber);
-		if (n < featureNumber)
-			Collections.shuffle(range);
-		StringBuilder ret = new StringBuilder();
-		for(int i = 0; i < featureNumber; i++) {
-			ret.append('0');
-		}
-		for(int i = 0; i < n; i++) {
-			ret.setCharAt(range.get(i), '1');
-		}
-		return ret.toString();
 	}
 
 }

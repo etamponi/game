@@ -106,7 +106,7 @@ public class ImplementationChooserEditor extends PropertyEditor {
 		});
 		container.setSpacing(15);
 		container.getChildren().addAll(box, editButton);
-		box.prefWidthProperty().bind(container.widthProperty().subtract(editButton.prefWidthProperty()).subtract(5));
+//		box.prefWidthProperty().bind(container.widthProperty().subtract(editButton.prefWidthProperty()).subtract(5));
 	}
 
 	@Override
