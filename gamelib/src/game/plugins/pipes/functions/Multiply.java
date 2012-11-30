@@ -10,7 +10,7 @@
  ******************************************************************************/
 package game.plugins.pipes.functions;
 
-import game.plugins.pipes.FeatureCombination.CombinationFunction;
+import game.plugins.pipes.CombinationFunction;
 
 import org.apache.commons.math3.linear.RealVector;
 

@@ -135,4 +135,23 @@ public class Utils {
 		for(int i: v) ret += i;
 		return ret;
 	}
+
+	public static int[] nextPermutation(int[] indices, int maxIndex) {
+		int pos = indices.length-1;
+		while(true) {
+			if (pos < 0)
+				return indices;
+			if (indices[pos] < maxIndex) {
+				indices[pos]++;
+				break;
+			} else {
+				pos--;
+				maxIndex = maxIndex-1;
+			}
+		}
+		for(pos = pos+1; pos < indices.length; pos++) {
+			indices[pos] = indices[pos-1]+1;
+		}
+		return indices;
+	}
 }

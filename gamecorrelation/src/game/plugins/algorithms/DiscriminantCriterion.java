@@ -58,8 +58,8 @@ public class DiscriminantCriterion extends Criterion {
 		RealVector yp_mean = evaluateMean(yp_list, features);
 		RealVector yn_mean = evaluateMean(yn_list, features);
 		/*
-		RealMatrix Wp = evaluateW(yp, yp_mean);
-		RealMatrix Wn = evaluateW(yn, yn_mean);
+		RealMatrix Wp = evaluateW(yp_list, yp_mean);
+		RealMatrix Wn = evaluateW(yn_list, yn_mean);
 		
 		Matrix Spl = new Matrix(Wp.add(Wn).scalarMultiply(1.0 / (count - 2)).getData());
 		RealMatrix Splinv = new Array2DRowRealMatrix(Spl.inverse().getArray());
