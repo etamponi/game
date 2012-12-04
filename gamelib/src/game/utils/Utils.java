@@ -13,10 +13,8 @@ package game.utils;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.lang.reflect.Modifier;
-import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Random;
 import java.util.Scanner;
 
 import org.apache.commons.math3.linear.RealVector;
@@ -111,12 +109,6 @@ public class Utils {
 			if (curr == c)
 				count++;
 		return count;
-	}
-	
-	private static Random generator = new Random();
-
-	public static String randomString() {
-		return new BigInteger(130, generator).toString(10);
 	}
 
 	public static List<Integer> range(int start, int end) {
