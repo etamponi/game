@@ -64,10 +64,6 @@ public class DiscriminantDecisionTree extends TrainingAlgorithm<DecisionTree> {
 			
 		}
 		
-		public SampleDataset(SampleDataset other) {
-			super(other);
-		}
-		
 		public SampleDataset(Dataset dataset, Block inputEncoder, Block outputEncoder) {
 			SampleIterator it = dataset.encodedSampleIterator(inputEncoder, outputEncoder, false);
 			while(it.hasNext())
@@ -92,12 +88,14 @@ public class DiscriminantDecisionTree extends TrainingAlgorithm<DecisionTree> {
 			planes = planesPerNode;
 		}
 		
-		Node root = recursiveTrain(samples, planes);
+		System.out.println("Planes per node: " + planes);
+		Node root = recursiveTrain(samples, planes, 1);
 		
 		block.setContent("root", root);
 	}
 	
-	private Node recursiveTrain(SampleDataset samples, int planes) {
+	private Node recursiveTrain(SampleDataset samples, int planes, int level) {
+//		updateStatus(getProgress(), "training node at level " + level + " with " + planes + " planes of " + featuresPerPlane + " features with " + samples.size() + " samples.");
 		Node node = new Node();
 		
 		if (samples.size() <= featuresPerPlane + 2) {
@@ -118,7 +116,7 @@ public class DiscriminantDecisionTree extends TrainingAlgorithm<DecisionTree> {
 		
 		node.setCriterion(criterion.criterion);
 		for(SampleDataset split: criterion.splits) {
-			node.getChildren().add(recursiveTrain(split, planes));
+			node.getChildren().add(recursiveTrain(split, planes, level+1));
 		}
 		
 		return node;
@@ -169,11 +167,11 @@ public class DiscriminantDecisionTree extends TrainingAlgorithm<DecisionTree> {
 			selectFeatures(selectedFeatures, indices, features);
 			
 			RealVector plane = evaluatePlane(H, E, selectedFeatures);
-			if (plane == null)
-				continue;
-			CriterionWithGainAndSplits criterion = evaluateCriterionWithGainAndSplits(samples, plane);
-			if (criterion.gainRatio > bestCriterion.gainRatio) {
-				bestCriterion = criterion;
+			if (plane != null) {
+				CriterionWithGainAndSplits criterion = evaluateCriterionWithGainAndSplits(samples, plane);
+				if (criterion.gainRatio > bestCriterion.gainRatio) {
+					bestCriterion = criterion;
+				}
 			}
 			
 			nextPermutation(indices, inputFeatures);
@@ -215,23 +213,26 @@ public class DiscriminantDecisionTree extends TrainingAlgorithm<DecisionTree> {
 		
 		List<SampleDataset> splits = new ArrayList<>();
 		splits.add(new SampleDataset());
-		splits.add(new SampleDataset(samples));
+		splits.add((SampleDataset) samples.clone());
 		ZSample previous = list.get(0);
 		for(int i = 1; i < list.size(); i++) {
 			ZSample current = list.get(i);
 			splits.get(0).add(previous.sample);
 			splits.get(1).remove(previous.sample);
-			if (!current.sample.getOutput().equals(previous.sample.getOutput())) {
+			if (previous.z < current.z && !previous.sample.getOutput().equals(current.sample.getOutput())) {
 				double gainRatio = gainRatio(samples, splits);
 				if (gainRatio > bestGainRatio) {
 					bestGainRatio = gainRatio;
 					bestThreshold = 0.5 * (previous.z + current.z);
-					bestSplits.set(0, new SampleDataset(splits.get(0)));
-					bestSplits.set(1, new SampleDataset(splits.get(1)));
+					bestSplits.set(0, (SampleDataset) splits.get(0).clone());
+					bestSplits.set(1, (SampleDataset) splits.get(1).clone());
 				}
 			}
 			previous = current;
 		}
+
+//		System.out.println("Plane found    : " + plane);
+//		System.out.println("Threshold found: " + bestThreshold);
 		
 		return new CriterionWithGainAndSplits(new PlaneCriterion(plane, bestThreshold), bestGainRatio, bestSplits);
 	}
@@ -239,7 +240,6 @@ public class DiscriminantDecisionTree extends TrainingAlgorithm<DecisionTree> {
 	private RealVector evaluatePlane(RealMatrix Hcomplete, RealMatrix Ecomplete, int[] selected) {
 		Matrix H = new Matrix(Hcomplete.getSubMatrix(selected, selected).getData());
 		Matrix E = new Matrix(Ecomplete.getSubMatrix(selected, selected).getData());
-		
 		
 		try {
 			Matrix M = E.inverse().times(H);
@@ -255,13 +255,14 @@ public class DiscriminantDecisionTree extends TrainingAlgorithm<DecisionTree> {
 			
 			RealVector plane = new ArrayRealVector(Hcomplete.getRowDimension());
 			int j = 0;
-			for(int i = 0; i < plane.getDimension(); i++) {
-				if (j < selected.length && i == selected[j])
-					plane.setEntry(i, temp.getEntry(j++));
-			}
+			for(int i: selected)
+				plane.setEntry(i, temp.getEntry(j++));
 			return plane;
 		} catch (RuntimeException ex) {
 			System.err.println("Singular matrix");
+			H.print(10, 2);
+			E.print(10, 2);
+			System.out.println(Arrays.toString(selected));
 			return null;
 		}
 	}
@@ -322,7 +323,7 @@ public class DiscriminantDecisionTree extends TrainingAlgorithm<DecisionTree> {
 	}
 	
 	private void nextPermutation(List<Integer> indices, int choices) {
-		int pos = indices.size()-1;
+		int pos = indices.size() - 1;
 		int maxIndex = choices - 1;
 		while(true) {
 			if (pos < 0)
@@ -332,7 +333,7 @@ public class DiscriminantDecisionTree extends TrainingAlgorithm<DecisionTree> {
 				break;
 			} else {
 				pos--;
-				maxIndex = maxIndex-1;
+				maxIndex--;
 			}
 		}
 		for(pos = pos+1; pos < indices.size(); pos++) {
@@ -370,7 +371,7 @@ public class DiscriminantDecisionTree extends TrainingAlgorithm<DecisionTree> {
 			if (p == 0 || p == 1)
 				continue;
 			
-			info -= p * Math.log(p);
+			info -= p * Utils.log2(p);
 		}
 		
 		return info;
@@ -383,6 +384,8 @@ public class DiscriminantDecisionTree extends TrainingAlgorithm<DecisionTree> {
 		for(Sample sample: samples)
 			ret = ret.add(sample.getEncodedOutput());
 		ret.mapDivideToSelf(samples.size());
+		
+//		System.out.println(ret);
 		
 		return ret;
 	}
