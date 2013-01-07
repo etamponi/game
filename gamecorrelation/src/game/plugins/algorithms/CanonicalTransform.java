@@ -3,22 +3,14 @@ package game.plugins.algorithms;
 import game.core.Block;
 import game.core.Dataset;
 import game.core.Dataset.SampleIterator;
-import game.core.DatasetBuilder;
-import game.core.InstanceTemplate;
+import game.core.Experiment;
 import game.core.Sample;
 import game.core.TrainingAlgorithm;
-import game.core.blocks.Encoder;
-import game.core.blocks.Pipe;
-import game.plugins.datasetbuilders.CSVDatasetBuilder;
-import game.plugins.datatemplates.LabelTemplate;
-import game.plugins.datatemplates.VectorTemplate;
-import game.plugins.encoders.VectorEncoder;
 import game.plugins.pipes.Concatenator;
 import game.plugins.pipes.FeatureSelection;
 import game.plugins.pipes.LinearTransform;
 import game.utils.Utils;
 
-import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -191,7 +183,7 @@ public class CanonicalTransform extends TrainingAlgorithm<LinearTransform> {
 
 	private String generateRandomMask(int featureNumber) {
 		List<Integer> range = Utils.range(0, featureNumber);
-		Collections.shuffle(range);
+		Collections.shuffle(range, Experiment.getRandom());
 		StringBuilder ret = new StringBuilder();
 		for(int i = 0; i < featureNumber; i++) {
 			ret.append('0');
@@ -216,7 +208,6 @@ public class CanonicalTransform extends TrainingAlgorithm<LinearTransform> {
 	}
 	
 	private double[] injectNoise(double[] v, NormalDistribution distribution) {
-//		return v;
 		for(int i = 0; i < v.length; i++)
 			v[i] = v[i] + distribution.sample();
 		return v;
@@ -225,34 +216,6 @@ public class CanonicalTransform extends TrainingAlgorithm<LinearTransform> {
 	@Override
 	protected String getManagedPropertyNames() {
 		return "transform";
-	}
-	
-	public static void main(String... args) {
-		InstanceTemplate template = new InstanceTemplate();
-		template.inputTemplate = new VectorTemplate();
-		template.inputTemplate.setContent("dimension", 47);
-		template.outputTemplate = new LabelTemplate();
-		template.outputTemplate.getContent("labels", List.class).add("pd");
-		template.outputTemplate.getContent("labels", List.class).add("snp");
-		
-		DatasetBuilder builder = new CSVDatasetBuilder();
-		builder.setContent("template", template);
-		builder.setContent("file", new File("../gamegui/sampledata/HumVar.txt"));
-		builder.setContent("instanceNumber", 5000);
-		
-		Dataset dataset = builder.buildDataset();
-		
-		Encoder inputEncoder = new VectorEncoder();
-		inputEncoder.setContent("template", template.inputTemplate);
-		Pipe featureSelection = new FeatureSelection();
-		featureSelection.setContent("mask", "00000000001111111111111111111111111111111111110");
-		featureSelection.parents.add(inputEncoder);
-		
-		LinearTransform transform = new LinearTransform();
-		transform.parents.add(featureSelection);
-		transform.setContent("trainingAlgorithm", new LinearTransform());
-		
-		transform.trainingAlgorithm.execute(dataset);
 	}
 
 }

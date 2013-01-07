@@ -19,7 +19,7 @@ import java.util.Iterator;
 
 import com.ios.triggers.MasterSlaveTrigger;
 
-public abstract class FullExperiment extends Experiment {
+public abstract class FullExperiment extends Experiment<FullResult> {
 	
 	public PredictionGraph graph;
 	

@@ -8,16 +8,27 @@
  * Contributors:
  *     Emanuele Tamponi - initial API and implementation
  ******************************************************************************/
-package game.core.experiments;
+package game.core;
 
-import game.core.Dataset;
-import game.core.Result;
-import game.core.blocks.PredictionGraph;
+import com.ios.IList;
+import com.ios.IObject;
 
-public class FullResult extends Result {
+public class ResultList<R extends Result> extends IObject {
 	
-	public PredictionGraph trainedGraph;
+	public Experiment experiment;
 	
-	public Dataset classifiedDataset;
+	public IList<R> results;
 	
+	public ResultList() {
+		setContent("results", new IList<>(Result.class));
+	}
+	
+	@Override
+	public String toString() {
+		if (experiment == null)
+			return "empty " + getClass().getSimpleName();
+		else
+			return experiment.name;
+	}
+
 }

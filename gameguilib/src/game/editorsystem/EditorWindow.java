@@ -108,10 +108,11 @@ public class EditorWindow extends Stage {
 	
 	public void startEdit(Property model) {
 		if (!editor.isReadOnly()) {
-			if (model.getContent() instanceof IObject)
+			if (model.getContent() instanceof IObject) {
 				original = model.getContent(IObject.class).copy();
-			else
+			} else {
 				original = IObject.getKryo().copy(model.getContent());
+			}
 		}
 		
 		editor.connect(model);
@@ -123,6 +124,9 @@ public class EditorWindow extends Stage {
 		cancelButton.setDisable(editor.isReadOnly());
 		
 		showAndWait();
+		
+		if (!editor.isReadOnly() && model.getContent() instanceof IObject)
+			model.getContent(IObject.class).editingFinished();
 		
 		editor.detach();
 	}

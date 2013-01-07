@@ -2,6 +2,7 @@ package game.plugins.algorithms;
 
 import game.core.Block;
 import game.core.Dataset;
+import game.core.Experiment;
 import game.core.Dataset.SampleIterator;
 import game.core.Sample;
 import game.core.TrainingAlgorithm;
@@ -36,7 +37,11 @@ public class DiscriminantDecisionTree extends TrainingAlgorithm<DecisionTree> {
 	
 	public int planesPerNode = 0;
 	
-	public double noiseSd = 1e-6;
+	public double noiseSd = 1e-8;
+
+	public boolean useCentroids;
+
+	public boolean useProportionalThreshold;
 	
 	public DiscriminantDecisionTree() {
 		addErrorCheck("", new ErrorCheck<DiscriminantDecisionTree>() {
@@ -159,7 +164,7 @@ public class DiscriminantDecisionTree extends TrainingAlgorithm<DecisionTree> {
 		CriterionWithGainAndSplits bestCriterion = new CriterionWithGainAndSplits(null, 0, null);
 		
 		List<Integer> features = Utils.range(0, inputFeatures);
-		Collections.shuffle(features);
+		Collections.shuffle(features, Experiment.getRandom());
 		
 		List<Integer> indices = Utils.range(0, featuresPerPlane);
 		int[] selectedFeatures = new int[featuresPerPlane];
@@ -168,7 +173,9 @@ public class DiscriminantDecisionTree extends TrainingAlgorithm<DecisionTree> {
 			
 			RealVector plane = evaluatePlane(H, E, selectedFeatures);
 			if (plane != null) {
-				CriterionWithGainAndSplits criterion = evaluateCriterionWithGainAndSplits(samples, plane);
+				CriterionWithGainAndSplits criterion = useCentroids ?
+						evaluateCriterionUsingCentroids(samples, plane)
+						: evaluateCriterionWithGainAndSplits(samples, plane);
 				if (criterion.gainRatio > bestCriterion.gainRatio) {
 					bestCriterion = criterion;
 				}
@@ -180,6 +187,34 @@ public class DiscriminantDecisionTree extends TrainingAlgorithm<DecisionTree> {
 		return bestCriterion;
 	}
 	
+	private CriterionWithGainAndSplits evaluateCriterionUsingCentroids(SampleDataset samples, RealVector plane) {
+		List<ZSample> list = new ArrayList<>(samples.size());
+		List<Double> centroids = new ArrayList<>();
+		centroids.add(0d); centroids.add(0d);
+		double count0 = 0;
+		for(Sample sample: samples) {
+			ZSample zsample = new ZSample(sample, plane);
+			list.add(zsample);
+			int index = (int) sample.getEncodedOutput().getEntry(1);
+			centroids.set(index, centroids.get(index)+zsample.z);
+			if (index == 0)
+				count0++;
+		}
+		centroids.set(0, centroids.get(0)/count0);
+		centroids.set(1, centroids.get(1)/(list.size()-count0));
+		double threshold = (useProportionalThreshold ? count0 / list.size() : 0.5) * (centroids.get(0) + centroids.get(1));
+		List<SampleDataset> splits = new ArrayList<>();
+		splits.add(new SampleDataset());
+		splits.add(new SampleDataset());
+		for(ZSample zsample: list) {
+			if (zsample.z <= threshold)
+				splits.get(0).add(zsample.sample);
+			else
+				splits.get(1).add(zsample.sample);
+		}
+		return new CriterionWithGainAndSplits(new PlaneCriterion(plane, threshold), gainRatio(samples, splits), splits);
+	}
+
 	public static class PlaneCriterion extends Criterion {
 		
 		private RealVector plane;
@@ -276,23 +311,25 @@ public class DiscriminantDecisionTree extends TrainingAlgorithm<DecisionTree> {
 		for(Sample sample: samples)
 			y_lists.get((int)sample.getEncodedOutput().getEntry(1)).add(new Array2DRowRealMatrix(injectNoise(sample.getEncodedInput().toArray(), distribution)));
 		List<RealMatrix> y_means = new ArrayList<>();
+//		y_means.add(injectNoise(evaluateMean(y_lists.get(0)), distribution));
+//		y_means.add(injectNoise(evaluateMean(y_lists.get(1)), distribution));
 		y_means.add(evaluateMean(y_lists.get(0)));
 		y_means.add(evaluateMean(y_lists.get(1)));
 		RealMatrix y_mean = y_means.get(0).scalarMultiply(y_lists.get(0).size())
 							.add(y_means.get(1).scalarMultiply(y_lists.get(1).size()))
-							.scalarMultiply(1.0/(y_lists.get(0).size() + y_lists.get(1).size()));
+							.scalarMultiply(1.0/samples.size());
 
 		RealMatrix H = Hfinal.copy();
 		RealMatrix E = Efinal.copy();
 		
 		for(int i = 0; i < 2; i++) {
-			RealMatrix temp = y_means.get(i).add(y_mean.scalarMultiply(-1.0));
+			RealMatrix temp = y_means.get(i).subtract(y_mean);
 			H = H.add(temp.multiply(temp.transpose()).scalarMultiply(y_lists.get(i).size()));
 		}
 		
 		for(int i = 0; i < 2; i++) {
 			for(int j = 0; j < y_lists.get(i).size(); j++) {
-				RealMatrix temp = y_lists.get(i).get(j).add(y_means.get(i).scalarMultiply(-1.0));
+				RealMatrix temp = y_lists.get(i).get(j).subtract(y_means.get(i));
 				E = E.add(temp.multiply(temp.transpose()));
 			}
 		}
@@ -303,10 +340,16 @@ public class DiscriminantDecisionTree extends TrainingAlgorithm<DecisionTree> {
 	
 	private double[] injectNoise(double[] v, NormalDistribution distribution) {
 		for(int i = 0; i < v.length; i++)
-			v[i] = v[i] + distribution.sample();
+			v[i] = v[i] * (1 + distribution.sample()) + distribution.sample();
 		return v;
 	}
-
+/*
+	private RealMatrix injectNoise(RealMatrix v, NormalDistribution distribution) {
+		for(int i = 0; i < v.getRowDimension(); i++)
+			v.setEntry(i, 0, v.getEntry(i, 0) * (1+distribution.sample()));
+		return v;
+	}
+*/
 	private RealMatrix evaluateMean(List<RealMatrix> list) {
 		RealMatrix ret = new Array2DRowRealMatrix(list.get(0).getRowDimension(), 1);
 		for(RealMatrix v: list)

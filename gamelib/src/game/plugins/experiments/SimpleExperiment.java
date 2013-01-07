@@ -10,14 +10,15 @@
  ******************************************************************************/
 package game.plugins.experiments;
 
-import com.ios.Property;
-import com.ios.constraints.CompatibleWith;
-import com.ios.triggers.MasterSlaveTrigger;
-
 import game.core.DatasetBuilder;
+import game.core.ResultList;
 import game.core.blocks.PredictionGraph;
 import game.core.experiments.FullExperiment;
 import game.core.experiments.FullResult;
+
+import com.ios.Property;
+import com.ios.constraints.CompatibleWith;
+import com.ios.triggers.MasterSlaveTrigger;
 
 public class SimpleExperiment extends FullExperiment {
 
@@ -33,15 +34,19 @@ public class SimpleExperiment extends FullExperiment {
 	}
 
 	@Override
-	protected FullResult runExperiment(String outputDirectory) {
-		FullResult ret = new FullResult();
+	protected ResultList runExperiment(String outputDirectory) {
+		FullResult result = new FullResult();
 		PredictionGraph graphClone = graph.copy();
 		updateStatus(0.01, "training graph...");
 		executeAnotherTaskAndWait(0.50, graphClone.trainingAlgorithm, trainingDataset.buildDataset());
 		updateStatus(0.71, "training complete, testing phase...");
-		ret.testedDatasets.add(classifyDataset(0.90, graphClone, testingDataset.buildDataset()));
-		ret.trainedGraphs.add(graphClone);
+		result.classifiedDataset = classifyDataset(0.90, graphClone, testingDataset.buildDataset());
+		result.trainedGraph = graphClone;
 		updateStatus(1.00, "experiment completed");
+		
+		ResultList<FullResult> ret = new ResultList<>();
+		ret.results.add(result);
+		
 		return ret;
 	}
 

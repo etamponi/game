@@ -12,6 +12,7 @@ package game.plugins.experiments;
 
 import game.core.Dataset;
 import game.core.DatasetBuilder;
+import game.core.ResultList;
 import game.core.blocks.PredictionGraph;
 import game.core.experiments.FullExperiment;
 import game.core.experiments.FullResult;
@@ -38,21 +39,23 @@ public class KFoldCrossValidation extends FullExperiment {
 	}
 
 	@Override
-	protected FullResult runExperiment(String outputDirectory) {
+	protected ResultList runExperiment(String outputDirectory) {
 		Dataset complete = dataset.buildDataset();
-		FullResult ret = new FullResult();
+		ResultList<FullResult> ret = new ResultList<>();
 		
 		List<Dataset> testings = complete.getFolds(folds);
 		List<Dataset> trainings = complete.getComplementaryFolds(testings);
 		
 		for(int i = 0; i < folds; i++) {
+			FullResult result = new FullResult();
 			PredictionGraph graphClone = graph.copy();
 			graphClone.setContent("name", graph.name + "_" + i);
 			updateStatus(getOverallStatus(0.01, i), "training graph for fold " + (i+1) + "/" + folds);
 			executeAnotherTaskAndWait(getOverallStatus(0.70, i), graphClone.trainingAlgorithm, trainings.get(i));
 			updateStatus(getOverallStatus(0.70, i), "training complete, testing phase...");
-			ret.testedDatasets.add(classifyDataset(getOverallStatus(0.99, i), graphClone, testings.get(i)));
-			ret.trainedGraphs.add(graphClone);
+			result.classifiedDataset = classifyDataset(getOverallStatus(0.99, i), graphClone, testings.get(i));
+			result.trainedGraph = graphClone;
+			ret.results.add(result);
 			updateStatus(getOverallStatus(1.00, i), "finished fold " + (i+1) + "/" + folds);
 		}
 		updateStatus(1.00, "experiment completed");

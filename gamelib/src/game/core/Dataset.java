@@ -168,7 +168,7 @@ public class Dataset extends ArrayList<Instance> implements KryoCopyable<Dataset
 		List<Dataset> ret = new ArrayList<>(folds);
 		
 		List<Integer> temp = Utils.range(0, size());
-		Collections.shuffle(temp);
+		Collections.shuffle(temp, Experiment.getRandom());
 		
 		int foldSize = size() / folds;
 		
@@ -195,7 +195,7 @@ public class Dataset extends ArrayList<Instance> implements KryoCopyable<Dataset
 	public Dataset getRandomSubset(double percent) {
 		assert(percent > 0 && percent <= 1);
 		List<Integer> temp = Utils.range(0, size());
-		Collections.shuffle(temp);
+		Collections.shuffle(temp, Experiment.getRandom());
 		
 		Dataset ret = new Dataset(template);
 		

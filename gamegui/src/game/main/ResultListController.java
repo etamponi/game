@@ -11,7 +11,7 @@
 package game.main;
 
 import game.core.Metric;
-import game.core.Result;
+import game.core.ResultList;
 import game.editorsystem.EditorWindow;
 import game.editorsystem.PropertyEditor;
 
@@ -43,10 +43,10 @@ public class ResultListController implements Initializable {
 		resultsView.getRoot().setExpanded(true);
 	}
 	
-	public void addResult(Result r) {
+	public void addResult(ResultList r) {
 		TreeItem expItem = new TreeItem(r);
 		
-		Set<Class> metrics = PluginManager.getCompatibleImplementationsOf(Metric.class, new CompatibleWith(new Property(r)));
+		Set<Class> metrics = PluginManager.getCompatibleImplementationsOf(Metric.class, new CompatibleWith(new Property(r.results.get(0))));
 		
 		for(Class<Metric> impl: metrics) {
 			try {
@@ -67,7 +67,7 @@ public class ResultListController implements Initializable {
 		chooser.setTitle("Load result");
 		File file = chooser.showOpenDialog(resultsView.getScene().getWindow());
 		if (file != null)
-			addResult((Result)IObject.load(file));
+			addResult((ResultList)IObject.load(file));
 	}
 	
 	@FXML
@@ -75,9 +75,10 @@ public class ResultListController implements Initializable {
 		TreeItem selected = (TreeItem)resultsView.getSelectionModel().getSelectedItem();
 		if (selected != null) {
 			if (selected.getValue() instanceof Metric) {
-				Result r = (Result)selected.getParent().getValue();
+				ResultList r = (ResultList)selected.getParent().getValue();
 				Metric m = (Metric)selected.getValue();
-				m.setResult(r);
+				m.name = r.name + "_" + m.getClass().getSimpleName();
+				m.prepare(r);
 			}
 			Property property = new Property(selected.getValue());
 			PropertyEditor editor = PropertyEditor.getBestEditor(property.getContentType(true));
@@ -89,7 +90,7 @@ public class ResultListController implements Initializable {
 	@FXML
 	public void onRemove(ActionEvent event) {
 		TreeItem selected = (TreeItem)resultsView.getSelectionModel().getSelectedItem();
-		if (selected != null && selected.getValue() instanceof Result) {
+		if (selected != null && selected.getValue() instanceof ResultList) {
 			resultsView.getRoot().getChildren().remove(selected);
 		}
 	}

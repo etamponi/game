@@ -11,7 +11,7 @@
 package game.main;
 
 import game.core.Experiment;
-import game.core.Result;
+import game.core.ResultList;
 import game.utils.Log;
 
 import java.util.concurrent.Executor;
@@ -29,7 +29,7 @@ import com.ios.Observer;
 import com.ios.Property;
 
 @SuppressWarnings("deprecation")
-public class ExperimentService extends Service<Result> {
+public class ExperimentService extends Service<ResultList> {
 	
 	public static final EventType<Event> FINISHED = new EventType<>();
 	
@@ -135,10 +135,10 @@ public class ExperimentService extends Service<Result> {
 	}
 
 	@Override
-	protected Task<Result> createTask() {
-		return new Task<Result>() {
+	protected Task<ResultList> createTask() {
+		return new Task<ResultList>() {
 			@Override
-			protected Result call() throws Exception {
+			protected ResultList call() throws Exception {
 				currentExperiment = (Experiment)controller.experimentList.get(counter.get());
 				
 				experimentObserver = new Observer(currentExperiment) {
@@ -152,7 +152,7 @@ public class ExperimentService extends Service<Result> {
 					}
 				};
 				
-				Result ret = currentExperiment.execute(Settings.RESULTSDIR);
+				ResultList ret = currentExperiment.execute(Settings.RESULTSDIR);
 
 				experimentObserver.detach();
 				
@@ -166,7 +166,7 @@ public class ExperimentService extends Service<Result> {
 	@Override
 	protected void succeeded() {
 		super.succeeded();
-		Result result = getValue();
+		ResultList result = getValue();
 		if (controller.addToResultList())
 			controller.getResultListController().addResult(result);
 		counter.set(counter.get()+1);

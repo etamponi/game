@@ -10,7 +10,7 @@
  ******************************************************************************/
 package game.plugins.experiments;
 
-import game.core.Result;
+import game.core.ResultList;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -18,7 +18,7 @@ import java.util.List;
 import org.apache.commons.math3.linear.RealMatrix;
 import org.apache.commons.math3.linear.RealVector;
 
-public class CorrelationResult extends Result {
+public class CorrelationResult extends ResultList {
 
 	public List<RealMatrix> inputCorrelationMatrices = new ArrayList<>();
 	

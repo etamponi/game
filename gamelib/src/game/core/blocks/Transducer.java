@@ -40,7 +40,10 @@ public abstract class Transducer extends Block implements Compatible<InstanceTem
 
 	@Override
 	public int getFeatureNumber() {
-		return outputEncoder.getFeatureNumber();
+		if (outputEncoder != null)
+			return outputEncoder.getFeatureNumber();
+		else
+			return 0;
 	}
 
 }

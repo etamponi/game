@@ -2,6 +2,7 @@ package game.plugins.algorithms;
 
 import game.core.Block;
 import game.core.Dataset;
+import game.core.Experiment;
 import game.core.Dataset.SampleIterator;
 import game.core.Sample;
 import game.core.TrainingAlgorithm;
@@ -46,6 +47,7 @@ public class DiscriminantFunction extends TrainingAlgorithm<LinearTransform> {
 		SampleIterator it = dataset.encodedSampleIterator(inputEncoder, outputEncoder, false);
 		
 		NormalDistribution distribution = new NormalDistribution(0, 1e-6);
+		distribution.reseedRandomGenerator(Experiment.getRandom().nextLong());
 		
 		while (it.hasNext()) {
 			Sample sample = it.next();
