@@ -10,7 +10,6 @@
  ******************************************************************************/
 package game.core;
 
-import game.core.DataTemplate.Data;
 import game.utils.Utils;
 
 import java.util.ArrayList;
@@ -24,50 +23,38 @@ import com.esotericsoftware.kryo.KryoCopyable;
 
 public class Dataset extends ArrayList<Instance> implements KryoCopyable<Dataset> {
 	
-	private InstanceTemplate template;
+	private DatasetTemplate template;
 
-	public Dataset(InstanceTemplate template) {
+	public Dataset(DatasetTemplate template) {
 		this.template = template;
 	}
 	
-	public Dataset(InstanceTemplate template, Collection<? extends Instance> collection) {
+	public Dataset(DatasetTemplate template, Collection<? extends Instance> collection) {
 		super(collection);
 		this.template = template;
 	}
 	
-	public InstanceTemplate getTemplate() {
+	public DatasetTemplate getTemplate() {
 		return template;
 	}
 	
-	public enum IterationType {
-		EVERYTHING, IN_OUT, IN_ENC, IN_OUT_PRED, IN_OUT_ENC
-	}
-	
-	public class SampleIterator<I, O> implements Iterator<Sample<I, O>> {
+	public class SampleIterator implements Iterator<Sample> {
 		
-		private IterationType type;
-		private Block inputEncoder;
-		private Block outputEncoder;
+		private Block sourceFilter;
+		private Block targetFilter;
 		private Iterator<Instance> instanceIterator = iterator();
-		private Data currentInputSequence;
-		private Data currentOutputSequence;
+		private Data currentSourceSequence;
+		private Data currentTargetSequence;
 		private Data currentPredictionSequence;
-		private Encoding currentInputEncoding;
-		private Encoding currentOutputEncoding;
-		private Encoding currentPredictionEncoding;
 		private int indexInInstance;
 		
-		private SampleIterator(IterationType type) {
-			if (type == IterationType.IN_OUT_ENC || type == IterationType.EVERYTHING)
-				throw new UnsupportedOperationException("Cannot use a sample iterator with encoding if you don't specify the encoders");
-			this.type = type;
+		private SampleIterator() {
 			prepareForNextInstance();
 		}
 		
-		public SampleIterator(IterationType type, Block inputEncoder, Block outputEncoder) {
-			this.type = type;
-			this.inputEncoder = inputEncoder;
-			this.outputEncoder = outputEncoder;
+		public SampleIterator(Block sourceFilter, Block targetFilter) {
+			this.sourceFilter = sourceFilter;
+			this.targetFilter = targetFilter;
 			prepareForNextInstance();
 		}
 		
@@ -78,69 +65,33 @@ public class Dataset extends ArrayList<Instance> implements KryoCopyable<Dataset
 		
 		private void prepareForNextInstance() {
 			Instance inst = instanceIterator.next();
-			currentInputSequence = inst.getInput();
-			currentOutputSequence = inst.getOutput();
-			if (inst.getPrediction() != null)
-				currentPredictionSequence = inst.getPrediction();
-			if (inputEncoder != null)
-				currentInputEncoding = inputEncoder.transform(inst.getInput());
-			if (outputEncoder != null)
-				currentOutputEncoding = outputEncoder.transform(inst.getOutput());
-			currentPredictionEncoding = inst.getPredictionEncoding();
+			currentSourceSequence = sourceFilter == null ? inst.getSource() : sourceFilter.transform(inst.getSource());
+			currentTargetSequence = targetFilter == null ? inst.getTarget() : targetFilter.transform(inst.getTarget());
+			currentPredictionSequence = inst.getPrediction();
 			indexInInstance = 0;
 		}
 
 		@Override
 		public boolean hasNext() {
 			return instanceIterator.hasNext() ||
-					indexInInstance < currentInputSequence.size();
+					indexInInstance < currentSourceSequence.size();
 		}
 
 		@Override
-		public Sample<I, O> next() {
-			if (indexInInstance == currentInputSequence.size()) {
+		public Sample next() {
+			if (indexInInstance == currentTargetSequence.size()) {
 				prepareForNextInstance();
 			}
 			
-			Sample<I, O> ret = null;
-			switch(type) {
-			case EVERYTHING:
-				ret = new Sample(
-						currentInputSequence.get(indexInInstance),
-						currentInputEncoding.getElement(indexInInstance),
-						currentOutputSequence.get(indexInInstance),
-						currentOutputEncoding.getElement(indexInInstance),
-						currentPredictionSequence.get(indexInInstance),
-						currentPredictionEncoding.getElement(indexInInstance));
-				break;
-			case IN_OUT:
-				ret = new Sample(
-						currentInputSequence.get(indexInInstance),
-						currentOutputSequence.get(indexInInstance));
-				break;
-			case IN_OUT_PRED:
-				ret = new Sample(
-						currentInputSequence.get(indexInInstance),
-						currentOutputSequence.get(indexInInstance),
-						currentPredictionSequence.get(indexInInstance));
-				break;
-			case IN_OUT_ENC:
-				ret = new Sample(
-						currentInputSequence.get(indexInInstance),
-						currentInputEncoding.getElement(indexInInstance),
-						currentOutputSequence.get(indexInInstance),
-						currentOutputEncoding != null ? currentOutputEncoding.getElement(indexInInstance) : null);
-				break;
-			default:
-				break;
-			}
-			
+			Sample ret = new Sample(currentSourceSequence.get(indexInInstance), currentTargetSequence.get(indexInInstance));
+			if (currentPredictionSequence != null)
+				ret.setPrediction(currentPredictionSequence.get(indexInInstance));	
 			indexInInstance++;
 			return ret;
 		}
 		
-		public Block getOutputEncoder() {
-			return outputEncoder;
+		public Block getOutputFilter() {
+			return targetFilter;
 		}
 
 		@Override
@@ -150,20 +101,14 @@ public class Dataset extends ArrayList<Instance> implements KryoCopyable<Dataset
 		
 	}
 
-	public SampleIterator sampleIterator(boolean includePrediction) {
-		if (includePrediction)
-			return new SampleIterator(IterationType.IN_OUT_PRED);
-		else
-			return new SampleIterator(IterationType.IN_OUT);
+	public SampleIterator sampleIterator() {
+		return new SampleIterator();
 	}
 	
-	public SampleIterator encodedSampleIterator(Block inputEncoder, Block outputEncoder, boolean includePrediction) {
-		if (includePrediction)
-			return new SampleIterator(IterationType.EVERYTHING, inputEncoder, outputEncoder);
-		else
-			return new SampleIterator(IterationType.IN_OUT_ENC, inputEncoder, outputEncoder);
+	public SampleIterator sampleIterator(Block sourceFilter, Block targetFilter) {
+		return new SampleIterator(sourceFilter, targetFilter);
 	}
-	
+
 	public List<Dataset> getFolds(int folds) {
 		List<Dataset> ret = new ArrayList<>(folds);
 		
@@ -205,32 +150,35 @@ public class Dataset extends ArrayList<Instance> implements KryoCopyable<Dataset
 		
 		return ret;
 	}
-
+	
+	public Dataset getFirsts(double percent) {
+		assert(percent > 0 && percent <= 1);
+		int lastIndex = (int) (size()*percent);
+		Dataset ret = new Dataset(template);
+		for(int i = 0; i < lastIndex; i++)
+			ret.add(get(i));
+		return ret;
+	}
+	
+	public Dataset getLasts(double percent) {
+		assert(percent > 0 && percent <= 1);
+		int firstIndex = (int) (size()*(1-percent));
+		Dataset ret = new Dataset(template);
+		for(int i = firstIndex; i < size(); i++)
+			ret.add(get(i));
+		return ret;
+	}
+	
 	@Override
 	public Dataset copy(Kryo kryo) {
 		kryo.reference(this);
 		
-		InstanceTemplate copyTmp = kryo.copy(template);
+		DatasetTemplate copyTmp = kryo.copy(template);
 		Dataset ret = new Dataset(copyTmp);
 		for(Instance i: this) {
-			Instance copy = copyTmp.newInstance();
-			Data input = copyTmp.inputTemplate.newData();
-			input.addAll(kryo.copy(new ArrayList(i.getInput())));
-			Data output = copyTmp.outputTemplate.newData();
-			output.addAll(kryo.copy(new ArrayList(i.getOutput())));
-			copy.setInput(input);
-			copy.setOutput(output);
-			if (i.getPrediction() != null) {
-				Data prediction = copyTmp.outputTemplate.newData();
-				prediction.addAll(kryo.copy(new ArrayList(i.getPrediction())));
-				copy.setPrediction(prediction);
-			}
-			if (i.getPredictionEncoding() != null) {
-				copy.setPredictionEncoding(kryo.copy(i.getPredictionEncoding()));
-			}
+			Instance copy = new Instance(new Data(i.getSource()), new Data(i.getTarget()), new Data(i.getPrediction()));
 			ret.add(copy);
 		}
 		return ret;
 	}
-	
 }

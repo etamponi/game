@@ -20,11 +20,13 @@ public abstract class Experiment<R extends Result> extends LongTask<ResultList<R
 	
 	private static Random generator;
 	
+	public DatasetBuilder datasetBuilder;
+	
 	public static Random getRandom() {
+		if (generator == null)
+			return new Random(); // Not inside an experiment
 		return generator;
 	}
-	
-	public InstanceTemplate template;
 	
 	public long seed = 1;
 	

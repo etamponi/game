@@ -13,7 +13,8 @@ package testgame.tests;
 import static org.junit.Assert.assertEquals;
 import game.core.Dataset;
 import game.core.DatasetBuilder;
-import game.core.InstanceTemplate;
+import game.core.DatasetTemplate;
+import game.core.ElementTemplate;
 import game.plugins.datasetbuilders.CSVDatasetBuilder;
 import game.plugins.datasetbuilders.SequenceCSVDatasetBuilder;
 import game.plugins.datatemplates.LabelTemplate;
@@ -26,31 +27,29 @@ import org.junit.Test;
 
 public class DatasetTest {
 
-	private static final InstanceTemplate template = new InstanceTemplate();
-	private static final InstanceTemplate sequenceTpl = new InstanceTemplate();
+	private static final DatasetTemplate templateIris = new DatasetTemplate();
+	private static final DatasetTemplate templateProtein = new DatasetTemplate();
 	
 	static {
-		template.inputTemplate = new VectorTemplate();
-		template.outputTemplate = new LabelTemplate();
-		template.inputTemplate.setContent("dimension", 4);
-		template.outputTemplate.getContent("labels", List.class).add("Iris-setosa");
-		template.outputTemplate.getContent("labels", List.class).add("Iris-versicolor");
-		template.outputTemplate.getContent("labels", List.class).add("Iris-virginica");
-		
-		sequenceTpl.inputTemplate = new VectorTemplate();
-		sequenceTpl.outputTemplate = new LabelTemplate();
-		sequenceTpl.inputTemplate.setContent("sequence", true);
-		sequenceTpl.inputTemplate.setContent("dimension", 20);
-		sequenceTpl.outputTemplate.setContent("sequence", true);
-		sequenceTpl.outputTemplate.getContent("labels", List.class).add("H");
-		sequenceTpl.outputTemplate.getContent("labels", List.class).add("E");
-		sequenceTpl.outputTemplate.getContent("labels", List.class).add("C");
+		templateIris.sourceTemplate = new ElementTemplate(new VectorTemplate());
+		templateIris.targetTemplate = new ElementTemplate(new LabelTemplate());
+		templateIris.sourceTemplate.setContent("0.dimension", 4);
+		templateIris.targetTemplate.getContent("0.labels", List.class).add("Iris-setosa");
+		templateIris.targetTemplate.getContent("0.labels", List.class).add("Iris-versicolor");
+		templateIris.targetTemplate.getContent("0.labels", List.class).add("Iris-virginica");
+
+		templateProtein.sourceTemplate = new ElementTemplate(new VectorTemplate());
+		templateProtein.targetTemplate = new ElementTemplate(new LabelTemplate());
+		templateProtein.sourceTemplate.setContent("0.dimension", 20);
+		templateProtein.targetTemplate.getContent("0.labels", List.class).add("H");
+		templateProtein.targetTemplate.getContent("0.labels", List.class).add("E");
+		templateProtein.targetTemplate.getContent("0.labels", List.class).add("C");
 	}
 
 	@Test
 	public void testCSV() {
 		DatasetBuilder builder = new CSVDatasetBuilder();
-		builder.setContent("template", template);
+		builder.setContent("datasetTemplate", templateIris);
 		builder.setContent("file", new File("testdata/iris.data.txt"));
 		Dataset dataset = builder.buildDataset();
 		
@@ -67,7 +66,7 @@ public class DatasetTest {
 	@Test
 	public void testCSVSequence() {
 		DatasetBuilder builder = new SequenceCSVDatasetBuilder();
-		builder.setContent("template", sequenceTpl);
+		builder.setContent("datasetTemplate", templateProtein);
 		builder.setContent("file", new File("testdata/csvsequence.txt"));
 		Dataset dataset = builder.buildDataset();
 		assertEquals(5, dataset.size());

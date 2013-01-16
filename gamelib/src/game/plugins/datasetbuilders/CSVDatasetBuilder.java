@@ -10,20 +10,16 @@
  ******************************************************************************/
 package game.plugins.datasetbuilders;
 
-import game.core.DataTemplate;
+import game.core.Data;
 import game.core.Dataset;
 import game.core.DatasetBuilder;
-import game.core.InstanceTemplate;
-import game.plugins.datatemplates.LabelTemplate;
-import game.plugins.datatemplates.VectorTemplate;
+import game.core.Instance;
 
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.Arrays;
-
-import org.apache.commons.math3.linear.ArrayRealVector;
 
 import com.ios.errorchecks.FileExistsCheck;
 
@@ -38,21 +34,11 @@ public class CSVDatasetBuilder extends DatasetBuilder {
 	}
 
 	@Override
-	public boolean isCompatible(InstanceTemplate template) {
-		return isCompatible(template.inputTemplate) && isCompatible(template.outputTemplate);
-	}
-
-	private boolean isCompatible(DataTemplate template) {
-		return (template instanceof VectorTemplate
-				|| template instanceof LabelTemplate) && template.sequence == false;
-	}
-
-	@Override
 	public Dataset buildDataset() {
-		Dataset ret = new Dataset(template);
+		Dataset ret = new Dataset(datasetTemplate);
 		
-		int inputDim = template.inputTemplate.getDescriptionLength();
-		int outputDim = template.outputTemplate.getDescriptionLength();
+		int sourceDim = datasetTemplate.sourceTemplate.getTotalDescriptionLength();
+		int targetDim = datasetTemplate.targetTemplate.getTotalDescriptionLength();
 		
 		if (file.exists()) {
 			try {
@@ -62,9 +48,13 @@ public class CSVDatasetBuilder extends DatasetBuilder {
 					if (index < startIndex)
 						continue;
 					String[] tokens = line.split(separators);
-					Object input = getData(Arrays.copyOfRange(tokens, 0, inputDim), template.inputTemplate);
-					Object output = getData(Arrays.copyOfRange(tokens, inputDim, inputDim+outputDim), template.outputTemplate);
-					ret.add(template.newInstance(input, output));
+					assert(tokens.length == (sourceDim + targetDim));
+					
+					Data source = new Data();
+					source.add(datasetTemplate.sourceTemplate.loadElement(Arrays.asList(Arrays.copyOfRange(tokens, 0, sourceDim))));
+					Data target = new Data();
+					target.add(datasetTemplate.targetTemplate.loadElement(Arrays.asList(Arrays.copyOfRange(tokens, sourceDim, tokens.length))));
+					ret.add(new Instance(source, target));
 					count++;
 				}
 				reader.close();
@@ -74,25 +64,9 @@ public class CSVDatasetBuilder extends DatasetBuilder {
 		return ret;
 	}
 
-	private Object getData(String[] tokens, DataTemplate template) {
-		if (template instanceof VectorTemplate) {
-			double[] ret = new double[tokens.length];
-			for (int i = 0; i < ret.length; i++) {
-				try {
-					ret[i] = Double.parseDouble(tokens[i]);
-				} catch (NumberFormatException e) {
-					e.printStackTrace();
-				}
-			}
-			return new ArrayRealVector(ret);
-		}
-		if (template instanceof LabelTemplate) {
-			if (((LabelTemplate) template).labels.contains(tokens[0]))
-				return tokens[0];
-			else
-				return null;
-		}
-		return null;
+	@Override
+	public void prepare() {
+		// nothing to do
 	}
 
 }

@@ -79,7 +79,11 @@ public class EditorWindow extends Stage {
 			public void handle(ActionEvent event) {
 				Property model = editor.getModel();
 				editor.detach();
-				model.setContent(original);
+//				if (original != null && original instanceof IObject) {
+//					((IObject)original).replace(model.getContent(IObject.class));
+//				} else {
+					model.setContent(original);
+//				}
 				close();
 			}
 		});
@@ -100,7 +104,11 @@ public class EditorWindow extends Stage {
 				if (!editor.isReadOnly()) {
 					Property model = editor.getModel();
 					editor.detach();
-					model.setContent(original);
+//					if (original != null && original instanceof IObject) {
+//						((IObject)original).replace(model.getContent(IObject.class));
+//					} else {
+						model.setContent(original);
+//					}
 				}
 			}
 		});
@@ -110,12 +118,15 @@ public class EditorWindow extends Stage {
 		if (!editor.isReadOnly()) {
 			if (model.getContent() instanceof IObject) {
 				original = model.getContent(IObject.class).copy();
+				editor.connect(model);
+				model.getContent(IObject.class).startEdit(editor.getReference());
 			} else {
 				original = IObject.getKryo().copy(model.getContent());
+				editor.connect(model);
 			}
+		} else {
+			editor.connect(model);
 		}
-		
-		editor.connect(model);
 		if (model.getContent() != null)
 			setTitle(model.toString());
 		else

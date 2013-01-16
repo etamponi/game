@@ -10,24 +10,23 @@
  ******************************************************************************/
 package game.core;
 
-import com.ios.Compatible;
 import com.ios.IObject;
-import com.ios.errorchecks.CompatibilityCheck;
 import com.ios.errorchecks.PositivenessCheck;
 
-public abstract class DatasetBuilder extends IObject implements Compatible<InstanceTemplate> {
+public abstract class DatasetBuilder extends IObject {
 	
-	public InstanceTemplate template;
+	public DatasetTemplate datasetTemplate;
 	
 	public int startIndex = 0;
 	
 	public int instanceNumber = 1000;
 	
 	public DatasetBuilder() {
-		addErrorCheck("template", new CompatibilityCheck(this));
 		addErrorCheck("instanceNumber", new PositivenessCheck(false));
 		addErrorCheck("startIndex", new PositivenessCheck(true));
 	}
+	
+	public abstract void prepare();
 	
 	public abstract Dataset buildDataset();
 

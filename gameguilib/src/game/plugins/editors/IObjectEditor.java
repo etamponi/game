@@ -17,15 +17,13 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Map;
 
 import javafx.geometry.HPos;
 import javafx.geometry.Insets;
 import javafx.geometry.VPos;
 import javafx.scene.Node;
 import javafx.scene.control.Label;
-import javafx.scene.control.TreeItem;
-import javafx.scene.control.TreeView;
+import javafx.scene.control.ListView;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.ColumnConstraints;
 import javafx.scene.layout.GridPane;
@@ -39,7 +37,7 @@ import com.ios.triggers.SimpleTrigger;
 public class IObjectEditor extends PropertyEditor {
 	
 	private GridPane pane = new GridPane();
-	private TreeView<String> errorList = new TreeView<>();
+	private ListView<String> errorList = new ListView<>();
 	
 	private HashSet<String> hiddenOptions = new HashSet<>();
 	private HashMap<String, Class<? extends PropertyEditor>> specificEditors = new HashMap<>();
@@ -66,6 +64,8 @@ public class IObjectEditor extends PropertyEditor {
 		pane.getColumnConstraints().addAll(c0, c1);
 		
 		pane.setPrefWidth(500);
+		
+		errorList.setPrefHeight(150);
 	}
 	
 	protected GridPane getPane() {
@@ -115,7 +115,7 @@ public class IObjectEditor extends PropertyEditor {
 			}
 		}
 	}
-	
+
 	private void updateErrorList() {
 		if (getModel() == null)
 			return;
@@ -123,18 +123,9 @@ public class IObjectEditor extends PropertyEditor {
 		IObject content = getModel().getContent();
 		if (content == null)
 			return;
-	
-		if (errorList.getRoot() != null)
-			errorList.getRoot().getChildren().clear();
-		errorList.setRoot(new TreeItem<String>("Errors"));
-		errorList.getRoot().setExpanded(true);
-		Map<Property, List<String>> errors = content.getErrors();
-		for(Property key: errors.keySet()) {
-			TreeItem<String> item = new TreeItem<>(key.getPath());
-			errorList.getRoot().getChildren().add(item);
-			for(String error: errors.get(key))
-				item.getChildren().add(new TreeItem<String>(error));
-		}
+		
+		errorList.getItems().clear();
+		errorList.getItems().addAll(content.getErrors());
 		errorList.setPrefHeight(75);
 		errorList.setPrefWidth(75);
 		GridPane.setVgrow(errorList, Priority.SOMETIMES);
@@ -150,7 +141,7 @@ public class IObjectEditor extends PropertyEditor {
 		applyRowLayout(label, editor.getView(), editor.isInline());
 		return editor;
 	}
-
+	
 	private void applyRowLayout(Node label, Node view, boolean inline) {
 		GridPane.setValignment(label, VPos.TOP);
 		GridPane.setHalignment(label, HPos.RIGHT);

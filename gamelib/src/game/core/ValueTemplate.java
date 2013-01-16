@@ -8,17 +8,20 @@
  * Contributors:
  *     Emanuele Tamponi - initial API and implementation
  ******************************************************************************/
-package game.core.metrics;
+package game.core;
 
-import game.core.Metric;
-import game.core.Result;
-import game.core.experiments.ClassificationResult;
 
-public abstract class FullMetric extends Metric<ClassificationResult> {
 
-	@Override
-	public boolean isCompatible(Result result) {
-		return result instanceof ClassificationResult;
-	}
+import java.util.List;
+
+import com.ios.IObject;
+
+public abstract class ValueTemplate<V> extends IObject {
+
+	public abstract int getDescriptionLength();
+	
+	public abstract V loadValue(List<String> description);
+	
+	public abstract boolean equals(Object other);
 	
 }

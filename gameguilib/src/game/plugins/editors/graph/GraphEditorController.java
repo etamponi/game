@@ -11,7 +11,7 @@
 package game.plugins.editors.graph;
 
 import game.core.Block;
-import game.core.blocks.PredictionGraph;
+import game.core.blocks.Graph;
 import game.editorsystem.EditorController;
 import game.editorsystem.PropertyEditor;
 import game.plugins.editors.IObjectEditor;
@@ -20,9 +20,6 @@ import java.net.URL;
 import java.util.LinkedList;
 import java.util.ResourceBundle;
 import java.util.Set;
-
-import com.ios.IList;
-import com.ios.Property;
 
 import javafx.event.Event;
 import javafx.event.EventHandler;
@@ -37,6 +34,9 @@ import javafx.scene.input.MouseEvent;
 import javafx.scene.input.TransferMode;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.FlowPane;
+
+import com.ios.IList;
+import com.ios.Property;
 
 public class GraphEditorController implements EditorController {
 
@@ -133,7 +133,7 @@ public class GraphEditorController implements EditorController {
 
 	@Override
 	public void updateView() {
-		PredictionGraph graph = graphModel.getContent();
+		Graph graph = graphModel.getContent();
 		if (graph != null) {
 			graphPane.setGraph(graph);
 			graphPane.parseGraph();
@@ -156,25 +156,23 @@ public class GraphEditorController implements EditorController {
 	}
 
 	private void fillPools() {
-		fillPool(classifiersPane, "classifiers");
-		fillPool(inputEncodersPane, "inputEncoders");
-		fillPool(pipesPane, "pipes");
+		fillPool(classifiersPane, "blocks");
 	}
 	
 	private static class GraphConfigurationEditor extends IObjectEditor {
 		
 		public GraphConfigurationEditor() {
-			setHiddenOptions("classifiers", "inputEncoders", "pipes", "outputClassifier", "parents", "position");
+			setHiddenOptions("blocks", "outputBlock", "parents", "position");
 		}
 		
 	}
 	
 	private void fillPool(FlowPane pool, String listOptionName) {
 		pool.getChildren().clear();
-		IList list = ((PredictionGraph)graphModel.getContent()).getContent(listOptionName);
+		IList list = ((Graph)graphModel.getContent()).getContent(listOptionName);
 		if (list == null)
 			return;
-		Set<Class> blocks = list.getCompatibleContentTypes("*");
+		Set<Class> blocks = list.getValidContentTypes("*");
 		for (Class<? extends Block> type: blocks) {
 			try {
 				Block block = type.newInstance();

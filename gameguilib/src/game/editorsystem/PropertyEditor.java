@@ -26,13 +26,14 @@ import com.esotericsoftware.kryo.KryoCopyable;
 import com.esotericsoftware.kryo.KryoSerializable;
 import com.esotericsoftware.kryo.io.Input;
 import com.esotericsoftware.kryo.io.Output;
+import com.ios.Editor;
 import com.ios.IObject;
 import com.ios.Listener;
 import com.ios.PluginManager;
 import com.ios.Property;
 import com.ios.triggers.SimpleTrigger;
 
-public abstract class PropertyEditor extends IObject implements KryoSerializable, KryoCopyable<PropertyEditor> {
+public abstract class PropertyEditor extends IObject implements KryoSerializable, KryoCopyable<PropertyEditor>, Editor {
 	
 	protected class UpdateTrigger extends SimpleTrigger {
 		
@@ -104,6 +105,10 @@ public abstract class PropertyEditor extends IObject implements KryoSerializable
 		return root != null ? model : null;
 	}
 	
+	public Property getReference() {
+		return root != null ? reference : null;
+	}
+	
 	protected UpdateTrigger getUpdateTrigger() {
 		return trigger;
 	}
@@ -131,7 +136,7 @@ public abstract class PropertyEditor extends IObject implements KryoSerializable
 	}
 	
 	public static PropertyEditor getBestEditor(Class type) {
-		Set<Class> editors = PluginManager.getCompatibleImplementationsOf(PropertyEditor.class, new CanEditConstraint(type));
+		Set<Class> editors = PluginManager.getValidImplementationsOf(PropertyEditor.class, new CanEditConstraint(type));
 		Iterator<Class> it = editors.iterator();
 		
 		if (!it.hasNext())

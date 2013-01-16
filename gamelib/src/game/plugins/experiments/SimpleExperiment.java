@@ -10,41 +10,35 @@
  ******************************************************************************/
 package game.plugins.experiments;
 
-import game.core.DatasetBuilder;
+import game.core.Dataset;
 import game.core.ResultList;
-import game.core.blocks.PredictionGraph;
-import game.core.experiments.FullExperiment;
-import game.core.experiments.FullResult;
+import game.core.blocks.Graph;
+import game.core.experiments.ClassificationExperiment;
+import game.core.experiments.ClassificationResult;
 
-import com.ios.Property;
-import com.ios.constraints.CompatibleWith;
-import com.ios.triggers.MasterSlaveTrigger;
-
-public class SimpleExperiment extends FullExperiment {
-
-	public DatasetBuilder trainingDataset;
+public class SimpleExperiment extends ClassificationExperiment {
 	
-	public DatasetBuilder testingDataset;
-		
-	public SimpleExperiment() {
-		addTrigger(new MasterSlaveTrigger(this, "template", "trainingDataset.template", "testingDataset.template"));
-		Property p = new Property(this, "template");
-		addConstraint("trainingDataset", new CompatibleWith(p));
-		addConstraint("testingDataset", new CompatibleWith(p));
-	}
-
+	public boolean shuffle = false;
+	
+	public double testingPercent = 0.30;
+	
 	@Override
 	protected ResultList runExperiment(String outputDirectory) {
-		FullResult result = new FullResult();
-		PredictionGraph graphClone = graph.copy();
+		ClassificationResult result = new ClassificationResult();
+		Graph graphClone = graph.copy();
+		
+		Dataset dataset = datasetBuilder.buildDataset();
+		Dataset trainset = dataset.getFirsts(1-testingPercent);
+		Dataset testset = dataset.getLasts(testingPercent);
+		
 		updateStatus(0.01, "training graph...");
-		executeAnotherTaskAndWait(0.50, graphClone.trainingAlgorithm, trainingDataset.buildDataset());
+		executeAnotherTaskAndWait(0.50, graphClone.trainingAlgorithm, trainset);
 		updateStatus(0.71, "training complete, testing phase...");
-		result.classifiedDataset = classifyDataset(0.90, graphClone, testingDataset.buildDataset());
+		result.classifiedDataset = classifyDataset(0.90, graphClone, testset);
 		result.trainedGraph = graphClone;
 		updateStatus(1.00, "experiment completed");
 		
-		ResultList<FullResult> ret = new ResultList<>();
+		ResultList<ClassificationResult> ret = new ResultList<>();
 		ret.results.add(result);
 		
 		return ret;

@@ -10,20 +10,15 @@
  ******************************************************************************/
 package game.plugins.datatemplates;
 
+import java.util.List;
+
 import com.ios.IList;
 import com.ios.errorchecks.NoRepetitionCheck;
 import com.ios.errorchecks.SizeCheck;
 
-import game.core.DataTemplate;
+import game.core.ValueTemplate;
 
-public class LabelTemplate extends DataTemplate {
-	
-	public class LabelData extends Data<String> {
-		@Override
-		protected Class getElementType() {
-			return String.class;
-		}
-	}
+public class LabelTemplate extends ValueTemplate<String> {
 	
 	public IList<String> labels;
 
@@ -39,8 +34,13 @@ public class LabelTemplate extends DataTemplate {
 	}
 
 	@Override
-	public LabelData newData() {
-		return new LabelData();
+	public String loadValue(List<String> description) {
+		return (String) description.get(0);
 	}
-	
+
+	@Override
+	public boolean equals(Object other) {
+		return other instanceof LabelTemplate ? ((LabelTemplate)other).labels.equals(this.labels) : false;
+	}
+
 }

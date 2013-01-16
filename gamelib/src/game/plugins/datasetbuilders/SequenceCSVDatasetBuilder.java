@@ -10,21 +10,16 @@
  ******************************************************************************/
 package game.plugins.datasetbuilders;
 
-import game.core.DataTemplate;
-import game.core.DataTemplate.Data;
+import game.core.Data;
 import game.core.Dataset;
 import game.core.DatasetBuilder;
-import game.core.InstanceTemplate;
-import game.plugins.datatemplates.LabelTemplate;
-import game.plugins.datatemplates.VectorTemplate;
+import game.core.Instance;
 
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.Arrays;
-
-import org.apache.commons.math3.linear.ArrayRealVector;
 
 import com.ios.errorchecks.FileExistsCheck;
 
@@ -39,38 +34,29 @@ public class SequenceCSVDatasetBuilder extends DatasetBuilder {
 	}
 
 	@Override
-	public boolean isCompatible(InstanceTemplate template) {
-		return isCompatible(template.inputTemplate) && isCompatible(template.outputTemplate);
-	}
-	
-	private boolean isCompatible(DataTemplate template) {
-		return (template instanceof VectorTemplate
-				|| template instanceof LabelTemplate) && template.sequence == true;
-	}
-
-	@Override
 	public Dataset buildDataset() {
-		Dataset ret = new Dataset(template);
+		Dataset ret = new Dataset(datasetTemplate);
 		
-		int inputDim = getDimension(template.inputTemplate);
-		int outputDim = getDimension(template.outputTemplate);
+		int sourceDim = datasetTemplate.sourceTemplate.getTotalDescriptionLength();
+		int targetDim = datasetTemplate.targetTemplate.getTotalDescriptionLength();
 		
 		if (file.exists()) {
 			try {
 				int count = 0, index = 0;
 				BufferedReader reader = new BufferedReader(new FileReader(file));
 				for(String line = reader.readLine(); line != null && count < instanceNumber; line = reader.readLine(), index++) {
-					Data inputSequence = template.inputTemplate.newData();
-					Data outputSequence = template.outputTemplate.newData();
+					Data sourceSequence = new Data();
+					Data targetSequence = new Data();
 					while (line != null && !line.matches("^$")) {
 						String[] tokens = line.split(separators);
-						inputSequence.add(getData(Arrays.copyOfRange(tokens, 0, inputDim), template.inputTemplate));
-						outputSequence.add(getData(Arrays.copyOfRange(tokens, inputDim, inputDim+outputDim), template.outputTemplate));
+						assert(tokens.length == (sourceDim + targetDim));
+						sourceSequence.add(datasetTemplate.sourceTemplate.loadElement(Arrays.copyOfRange(tokens, 0, sourceDim)));
+						targetSequence.add(datasetTemplate.targetTemplate.loadElement(Arrays.copyOfRange(tokens, sourceDim, tokens.length)));
 						line = reader.readLine();
 					}
 					if (index < startIndex)
 						continue;
-					ret.add(template.newInstance(inputSequence, outputSequence));
+					ret.add(new Instance(sourceSequence, targetSequence));
 					count++;
 				}
 				reader.close();
@@ -79,33 +65,10 @@ public class SequenceCSVDatasetBuilder extends DatasetBuilder {
 		
 		return ret;
 	}
-	
-	private Object getData(String[] tokens, DataTemplate template) {
-		if (template instanceof VectorTemplate) {
-			double[] ret = new double[tokens.length];
-			for (int i = 0; i < ret.length; i++) {
-				ret[i] = Double.parseDouble(tokens[i]);
-			}
-			return new ArrayRealVector(ret);
-		}
-		if (template instanceof LabelTemplate) {
-			if (((LabelTemplate) template).labels.contains(tokens[0]))
-				return tokens[0];
-			else
-				return null;
-		}
-		return null;
-	}
 
-	private int getDimension(DataTemplate template) {
-		if (template instanceof VectorTemplate) {
-			return ((VectorTemplate) template).dimension;
-		}
-		if (template instanceof LabelTemplate) {
-			return 1;
-		}
-		
-		return 0;
+	@Override
+	public void prepare() {
+		// nothing to do
 	}
 
 }

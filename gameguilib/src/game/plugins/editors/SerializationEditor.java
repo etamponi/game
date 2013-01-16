@@ -117,6 +117,7 @@ public class SerializationEditor extends PropertyEditor {
 					File out = chooser.showOpenDialog(line.getScene().getWindow());
 					if (out != null) {
 						IObject loaded = IObject.load(out);
+						loaded.startEdit(content.getLinkFromEditor());
 						if (!loaded.getClass().equals(content.getClass())) {
 							messageDialog("Cannot load object configuration", "Object could not be loaded. Check for type and constraints.");
 						} else {

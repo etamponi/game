@@ -10,66 +10,46 @@
  ******************************************************************************/
 package game.core;
 
-import org.apache.commons.math3.linear.RealVector;
 
-public class Sample<I, O> {
+public class Sample {
 
-	private I input;
-	private O output;
-	private O prediction;
-	private RealVector encodedInput;
-	private RealVector encodedOutput;
-	private RealVector encodedPrediction;
+	private Element source;
+	private Element target;
+	private Element prediction;
 	
-	public Sample(I input, O output) {
-		this.input = input;
-		this.output = output;
+	public Sample(Element source, Element target) {
+		this.source = source;
+		this.target = target;
 	}
 	
-	public Sample(I input, O output, O prediction) {
-		this.input = input;
-		this.output = output;
+	public Sample(Element source, Element target, Element prediction) {
+		this.source = source;
+		this.target = target;
 		this.prediction = prediction;
 	}
-	
-	public Sample(I input, RealVector encodedInput, O output, RealVector encodedOutput) {
-		this.input = input;
-		this.output = output;
-		this.encodedInput = encodedInput;
-		this.encodedOutput = encodedOutput;
+
+	public Element getSource() {
+		return source;
 	}
-	
-	public Sample(I input, RealVector encodedInput, O output, RealVector encodedOutput, O prediction, RealVector encodedPrediction) {
-		this.input = input;
-		this.output = output;
-		this.prediction = prediction;
-		this.encodedInput = encodedInput;
-		this.encodedOutput = encodedOutput;
-		this.encodedPrediction = encodedPrediction;
+
+	public void setSource(Element source) {
+		this.source = source;
 	}
-	
-	public I getInput() {
-		return input;
+
+	public Element getTarget() {
+		return target;
 	}
-	
-	public O getOutput() {
-		return output;
+
+	public void setTarget(Element target) {
+		this.target = target;
 	}
-	
-	public O getPrediction() {
+
+	public Element getPrediction() {
 		return prediction;
 	}
 
-	public RealVector getEncodedInput() {
-		return encodedInput;
-	}
-
-	public RealVector getEncodedOutput() {
-		return encodedOutput;
-	}
-
-	public RealVector getEncodedPrediction() {
-		return encodedPrediction;
+	public void setPrediction(Element prediction) {
+		this.prediction = prediction;
 	}
 	
 }

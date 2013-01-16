@@ -11,7 +11,7 @@
 package game.plugins.editors.graph;
 
 import game.core.Block;
-import game.core.blocks.PredictionGraph;
+import game.core.blocks.Graph;
 import game.editorsystem.EditorWindow;
 import game.editorsystem.PropertyEditor;
 import game.plugins.editors.graph.OuterGraphEditor.GraphEditor;
@@ -69,10 +69,9 @@ public class BlockNode extends VBox {
 			
 			if (!isTemplate) {
 				addTrigger(new SimpleTrigger(new SubPathListener(new Property(this, "block"))) {
-					private BlockParent parent = BlockParent.this;
 					@Override
 					public void action(Property changedPath) {
-						if (parent.block != null)
+						if (block != null)
 							updateView(block);
 					}
 				});
@@ -84,6 +83,7 @@ public class BlockNode extends VBox {
 	public void updateView(Block block) {
 		blockName.setText(block.name);
 		pane.fixPosition(this);
+//		System.out.println("Checking " + block);
 		status.setImage(block.getErrors().isEmpty() ? STATUSOK : STATUSERRORS);
 	}
 
@@ -142,7 +142,7 @@ public class BlockNode extends VBox {
 				public void handle(MouseEvent event) {
 					if (event.getClickCount() > 1) {
 						PropertyEditor editor;
-						if (PredictionGraph.class.isAssignableFrom(b.getClass()))
+						if (Graph.class.isAssignableFrom(b.getClass()))
 							editor = new GraphEditor();
 						else
 							editor = PropertyEditor.getBestEditor(b.getClass());

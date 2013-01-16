@@ -15,7 +15,7 @@ import game.core.Dataset.SampleIterator;
 import game.core.LabeledMatrix;
 import game.core.Result;
 import game.core.Sample;
-import game.core.experiments.FullResult;
+import game.core.experiments.ClassificationResult;
 import game.core.metrics.FullMetric;
 import game.plugins.datatemplates.LabelTemplate;
 
@@ -28,17 +28,18 @@ import com.ios.IList;
 
 public class StandardMetrics extends FullMetric {
 	
+	private IList<String> labels;
 	private List<Double> truePositives, falseNegatives;
 	private List<Double> falsePositives, trueNegatives;
 	
 	@Override
 	public boolean isCompatible(Result result) {
 		return super.isCompatible(result) &&
-				((FullResult)result).classifiedDataset.getTemplate().outputTemplate instanceof LabelTemplate;
+				((ClassificationResult)result).classifiedDataset.getTemplate().targetTemplate.isSingletonTemplate(LabelTemplate.class);
 	}
 
 	@Override
-	protected void prepareForEvaluation(FullResult result) {	
+	protected void prepareForEvaluation(ClassificationResult result) {	
 		truePositives = new ArrayList<>();
 		falsePositives = new ArrayList<>();
 		falseNegatives = new ArrayList<>();
@@ -46,7 +47,7 @@ public class StandardMetrics extends FullMetric {
 		
 		Dataset dataset = result.classifiedDataset;
 		
-		List<String> labels = dataset.getTemplate().outputTemplate.getContent("labels");
+		labels = dataset.getTemplate().targetTemplate.getSingleton(LabelTemplate.class).labels.copy();
 		for(int k = 0; k < labels.size(); k++) {
 			truePositives.add(0.0);
 			falsePositives.add(0.0);
@@ -54,11 +55,11 @@ public class StandardMetrics extends FullMetric {
 			trueNegatives.add(0.0);
 		}
 		
-		SampleIterator it = dataset.sampleIterator(true);
+		SampleIterator it = dataset.sampleIterator();
 		while(it.hasNext()) {
 			Sample sample = it.next();
-			String trueLabel = (String) sample.getOutput();
-			String predLabel = (String) sample.getPrediction();
+			String trueLabel = (String) sample.getTarget().get(0);
+			String predLabel = (String) sample.getPrediction().get(0);
 			int trueIndex = labels.indexOf(trueLabel);
 			int predIndex = labels.indexOf(predLabel);
 			
@@ -97,8 +98,8 @@ public class StandardMetrics extends FullMetric {
 		return ret;
 	}
 	
-	protected LabeledMatrix evaluatePrecision(FullResult result) {
-		IList<String> labels = result.classifiedDataset.getTemplate().outputTemplate.getContent("labels", IList.class).copy();
+	protected LabeledMatrix evaluatePrecision(ClassificationResult result) {
+		IList<String> labels = this.labels.copy();
 		LabeledMatrix matrix = new LabeledMatrix(1, labels.size()+1);
 		
 		for(int i = 0; i < labels.size(); i++) {
@@ -115,8 +116,8 @@ public class StandardMetrics extends FullMetric {
 		return matrix;
 	}
 	
-	protected LabeledMatrix evaluateRecall(FullResult result) {
-		IList<String> labels = result.classifiedDataset.getTemplate().outputTemplate.getContent("labels", IList.class).copy();
+	protected LabeledMatrix evaluateRecall(ClassificationResult result) {
+		IList<String> labels = this.labels.copy();
 		LabeledMatrix matrix = new LabeledMatrix(1, labels.size()+1);
 		
 		for(int i = 0; i < labels.size(); i++) {
@@ -133,8 +134,8 @@ public class StandardMetrics extends FullMetric {
 		return matrix;
 	}
 	
-	protected LabeledMatrix evaluateAccuracy(FullResult result) {
-		IList<String> labels = result.classifiedDataset.getTemplate().outputTemplate.getContent("labels", IList.class).copy();
+	protected LabeledMatrix evaluateAccuracy(ClassificationResult result) {
+		IList<String> labels = this.labels.copy();
 		LabeledMatrix matrix = new LabeledMatrix(1, labels.size()+1);
 		
 		for(int i = 0; i < labels.size(); i++) {
@@ -153,8 +154,8 @@ public class StandardMetrics extends FullMetric {
 		return matrix;
 	}
 	
-	protected LabeledMatrix evaluateFScore(FullResult result) {
-		IList<String> labels = result.classifiedDataset.getTemplate().outputTemplate.getContent("labels", IList.class).copy();
+	protected LabeledMatrix evaluateFScore(ClassificationResult result) {
+		IList<String> labels = this.labels.copy();
 		LabeledMatrix matrix = new LabeledMatrix(1, labels.size()+1);
 		
 		for(int i = 0; i < labels.size(); i++) {
@@ -172,8 +173,8 @@ public class StandardMetrics extends FullMetric {
 		return matrix;
 	}
 	
-	protected LabeledMatrix evaluateMatthews(FullResult result) {
-		IList<String> labels = result.classifiedDataset.getTemplate().outputTemplate.getContent("labels", IList.class).copy();
+	protected LabeledMatrix evaluateMatthews(ClassificationResult result) {
+		IList<String> labels = this.labels.copy();
 		LabeledMatrix matrix = new LabeledMatrix(1, labels.size()+1);
 		
 		for(int i = 0; i < labels.size(); i++) {

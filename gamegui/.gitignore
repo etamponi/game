@@ -5,3 +5,5 @@
 /bin
 /plugins/*.jar
 /plugins.bin
+/logs.old
+/results.old

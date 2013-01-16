@@ -8,17 +8,16 @@
  * Contributors:
  *     Emanuele Tamponi - initial API and implementation
  ******************************************************************************/
-package game.core.metrics;
+package game.core.experiments;
 
-import game.core.Metric;
+import game.core.Dataset;
 import game.core.Result;
-import game.core.experiments.ClassificationResult;
+import game.core.blocks.Graph;
 
-public abstract class FullMetric extends Metric<ClassificationResult> {
-
-	@Override
-	public boolean isCompatible(Result result) {
-		return result instanceof ClassificationResult;
-	}
+public class ClassificationResult extends Result {
+	
+	public Graph trainedGraph;
+	
+	public Dataset classifiedDataset;
 	
 }

@@ -131,7 +131,7 @@ public class ImplementationChooserEditor extends PropertyEditor {
 				IObject current = getModel().getContent();
 				implementations.add(selected);
 				
-				Set<Class> types = getModel().getCompatibleContentTypes();
+				Set<Class> types = getModel().getValidContentTypes();
 				for (Class<? extends IObject> type: types) {
 					if (current != null && current.getClass().equals(type)) {
 						selected = new Implementation(current);

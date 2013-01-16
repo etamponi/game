@@ -11,14 +11,12 @@
 package game.plugins.editors.graph;
 
 import game.core.Block;
-import game.core.blocks.Encoder;
-import game.core.blocks.PredictionGraph;
+import game.core.blocks.Graph;
 import game.core.blocks.Pipe;
-import game.core.blocks.Transducer;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -40,7 +38,7 @@ import javafx.scene.transform.Scale;
 
 public class GraphPane extends ScrollPane {
 
-	private PredictionGraph graph;
+	private Graph graph;
 	
 	private AnchorPane parent = new AnchorPane();
 	
@@ -150,12 +148,9 @@ public class GraphPane extends ScrollPane {
 					fixPosition(node);
 					
 					Block block = node.getBlock();
-					if (block instanceof Transducer && !graph.classifiers.contains(block))
-						graph.classifiers.add((Transducer)block);
-					if (block instanceof Encoder && !graph.inputEncoders.contains(block))
-						graph.inputEncoders.add((Encoder)block);
-					if (block instanceof Pipe && !graph.pipes.contains(block))
-						graph.pipes.add((Pipe)block);
+					
+					if (!graph.blocks.contains(block))
+						graph.blocks.add(block);
 					
 					node.updateView(block);
 					
@@ -178,7 +173,7 @@ public class GraphPane extends ScrollPane {
 		return content;
 	}
 	
-	public void setGraph(PredictionGraph g) {
+	public void setGraph(Graph g) {
 		this.graph = g;
 	}
 	
@@ -206,13 +201,10 @@ public class GraphPane extends ScrollPane {
 		disconnectBlockNodes();
 		content.getChildren().clear();
 		
-		List<Block> all = new LinkedList<>();
-		all.addAll(graph.inputEncoders);
-		all.addAll(graph.pipes);
-		all.addAll(graph.classifiers);
+		List<Block> all = new ArrayList<>(graph.blocks);
 		
 		Map<Integer, Integer> countPerLevel = new HashMap<>();
-		List<BlockNode> allNodes = new LinkedList<>();
+		List<BlockNode> allNodes = new ArrayList<>();
 		
 		for(Block b: all) {
 			BlockNode node = new BlockNode(b, false, this);
@@ -324,7 +316,7 @@ public class GraphPane extends ScrollPane {
 			 0.0, 20.0
 		});
 		out.setFill(Color.GREEN);
-		if (graph.outputClassifier != node.getBlock())
+		if (graph.outputBlock != node.getBlock())
 			out.setOpacity(0);
 		else
 			outputBlock = out;
@@ -360,18 +352,18 @@ public class GraphPane extends ScrollPane {
 			});
 		}
 		
-		if (node.getBlock() instanceof Transducer) {
+		if (node.getBlock() instanceof Pipe) {
 			node.addEventHandler(MouseEvent.MOUSE_CLICKED, new EventHandler<MouseEvent>() {
 				@Override
 				public void handle(MouseEvent event) {
 					if (event.getButton() == MouseButton.SECONDARY) {
-						if (node.getBlock() == graph.outputClassifier) {
-							graph.setContent("outputClassifier", null);
+						if (node.getBlock() == graph.outputBlock) {
+							graph.setContent("outputBlock", null);
 							out.setOpacity(0);
 						} else {
 							if (outputBlock != null)
 								outputBlock.setOpacity(0);
-							graph.setContent("outputClassifier", node.getBlock());
+							graph.setContent("outputBlock", node.getBlock());
 							out.setOpacity(1);
 							outputBlock = out;
 						}
@@ -452,15 +444,9 @@ public class GraphPane extends ScrollPane {
 	}
 
 	public void removeBlock(Block block) {
-		if (block instanceof Transducer) {
-			graph.classifiers.remove(block);
-			if (graph.outputClassifier == block)
-				graph.setContent("outputClassifier", null);
-		}
-		if (block instanceof Encoder)
-			graph.inputEncoders.remove(block);
-		if (block instanceof Pipe)
-			graph.pipes.remove(block);
+		if (graph.outputBlock == block)
+			graph.setContent("outputBlock", null);
+		graph.blocks.remove(block);
 	}
 	
 	public BlockNode getDragging() {

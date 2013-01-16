@@ -54,7 +54,7 @@ import com.ios.IObject;
 import com.ios.PluginManager;
 import com.ios.PluginManager.PluginConfiguration;
 import com.ios.Property;
-import com.ios.listeners.SubPathListener;
+import com.ios.listeners.ExactPathListener;
 import com.ios.triggers.SimpleTrigger;
 
 public class MainController extends IObject implements Initializable , KryoCopyable<MainController> {
@@ -95,7 +95,7 @@ public class MainController extends IObject implements Initializable , KryoCopya
 	public MainController() {
 		setContent("experimentList", new IList<>(Experiment.class));
 		
-		addTrigger(new SimpleTrigger(new SubPathListener(new Property(this, "experimentList"))) {
+		addTrigger(new SimpleTrigger(new ExactPathListener(new Property(this, "experimentList"))) {
 			@Override
 			public void action(Property triggerPath) {
 				controlButtons();

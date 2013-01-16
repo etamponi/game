@@ -10,57 +10,56 @@
  ******************************************************************************/
 package game.core;
 
-import game.core.DataTemplate.Data;
 
 public class Instance {
 	
-	private Data input;
+	private Data source;
 	
-	private Data output;
+	private Data target;
 	
 	private Data prediction;
 	
-	private Encoding predictionEncoding;
-	
-	Instance() {
+	public Instance() {
 		
 	}
 	
-	Instance(Data input, Data output) {
-		this.input = input;
-		this.output = output;
+	public Instance(Data input) {
+		this.source = input;
 	}
 	
-	public <D extends Data> D getInput() {
-		return (D)input;
+	public Instance(Data source, Data target) {
+		this.source = source;
+		this.target = target;
+	}
+	
+	public Instance(Data source, Data target, Data prediction) {
+		this.source = source;
+		this.target = target;
+		this.prediction = prediction;
+	}
+	
+	public Data getSource() {
+		return source;
 	}
 
-	public void setInput(Data input) {
-		this.input = input;
+	public void setSource(Data source) {
+		this.source = source;
 	}
 
-	public <D extends Data> D getOutput() {
-		return (D)output;
+	public Data getTarget() {
+		return target;
 	}
 
-	public void setOutput(Data output) {
-		this.output = output;
+	public void setTarget(Data target) {
+		this.target = target;
 	}
 
-	public <D extends Data> D getPrediction() {
-		return (D)prediction;
+	public Data getPrediction() {
+		return prediction;
 	}
 
 	public void setPrediction(Data prediction) {
 		this.prediction = prediction;
 	}
-
-	public Encoding getPredictionEncoding() {
-		return predictionEncoding;
-	}
-
-	public void setPredictionEncoding(Encoding predictionEncoding) {
-		this.predictionEncoding = predictionEncoding;
-	}
-
+	
 }

@@ -10,8 +10,6 @@
  ******************************************************************************/
 package game.main;
 
-import game.core.Dataset;
-import game.core.DatasetSerializer;
 import game.utils.Log;
 
 import java.io.File;
@@ -39,7 +37,7 @@ public class Settings {
 		PluginManager.initialize(config);
 		Log.setLogsDirectory(LOGSDIR);
 		
-		IObject.getKryo().addDefaultSerializer(Dataset.class, DatasetSerializer.class);
+//		IObject.getKryo().addDefaultSerializer(Dataset.class, DatasetSerializer.class);
 	}
 
 	private static void addPlugins(PluginConfiguration config) {

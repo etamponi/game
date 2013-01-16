@@ -8,17 +8,20 @@
  * Contributors:
  *     Emanuele Tamponi - initial API and implementation
  ******************************************************************************/
-package game.core.metrics;
+package game.core;
 
-import game.core.Metric;
-import game.core.Result;
-import game.core.experiments.ClassificationResult;
 
-public abstract class FullMetric extends Metric<ClassificationResult> {
+import com.ios.IObject;
 
-	@Override
-	public boolean isCompatible(Result result) {
-		return result instanceof ClassificationResult;
-	}
+public class DatasetTemplate extends IObject {
 	
+	public ElementTemplate sourceTemplate;
+	
+	public ElementTemplate targetTemplate;
+	
+	public DatasetTemplate() {
+		setContent("sourceTemplate", new ElementTemplate());
+		setContent("targetTemplate", new ElementTemplate());
+	}
+
 }

@@ -10,23 +10,18 @@
  ******************************************************************************/
 package game.plugins.datatemplates;
 
+
+import game.core.ValueTemplate;
+
+import java.util.List;
+
+import org.apache.commons.math3.linear.ArrayRealVector;
 import org.apache.commons.math3.linear.RealVector;
 
 import com.ios.errorchecks.PositivenessCheck;
 
-import game.core.DataTemplate;
-
-public class VectorTemplate extends DataTemplate {
+public class VectorTemplate extends ValueTemplate<RealVector> {
 	
-	public class VectorData extends Data<RealVector> {
-
-		@Override
-		protected Class getElementType() {
-			return RealVector.class;
-		}
-		
-	}
-
 	public int dimension;
 	
 	public VectorTemplate() {
@@ -39,8 +34,17 @@ public class VectorTemplate extends DataTemplate {
 	}
 
 	@Override
-	public VectorData newData() {
-		return new VectorData();
+	public RealVector loadValue(List<String> description) {
+		RealVector ret = new ArrayRealVector(dimension);
+		int i = 0;
+		for(String s: description)
+			ret.setEntry(i++, Double.parseDouble(s));
+		return ret;
+	}
+
+	@Override
+	public boolean equals(Object other) {
+		return other instanceof VectorTemplate ? ((VectorTemplate)other).dimension == this.dimension : false;
 	}
 	
 }
