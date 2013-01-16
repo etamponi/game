@@ -56,7 +56,7 @@ public class SimpleKNNTraining extends TrainingAlgorithm<KNNClassifier> {
 
 	@Override
 	protected boolean isCompatible(DatasetTemplate template) {
-		return template != null && template.targetTemplate != null && template.targetTemplate.isSingletonTemplate(LabelTemplate.class);
+		return template.targetTemplate.isSingletonTemplate(LabelTemplate.class);
 	}
 
 }

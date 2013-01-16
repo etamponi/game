@@ -66,7 +66,7 @@ public abstract class TrainingAlgorithm<B extends Block> extends LongTask<Void, 
 		if (!((Class)((ParameterizedType)getClass().getGenericSuperclass()).getActualTypeArguments()[0]).isAssignableFrom(block.getClass()))
 			return false;
 		else
-			return isCompatible(block.datasetTemplate);
+			return block.datasetTemplate == null || !block.datasetTemplate.isReady() ? false : isCompatible(block.datasetTemplate);
 	}
 
 }

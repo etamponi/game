@@ -22,6 +22,7 @@ import java.io.IOException;
 import java.util.Arrays;
 
 import com.ios.errorchecks.FileExistsCheck;
+import com.ios.triggers.MasterSlaveTrigger;
 
 public class CSVDatasetBuilder extends DatasetBuilder {
 	
@@ -30,6 +31,12 @@ public class CSVDatasetBuilder extends DatasetBuilder {
 	public String separators = "[, +]";
 	
 	public CSVDatasetBuilder() {
+		addTrigger(new MasterSlaveTrigger(this, "", "datasetTemplate.sequences") {
+			@Override
+			protected Object transform(Object content) {
+				return false;
+			}
+		});
 		addErrorCheck("file", new FileExistsCheck());
 	}
 

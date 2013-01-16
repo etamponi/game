@@ -36,7 +36,7 @@ public class MajorityCombiner extends Sink {
 		
 		Data ret = new Data();
 		for(int j = 0; j < counts.getColumnDimension(); j++)
-			ret.add(new Element(labels.get(counts.getRowVector(j).getMaxIndex())));
+			ret.add(new Element(labels.get(counts.getColumnVector(j).getMaxIndex())));
 		return ret;
 	}
 

@@ -19,9 +19,15 @@ public class DatasetTemplate extends IObject {
 	
 	public ElementTemplate targetTemplate;
 	
+	public boolean sequences;
+	
 	public DatasetTemplate() {
 		setContent("sourceTemplate", new ElementTemplate());
 		setContent("targetTemplate", new ElementTemplate());
+	}
+
+	public boolean isReady() {
+		return !sourceTemplate.isEmpty() && !targetTemplate.isEmpty();
 	}
 
 }

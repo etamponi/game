@@ -35,7 +35,7 @@ public abstract class Block extends IObject {
 		setContent("position", new BlockPosition());
 		setContent("outputTemplate", new ElementTemplate());
 		omitFromErrorCheck("parents", "position");
-		omitFromPropagation("*.parents.*", "*.trainingAlgorithm.block");
+		omitFromPropagation("*.parents.*.parents.*", "*.parents.*.trainingAlgorithm.block");
 		
 //		addTrigger(new BoundProperties(this, "outputTemplate"));
 		addTrigger(new MasterSlaveTrigger(this, "", "trainingAlgorithm.block"));
