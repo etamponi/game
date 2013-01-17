@@ -27,6 +27,11 @@ public class VectorTemplate extends ValueTemplate<RealVector> {
 	public VectorTemplate() {
 		addErrorCheck("dimension", new PositivenessCheck(false));
 	}
+	
+	public VectorTemplate(int dimension) {
+		this();
+		this.dimension = dimension;
+	}
 
 	@Override
 	public int getDescriptionLength() {

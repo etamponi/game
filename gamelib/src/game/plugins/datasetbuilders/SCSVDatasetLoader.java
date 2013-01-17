@@ -24,17 +24,17 @@ import java.util.Arrays;
 import com.ios.errorchecks.FileExistsCheck;
 import com.ios.triggers.MasterSlaveTrigger;
 
-public class CSVDatasetBuilder extends DatasetBuilder {
-	
+public class SCSVDatasetLoader extends DatasetBuilder {
+
 	public File file = new File("nonexistent.txt");
 	
 	public String separators = "[, +]";
 	
-	public CSVDatasetBuilder() {
+	public SCSVDatasetLoader() {
 		addTrigger(new MasterSlaveTrigger(this, "", "datasetTemplate.sequences") {
 			@Override
 			protected Object transform(Object content) {
-				return false;
+				return true;
 			}
 		});
 		addErrorCheck("file", new FileExistsCheck());
@@ -49,19 +49,21 @@ public class CSVDatasetBuilder extends DatasetBuilder {
 		
 		if (file.exists()) {
 			try {
-				int index = 0, count = 0;
+				int count = 0, index = 0;
 				BufferedReader reader = new BufferedReader(new FileReader(file));
 				for(String line = reader.readLine(); line != null && count < instanceNumber; line = reader.readLine(), index++) {
+					Data sourceSequence = new Data();
+					Data targetSequence = new Data();
+					while (line != null && !line.matches("^$")) {
+						String[] tokens = line.split(separators);
+						assert(tokens.length == (sourceDim + targetDim));
+						sourceSequence.add(datasetTemplate.sourceTemplate.loadElement(Arrays.copyOfRange(tokens, 0, sourceDim)));
+						targetSequence.add(datasetTemplate.targetTemplate.loadElement(Arrays.copyOfRange(tokens, sourceDim, tokens.length)));
+						line = reader.readLine();
+					}
 					if (index < startIndex)
 						continue;
-					String[] tokens = line.split(separators);
-					assert(tokens.length == (sourceDim + targetDim));
-					
-					Data source = new Data();
-					source.add(datasetTemplate.sourceTemplate.loadElement(Arrays.asList(Arrays.copyOfRange(tokens, 0, sourceDim))));
-					Data target = new Data();
-					target.add(datasetTemplate.targetTemplate.loadElement(Arrays.asList(Arrays.copyOfRange(tokens, sourceDim, tokens.length))));
-					ret.add(new Instance(source, target));
+					ret.add(new Instance(sourceSequence, targetSequence));
 					count++;
 				}
 				reader.close();

@@ -15,8 +15,8 @@ import game.core.Dataset;
 import game.core.DatasetBuilder;
 import game.core.DatasetTemplate;
 import game.core.ElementTemplate;
-import game.plugins.datasetbuilders.CSVDatasetBuilder;
-import game.plugins.datasetbuilders.SequenceCSVDatasetBuilder;
+import game.plugins.datasetbuilders.CSVDatasetLoader;
+import game.plugins.datasetbuilders.SCSVDatasetLoader;
 import game.plugins.datatemplates.LabelTemplate;
 import game.plugins.datatemplates.VectorTemplate;
 
@@ -48,7 +48,7 @@ public class DatasetTest {
 
 	@Test
 	public void testCSV() {
-		DatasetBuilder builder = new CSVDatasetBuilder();
+		DatasetBuilder builder = new CSVDatasetLoader();
 		builder.setContent("datasetTemplate", templateIris);
 		builder.setContent("file", new File("testdata/iris.data.txt"));
 		Dataset dataset = builder.buildDataset();
@@ -65,7 +65,7 @@ public class DatasetTest {
 	
 	@Test
 	public void testCSVSequence() {
-		DatasetBuilder builder = new SequenceCSVDatasetBuilder();
+		DatasetBuilder builder = new SCSVDatasetLoader();
 		builder.setContent("datasetTemplate", templateProtein);
 		builder.setContent("file", new File("testdata/csvsequence.txt"));
 		Dataset dataset = builder.buildDataset();

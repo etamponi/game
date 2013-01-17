@@ -1,7 +1,6 @@
 package game.core;
 
 import java.util.ArrayList;
-import java.util.List;
 
 public class Data extends ArrayList<Element> {
 	
@@ -9,7 +8,7 @@ public class Data extends ArrayList<Element> {
 		
 	}
 	
-	public Data(List<? extends Element> other) {
+	public Data(Data other) {
 		super(other);
 	}
 	
@@ -20,6 +19,14 @@ public class Data extends ArrayList<Element> {
 	
 	public int length() {
 		return size();
+	}
+	
+	public Element get() {
+		return get(0);
+	}
+	
+	public <T> T getValue() {
+		return get().get();
 	}
 	
 }

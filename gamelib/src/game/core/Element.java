@@ -13,4 +13,8 @@ public class Element extends ArrayList {
 			add(value);
 	}
 	
+	public <T> T get() {
+		return (T)super.get(0);
+	}
+	
 }

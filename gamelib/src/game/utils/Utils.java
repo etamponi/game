@@ -146,4 +146,12 @@ public class Utils {
 		}
 		return indices;
 	}
+	
+	public static double getMax(double[] v) {
+		double max = v[0];
+		for(int i = 1; i < v.length; i++)
+			if (v[i] > max)
+				max = v[i];
+		return max;
+	}
 }

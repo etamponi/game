@@ -14,7 +14,6 @@ import game.core.Block;
 import game.core.blocks.Graph;
 import game.editorsystem.EditorController;
 import game.editorsystem.PropertyEditor;
-import game.plugins.editors.IObjectEditor;
 
 import java.net.URL;
 import java.util.LinkedList;
@@ -159,10 +158,10 @@ public class GraphEditorController implements EditorController {
 		fillPool(classifiersPane, "blocks");
 	}
 	
-	private static class GraphConfigurationEditor extends IObjectEditor {
+	private static class GraphConfigurationEditor extends BlockEditor {
 		
 		public GraphConfigurationEditor() {
-			setHiddenOptions("blocks", "outputBlock", "parents", "position");
+			setHiddenOptions("blocks", "outputBlock");
 		}
 		
 	}
