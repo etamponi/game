@@ -39,4 +39,9 @@ public class LabeledStatisticsMatrix {
 		return matrix;
 	}
 
+	@Override
+	public String toString() {
+		return rowLabels.toString();
+	}
+
 }

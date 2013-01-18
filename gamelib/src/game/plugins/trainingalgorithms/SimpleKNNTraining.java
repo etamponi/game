@@ -32,7 +32,7 @@ public class SimpleKNNTraining extends TrainingAlgorithm<KNNClassifier> {
 	public SimpleKNNTraining() {
 		addTrigger(new MasterSlaveTrigger(this, "block.datasetTemplate.targetTemplate.0.labels", "block.outputTemplate.0.dimension") {
 			@Override protected Object transform(final Object content) {
-				return ((List)content).size();
+				return content == null ? 0 : ((List)content).size();
 			}
 		});
 	}

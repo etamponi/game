@@ -66,8 +66,7 @@ public abstract class Block extends IObject {
 			private Block block = Block.this;
 			@Override
 			public void action(Property changedPath) {
-				if (!new Property(changedPath.getRoot(), "parents.*.parents").isPrefix(changedPath, false))
-					block.setup();
+				block.setup();
 			}
 		});
 
