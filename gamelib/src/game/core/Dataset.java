@@ -17,21 +17,48 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
+import java.util.ListIterator;
 
 import com.esotericsoftware.kryo.Kryo;
-import com.esotericsoftware.kryo.KryoCopyable;
+import com.esotericsoftware.kryo.io.Input;
+import com.esotericsoftware.kryo.io.Output;
+import com.esotericsoftware.kryo.serializers.FieldSerializer;
+import com.ios.IOSSerializer;
+import com.ios.IObject;
 
-public class Dataset extends ArrayList<Instance> implements KryoCopyable<Dataset> {
+public class Dataset implements List<Instance> {
 	
-	private DatasetTemplate template;
+	public static final class DatasetSerializer extends IOSSerializer<Dataset> {
+
+		private final FieldSerializer<Dataset> internal = new FieldSerializer<>(IObject.getKryo(), Dataset.class);
+		
+		@Override
+		public void write(Kryo kryo, Output output, Dataset object) {
+			internal.write(kryo, output, object);
+		}
+
+		@Override
+		public Dataset read(Kryo kryo, Input input, Class<Dataset> type) {
+			return internal.read(kryo, input, type);
+		}
+
+		@Override
+		public Dataset copy(Kryo kryo, Dataset original) {
+			return internal.copy(kryo, original);
+		}
+		
+	}
+	
+	private final List<Instance> internal = new ArrayList<>();
+	private final DatasetTemplate template;
 
 	public Dataset(DatasetTemplate template) {
 		this.template = template;
 	}
 	
 	public Dataset(DatasetTemplate template, Collection<? extends Instance> collection) {
-		super(collection);
 		this.template = template;
+		this.internal.addAll(collection);
 	}
 	
 	public DatasetTemplate getTemplate() {
@@ -168,17 +195,121 @@ public class Dataset extends ArrayList<Instance> implements KryoCopyable<Dataset
 			ret.add(get(i));
 		return ret;
 	}
-	
+
+	// Methods
 	@Override
-	public Dataset copy(Kryo kryo) {
-		kryo.reference(this);
-		
-		DatasetTemplate copyTmp = kryo.copy(template);
-		Dataset ret = new Dataset(copyTmp);
-		for(Instance i: this) {
-			Instance copy = new Instance(new Data(i.getSource()), new Data(i.getTarget()), new Data(i.getPrediction()));
-			ret.add(copy);
-		}
-		return ret;
+	public boolean add(Instance e) {
+		return internal.add(e);
 	}
+
+	@Override
+	public void add(int index, Instance element) {
+		internal.add(index, element);
+	}
+
+	@Override
+	public boolean addAll(Collection<? extends Instance> c) {
+		return internal.addAll(c);
+	}
+
+	@Override
+	public boolean addAll(int index, Collection<? extends Instance> c) {
+		return internal.addAll(index, c);
+	}
+
+	@Override
+	public void clear() {
+		internal.clear();
+	}
+
+	@Override
+	public boolean contains(Object o) {
+		return internal.contains(o);
+	}
+
+	@Override
+	public boolean containsAll(Collection<?> c) {
+		return internal.containsAll(c);
+	}
+
+	@Override
+	public Instance get(int index) {
+		return internal.get(index);
+	}
+
+	@Override
+	public int indexOf(Object o) {
+		return internal.indexOf(o);
+	}
+
+	@Override
+	public boolean isEmpty() {
+		return internal.isEmpty();
+	}
+
+	@Override
+	public Iterator<Instance> iterator() {
+		return internal.iterator();
+	}
+
+	@Override
+	public int lastIndexOf(Object o) {
+		return internal.lastIndexOf(o);
+	}
+
+	@Override
+	public ListIterator<Instance> listIterator() {
+		return internal.listIterator();
+	}
+
+	@Override
+	public ListIterator<Instance> listIterator(int index) {
+		return internal.listIterator(index);
+	}
+
+	@Override
+	public boolean remove(Object o) {
+		return internal.remove(o);
+	}
+
+	@Override
+	public Instance remove(int index) {
+		return internal.remove(index);
+	}
+
+	@Override
+	public boolean removeAll(Collection<?> c) {
+		return internal.removeAll(c);
+	}
+
+	@Override
+	public boolean retainAll(Collection<?> c) {
+		return internal.retainAll(c);
+	}
+
+	@Override
+	public Instance set(int index, Instance element) {
+		return internal.set(index, element);
+	}
+
+	@Override
+	public int size() {
+		return internal.size();
+	}
+
+	@Override
+	public List<Instance> subList(int fromIndex, int toIndex) {
+		return internal.subList(fromIndex, toIndex);
+	}
+
+	@Override
+	public Object[] toArray() {
+		return internal.toArray();
+	}
+
+	@Override
+	public <T> T[] toArray(T[] a) {
+		return internal.toArray(a);
+	}
+	
 }

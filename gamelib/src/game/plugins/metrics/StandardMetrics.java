@@ -24,6 +24,7 @@ import java.util.List;
 
 import org.apache.commons.math3.linear.RealVector;
 
+import com.esotericsoftware.reflectasm.MethodAccess;
 import com.ios.IList;
 
 public class StandardMetrics extends FullMetric {
@@ -81,7 +82,7 @@ public class StandardMetrics extends FullMetric {
 
 	@Override
 	protected String getMetricNames() {
-		return "precision recall accuracy fScore matthews";
+		return "standards";
 	}
 	
 	private double evaluateWeightedAverage(RealVector row) {
@@ -98,85 +99,60 @@ public class StandardMetrics extends FullMetric {
 		return ret;
 	}
 	
-	protected LabeledMatrix evaluatePrecision(ClassificationResult result) {
+	private static final String[] rows = {"Precision", "Recall", "Accuracy", "FScore", "Matthews"};
+	protected LabeledMatrix evaluateStandards(ClassificationResult result) {
 		IList<String> labels = this.labels.copy();
-		LabeledMatrix matrix = new LabeledMatrix(1, labels.size()+1);
+		LabeledMatrix matrix = new LabeledMatrix(rows.length, labels.size()+1);
 		
+		MethodAccess access = MethodAccess.get(StandardMetrics.class);
+		for(int row = 0; row < rows.length; row++) {
+			matrix.getRowLabels().add(rows[row]);
+			access.invoke(this, "evaluate"+rows[row], matrix, row, result);
+			matrix.setEntry(row, labels.size(), evaluateWeightedAverage(matrix.getRowVector(row)));
+		}
+
+		labels.add("w. avg");
+		matrix.setColumnLabels(labels.toArray(new String[labels.size()]));
+		
+		return matrix;
+	}
+	
+	protected void evaluatePrecision(LabeledMatrix matrix, int row, ClassificationResult result) {
 		for(int i = 0; i < labels.size(); i++) {
 			double TP = truePositives.get(i);
 			double FP = falsePositives.get(i);
-			matrix.setEntry(0, i, TP / (FP + TP));
+			matrix.setEntry(row, i, TP / (FP + TP));
 		}
-		
-		matrix.setEntry(0, labels.size(), evaluateWeightedAverage(matrix.getRowVector(0)));
-		labels.add("w. avg");
-		matrix.setColumnLabels(labels.toArray(new String[labels.size()]));
-		matrix.setRowLabels("Precision");
-		
-		return matrix;
 	}
 	
-	protected LabeledMatrix evaluateRecall(ClassificationResult result) {
-		IList<String> labels = this.labels.copy();
-		LabeledMatrix matrix = new LabeledMatrix(1, labels.size()+1);
-		
+	protected void evaluateRecall(LabeledMatrix matrix, int row, ClassificationResult result) {
 		for(int i = 0; i < labels.size(); i++) {
 			double TP = truePositives.get(i);
 			double FN = falseNegatives.get(i);
-			matrix.setEntry(0, i, TP / (FN + TP));
+			matrix.setEntry(row, i, TP / (FN + TP));
 		}
-
-		matrix.setEntry(0, labels.size(), evaluateWeightedAverage(matrix.getRowVector(0)));
-		labels.add("w. avg");
-		matrix.setRowLabels("Recall");
-		matrix.setColumnLabels(labels.toArray(new String[labels.size()]));
-		
-		return matrix;
 	}
 	
-	protected LabeledMatrix evaluateAccuracy(ClassificationResult result) {
-		IList<String> labels = this.labels.copy();
-		LabeledMatrix matrix = new LabeledMatrix(1, labels.size()+1);
-		
+	protected void evaluateAccuracy(LabeledMatrix matrix, int row, ClassificationResult result) {
 		for(int i = 0; i < labels.size(); i++) {
 			double TP = truePositives.get(i);
 			double TN = trueNegatives.get(i);
 			double FN = falseNegatives.get(i);
 			double FP = falsePositives.get(i);
-			matrix.setEntry(0, i, (TP + TN) / (FN + TP + FP + TN));
+			matrix.setEntry(row, i, (TP + TN) / (FN + TP + FP + TN));
 		}
-
-		matrix.setEntry(0, labels.size(), evaluateWeightedAverage(matrix.getRowVector(0)));
-		labels.add("w. avg");
-		matrix.setRowLabels("Accuracy");
-		matrix.setColumnLabels(labels.toArray(new String[labels.size()]));
-		
-		return matrix;
 	}
 	
-	protected LabeledMatrix evaluateFScore(ClassificationResult result) {
-		IList<String> labels = this.labels.copy();
-		LabeledMatrix matrix = new LabeledMatrix(1, labels.size()+1);
-		
+	protected void evaluateFScore(LabeledMatrix matrix, int row, ClassificationResult result) {
 		for(int i = 0; i < labels.size(); i++) {
 			double TP = truePositives.get(i);
 			double FN = falseNegatives.get(i);
 			double FP = falsePositives.get(i);
-			matrix.setEntry(0, i, TP / (FN + FP + TP));
+			matrix.setEntry(row, i, TP / (FN + FP + TP));
 		}
-
-		matrix.setEntry(0, labels.size(), evaluateWeightedAverage(matrix.getRowVector(0)));
-		labels.add("w. avg");
-		matrix.setRowLabels("FScore");
-		matrix.setColumnLabels(labels.toArray(new String[labels.size()]));
-		
-		return matrix;
 	}
 	
-	protected LabeledMatrix evaluateMatthews(ClassificationResult result) {
-		IList<String> labels = this.labels.copy();
-		LabeledMatrix matrix = new LabeledMatrix(1, labels.size()+1);
-		
+	protected void evaluateMatthews(LabeledMatrix matrix, int row, ClassificationResult result) {
 		for(int i = 0; i < labels.size(); i++) {
 			double TP = truePositives.get(i);
 			double FN = falseNegatives.get(i);
@@ -190,16 +166,9 @@ public class StandardMetrics extends FullMetric {
 			double den = Math.sqrt(P * N * T * F);
 			
 			if (den == 0)
-				matrix.setEntry(0, i, 0);
+				matrix.setEntry(row, i, 0);
 			else
-				matrix.setEntry(0, i, (TP*TN - FP*FN) / den);
+				matrix.setEntry(row, i, (TP*TN - FP*FN) / den);
 		}
-
-		matrix.setEntry(0, labels.size(), evaluateWeightedAverage(matrix.getRowVector(0)));
-		labels.add("w. avg");
-		matrix.setRowLabels("Matthews");
-		matrix.setColumnLabels(labels.toArray(new String[labels.size()]));
-		
-		return matrix;
 	}
 }

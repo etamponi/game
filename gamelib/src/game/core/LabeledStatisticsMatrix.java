@@ -19,7 +19,7 @@ public class LabeledStatisticsMatrix {
 		matrix = new SummaryStatistics[temp.getRowDimension()][temp.getColumnDimension()];
 		
 		for(int i = 0; i < matrix.length; i++) {
-			for(int j = 0; j < matrix.length; j++) {
+			for(int j = 0; j < matrix[i].length; j++) {
 				matrix[i][j] = new SummaryStatistics();
 				for(int k = 0; k < data.size(); k++)
 					matrix[i][j].addValue(data.get(k).getEntry(i, j));
