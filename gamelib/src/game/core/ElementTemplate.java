@@ -40,8 +40,9 @@ public class ElementTemplate extends IList<ValueTemplate> {
 		Element ret = new Element();
 		int startingIndex = 0;
 		for(ValueTemplate template: this) {
-			List<String> description = descriptions.subList(startingIndex, template.getDescriptionLength());
+			List<String> description = descriptions.subList(startingIndex, startingIndex+template.getDescriptionLength());
 			ret.add(template.loadValue(description));
+			startingIndex += template.getDescriptionLength();
 		}
 		return ret;
 	}

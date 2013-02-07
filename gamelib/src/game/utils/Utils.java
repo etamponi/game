@@ -17,6 +17,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
 
+import org.apache.commons.math3.linear.RealMatrix;
 import org.apache.commons.math3.linear.RealVector;
 
 public class Utils {
@@ -153,5 +154,21 @@ public class Utils {
 			if (v[i] > max)
 				max = v[i];
 		return max;
+	}
+
+	public static String printMatrix(RealMatrix matrix) {
+		StringBuilder ret = new StringBuilder();
+		
+		for(int i = 0; i < matrix.getRowDimension(); i++) {
+			for(int j = 0; j < matrix.getColumnDimension(); j++) {
+				ret.append(String.format("%.5f", matrix.getEntry(i, j)));
+				if (j == matrix.getColumnDimension()-1)
+					ret.append('\n');
+				else
+					ret.append(", ");
+			}
+		}
+		
+		return ret.toString();
 	}
 }

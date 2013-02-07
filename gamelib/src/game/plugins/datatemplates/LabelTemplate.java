@@ -27,6 +27,12 @@ public class LabelTemplate extends ValueTemplate<String> {
 		addErrorCheck("labels", new NoRepetitionCheck());
 		addErrorCheck("labels", new SizeCheck(2));
 	}
+	
+	public LabelTemplate(String... ls) {
+		this();
+		for(String l: ls)
+			labels.add(l);
+	}
 
 	@Override
 	public int getDescriptionLength() {

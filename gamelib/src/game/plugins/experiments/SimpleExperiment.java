@@ -10,7 +10,11 @@
  ******************************************************************************/
 package game.plugins.experiments;
 
+import com.ios.ErrorCheck;
+
 import game.core.Dataset;
+import game.core.DatasetBuilder;
+import game.core.DatasetTemplate;
 import game.core.ResultList;
 import game.core.blocks.Graph;
 import game.core.experiments.ClassificationExperiment;
@@ -18,18 +22,39 @@ import game.core.experiments.ClassificationResult;
 
 public class SimpleExperiment extends ClassificationExperiment {
 	
-	public boolean shuffle = false;
+//	public boolean wholeTraining = false;
 	
-	public double testingPercent = 0.30;
+//	public double testingPercent = 0.30;
+	
+	public DatasetBuilder testingDataset;
+	
+	public SimpleExperiment() {
+		addErrorCheck("testingDataset.datasetTemplate", new ErrorCheck<DatasetTemplate>() {
+			private SimpleExperiment self = SimpleExperiment.this;
+			@Override
+			public String getError(DatasetTemplate value) {
+				if (value.equals(self.datasetBuilder.datasetTemplate))
+					return null;
+				else
+					return "must be the same as the training dataset template";
+			}
+		});
+	}
 	
 	@Override
-	protected ResultList runExperiment(String outputDirectory) {
+	protected ResultList runExperiment() {
 		ClassificationResult result = new ClassificationResult();
 		Graph graphClone = graph.copy();
 		
+		/*
 		Dataset dataset = datasetBuilder.buildDataset();
-		Dataset trainset = dataset.getFirsts(1-testingPercent);
-		Dataset testset = dataset.getLasts(testingPercent);
+		Collections.shuffle(dataset, getRandom());
+		Dataset trainset = wholeTraining ? dataset : dataset.getFirsts(1 - testingPercent);
+		Dataset testset = wholeTraining ? dataset.getRandomSubset(testingPercent) : dataset.getLasts(testingPercent);
+		*/
+		
+		Dataset trainset = datasetBuilder.buildDataset();
+		Dataset testset = testingDataset.buildDataset();
 		
 		updateStatus(0.01, "training graph...");
 		executeAnotherTaskAndWait(0.50, graphClone.trainingAlgorithm, trainset);

@@ -10,6 +10,7 @@
  ******************************************************************************/
 package game.core;
 
+import com.ios.ErrorCheck;
 import com.ios.IObject;
 import com.ios.errorchecks.PositivenessCheck;
 
@@ -19,10 +20,18 @@ public abstract class DatasetBuilder extends IObject {
 	
 	public int startIndex = 0;
 	
-	public int instanceNumber = 1000;
+	public int instanceNumber = -1;
 	
 	public DatasetBuilder() {
-		addErrorCheck("instanceNumber", new PositivenessCheck(false));
+		addErrorCheck("instanceNumber", new ErrorCheck<Integer>() {
+			@Override
+			public String getError(Integer value) {
+				if (value > 0 || value == -1)
+					return null;
+				else
+					return "must be positive or -1";
+			}
+		});
 		addErrorCheck("startIndex", new PositivenessCheck(true));
 	}
 	

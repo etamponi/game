@@ -51,11 +51,14 @@ public class CSVDatasetLoader extends DatasetBuilder {
 			try {
 				int index = 0, count = 0;
 				BufferedReader reader = new BufferedReader(new FileReader(file));
-				for(String line = reader.readLine(); line != null && count < instanceNumber; line = reader.readLine(), index++) {
+				for(String line = reader.readLine(); line != null && (instanceNumber < 0 || count < instanceNumber); line = reader.readLine(), index++) {
 					if (index < startIndex)
 						continue;
 					String[] tokens = line.split(separators);
-					assert(tokens.length == (sourceDim + targetDim));
+					if (tokens.length != (sourceDim + targetDim)) {
+						reader.close();
+						throw new RuntimeException("Expected " + (sourceDim + targetDim) + " tokens, found " + tokens.length);
+					}
 					
 					Data source = new Data();
 					source.add(datasetTemplate.sourceTemplate.loadElement(Arrays.asList(Arrays.copyOfRange(tokens, 0, sourceDim))));

@@ -17,4 +17,12 @@ public class Element extends ArrayList {
 		return (T)super.get(0);
 	}
 	
+	public <T> T get(Class<T> type) {
+		return (T)super.get(0);
+	}
+	
+	public <T> T get(int index, Class<T> type) {
+		return (T)super.get(index);
+	}
+	
 }

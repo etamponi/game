@@ -57,6 +57,8 @@ public class Log {
 	}
 	
 	private static String getCompleteDirectory() {
+		if (logsDirectory == null)
+			setLogsDirectory("logs/");
 		String ret = logsDirectory.getAbsolutePath();
 		if (currentExperiment != null)
 			ret += "/" + currentExperiment;

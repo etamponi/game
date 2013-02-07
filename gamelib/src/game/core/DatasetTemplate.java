@@ -25,9 +25,24 @@ public class DatasetTemplate extends IObject {
 		setContent("sourceTemplate", new ElementTemplate());
 		setContent("targetTemplate", new ElementTemplate());
 	}
+	
+	public DatasetTemplate(ElementTemplate sourceTemplate, ElementTemplate targetTemplate) {
+		setContent("sourceTemplate", sourceTemplate);
+		setContent("targetTemplate", targetTemplate);
+	}
 
 	public boolean isReady() {
 		return !sourceTemplate.isEmpty() && !targetTemplate.isEmpty();
+	}
+	
+	@Override
+	public boolean equals(Object o) {
+		if (o instanceof DatasetTemplate) {
+			DatasetTemplate other = (DatasetTemplate) o;
+			return this.sourceTemplate.equals(other.sourceTemplate) && this.targetTemplate.equals(other.targetTemplate);
+		} else {
+			return false;
+		}
 	}
 
 }

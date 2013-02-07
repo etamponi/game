@@ -39,7 +39,7 @@ public class RandomSplitTraining extends TrainingAlgorithm<Graph> {
 			recursivelyTrainGraph(parent, trainingSet, increase);
 
 		if (!current.trained) {
-			executeAnotherTaskAndWait(getProgress()+increase, current.trainingAlgorithm, trainingSet.getRandomSubset(splitPercent));
+			executeAnotherTaskAndWait(getProgress()+increase, current.trainingAlgorithm, splitPercent < 1 ? trainingSet.getRandomSubset(splitPercent) : trainingSet);
 		}
 	}
 	

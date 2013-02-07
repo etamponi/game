@@ -24,9 +24,13 @@ public class Data extends ArrayList<Element> {
 	public Element get() {
 		return get(0);
 	}
-	
+	/*
 	public <T> T getValue() {
 		return get().get();
 	}
 	
+	public <T> T getValue(Class<T> type) {
+		return get().get();
+	}
+	*/
 }

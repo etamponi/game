@@ -91,6 +91,8 @@ public class Dataset implements List<Instance> {
 		}
 		
 		private void prepareForNextInstance() {
+			if (!instanceIterator.hasNext())
+				return;
 			Instance inst = instanceIterator.next();
 			currentSourceSequence = sourceFilter == null ? inst.getSource() : sourceFilter.transform(inst.getSource());
 			currentTargetSequence = targetFilter == null ? inst.getTarget() : targetFilter.transform(inst.getTarget());
@@ -100,8 +102,8 @@ public class Dataset implements List<Instance> {
 
 		@Override
 		public boolean hasNext() {
-			return instanceIterator.hasNext() ||
-					indexInInstance < currentSourceSequence.size();
+			return instanceIterator.hasNext() || 
+					(currentSourceSequence != null && indexInInstance < currentSourceSequence.size());
 		}
 
 		@Override

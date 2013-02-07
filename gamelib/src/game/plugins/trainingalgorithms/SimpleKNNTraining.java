@@ -45,7 +45,9 @@ public class SimpleKNNTraining extends TrainingAlgorithm<KNNClassifier> {
 		Iterator<Sample> it = trainingSet.sampleIterator(block.getParent(), outputFilter);
 		while(it.hasNext()) {
 			Sample sample = it.next();
-			block.reference.add(new ReferenceSample((RealVector)sample.getSource().get(0), (RealVector)sample.getTarget().get(0)));
+			block.reference.add(new ReferenceSample(
+					sample.getSource().get(RealVector.class),
+					sample.getTarget().get(RealVector.class)));
 		}
 	}
 

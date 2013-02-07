@@ -30,7 +30,7 @@ public abstract class Experiment<R extends Result> extends LongTask<ResultList<R
 	
 	public long seed = 1;
 	
-	protected abstract ResultList<R> runExperiment(String outputDirectory);
+	protected abstract ResultList<R> runExperiment();
 
 	@Override
 	public ResultList<R> execute(String resultsDirectory) {
@@ -39,15 +39,20 @@ public abstract class Experiment<R extends Result> extends LongTask<ResultList<R
 			generator = new Random(seed);
 		}
 		updateStatus(0.0, "Starting " + getClass().getSimpleName() + " " + name);
-		String outputDirectory = resultsDirectory + "/" + name;
-		File dir = new File(outputDirectory);
-		if (!dir.exists())
-			dir.mkdirs();
-		this.write(new File(outputDirectory+"/experiment_"+name+".bin"));
-		ResultList<R> result = runExperiment(outputDirectory);
-		result.experiment = this.copy();
-		result.name = name;
-		result.write(new File(outputDirectory + "/results_"+name+".bin"));
+		String outputDirectory = "";
+		if (resultsDirectory != null) {
+			outputDirectory = resultsDirectory + "/" + name;
+			File dir = new File(outputDirectory);
+			if (!dir.exists())
+				dir.mkdirs();
+			this.write(new File(outputDirectory+"/experiment_"+name+".bin"));
+		}
+		ResultList<R> result = runExperiment();
+		if (resultsDirectory != null) {
+			result.experiment = this.copy();
+			result.name = name;
+			result.write(new File(outputDirectory + "/results_"+name+".bin"));
+		}
 		updateStatus(1.0, "Experiment " + getClass().getSimpleName() + " " + name + " finished");
 		Log.setCurrentExperiment(null);
 		return result;

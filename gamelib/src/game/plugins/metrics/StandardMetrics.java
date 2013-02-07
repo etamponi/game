@@ -59,8 +59,8 @@ public class StandardMetrics extends FullMetric {
 		SampleIterator it = dataset.sampleIterator();
 		while(it.hasNext()) {
 			Sample sample = it.next();
-			String trueLabel = (String) sample.getTarget().get(0);
-			String predLabel = (String) sample.getPrediction().get(0);
+			String trueLabel = (String) sample.getTarget().get();
+			String predLabel = (String) sample.getPrediction().get();
 			int trueIndex = labels.indexOf(trueLabel);
 			int predIndex = labels.indexOf(predLabel);
 			
@@ -170,5 +170,9 @@ public class StandardMetrics extends FullMetric {
 			else
 				matrix.setEntry(row, i, (TP*TN - FP*FN) / den);
 		}
+	}
+
+	public double getAccuracy() {
+		return this.statMap.get("standards").getMatrix()[2][labels.size()].getMean();
 	}
 }

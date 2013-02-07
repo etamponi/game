@@ -13,6 +13,7 @@ package game.main;
 import game.utils.Log;
 
 import java.io.File;
+import java.util.Locale;
 
 import com.ios.IObject;
 import com.ios.PluginManager;
@@ -25,6 +26,8 @@ public class Settings {
 	public static final String LOGSDIR = "logs";
 	
 	public static void initialize() {
+		Locale.setDefault(Locale.ENGLISH);
+		
 		PluginConfiguration config = null;
 		if (CONFIGFILE.exists()) {
 			config = IObject.load(CONFIGFILE);

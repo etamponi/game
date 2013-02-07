@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <anttasks:AntTask xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:anttasks="http://at.bestsolution.efxclipse.tooling.jdt/1.0" buildDirectory="${workspace}/gamegui/build">
   <deploy>
-    <application name="Game GUI" mainclass="game.main.Main" version="3.0"/>
+    <application name="Game GUI" mainclass="game.old.MultiResolutionPreprocess" version="3.0"/>
     <info vendor="IASC Group"/>
   </deploy>
   <signjar/>

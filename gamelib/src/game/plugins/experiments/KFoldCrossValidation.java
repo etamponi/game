@@ -30,7 +30,7 @@ public class KFoldCrossValidation extends ClassificationExperiment {
 	}
 
 	@Override
-	protected ResultList runExperiment(String outputDirectory) {
+	protected ResultList runExperiment() {
 		Dataset dataset = datasetBuilder.buildDataset();
 		ResultList<ClassificationResult> ret = new ResultList<>();
 		

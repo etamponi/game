@@ -67,7 +67,7 @@ public class KNNClassifier extends Classifier {
 	}
 
 	@Override
-	protected Data transduce(Data input) {
+	protected Data classify(Data input) {
 		Data ret = new Data();
 		
 		for (int j = 0; j < input.length(); j++) {
