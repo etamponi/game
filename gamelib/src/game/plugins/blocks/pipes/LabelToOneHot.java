@@ -1,6 +1,6 @@
 package game.plugins.blocks.pipes;
 
-import game.plugins.datatemplates.LabelTemplate;
+import game.plugins.valuetemplates.LabelTemplate;
 
 import org.apache.commons.math3.linear.ArrayRealVector;
 import org.apache.commons.math3.linear.RealVector;

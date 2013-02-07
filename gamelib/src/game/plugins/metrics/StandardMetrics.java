@@ -17,7 +17,7 @@ import game.core.Result;
 import game.core.Sample;
 import game.core.experiments.ClassificationResult;
 import game.core.metrics.FullMetric;
-import game.plugins.datatemplates.LabelTemplate;
+import game.plugins.valuetemplates.LabelTemplate;
 
 import java.util.ArrayList;
 import java.util.List;

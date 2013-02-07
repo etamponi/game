@@ -2,8 +2,8 @@ package game.plugins.blocks.pipes;
 
 import game.core.Data;
 import game.core.Element;
-import game.plugins.datatemplates.LabelTemplate;
-import game.plugins.datatemplates.VectorTemplate;
+import game.plugins.valuetemplates.LabelTemplate;
+import game.plugins.valuetemplates.VectorTemplate;
 
 import org.apache.commons.math3.linear.RealVector;
 

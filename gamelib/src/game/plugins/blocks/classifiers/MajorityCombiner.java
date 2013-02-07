@@ -14,7 +14,7 @@ import game.core.Data;
 import game.core.ElementTemplate;
 import game.core.Element;
 import game.core.blocks.Sink;
-import game.plugins.datatemplates.LabelTemplate;
+import game.plugins.valuetemplates.LabelTemplate;
 
 import java.util.List;
 

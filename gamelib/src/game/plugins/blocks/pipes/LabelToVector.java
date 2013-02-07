@@ -4,8 +4,8 @@ import game.core.Data;
 import game.core.ElementTemplate;
 import game.core.Element;
 import game.core.blocks.Pipe;
-import game.plugins.datatemplates.LabelTemplate;
-import game.plugins.datatemplates.VectorTemplate;
+import game.plugins.valuetemplates.LabelTemplate;
+import game.plugins.valuetemplates.VectorTemplate;
 
 import java.util.HashMap;
 import java.util.Map;

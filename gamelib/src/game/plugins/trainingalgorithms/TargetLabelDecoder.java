@@ -6,7 +6,7 @@ import game.core.Dataset;
 import game.core.DatasetTemplate;
 import game.core.TrainingAlgorithm;
 import game.plugins.blocks.pipes.VectorToLabel;
-import game.plugins.datatemplates.LabelTemplate;
+import game.plugins.valuetemplates.LabelTemplate;
 
 public class TargetLabelDecoder extends TrainingAlgorithm<VectorToLabel> {
 	

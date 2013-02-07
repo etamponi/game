@@ -5,7 +5,7 @@ import game.core.Element;
 import game.core.ElementTemplate;
 import game.core.ValueTemplate;
 import game.core.blocks.Pipe;
-import game.plugins.datatemplates.VectorTemplate;
+import game.plugins.valuetemplates.VectorTemplate;
 
 import org.apache.commons.math3.linear.ArrayRealVector;
 import org.apache.commons.math3.linear.RealVector;

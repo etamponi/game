@@ -5,8 +5,8 @@ import com.ios.triggers.MasterSlaveTrigger;
 
 import game.core.ElementTemplate;
 import game.core.blocks.Pipe;
-import game.plugins.datatemplates.LabelTemplate;
-import game.plugins.datatemplates.VectorTemplate;
+import game.plugins.valuetemplates.LabelTemplate;
+import game.plugins.valuetemplates.VectorTemplate;
 
 public abstract class VectorToLabel extends Pipe {
 

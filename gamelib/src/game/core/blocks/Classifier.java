@@ -2,7 +2,7 @@ package game.core.blocks;
 
 import game.core.Data;
 import game.core.ElementTemplate;
-import game.plugins.datatemplates.VectorTemplate;
+import game.plugins.valuetemplates.VectorTemplate;
 
 
 public abstract class Classifier extends Pipe {

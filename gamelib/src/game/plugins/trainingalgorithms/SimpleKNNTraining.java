@@ -18,7 +18,7 @@ import game.core.blocks.DataFeeder;
 import game.plugins.blocks.classifiers.KNNClassifier;
 import game.plugins.blocks.classifiers.KNNClassifier.ReferenceSample;
 import game.plugins.blocks.pipes.LabelToOneHot;
-import game.plugins.datatemplates.LabelTemplate;
+import game.plugins.valuetemplates.LabelTemplate;
 
 import java.util.Iterator;
 import java.util.List;

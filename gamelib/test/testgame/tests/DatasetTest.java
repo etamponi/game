@@ -17,8 +17,8 @@ import game.core.DatasetTemplate;
 import game.core.ElementTemplate;
 import game.plugins.datasetbuilders.CSVDatasetLoader;
 import game.plugins.datasetbuilders.SCSVDatasetLoader;
-import game.plugins.datatemplates.LabelTemplate;
-import game.plugins.datatemplates.VectorTemplate;
+import game.plugins.valuetemplates.LabelTemplate;
+import game.plugins.valuetemplates.VectorTemplate;
 
 import java.io.File;
 import java.util.List;

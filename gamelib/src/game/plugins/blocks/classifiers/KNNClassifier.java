@@ -4,7 +4,7 @@ import game.core.Data;
 import game.core.ElementTemplate;
 import game.core.Element;
 import game.core.blocks.Classifier;
-import game.plugins.datatemplates.VectorTemplate;
+import game.plugins.valuetemplates.VectorTemplate;
 import game.utils.Utils;
 
 import java.util.ArrayList;
