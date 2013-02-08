@@ -3,10 +3,7 @@ package game.core;
 
 import game.core.trainingalgorithms.NoTraining;
 
-import java.util.List;
-
-import com.ios.ErrorCheck;
-import com.ios.IList;
+import com.ios.Compatible;
 import com.ios.IObject;
 import com.ios.Property;
 import com.ios.Trigger;
@@ -16,11 +13,9 @@ import com.ios.triggers.BoundProperties;
 import com.ios.triggers.MasterSlaveTrigger;
 import com.ios.triggers.SimpleTrigger;
 
-public abstract class Block extends IObject {
+public abstract class Block extends IObject implements Compatible<DatasetTemplate> {
 	
 	public boolean trained = false;
-	
-	public IList<Block> parents;
 	
 	public TrainingAlgorithm trainingAlgorithm;
 	
@@ -31,13 +26,10 @@ public abstract class Block extends IObject {
 	public BlockPosition position;
 	
 	public Block() {
-		setContent("parents", new IList<>(Block.class));
 		setContent("position", new BlockPosition());
 		setContent("outputTemplate", new ElementTemplate());
-		omitFromErrorCheck("parents", "position");
-		omitFromPropagation("*.parents.*.parents.*", "*.parents.*.trainingAlgorithm.block");
+		omitFromErrorCheck("position");
 		
-//		addTrigger(new BoundProperties(this, "outputTemplate"));
 		addTrigger(new MasterSlaveTrigger(this, "", "trainingAlgorithm.block"));
 		
 		setContent("trainingAlgorithm", new NoTraining());
@@ -62,7 +54,7 @@ public abstract class Block extends IObject {
 			}
 		});
 		
-		addTrigger(new SimpleTrigger(new SubPathListener(new Property(this, "parents"))) {
+		addTrigger(new SimpleTrigger(new SubPathListener(new Property(this, "datasetTemplate"))) {
 			private Block block = Block.this;
 			@Override
 			public void action(Property changedPath) {
@@ -71,23 +63,9 @@ public abstract class Block extends IObject {
 		});
 
 		addConstraint("trainingAlgorithm", new CompatibleWith(new Property(this, "")));
-
-		addErrorCheck("parents", new ErrorCheck<List>() {
-			private Block block = Block.this;
-			@Override
-			public String getError(List parents) {
-				for (Block parent: (List<Block>)parents) {
-					if (!block.supportsInputTemplate(parent.outputTemplate))
-						return "cannot handle " + parent.outputTemplate;
-				}
-				return null;
-			}
-		});
 	}
 
 	public abstract Data transform(Data input);
-	
-	public abstract boolean supportsInputTemplate(ElementTemplate inputTemplate);
 	
 	public abstract boolean acceptsParents();
 	

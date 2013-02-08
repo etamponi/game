@@ -47,7 +47,7 @@ public class ElementTemplate extends IList<ValueTemplate> {
 		return ret;
 	}
 
-	public int getTotalDescriptionLength() {
+	public int getDescriptionLength() {
 		int ret = 0;
 		for(ValueTemplate template: this)
 			ret += template.getDescriptionLength();

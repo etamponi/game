@@ -44,8 +44,8 @@ public class SCSVDatasetLoader extends DatasetBuilder {
 	public Dataset buildDataset() {
 		Dataset ret = new Dataset(datasetTemplate);
 		
-		int sourceDim = datasetTemplate.sourceTemplate.getTotalDescriptionLength();
-		int targetDim = datasetTemplate.targetTemplate.getTotalDescriptionLength();
+		int sourceDim = datasetTemplate.sourceTemplate.getDescriptionLength();
+		int targetDim = datasetTemplate.targetTemplate.getDescriptionLength();
 		
 		if (file.exists()) {
 			try {
