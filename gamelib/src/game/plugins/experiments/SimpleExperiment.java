@@ -10,21 +10,17 @@
  ******************************************************************************/
 package game.plugins.experiments;
 
-import com.ios.ErrorCheck;
-
 import game.core.Dataset;
 import game.core.DatasetBuilder;
 import game.core.DatasetTemplate;
 import game.core.ResultList;
-import game.core.blocks.Graph;
+import game.core.blocks.Classifier;
 import game.core.experiments.ClassificationExperiment;
 import game.core.experiments.ClassificationResult;
 
+import com.ios.ErrorCheck;
+
 public class SimpleExperiment extends ClassificationExperiment {
-	
-//	public boolean wholeTraining = false;
-	
-//	public double testingPercent = 0.30;
 	
 	public DatasetBuilder testingDataset;
 	
@@ -44,23 +40,16 @@ public class SimpleExperiment extends ClassificationExperiment {
 	@Override
 	protected ResultList runExperiment() {
 		ClassificationResult result = new ClassificationResult();
-		Graph graphClone = graph.copy();
-		
-		/*
-		Dataset dataset = datasetBuilder.buildDataset();
-		Collections.shuffle(dataset, getRandom());
-		Dataset trainset = wholeTraining ? dataset : dataset.getFirsts(1 - testingPercent);
-		Dataset testset = wholeTraining ? dataset.getRandomSubset(testingPercent) : dataset.getLasts(testingPercent);
-		*/
+		Classifier clsClone = classifier.copy();
 		
 		Dataset trainset = datasetBuilder.buildDataset();
 		Dataset testset = testingDataset.buildDataset();
 		
 		updateStatus(0.01, "training graph...");
-		executeAnotherTaskAndWait(0.50, graphClone.trainingAlgorithm, trainset);
+		executeAnotherTaskAndWait(0.50, clsClone.trainingAlgorithm, trainset);
 		updateStatus(0.71, "training complete, testing phase...");
-		result.classifiedDataset = classifyDataset(0.90, graphClone, testset);
-		result.trainedGraph = graphClone;
+		result.classifiedDataset = classifyDataset(0.90, clsClone, testset);
+		result.trainedClassifier = clsClone;
 		updateStatus(1.00, "experiment completed");
 		
 		ResultList<ClassificationResult> ret = new ResultList<>();

@@ -49,8 +49,8 @@ public abstract class Experiment<R extends Result> extends LongTask<ResultList<R
 		}
 		ResultList<R> result = runExperiment();
 		if (resultsDirectory != null) {
-			result.experiment = this.copy();
-			result.name = name;
+			result.setContent("experiment", this.copy());
+			result.setContent("name", name);
 			result.write(new File(outputDirectory + "/results_"+name+".bin"));
 		}
 		updateStatus(1.0, "Experiment " + getClass().getSimpleName() + " " + name + " finished");

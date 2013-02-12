@@ -8,6 +8,7 @@ import com.ios.IObject;
 import com.ios.Property;
 import com.ios.Trigger;
 import com.ios.constraints.CompatibleWith;
+import com.ios.errorchecks.CompatibilityCheck;
 import com.ios.listeners.SubPathListener;
 import com.ios.triggers.BoundProperties;
 import com.ios.triggers.MasterSlaveTrigger;
@@ -27,48 +28,44 @@ public abstract class Block extends IObject implements Compatible<DatasetTemplat
 	
 	public Block() {
 		setContent("position", new BlockPosition());
+		
 		setContent("outputTemplate", new ElementTemplate());
-		omitFromErrorCheck("position");
+		addTrigger(new BoundProperties(this, "outputTemplate"));
 		
+		// To handle training properties
 		addTrigger(new MasterSlaveTrigger(this, "", "trainingAlgorithm.block"));
-		
 		setContent("trainingAlgorithm", new NoTraining());
-		
 		final Trigger t = new BoundProperties(this, "empty");
 		addTrigger(t);
 		addTrigger(new SimpleTrigger(new SubPathListener(new Property(this, "trainingAlgorithm"))) {
-			private Block block = Block.this;
+			private Block self = Block.this;
 			private Trigger trigger = t;
 			@Override
 			public void action(Property changedPath) {
 				trigger.getBoundProperties().clear();
-				
-				if (block.trainingAlgorithm != null) {
-					for(Object path: block.trainingAlgorithm.getTrainingProperties())
-						trigger.getBoundProperties().add(new Property(block, path.toString()));
+				if (self.trainingAlgorithm != null) {
+					for(Object path: self.trainingAlgorithm.getTrainingProperties())
+						trigger.getBoundProperties().add(new Property(self, path.toString()));
 				}
 				if (trigger.getBoundProperties().isEmpty())
-					trigger.getBoundProperties().add(new Property(block, "empty"));
-				
-				
+					trigger.getBoundProperties().add(new Property(self, "empty"));
 			}
 		});
-		
-		addTrigger(new SimpleTrigger(new SubPathListener(new Property(this, "datasetTemplate"))) {
-			private Block block = Block.this;
-			@Override
-			public void action(Property changedPath) {
-				block.setup();
-			}
-		});
+		addConstraint("trainingAlgorithm", new CompatibleWith(getProperty("")));
 
-		addConstraint("trainingAlgorithm", new CompatibleWith(new Property(this, "")));
+		addTrigger(new SimpleTrigger(new SubPathListener(new Property(this, "datasetTemplate"))) {
+			private Block self = Block.this;
+			@Override public void action(Property changedPath) {
+				self.updateOutputTemplate();
+			}
+		});
+		addErrorCheck("datasetTemplate", new CompatibilityCheck(this));
 	}
 
 	public abstract Data transform(Data input);
 	
-	public abstract boolean acceptsParents();
-	
-	protected abstract void setup();
+	protected abstract void updateOutputTemplate();
+
+	public abstract boolean isClassifier();
 
 }

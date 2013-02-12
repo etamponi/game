@@ -1,7 +1,7 @@
 package game.plugins.blocks.classifiers;
 
 import game.core.Data;
-import game.core.ElementTemplate;
+import game.core.DatasetTemplate;
 import game.core.Element;
 import game.core.blocks.Classifier;
 import game.plugins.valuetemplates.VectorTemplate;
@@ -67,7 +67,7 @@ public class KNNClassifier extends Classifier {
 	}
 
 	@Override
-	protected Data classify(Data input) {
+	public Data classify(Data input) {
 		Data ret = new Data();
 		
 		for (int j = 0; j < input.length(); j++) {
@@ -89,13 +89,13 @@ public class KNNClassifier extends Classifier {
 	}
 
 	@Override
-	public boolean supportsInputTemplate(ElementTemplate inputTemplate) {
-		return inputTemplate.isSingletonTemplate(VectorTemplate.class);
+	protected void updateOutputTemplate() {
+		reference.clear();
 	}
 
 	@Override
-	protected void setup() {
-		reference.clear();
+	public boolean isClassifierCompatible(DatasetTemplate template) {
+		return template.sourceTemplate.isSingletonTemplate(VectorTemplate.class);
 	}
 
 }

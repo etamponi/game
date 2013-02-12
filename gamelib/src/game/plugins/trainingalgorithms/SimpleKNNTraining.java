@@ -13,36 +13,24 @@ package game.plugins.trainingalgorithms;
 import game.core.Dataset;
 import game.core.DatasetTemplate;
 import game.core.Sample;
-import game.core.TrainingAlgorithm;
-import game.core.blocks.DataFeeder;
+import game.core.trainingalgorithms.StandardClassifierTrainingAlgorithm;
 import game.plugins.blocks.classifiers.KNNClassifier;
 import game.plugins.blocks.classifiers.KNNClassifier.ReferenceSample;
-import game.plugins.blocks.pipes.LabelToOneHot;
-import game.plugins.valuetemplates.LabelTemplate;
+import game.plugins.blocks.filters.LabelToOneHot;
 
 import java.util.Iterator;
-import java.util.List;
 
 import org.apache.commons.math3.linear.RealVector;
 
-import com.ios.triggers.MasterSlaveTrigger;
-
-public class SimpleKNNTraining extends TrainingAlgorithm<KNNClassifier> {
-	
-	public SimpleKNNTraining() {
-		addTrigger(new MasterSlaveTrigger(this, "block.datasetTemplate.targetTemplate.0.labels", "block.outputTemplate.0.dimension") {
-			@Override protected Object transform(final Object content) {
-				return content == null ? 0 : ((List)content).size();
-			}
-		});
-	}
+public class SimpleKNNTraining extends StandardClassifierTrainingAlgorithm<KNNClassifier> {
 
 	@Override
 	protected void train(Dataset trainingSet) {
 		LabelToOneHot outputFilter = new LabelToOneHot();
-		outputFilter.parents.add(new DataFeeder(false));
-		outputFilter.parents.setContent("0.datasetTemplate", block.datasetTemplate);
-		Iterator<Sample> it = trainingSet.sampleIterator(block.getParent(), outputFilter);
+		
+		outputFilter.setContent("datasetTemplate", trainingSet.getTemplate().reverseTemplate());
+		
+		Iterator<Sample> it = trainingSet.sampleIterator(null, outputFilter, null);
 		while(it.hasNext()) {
 			Sample sample = it.next();
 			block.reference.add(new ReferenceSample(
@@ -58,7 +46,7 @@ public class SimpleKNNTraining extends TrainingAlgorithm<KNNClassifier> {
 
 	@Override
 	protected boolean isCompatible(DatasetTemplate template) {
-		return template.targetTemplate.isSingletonTemplate(LabelTemplate.class);
+		return true;
 	}
 
 }

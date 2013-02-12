@@ -16,6 +16,7 @@ public class Sample {
 	private Element source;
 	private Element target;
 	private Element prediction;
+	private Element decoded;
 	
 	public Sample(Element source, Element target) {
 		this.source = source;
@@ -50,6 +51,14 @@ public class Sample {
 
 	public void setPrediction(Element prediction) {
 		this.prediction = prediction;
+	}
+	
+	public Element getDecodedTarget() {
+		return decoded;
+	}
+	
+	public void setDecodedTarget(Element decoded) {
+		this.decoded = decoded;
 	}
 	
 }

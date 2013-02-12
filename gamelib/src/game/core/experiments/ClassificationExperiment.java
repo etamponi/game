@@ -10,10 +10,13 @@
  ******************************************************************************/
 package game.core.experiments;
 
+import game.core.Data;
 import game.core.Dataset;
+import game.core.DatasetTemplate;
 import game.core.Experiment;
 import game.core.Instance;
-import game.core.blocks.Graph;
+import game.core.blocks.Classifier;
+import game.plugins.valuetemplates.LabelTemplate;
 
 import java.util.Iterator;
 
@@ -22,37 +25,41 @@ import com.ios.triggers.MasterSlaveTrigger;
 
 public abstract class ClassificationExperiment extends Experiment<ClassificationResult> {
 	
-	public Graph graph;
+	public Classifier classifier;
 	
 	public ClassificationExperiment() {
-		addTrigger(new MasterSlaveTrigger(this, "datasetBuilder.datasetTemplate", "graph.datasetTemplate"));
-		addErrorCheck("graph", new ErrorCheck<Graph>() {
-			private ClassificationExperiment self = ClassificationExperiment.this;
-			@Override
-			public String getError(Graph value) {
-				if (value == null || value.outputTemplate == null || self.getContent("datasetBuilder.datasetTemplate.targetTemplate") == null)
+		addTrigger(new MasterSlaveTrigger(this, "datasetBuilder.datasetTemplate", "classifier.datasetTemplate"));
+		
+		addErrorCheck("datasetBuilder.datasetTemplate", new ErrorCheck<DatasetTemplate>() {
+			@Override public String getError(DatasetTemplate value) {
+				if (value.targetTemplate.isSingletonTemplate(LabelTemplate.class))
 					return null;
-				if (!value.outputTemplate.equals(self.datasetBuilder.datasetTemplate.targetTemplate))
-					return "the graph should output data from " + self.datasetBuilder.datasetTemplate.targetTemplate;
 				else
-					return null;
+					return "can only handle a singleton LabelTemplate as target";
 			}
 		});
 	}
 	
-	protected Dataset classifyDataset(double finalPercent, Graph graph, Dataset dataset) {
-		Dataset ret = new Dataset(graph.datasetTemplate);
+	protected Dataset classifyDataset(double finalPercent, Classifier cls, Dataset dataset) {
+		Dataset ret = new Dataset(dataset.getTemplate());
 		double startPercent = getProgress();
 		double increase = (finalPercent - startPercent) / dataset.size();
 		int count = 1;
 		Iterator<Instance> it = dataset.iterator();
 		while (it.hasNext()) {
 			Instance instance = it.next();
-			ret.add(graph.classify(instance));
+			ret.add(classify(instance, cls));
 			if (count % 10 == 0 || count == dataset.size())
 				updateStatus(startPercent+count*increase, "instances predicted " + count + "/" + dataset.size());
 			count++;
 		}
+		return ret;
+	}
+	
+	private Instance classify(Instance instance, Classifier cls) {
+		Instance ret = new Instance(instance.getSource(), instance.getTarget());
+		Data output = cls.transform(instance.getSource());
+		ret.setPrediction(output);
 		return ret;
 	}
 

@@ -79,36 +79,5 @@ public class Log {
 			e.printStackTrace();
 		}
 	}
-	/*
-	public static class Logger implements Observer {
-		
-		private LongTask task;
-		
-		public Logger(LongTask task) {
-			this.task = task;
-			task.addObserver(this);
-		}
 
-		@Override
-		public void update(Observable o, Object arg) {
-			if (arg instanceof LongTaskUpdate) {
-				Log.write(task, "%6.2f%%: %s", task.getCurrentPercent()*100, task.getCurrentMessage());
-			}
-		}
-		
-		public void stop() {
-			task.deleteObserver(this);
-		}
-		
-		public void start() {
-			task.addObserver(this);
-		}
-
-		@Override
-		protected void finalize() throws Throwable {
-			stop();
-		}
-		
-	}
-	*/
 }

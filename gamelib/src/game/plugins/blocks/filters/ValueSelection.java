@@ -8,12 +8,13 @@
  * Contributors:
  *     Emanuele Tamponi - initial API and implementation
  ******************************************************************************/
-package game.plugins.blocks.pipes;
+package game.plugins.blocks.filters;
 
 import game.core.Data;
+import game.core.DatasetTemplate;
 import game.core.Element;
 import game.core.ElementTemplate;
-import game.core.blocks.Pipe;
+import game.core.blocks.Filter;
 import game.utils.Utils;
 
 import com.ios.ErrorCheck;
@@ -21,7 +22,7 @@ import com.ios.Property;
 import com.ios.listeners.ExactPathListener;
 import com.ios.triggers.SimpleTrigger;
 
-public class ValueSelection extends Pipe {
+public class ValueSelection extends Filter {
 	
 	public String mask = "";
 	
@@ -37,7 +38,7 @@ public class ValueSelection extends Pipe {
 			private ValueSelection fs = ValueSelection.this;
 			@Override
 			public void action(Property changedPath) {
-				fs.setup();
+				fs.updateOutputTemplate();
 			}
 		});
 	}
@@ -45,13 +46,13 @@ public class ValueSelection extends Pipe {
 	private String maskErrors() {
 		if (Utils.count(mask, '0') + Utils.count(mask, '1') != mask.length())
 			return "can contain only 1s and 0s";
-		if (!parents.isEmpty() && getParent().outputTemplate.size() != mask.length())
-			return "must contain extactly " + getParent().outputTemplate.size() + " characters";
+		if (datasetTemplate != null && datasetTemplate.sourceTemplate.size() != mask.length())
+			return "must contain extactly " +  datasetTemplate.sourceTemplate.size() + " characters";
 		return null;
 	}
 
 	@Override
-	protected Data transduce(Data input) {
+	public Data transform(Data input) {
 		Data ret = new Data();
 		
 		for(int j = 0; j < input.size(); j++) {
@@ -71,24 +72,24 @@ public class ValueSelection extends Pipe {
 	}
 
 	@Override
-	public boolean supportsInputTemplate(ElementTemplate inputTemplate) {
-		return true;
-	}
-
-	@Override
-	protected void setup() {
+	protected void updateOutputTemplate() {
 		ElementTemplate tpl = new ElementTemplate();
-		if (maskErrors() == null && getParentTemplate() != null) {
+		if (maskErrors() == null && datasetTemplate != null) {
 			int baseIndex = 0;
 			for(char c: mask.toCharArray()) {
 				if (c == '1') {
-					if (getParentTemplate().size() > baseIndex)
-						tpl.add(getParentTemplate().get(baseIndex));
+					if (datasetTemplate.sourceTemplate.size() > baseIndex)
+						tpl.add(datasetTemplate.sourceTemplate.get(baseIndex));
 				}
 				baseIndex++;
 			}
 		}
 		setContent("outputTemplate", tpl);
+	}
+
+	@Override
+	public boolean isCompatible(DatasetTemplate object) {
+		return true;
 	}
 
 }

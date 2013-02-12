@@ -1,19 +1,20 @@
-package game.plugins.blocks.pipes;
+package game.plugins.blocks.filters;
 
 import game.core.Data;
+import game.core.DatasetTemplate;
 import game.core.Element;
 import game.core.ElementTemplate;
 import game.core.ValueTemplate;
-import game.core.blocks.Pipe;
+import game.core.blocks.Filter;
 import game.plugins.valuetemplates.VectorTemplate;
 
 import org.apache.commons.math3.linear.ArrayRealVector;
 import org.apache.commons.math3.linear.RealVector;
 
-public class SplitVector extends Pipe {
+public class SplitVector extends Filter {
 
 	@Override
-	protected Data transduce(Data input) {
+	public Data transform(Data input) {
 		Data ret = new Data();
 		for(Element e: input) {
 			Element out = new Element();
@@ -28,19 +29,18 @@ public class SplitVector extends Pipe {
 	}
 
 	@Override
-	public boolean supportsInputTemplate(ElementTemplate inputTemplate) {
-		for(ValueTemplate template: inputTemplate)
-			if (!(template instanceof VectorTemplate))
+	public boolean isCompatible(DatasetTemplate template) {
+		for(ValueTemplate tpl: template.sourceTemplate)
+			if (!(tpl instanceof VectorTemplate))
 				return false;
 		return true;
 	}
 
 	@Override
-	protected void setup() {
+	protected void updateOutputTemplate() {
 		ElementTemplate tpl = new ElementTemplate();
-		ElementTemplate parentTemplate = getParentTemplate();
-		if (parentTemplate != null && supportsInputTemplate(parentTemplate)) {
-			for (ValueTemplate template: parentTemplate) {
+		if (datasetTemplate != null && isCompatible(datasetTemplate)) {
+			for (ValueTemplate template: datasetTemplate.sourceTemplate) {
 				int dimension = template.getContent("dimension");
 				for(int i = 0; i < dimension; i++) {
 					VectorTemplate value = new VectorTemplate();

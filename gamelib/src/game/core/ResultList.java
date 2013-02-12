@@ -12,6 +12,7 @@ package game.core;
 
 import com.ios.IList;
 import com.ios.IObject;
+import com.ios.triggers.MasterSlaveTrigger;
 
 public class ResultList<R extends Result> extends IObject {
 	
@@ -21,6 +22,7 @@ public class ResultList<R extends Result> extends IObject {
 	
 	public ResultList() {
 		setContent("results", new IList<>(Result.class));
+		addTrigger(new MasterSlaveTrigger(this, "experiment", "results.*.experiment"));
 	}
 	
 	@Override

@@ -13,10 +13,11 @@ package game.plugins.metrics;
 import game.core.Dataset;
 import game.core.Dataset.SampleIterator;
 import game.core.LabeledMatrix;
+import game.core.Metrics;
 import game.core.Result;
 import game.core.Sample;
+import game.core.blocks.Decoder;
 import game.core.experiments.ClassificationResult;
-import game.core.metrics.FullMetric;
 import game.plugins.valuetemplates.LabelTemplate;
 
 import java.util.ArrayList;
@@ -27,18 +28,12 @@ import org.apache.commons.math3.linear.RealVector;
 import com.esotericsoftware.reflectasm.MethodAccess;
 import com.ios.IList;
 
-public class StandardMetrics extends FullMetric {
-	
+public class StandardClassificationMetrics extends Metrics<ClassificationResult> {
+
 	private IList<String> labels;
 	private List<Double> truePositives, falseNegatives;
 	private List<Double> falsePositives, trueNegatives;
 	
-	@Override
-	public boolean isCompatible(Result result) {
-		return super.isCompatible(result) &&
-				((ClassificationResult)result).classifiedDataset.getTemplate().targetTemplate.isSingletonTemplate(LabelTemplate.class);
-	}
-
 	@Override
 	protected void prepareForEvaluation(ClassificationResult result) {	
 		truePositives = new ArrayList<>();
@@ -47,6 +42,7 @@ public class StandardMetrics extends FullMetric {
 		trueNegatives = new ArrayList<>();
 		
 		Dataset dataset = result.classifiedDataset;
+		Decoder decoder = result.trainedClassifier.decoder;
 		
 		labels = dataset.getTemplate().targetTemplate.getSingleton(LabelTemplate.class).labels.copy();
 		for(int k = 0; k < labels.size(); k++) {
@@ -56,11 +52,11 @@ public class StandardMetrics extends FullMetric {
 			trueNegatives.add(0.0);
 		}
 		
-		SampleIterator it = dataset.sampleIterator();
+		SampleIterator it = dataset.sampleIterator(null, null, decoder);
 		while(it.hasNext()) {
 			Sample sample = it.next();
 			String trueLabel = (String) sample.getTarget().get();
-			String predLabel = (String) sample.getPrediction().get();
+			String predLabel = (String) sample.getDecodedTarget().get();
 			int trueIndex = labels.indexOf(trueLabel);
 			int predIndex = labels.indexOf(predLabel);
 			
@@ -80,11 +76,6 @@ public class StandardMetrics extends FullMetric {
 		}
 	}
 
-	@Override
-	protected String getMetricNames() {
-		return "standards";
-	}
-	
 	private double evaluateWeightedAverage(RealVector row) {
 		double ret = 0;
 		double sum = 0;
@@ -100,11 +91,11 @@ public class StandardMetrics extends FullMetric {
 	}
 	
 	private static final String[] rows = {"Precision", "Recall", "Accuracy", "FScore", "Matthews"};
-	protected LabeledMatrix evaluateStandards(ClassificationResult result) {
+	protected LabeledMatrix evaluateMetrics(ClassificationResult result) {
 		IList<String> labels = this.labels.copy();
 		LabeledMatrix matrix = new LabeledMatrix(rows.length, labels.size()+1);
 		
-		MethodAccess access = MethodAccess.get(StandardMetrics.class);
+		MethodAccess access = MethodAccess.get(StandardClassificationMetrics.class);
 		for(int row = 0; row < rows.length; row++) {
 			matrix.getRowLabels().add(rows[row]);
 			access.invoke(this, "evaluate"+rows[row], matrix, row, result);
@@ -173,6 +164,11 @@ public class StandardMetrics extends FullMetric {
 	}
 
 	public double getAccuracy() {
-		return this.statMap.get("standards").getMatrix()[2][labels.size()].getMean();
+		return this.statistics.getMatrix()[2][labels.size()].getMean();
 	}
+	
+	public boolean isCompatible(Result result) {
+		return result instanceof ClassificationResult;
+	}
+	
 }

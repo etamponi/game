@@ -1,4 +1,4 @@
-package game.plugins.blocks.pipes;
+package game.plugins.blocks.filters;
 
 import game.plugins.valuetemplates.LabelTemplate;
 
@@ -8,9 +8,7 @@ public class LabelToInteger extends LabelToVector {
 
 	@Override
 	protected void updateLabelMapping() {
-		LabelTemplate template = getParentTemplate() == null ? null : getParentTemplate().getSingleton(LabelTemplate.class);
-		if (template == null)
-			return;
+		LabelTemplate template = datasetTemplate.sourceTemplate.getSingleton(LabelTemplate.class);
 		for(int i = 0; i < template.labels.size(); i++)
 			getLabelMapping().put((String)template.labels.get(i), new ArrayRealVector(new double[]{i}));
 	}

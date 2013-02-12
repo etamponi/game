@@ -49,4 +49,9 @@ public class LabelTemplate extends ValueTemplate<String> {
 		return other instanceof LabelTemplate ? ((LabelTemplate)other).labels.equals(this.labels) : false;
 	}
 
+	@Override
+	public String toString() {
+		return "LabelTemplate {labels: " + labels.toString() + "}";
+	}
+
 }

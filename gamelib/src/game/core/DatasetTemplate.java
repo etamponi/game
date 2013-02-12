@@ -45,4 +45,17 @@ public class DatasetTemplate extends IObject {
 		}
 	}
 
+	public DatasetTemplate reverseTemplate() {
+		return new DatasetTemplate(targetTemplate, sourceTemplate);
+	}
+	
+	@Override
+	public String toString() {
+		StringBuilder builder = new StringBuilder();
+		
+		builder.append("source: ").append(sourceTemplate).append("; target: ").append(targetTemplate);
+		
+		return builder.toString();
+	}
+
 }

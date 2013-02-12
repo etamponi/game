@@ -10,6 +10,7 @@
  ******************************************************************************/
 package game.core;
 
+import game.core.blocks.Decoder;
 import game.utils.Utils;
 
 import java.util.ArrayList;
@@ -69,19 +70,22 @@ public class Dataset implements List<Instance> {
 		
 		private Block sourceFilter;
 		private Block targetFilter;
+		private Decoder decoder;
 		private Iterator<Instance> instanceIterator = iterator();
-		private Data currentSourceSequence;
-		private Data currentTargetSequence;
-		private Data currentPredictionSequence;
+		private Data currentSourceData;
+		private Data currentTargetData;
+		private Data currentPredictionData;
+		private Data currentDecodedData;
 		private int indexInInstance;
 		
 		private SampleIterator() {
 			prepareForNextInstance();
 		}
 		
-		public SampleIterator(Block sourceFilter, Block targetFilter) {
+		public SampleIterator(Block sourceFilter, Block targetFilter, Decoder decoder) {
 			this.sourceFilter = sourceFilter;
 			this.targetFilter = targetFilter;
+			this.decoder = decoder;
 			prepareForNextInstance();
 		}
 		
@@ -94,27 +98,30 @@ public class Dataset implements List<Instance> {
 			if (!instanceIterator.hasNext())
 				return;
 			Instance inst = instanceIterator.next();
-			currentSourceSequence = sourceFilter == null ? inst.getSource() : sourceFilter.transform(inst.getSource());
-			currentTargetSequence = targetFilter == null ? inst.getTarget() : targetFilter.transform(inst.getTarget());
-			currentPredictionSequence = inst.getPrediction();
+			currentSourceData = sourceFilter == null ? inst.getSource() : sourceFilter.transform(inst.getSource());
+			currentTargetData = targetFilter == null ? inst.getTarget() : targetFilter.transform(inst.getTarget());
+			currentPredictionData = inst.getPrediction();
+			currentDecodedData = decoder == null || currentPredictionData == null ? null : decoder.transform(currentPredictionData);
 			indexInInstance = 0;
 		}
 
 		@Override
 		public boolean hasNext() {
 			return instanceIterator.hasNext() || 
-					(currentSourceSequence != null && indexInInstance < currentSourceSequence.size());
+					(currentSourceData != null && indexInInstance < currentSourceData.size());
 		}
 
 		@Override
 		public Sample next() {
-			if (indexInInstance == currentTargetSequence.size()) {
+			if (indexInInstance == currentTargetData.size()) {
 				prepareForNextInstance();
 			}
 			
-			Sample ret = new Sample(currentSourceSequence.get(indexInInstance), currentTargetSequence.get(indexInInstance));
-			if (currentPredictionSequence != null)
-				ret.setPrediction(currentPredictionSequence.get(indexInInstance));	
+			Sample ret = new Sample(currentSourceData.get(indexInInstance), currentTargetData.get(indexInInstance));
+			if (currentPredictionData != null)
+				ret.setPrediction(currentPredictionData.get(indexInInstance));
+			if (currentDecodedData != null)
+				ret.setDecodedTarget(currentDecodedData.get(indexInInstance));
 			indexInInstance++;
 			return ret;
 		}
@@ -134,8 +141,8 @@ public class Dataset implements List<Instance> {
 		return new SampleIterator();
 	}
 	
-	public SampleIterator sampleIterator(Block sourceFilter, Block targetFilter) {
-		return new SampleIterator(sourceFilter, targetFilter);
+	public SampleIterator sampleIterator(Block sourceFilter, Block targetFilter, Decoder decoder) {
+		return new SampleIterator(sourceFilter, targetFilter, decoder);
 	}
 
 	public List<Dataset> getFolds(int folds) {

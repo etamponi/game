@@ -1,9 +1,9 @@
-package game.plugins.blocks.pipes;
+package game.plugins.blocks.filters;
 
 import game.core.Data;
-import game.core.ElementTemplate;
+import game.core.DatasetTemplate;
 import game.core.Element;
-import game.core.blocks.Pipe;
+import game.core.blocks.Filter;
 import game.plugins.valuetemplates.LabelTemplate;
 import game.plugins.valuetemplates.VectorTemplate;
 
@@ -13,18 +13,21 @@ import java.util.Map;
 import org.apache.commons.math3.linear.ArrayRealVector;
 import org.apache.commons.math3.linear.RealVector;
 
-public abstract class LabelToVector extends Pipe {
+import com.ios.triggers.BoundProperties;
+
+public abstract class LabelToVector extends Filter {
 	
 	private final Map<String, RealVector> labelMapping = new HashMap<>();
 	
 	protected abstract void updateLabelMapping();
 	
 	public LabelToVector() {
+		addTrigger(new BoundProperties(this, "outputTemplate"));
 		outputTemplate.add(new VectorTemplate());
 	}
 
 	@Override
-	protected Data transduce(Data input) {
+	public Data transform(Data input) {
 		Data ret = new Data();
 		for (int j = 0; j < input.length(); j++) {
 			String label = (String) input.get(j).get(0);
@@ -39,17 +42,19 @@ public abstract class LabelToVector extends Pipe {
 	}
 
 	@Override
-	public boolean supportsInputTemplate(ElementTemplate inputTemplate) {
-		return inputTemplate.isSingletonTemplate(LabelTemplate.class);
+	public boolean isCompatible(DatasetTemplate template) {
+		return template.sourceTemplate.isSingletonTemplate(LabelTemplate.class);
 	}
 
 	@Override
-	protected void setup() {
+	protected void updateOutputTemplate() {
 		labelMapping.clear();
-		if (getParentTemplate() != null && supportsInputTemplate(getParentTemplate())) {
+		if (datasetTemplate != null && isCompatible(datasetTemplate)) {
 			updateLabelMapping();
 			if (!labelMapping.values().isEmpty())
 				outputTemplate.getSingleton().setContent("dimension", labelMapping.values().iterator().next().getDimension());
+		} else {
+			outputTemplate.getSingleton().setContent("dimension", 0);
 		}
 	}
 

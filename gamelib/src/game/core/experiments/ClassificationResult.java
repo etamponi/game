@@ -12,11 +12,11 @@ package game.core.experiments;
 
 import game.core.Dataset;
 import game.core.Result;
-import game.core.blocks.Graph;
+import game.core.blocks.Classifier;
 
-public class ClassificationResult extends Result {
+public class ClassificationResult extends Result<ClassificationExperiment> {
 	
-	public Graph trainedGraph;
+	public Classifier trainedClassifier;
 	
 	public Dataset classifiedDataset;
 	

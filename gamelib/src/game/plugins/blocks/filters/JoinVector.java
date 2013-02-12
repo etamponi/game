@@ -1,19 +1,26 @@
-package game.plugins.blocks.pipes;
+package game.plugins.blocks.filters;
 
 import game.core.Data;
+import game.core.DatasetTemplate;
 import game.core.Element;
 import game.core.ElementTemplate;
 import game.core.ValueTemplate;
-import game.core.blocks.Pipe;
+import game.core.blocks.Filter;
 import game.plugins.valuetemplates.VectorTemplate;
 
 import org.apache.commons.math3.linear.ArrayRealVector;
 import org.apache.commons.math3.linear.RealVector;
 
-public class JoinVector extends Pipe {
+import com.ios.triggers.BoundProperties;
+
+public class JoinVector extends Filter {
+	
+	public JoinVector() {
+		addTrigger(new BoundProperties(this, "outputTemplate"));
+	}
 
 	@Override
-	protected Data transduce(Data input) {
+	public Data transform(Data input) {
 		Data ret = new Data();
 		for(Element e: input) {
 			RealVector out = new ArrayRealVector();
@@ -28,20 +35,19 @@ public class JoinVector extends Pipe {
 	}
 
 	@Override
-	public boolean supportsInputTemplate(ElementTemplate inputTemplate) {
-		for(ValueTemplate template: inputTemplate)
-			if (!(template instanceof VectorTemplate))
+	public boolean isCompatible(DatasetTemplate template) {
+		for(ValueTemplate tpl: template.sourceTemplate)
+			if (!(tpl instanceof VectorTemplate))
 				return false;
 		return true;
 	}
 
 	@Override
-	protected void setup() {
+	protected void updateOutputTemplate() {
 		ElementTemplate tpl = new ElementTemplate();
-		ElementTemplate parentTemplate = getParentTemplate();
-		if (parentTemplate != null && supportsInputTemplate(parentTemplate)) {
+		if (datasetTemplate != null && isCompatible(datasetTemplate)) {
 			int dimension = 0;
-			for (ValueTemplate template: parentTemplate) {
+			for (ValueTemplate template: datasetTemplate.sourceTemplate) {
 				dimension += (int)template.getContent("dimension");
 			}
 			VectorTemplate vec = new VectorTemplate();

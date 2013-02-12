@@ -12,7 +12,7 @@ package game.plugins.experiments;
 
 import game.core.Dataset;
 import game.core.ResultList;
-import game.core.blocks.Graph;
+import game.core.blocks.Classifier;
 import game.core.experiments.ClassificationExperiment;
 import game.core.experiments.ClassificationResult;
 
@@ -39,13 +39,13 @@ public class KFoldCrossValidation extends ClassificationExperiment {
 		
 		for(int i = 0; i < folds; i++) {
 			ClassificationResult result = new ClassificationResult();
-			Graph graphClone = graph.copy();
-			graphClone.setContent("name", graph.name + "_" + i);
+			Classifier clsClone = classifier.copy();
+			clsClone.setContent("name", classifier.name + "_" + i);
 			updateStatus(getOverallStatus(0.01, i), "training graph for fold " + (i+1) + "/" + folds);
-			executeAnotherTaskAndWait(getOverallStatus(0.70, i), graphClone.trainingAlgorithm, trainings.get(i));
+			executeAnotherTaskAndWait(getOverallStatus(0.70, i), clsClone.trainingAlgorithm, trainings.get(i));
 			updateStatus(getOverallStatus(0.70, i), "training complete, testing phase...");
-			result.classifiedDataset = classifyDataset(getOverallStatus(0.99, i), graphClone, testings.get(i));
-			result.trainedGraph = graphClone;
+			result.classifiedDataset = classifyDataset(getOverallStatus(0.99, i), clsClone, testings.get(i));
+			result.trainedClassifier = clsClone;
 			ret.results.add(result);
 			updateStatus(getOverallStatus(1.00, i), "finished fold " + (i+1) + "/" + folds);
 		}

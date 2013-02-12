@@ -10,7 +10,7 @@
  ******************************************************************************/
 package game.main;
 
-import game.core.Metric;
+import game.core.Metrics;
 import game.core.ResultList;
 import game.editorsystem.EditorWindow;
 import game.editorsystem.PropertyEditor;
@@ -20,17 +20,17 @@ import java.net.URL;
 import java.util.ResourceBundle;
 import java.util.Set;
 
-import com.ios.IObject;
-import com.ios.PluginManager;
-import com.ios.Property;
-import com.ios.constraints.CompatibleWith;
-
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.TreeItem;
 import javafx.scene.control.TreeView;
 import javafx.stage.FileChooser;
+
+import com.ios.IObject;
+import com.ios.PluginManager;
+import com.ios.Property;
+import com.ios.constraints.CompatibleWith;
 
 public class ResultListController implements Initializable {
 	
@@ -46,9 +46,9 @@ public class ResultListController implements Initializable {
 	public void addResult(ResultList r) {
 		TreeItem expItem = new TreeItem(r);
 		
-		Set<Class> metrics = PluginManager.getValidImplementationsOf(Metric.class, new CompatibleWith(new Property(r.results.get(0))));
+		Set<Class> metrics = PluginManager.getValidImplementationsOf(Metrics.class, new CompatibleWith(new Property(r.results.get(0))));
 		
-		for(Class<Metric> impl: metrics) {
+		for(Class<Metrics> impl: metrics) {
 			try {
 				TreeItem evaItem = new TreeItem(impl.newInstance());
 				expItem.getChildren().add(evaItem);
@@ -74,10 +74,9 @@ public class ResultListController implements Initializable {
 	public void onShow(ActionEvent event) {
 		TreeItem selected = (TreeItem)resultsView.getSelectionModel().getSelectedItem();
 		if (selected != null) {
-			if (selected.getValue() instanceof Metric) {
+			if (selected.getValue() instanceof Metrics) {
 				ResultList r = (ResultList)selected.getParent().getValue();
-				Metric m = (Metric)selected.getValue();
-				m.name = r.name + "_" + m.getClass().getSimpleName();
+				Metrics m = (Metrics)selected.getValue();
 				m.prepare(r);
 			}
 			Property property = new Property(selected.getValue());
