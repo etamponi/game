@@ -23,7 +23,7 @@ public abstract class Classifier extends Block {
 	public DatasetTemplate decoderTemplate;
 	
 	public Classifier() {
-		setContent("decoder", new NoDecoder());
+		omitFromErrorCheck("decoder");
 		
 		addTrigger(new BoundProperties(this, "decoderTemplate"));
 		addTrigger(new SimpleTrigger(

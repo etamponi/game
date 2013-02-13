@@ -17,7 +17,6 @@ import game.core.Experiment;
 import game.core.Instance;
 import game.core.blocks.Classifier;
 import game.core.blocks.Decoder;
-import game.core.blocks.NoDecoder;
 import game.plugins.valuetemplates.LabelTemplate;
 
 import java.util.Iterator;
@@ -43,7 +42,7 @@ public abstract class ClassificationExperiment extends Experiment<Classification
 		
 		addErrorCheck("classifier.decoder", new ErrorCheck<Decoder>() {
 			@Override public String getError(Decoder value) {
-				if (value instanceof NoDecoder)
+				if (value == null)
 					return "select a valid Decoder";
 				else
 					return null;
