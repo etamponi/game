@@ -2,40 +2,29 @@ package game.plugins.blocks.filters;
 
 import game.core.Data;
 import game.core.DatasetTemplate;
-import game.core.Element;
 import game.core.ElementTemplate;
 import game.core.ValueTemplate;
 import game.core.blocks.Filter;
 import game.plugins.valuetemplates.VectorTemplate;
 
-import org.apache.commons.math3.linear.ArrayRealVector;
-import org.apache.commons.math3.linear.RealVector;
-
-public class JoinVector extends Filter {
-
-	@Override
-	public Data transform(Data input) {
-		Data ret = new Data();
-		for(Element e: input) {
-			RealVector out = new ArrayRealVector();
-			for (Object o: e) {
-				RealVector v = (RealVector) o;
-				for(int i = 0; i < v.getDimension(); i++)
-					out = out.append(v.getEntry(i));
-			}
-			ret.add(new Element(out));
-		}
-		return ret;
-	}
+public class VectorToStringList extends Filter {
+	
+	@InName
+	public String format = "%.2f";
 
 	@Override
 	public boolean isCompatible(DatasetTemplate template) {
-		if (template.sourceTemplate == null)
-			return false;
-		for(ValueTemplate tpl: template.sourceTemplate)
+		for (ValueTemplate tpl: template.sourceTemplate) {
 			if (!(tpl instanceof VectorTemplate))
 				return false;
+		}
 		return true;
+	}
+
+	@Override
+	public Data transform(Data input) {
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 	@Override

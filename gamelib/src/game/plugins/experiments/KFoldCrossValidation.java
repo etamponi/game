@@ -40,8 +40,7 @@ public class KFoldCrossValidation extends ClassificationExperiment {
 		for(int i = 0; i < folds; i++) {
 			ClassificationResult result = new ClassificationResult();
 			Classifier clsClone = classifier.copy();
-			clsClone.setContent("name", classifier.name + "_" + i);
-			updateStatus(getOverallStatus(0.01, i), "training graph for fold " + (i+1) + "/" + folds);
+			updateStatus(getOverallStatus(0.01, i), "training classifier for fold " + (i+1) + "/" + folds);
 			executeAnotherTaskAndWait(getOverallStatus(0.70, i), clsClone.trainingAlgorithm, trainings.get(i));
 			updateStatus(getOverallStatus(0.70, i), "training complete, testing phase...");
 			result.classifiedDataset = classifyDataset(getOverallStatus(0.99, i), clsClone, testings.get(i));

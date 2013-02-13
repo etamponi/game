@@ -15,8 +15,9 @@ import com.ios.IObject;
 
 public class DatasetTemplate extends IObject {
 	
+	@InName
 	public ElementTemplate sourceTemplate;
-	
+	@InName
 	public ElementTemplate targetTemplate;
 	
 	public boolean sequences;
@@ -32,14 +33,18 @@ public class DatasetTemplate extends IObject {
 	}
 
 	public boolean isReady() {
-		return !sourceTemplate.isEmpty() && !targetTemplate.isEmpty();
+		return sourceTemplate != null && !sourceTemplate.isEmpty() && !targetTemplate.isEmpty();
 	}
 	
 	@Override
 	public boolean equals(Object o) {
 		if (o instanceof DatasetTemplate) {
 			DatasetTemplate other = (DatasetTemplate) o;
-			return this.sourceTemplate.equals(other.sourceTemplate) && this.targetTemplate.equals(other.targetTemplate);
+			
+			boolean ret = (this.sourceTemplate == null ? other.sourceTemplate == null : this.sourceTemplate.equals(other.sourceTemplate))
+						&& (this.targetTemplate == null ? other.targetTemplate == null : this.targetTemplate.equals(other.targetTemplate));
+			
+			return ret;
 		} else {
 			return false;
 		}
@@ -48,7 +53,7 @@ public class DatasetTemplate extends IObject {
 	public DatasetTemplate reverseTemplate() {
 		return new DatasetTemplate(targetTemplate, sourceTemplate);
 	}
-	
+/*
 	@Override
 	public String toString() {
 		StringBuilder builder = new StringBuilder();
@@ -57,5 +62,5 @@ public class DatasetTemplate extends IObject {
 		
 		return builder.toString();
 	}
-
+*/
 }

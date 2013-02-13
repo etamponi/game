@@ -46,8 +46,9 @@ public class KNNClassifier extends Classifier {
 		}
 	}
 	
+	@InName
 	public int k = 1;
-	
+	@InName
 	public String distanceType = "L2";
 
 	public List<ReferenceSample> reference = new ArrayList<>();
@@ -90,7 +91,7 @@ public class KNNClassifier extends Classifier {
 
 	@Override
 	protected void updateOutputTemplate() {
-		reference.clear();
+		// Nothing to do
 	}
 
 	@Override

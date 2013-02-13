@@ -320,5 +320,17 @@ public class Dataset implements List<Instance> {
 	public <T> T[] toArray(T[] a) {
 		return internal.toArray(a);
 	}
+
+	public Dataset apply(Block block) {
+		Dataset ret = new Dataset(new DatasetTemplate(block.outputTemplate, template.targetTemplate));
+		
+		for(Instance inst: this) {
+			Data out = block.transform(inst.getSource());
+			Instance outInst = new Instance(out, inst.getTarget());
+			ret.add(outInst);
+		}
+		
+		return ret;
+	}
 	
 }

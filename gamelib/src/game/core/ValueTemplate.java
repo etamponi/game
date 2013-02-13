@@ -24,6 +24,4 @@ public abstract class ValueTemplate<V> extends IObject {
 	
 	public abstract boolean equals(Object other);
 	
-	public abstract String toString();
-	
 }

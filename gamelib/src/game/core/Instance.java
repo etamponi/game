@@ -37,7 +37,7 @@ public class Instance {
 		this.target = target;
 		this.prediction = prediction;
 	}
-	
+
 	public Data getSource() {
 		return source;
 	}

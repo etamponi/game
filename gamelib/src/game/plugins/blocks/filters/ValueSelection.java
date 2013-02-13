@@ -18,12 +18,10 @@ import game.core.blocks.Filter;
 import game.utils.Utils;
 
 import com.ios.ErrorCheck;
-import com.ios.Property;
-import com.ios.listeners.ExactPathListener;
-import com.ios.triggers.SimpleTrigger;
 
 public class ValueSelection extends Filter {
 	
+	@InName
 	public String mask = "";
 	
 	public ValueSelection() {
@@ -33,20 +31,13 @@ public class ValueSelection extends Filter {
 				return fs.maskErrors();
 			}
 		});
-		
-		addTrigger(new SimpleTrigger(new ExactPathListener(new Property(this, "mask"))) {
-			private ValueSelection fs = ValueSelection.this;
-			@Override
-			public void action(Property changedPath) {
-				fs.updateOutputTemplate();
-			}
-		});
 	}
 	
 	private String maskErrors() {
 		if (Utils.count(mask, '0') + Utils.count(mask, '1') != mask.length())
 			return "can contain only 1s and 0s";
-		if (datasetTemplate != null && datasetTemplate.sourceTemplate.size() != mask.length())
+		if (datasetTemplate != null && datasetTemplate.sourceTemplate != null &&
+				datasetTemplate.sourceTemplate.size() != mask.length())
 			return "must contain extactly " +  datasetTemplate.sourceTemplate.size() + " characters";
 		return null;
 	}
@@ -73,8 +64,9 @@ public class ValueSelection extends Filter {
 
 	@Override
 	protected void updateOutputTemplate() {
-		ElementTemplate tpl = new ElementTemplate();
-		if (maskErrors() == null && datasetTemplate != null) {
+		ElementTemplate tpl = null;
+		if (maskErrors() == null) {
+			tpl = new ElementTemplate();
 			int baseIndex = 0;
 			for(char c: mask.toCharArray()) {
 				if (c == '1') {
@@ -88,8 +80,8 @@ public class ValueSelection extends Filter {
 	}
 
 	@Override
-	public boolean isCompatible(DatasetTemplate object) {
-		return true;
+	public boolean isCompatible(DatasetTemplate template) {
+		return template.sourceTemplate != null;
 	}
 
 }

@@ -30,7 +30,7 @@ public class ResultList<R extends Result> extends IObject {
 		if (experiment == null)
 			return "empty " + getClass().getSimpleName();
 		else
-			return experiment.name;
+			return experiment.toString();
 	}
 
 }

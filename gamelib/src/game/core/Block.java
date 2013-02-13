@@ -18,23 +18,20 @@ public abstract class Block extends IObject implements Compatible<DatasetTemplat
 	
 	public boolean trained = false;
 	
+	@InName
 	public TrainingAlgorithm trainingAlgorithm;
 	
 	public DatasetTemplate datasetTemplate;
 	
 	public ElementTemplate outputTemplate;
 	
-	public BlockPosition position;
+//	public BlockPosition position;
 	
 	public Block() {
-		setContent("position", new BlockPosition());
-		
-		setContent("outputTemplate", new ElementTemplate());
-		addTrigger(new BoundProperties(this, "outputTemplate"));
+//		setContent("position", new BlockPosition());
 		
 		// To handle training properties
 		addTrigger(new MasterSlaveTrigger(this, "", "trainingAlgorithm.block"));
-		setContent("trainingAlgorithm", new NoTraining());
 		final Trigger t = new BoundProperties(this, "empty");
 		addTrigger(t);
 		addTrigger(new SimpleTrigger(new SubPathListener(new Property(this, "trainingAlgorithm"))) {
@@ -52,20 +49,30 @@ public abstract class Block extends IObject implements Compatible<DatasetTemplat
 			}
 		});
 		addConstraint("trainingAlgorithm", new CompatibleWith(getProperty("")));
-
-		addTrigger(new SimpleTrigger(new SubPathListener(new Property(this, "datasetTemplate"))) {
+		setContent("trainingAlgorithm", new NoTraining());
+		
+		addTrigger(new BoundProperties(this, "outputTemplate"));
+		addTrigger(new SimpleTrigger(new SubPathListener(getProperty(""))) {
 			private Block self = Block.this;
+			private boolean listen = true;
 			@Override public void action(Property changedPath) {
-				self.updateOutputTemplate();
+				if (listen) {
+					listen = false;
+					if (self.datasetTemplate != null && self.isCompatible(self.datasetTemplate)) {
+						self.updateOutputTemplate();
+					} else {
+						self.setContent("outputTemplate", null);
+					}
+					listen = true;
+				}
 			}
 		});
+
 		addErrorCheck("datasetTemplate", new CompatibilityCheck(this));
 	}
 
 	public abstract Data transform(Data input);
 	
 	protected abstract void updateOutputTemplate();
-
-	public abstract boolean isClassifier();
 
 }

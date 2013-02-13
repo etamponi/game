@@ -10,16 +10,17 @@
  ******************************************************************************/
 package game.plugins.valuetemplates;
 
+import game.core.ValueTemplate;
+
 import java.util.List;
 
 import com.ios.IList;
 import com.ios.errorchecks.NoRepetitionCheck;
 import com.ios.errorchecks.SizeCheck;
 
-import game.core.ValueTemplate;
-
 public class LabelTemplate extends ValueTemplate<String> {
 	
+	@InName
 	public IList<String> labels;
 
 	public LabelTemplate() {
@@ -47,11 +48,6 @@ public class LabelTemplate extends ValueTemplate<String> {
 	@Override
 	public boolean equals(Object other) {
 		return other instanceof LabelTemplate ? ((LabelTemplate)other).labels.equals(this.labels) : false;
-	}
-
-	@Override
-	public String toString() {
-		return "LabelTemplate {labels: " + labels.toString() + "}";
 	}
 
 }

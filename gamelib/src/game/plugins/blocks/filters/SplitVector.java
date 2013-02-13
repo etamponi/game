@@ -30,6 +30,8 @@ public class SplitVector extends Filter {
 
 	@Override
 	public boolean isCompatible(DatasetTemplate template) {
+		if (template.sourceTemplate == null)
+			return false;
 		for(ValueTemplate tpl: template.sourceTemplate)
 			if (!(tpl instanceof VectorTemplate))
 				return false;
@@ -39,15 +41,12 @@ public class SplitVector extends Filter {
 	@Override
 	protected void updateOutputTemplate() {
 		ElementTemplate tpl = new ElementTemplate();
-		if (datasetTemplate != null && isCompatible(datasetTemplate)) {
-			for (ValueTemplate template: datasetTemplate.sourceTemplate) {
-				int dimension = template.getContent("dimension");
-				for(int i = 0; i < dimension; i++) {
-					VectorTemplate value = new VectorTemplate();
-					value.dimension = 1;
-					value.name = "D"+i;
-					tpl.add(value);
-				}
+		for (ValueTemplate template: datasetTemplate.sourceTemplate) {
+			int dimension = template.getContent("dimension");
+			for(int i = 0; i < dimension; i++) {
+				VectorTemplate value = new VectorTemplate();
+				value.dimension = 1;
+				tpl.add(value);
 			}
 		}
 		setContent("outputTemplate", tpl);

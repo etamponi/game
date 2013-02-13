@@ -14,17 +14,22 @@ import game.utils.Log;
 
 import java.io.File;
 import java.lang.reflect.ParameterizedType;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.Random;
 
 public abstract class Experiment<R extends Result> extends LongTask<ResultList<R>, String> {
 	
 	private static Random generator;
 	
+	@InName
+	public String name = String.format("%s", new SimpleDateFormat("yyMMdd-HH.mm").format(new Date()));
+	
 	public DatasetBuilder datasetBuilder;
 	
 	public static Random getRandom() {
 		if (generator == null)
-			return new Random(); // Not inside an experiment
+			return new Random(); // We are not inside an experiment, return an arbitrary random
 		return generator;
 	}
 	
@@ -50,7 +55,6 @@ public abstract class Experiment<R extends Result> extends LongTask<ResultList<R
 		ResultList<R> result = runExperiment();
 		if (resultsDirectory != null) {
 			result.setContent("experiment", this.copy());
-			result.setContent("name", name);
 			result.write(new File(outputDirectory + "/results_"+name+".bin"));
 		}
 		updateStatus(1.0, "Experiment " + getClass().getSimpleName() + " " + name + " finished");

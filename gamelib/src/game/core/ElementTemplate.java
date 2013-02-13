@@ -61,7 +61,8 @@ public class ElementTemplate extends IList<ValueTemplate> {
 			if (other.size() != this.size())
 				return false;
 			for(int i = 0; i < this.size(); i++) {
-				if (!other.get(i).equals(this.get(i)))
+				if ((other.get(i) == null && this.get(i) != null) ||
+						!other.get(i).equals(this.get(i)))
 					return false;
 			}
 			return true;

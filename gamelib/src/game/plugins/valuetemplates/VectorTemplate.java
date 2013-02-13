@@ -22,6 +22,7 @@ import com.ios.errorchecks.PositivenessCheck;
 
 public class VectorTemplate extends ValueTemplate<RealVector> {
 	
+	@InName
 	public int dimension;
 	
 	public VectorTemplate() {
@@ -50,11 +51,6 @@ public class VectorTemplate extends ValueTemplate<RealVector> {
 	@Override
 	public boolean equals(Object other) {
 		return other instanceof VectorTemplate ? ((VectorTemplate)other).dimension == this.dimension : false;
-	}
-
-	@Override
-	public String toString() {
-		return "VectorTemplate {dimension: " + dimension + "}";
 	}
 	
 }

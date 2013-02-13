@@ -7,6 +7,7 @@ import game.core.ElementTemplate;
 import game.plugins.valuetemplates.LabelTemplate;
 import game.plugins.valuetemplates.VectorTemplate;
 
+import com.ios.ErrorCheck;
 import com.ios.Property;
 import com.ios.constraints.CompatibleWith;
 import com.ios.listeners.SubPathListener;
@@ -22,9 +23,7 @@ public abstract class Classifier extends Block {
 	public DatasetTemplate decoderTemplate;
 	
 	public Classifier() {
-		setContent("outputTemplate", new ElementTemplate(new VectorTemplate(0)));
-		
-		omitFromErrorCheck("decoder");
+		setContent("decoder", new NoDecoder());
 		
 		addTrigger(new BoundProperties(this, "decoderTemplate"));
 		addTrigger(new SimpleTrigger(
@@ -40,6 +39,16 @@ public abstract class Classifier extends Block {
 		});
 		addTrigger(new MasterSlaveTrigger(this, "decoderTemplate", "decoder.datasetTemplate"));
 		addConstraint("decoder", new CompatibleWith(getProperty("decoderTemplate")));
+		
+		addErrorCheck("outputTemplate", new ErrorCheck<ElementTemplate>() {
+			@Override
+			public String getError(ElementTemplate value) {
+				if (!value.isSingletonTemplate(VectorTemplate.class))
+					return "Classifier must output a single Vector";
+				else
+					return null;
+			}
+		});
 	}
 	
 	public abstract Data classify(Data input);
@@ -53,12 +62,7 @@ public abstract class Classifier extends Block {
 	
 	@Override
 	public boolean isCompatible(DatasetTemplate template) {
-		return template.targetTemplate.isSingletonTemplate(LabelTemplate.class) && isClassifierCompatible(template);
-	}
-
-	@Override
-	public boolean isClassifier() {
-		return true;
+		return template.isReady() && template.targetTemplate.isSingletonTemplate(LabelTemplate.class) && isClassifierCompatible(template);
 	}
 
 }

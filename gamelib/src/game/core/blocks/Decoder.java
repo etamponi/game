@@ -11,11 +11,6 @@ public abstract class Decoder extends Block {
 	}
 	
 	@Override
-	public boolean isClassifier() {
-		return false;
-	}
-	
-	@Override
 	protected void updateOutputTemplate() {
 		// Nothing to do
 	}

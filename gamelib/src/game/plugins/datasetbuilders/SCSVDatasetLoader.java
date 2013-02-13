@@ -21,6 +21,7 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.util.Arrays;
 
+import com.ios.Property;
 import com.ios.errorchecks.FileExistsCheck;
 import com.ios.triggers.MasterSlaveTrigger;
 
@@ -32,9 +33,8 @@ public class SCSVDatasetLoader extends DatasetBuilder {
 	
 	public SCSVDatasetLoader() {
 		addTrigger(new MasterSlaveTrigger(this, "", "datasetTemplate.sequences") {
-			@Override
-			protected Object transform(Object content) {
-				return true;
+			@Override protected void updateSlave(Property slave, Object content) {
+				slave.setContent(false);
 			}
 		});
 		addErrorCheck("file", new FileExistsCheck());
