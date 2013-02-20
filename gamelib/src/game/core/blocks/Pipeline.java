@@ -37,6 +37,8 @@ public class Pipeline extends Block {
 	}
 
 	private void updatePipelineTemplates() {
+		if (datasetTemplate == null)
+			return;
 		DatasetTemplate template = datasetTemplate;
 		for(Block block: blocks) {
 			if (block == null)

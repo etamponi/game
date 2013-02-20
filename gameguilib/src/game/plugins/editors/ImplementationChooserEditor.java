@@ -14,6 +14,7 @@ import game.editorsystem.EditorWindow;
 import game.editorsystem.PropertyEditor;
 import game.utils.Utils;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -29,6 +30,8 @@ import javafx.scene.control.ComboBox;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
+import javafx.stage.FileChooser;
+import javafx.stage.FileChooser.ExtensionFilter;
 
 import com.ios.IObject;
 import com.ios.listeners.SubPathListener;
@@ -88,6 +91,8 @@ public class ImplementationChooserEditor extends PropertyEditor {
 
 	private Button editButton;
 	
+	private Button loadButton;
+	
 	public ImplementationChooserEditor() {
 		getUpdateTrigger().getListeners().add(new SubPathListener(getProperty("root")));
 		
@@ -104,8 +109,29 @@ public class ImplementationChooserEditor extends PropertyEditor {
 				new EditorWindow(editor).startEdit(getModel());
 			}
 		});
-		container.setSpacing(15);
-		container.getChildren().addAll(box, editButton);
+		this.loadButton = new Button("Load");
+		loadButton.setPrefWidth(55);
+		loadButton.setOnAction(new EventHandler<ActionEvent>() {
+			@Override
+			public void handle(ActionEvent event) {
+				FileChooser chooser = new FileChooser();
+				chooser.setInitialDirectory(new File(System.getProperty("user.dir")));
+				chooser.getExtensionFilters().add(new ExtensionFilter("GAME configuration file", "*.bin"));
+				
+				chooser.setTitle("Load object configuration");
+				File out = chooser.showOpenDialog(loadButton.getScene().getWindow());
+				if (out != null) {
+					IObject loaded = IObject.load(out);
+					if (!getModel().getContentType(false).isAssignableFrom(loaded.getClass())) {
+						//messageDialog("Cannot load object configuration", "Object could not be loaded. Check for type and constraints.");
+					} else {
+						getModel().setContent(loaded);
+					}
+				}
+			}
+		});
+		container.setSpacing(5);
+		container.getChildren().addAll(box, editButton, loadButton);
 //		box.prefWidthProperty().bind(container.widthProperty().subtract(editButton.prefWidthProperty()).subtract(5));
 	}
 

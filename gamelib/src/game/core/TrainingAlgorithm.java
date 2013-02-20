@@ -13,10 +13,7 @@ package game.core;
 import java.lang.reflect.ParameterizedType;
 
 import com.ios.Compatible;
-import com.ios.Property;
 import com.ios.errorchecks.CompatibilityCheck;
-import com.ios.listeners.SubPathListener;
-import com.ios.triggers.SimpleTrigger;
 
 public abstract class TrainingAlgorithm<B extends Block> extends LongTask<Void, Dataset> implements Compatible<Block> {
 	
@@ -24,16 +21,6 @@ public abstract class TrainingAlgorithm<B extends Block> extends LongTask<Void, 
 	
 	public TrainingAlgorithm() {
 		addErrorCheck("block", new CompatibilityCheck(this));
-		
-		addTrigger(new SimpleTrigger(new SubPathListener(new Property(this, "block.trainingAlgorithm"))) {
-			private TrainingAlgorithm self = TrainingAlgorithm.this;
-			@Override
-			public void action(Property changedPath) {
-				if (self != self.block.trainingAlgorithm) {
-					self.setContent("block", null);
-				}
-			}
-		});
 	}
 	
 	protected abstract void train(Dataset dataset);

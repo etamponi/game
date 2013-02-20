@@ -21,7 +21,7 @@ public class ElementTemplate extends IList<ValueTemplate> {
 	}
 	
 	public boolean isSingletonTemplate(Class<? extends ValueTemplate> type) {
-		return size() == 1 && type.isAssignableFrom(get(0).getClass());
+		return size() == 1 && get(0) != null && type.isAssignableFrom(get(0).getClass());
 	}
 	
 	public <T extends ValueTemplate> T getSingleton() {

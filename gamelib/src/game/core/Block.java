@@ -3,6 +3,8 @@ package game.core;
 
 import game.core.trainingalgorithms.NoTraining;
 
+import java.util.ArrayList;
+
 import com.ios.Compatible;
 import com.ios.IObject;
 import com.ios.Property;
@@ -25,11 +27,7 @@ public abstract class Block extends IObject implements Compatible<DatasetTemplat
 	
 	public ElementTemplate outputTemplate;
 	
-//	public BlockPosition position;
-	
 	public Block() {
-//		setContent("position", new BlockPosition());
-		
 		// To handle training properties
 		addTrigger(new MasterSlaveTrigger(this, "", "trainingAlgorithm.block"));
 		final Trigger t = new BoundProperties(this, "empty");
@@ -46,6 +44,12 @@ public abstract class Block extends IObject implements Compatible<DatasetTemplat
 				}
 				if (trigger.getBoundProperties().isEmpty())
 					trigger.getBoundProperties().add(new Property(self, "empty"));
+				
+				for(Property linkToThis: new ArrayList<>(getParentsLinksToThis())) {
+					if (linkToThis.getPath().equals("block") && linkToThis.getRoot() instanceof TrainingAlgorithm)
+						if (linkToThis.getRoot() != self.trainingAlgorithm)
+							linkToThis.getRoot().detach();
+				}
 			}
 		});
 		addConstraint("trainingAlgorithm", new CompatibleWith(getProperty("")));

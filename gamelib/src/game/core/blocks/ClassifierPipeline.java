@@ -70,6 +70,8 @@ public class ClassifierPipeline extends Classifier {
 	}
 
 	private void updatePipelineTemplates() {
+		if (datasetTemplate == null)
+			return;
 		DatasetTemplate template = datasetTemplate;
 		for(Block block: blocks) {
 			if (block == null)
@@ -77,7 +79,6 @@ public class ClassifierPipeline extends Classifier {
 			block.setContent("datasetTemplate", template);
 			template = new DatasetTemplate(block.outputTemplate, template.targetTemplate);
 		}
-//		updateOutputTemplate();
 	}
 
 	@Override

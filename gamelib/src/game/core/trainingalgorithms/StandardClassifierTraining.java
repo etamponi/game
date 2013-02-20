@@ -1,19 +1,21 @@
 package game.core.trainingalgorithms;
 
+import game.core.Block;
 import game.core.ElementTemplate;
 import game.core.TrainingAlgorithm;
 import game.core.blocks.Classifier;
+import game.plugins.blocks.decoders.ProbabilityDecoder;
 import game.plugins.valuetemplates.LabelTemplate;
 import game.plugins.valuetemplates.VectorTemplate;
 
 import com.ios.Property;
 import com.ios.triggers.MasterSlaveTrigger;
 
-public abstract class StandardClassifierTrainingAlgorithm<C extends Classifier> extends TrainingAlgorithm<C> {
+public abstract class StandardClassifierTraining<C extends Classifier> extends TrainingAlgorithm<C> {
 
-	public StandardClassifierTrainingAlgorithm() {
-		addTrigger(new MasterSlaveTrigger(this, "block.datasetTemplate", "block.outputTemplate.0.dimension") {
-			private StandardClassifierTrainingAlgorithm self = StandardClassifierTrainingAlgorithm.this;
+	public StandardClassifierTraining() {
+		addTrigger(new MasterSlaveTrigger(this, "block.datasetTemplate", "block.outputTemplate") {
+			private StandardClassifierTraining self = StandardClassifierTraining.this;
 			@Override
 			public void updateSlave(Property slave, Object content) {
 				if (self.block == null)
@@ -24,6 +26,14 @@ public abstract class StandardClassifierTrainingAlgorithm<C extends Classifier> 
 				} else {
 					self.block.setContent("outputTemplate", new ElementTemplate(new VectorTemplate(0)));
 				}
+			}
+		});
+		
+		addTrigger(new MasterSlaveTrigger<Block>(this, "block", "block.decoder") {
+			@Override
+			public void updateSlave(Property slave, Block content) {
+				if (content != null)
+					content.setContent("decoder", new ProbabilityDecoder());
 			}
 		});
 	}
