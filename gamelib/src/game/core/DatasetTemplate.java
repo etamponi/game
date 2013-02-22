@@ -33,7 +33,8 @@ public class DatasetTemplate extends IObject {
 	}
 
 	public boolean isReady() {
-		return sourceTemplate != null && !sourceTemplate.isEmpty() && !targetTemplate.isEmpty();
+		return sourceTemplate != null && !sourceTemplate.isEmpty() 
+				&& targetTemplate != null && !targetTemplate.isEmpty();
 	}
 	
 	@Override

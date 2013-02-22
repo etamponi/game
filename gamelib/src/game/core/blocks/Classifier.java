@@ -62,7 +62,8 @@ public abstract class Classifier extends Block {
 	
 	@Override
 	public boolean isCompatible(DatasetTemplate template) {
-		return template.isReady() && template.targetTemplate.isSingletonTemplate(LabelTemplate.class) && isClassifierCompatible(template);
+		return template != null && template.isReady()
+				&& template.targetTemplate.isSingletonTemplate(LabelTemplate.class) && isClassifierCompatible(template);
 	}
 
 }
