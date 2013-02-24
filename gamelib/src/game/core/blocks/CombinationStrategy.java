@@ -1,6 +1,7 @@
 package game.core.blocks;
 
 import game.core.Data;
+import game.core.DatasetTemplate;
 import game.core.ElementTemplate;
 
 import java.util.List;
@@ -16,11 +17,13 @@ public abstract class CombinationStrategy extends IObject implements Compatible<
 	
 	public List<Classifier> classifiers;
 	
+	public DatasetTemplate datasetTemplate;
+	
 	public ElementTemplate outputTemplate;
 	
 	public CombinationStrategy() {
 		addErrorCheck("classifiers", new CompatibilityCheck(this));
-		addTrigger(new SimpleTrigger(new SubPathListener(getProperty("classifiers"))) {
+		addTrigger(new SimpleTrigger(new SubPathListener(getProperty("classifiers")), new SubPathListener(getProperty("datasetTemplate"))) {
 			private CombinationStrategy self = CombinationStrategy.this;
 			@Override public void action(Property changedPath) {
 				self.updateOutputTemplate();

@@ -45,7 +45,7 @@ public abstract class Block extends IObject implements Compatible<DatasetTemplat
 				if (trigger.getBoundProperties().isEmpty())
 					trigger.getBoundProperties().add(new Property(self, "empty"));
 				
-				for(Property linkToThis: new ArrayList<>(getParentsLinksToThis())) {
+				for(Property linkToThis: new ArrayList<>(self.getParentsLinksToThis())) {
 					if (linkToThis.getPath().equals("block") && linkToThis.getRoot() instanceof TrainingAlgorithm)
 						if (linkToThis.getRoot() != self.trainingAlgorithm)
 							linkToThis.getRoot().detach();

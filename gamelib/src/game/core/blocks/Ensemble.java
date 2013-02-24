@@ -10,7 +10,6 @@ import java.util.List;
 
 import com.ios.IList;
 import com.ios.constraints.CompatibleWith;
-import com.ios.errorchecks.SizeCheck;
 import com.ios.triggers.MasterSlaveTrigger;
 
 public class Ensemble extends Classifier {
@@ -27,8 +26,8 @@ public class Ensemble extends Classifier {
 		addTrigger(new MasterSlaveTrigger(this, "strategy.outputTemplate", "outputTemplate"));
 		addConstraint("strategy", new CompatibleWith(getProperty("classifiers")));
 		
-		addTrigger(new MasterSlaveTrigger(this, "datasetTemplate", "classifiers.*.datasetTemplate"));
-		addErrorCheck("classifiers", new SizeCheck(1));
+		addTrigger(new MasterSlaveTrigger(this, "datasetTemplate", "classifiers.*.datasetTemplate", "strategy.datasetTemplate"));
+//		addErrorCheck("classifiers", new SizeCheck(1));
 	}
 
 	@Override

@@ -49,7 +49,10 @@ public class Averaging extends CombinationStrategy {
 
 	@Override
 	public void updateOutputTemplate() {
-		setContent("outputTemplate", classifiers.get(0).outputTemplate);
+		if (classifiers != null && !classifiers.isEmpty())
+			setContent("outputTemplate", classifiers.get(0).outputTemplate);
+		else
+			setContent("outputTemplate", null);
 	}
 
 }
