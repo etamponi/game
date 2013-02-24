@@ -136,10 +136,9 @@ public class StandardClassificationMetrics extends Metrics<ClassificationResult>
 	
 	protected void evaluateFScore(LabeledMatrix matrix, int row, ClassificationResult result) {
 		for(int i = 0; i < labels.size(); i++) {
-			double TP = truePositives.get(i);
-			double FN = falseNegatives.get(i);
-			double FP = falsePositives.get(i);
-			matrix.setEntry(row, i, TP / (FN + FP + TP));
+			double precision = matrix.getEntry(0, i);
+			double recall = matrix.getEntry(1, i);
+			matrix.setEntry(row, i, 2*(precision*recall)/(precision+recall));
 		}
 	}
 	

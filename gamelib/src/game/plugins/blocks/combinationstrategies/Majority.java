@@ -41,7 +41,7 @@ public class Majority extends CombinationStrategy {
 			for(int j = 0; j < reencoded.length(); j++) {
 				RealVector sum = ret.get(j).get();
 				RealVector cur = reencoded.get(j).get();
-				sum = sum.add(cur);
+				ret.get(j).set(0, sum.add(cur));
 			}
 		}
 		

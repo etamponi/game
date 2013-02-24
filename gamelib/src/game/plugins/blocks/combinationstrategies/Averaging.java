@@ -36,7 +36,7 @@ public class Averaging extends CombinationStrategy {
 			for(int j = 0; j < curr.length(); j++) {
 				RealVector tot = ret.get(j).get();
 				RealVector cur = curr.get(j).get();
-				tot = tot.add(cur);
+				ret.get(j).set(0, tot.add(cur));
 			}
 		}
 		
