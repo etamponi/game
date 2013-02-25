@@ -13,13 +13,19 @@ package game.plugins.datasetbuilders;
 import game.core.Data;
 import game.core.Dataset;
 import game.core.DatasetBuilder;
+import game.core.DatasetTemplate;
+import game.core.ElementTemplate;
 import game.core.Instance;
+import game.plugins.valuetemplates.LabelTemplate;
+import game.plugins.valuetemplates.VectorTemplate;
 
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 
 import com.ios.Property;
 import com.ios.errorchecks.FileExistsCheck;
@@ -30,6 +36,8 @@ public class CSVDatasetLoader extends DatasetBuilder {
 	public File file = new File("nonexistent.txt");
 	
 	public String separators = "[, +]";
+	
+	public boolean hasHeader = false;
 	
 	public CSVDatasetLoader() {
 		addTrigger(new MasterSlaveTrigger(this, "", "datasetTemplate.sequences") {
@@ -51,6 +59,8 @@ public class CSVDatasetLoader extends DatasetBuilder {
 			try {
 				int index = 0, count = 0;
 				BufferedReader reader = new BufferedReader(new FileReader(file));
+				if (hasHeader)
+					reader.readLine();
 				for(String line = reader.readLine(); line != null && (instanceNumber < 0 || count < instanceNumber); line = reader.readLine(), index++) {
 					if (index < startIndex)
 						continue;
@@ -76,7 +86,33 @@ public class CSVDatasetLoader extends DatasetBuilder {
 
 	@Override
 	public void prepare() {
-		// nothing to do
+		if (file.exists()) {
+			try {
+				BufferedReader reader = new BufferedReader(new FileReader(file));
+				String line = reader.readLine();
+				
+				String[] tokens = line.split(separators);
+				DatasetTemplate template = new DatasetTemplate();
+				template.setContent("sourceTemplate", new ElementTemplate(new VectorTemplate(tokens.length-1)));
+				
+				List<String> labels = new ArrayList<>();
+				do {
+					if (hasHeader) {
+						line = reader.readLine();
+						continue;
+					}
+					tokens = line.split(separators);
+					if (!labels.contains(tokens[tokens.length-1]))
+						labels.add(tokens[tokens.length-1]);
+					
+					line = reader.readLine();
+				} while(line != null);
+				
+				template.setContent("targetTemplate", new ElementTemplate(new LabelTemplate(labels.toArray(new String[]{}))));
+				
+				reader.close();
+			} catch (IOException e) {}
+		}
 	}
 
 }

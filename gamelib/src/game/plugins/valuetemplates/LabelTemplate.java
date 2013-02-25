@@ -12,6 +12,7 @@ package game.plugins.valuetemplates;
 
 import game.core.ValueTemplate;
 
+import java.util.Collection;
 import java.util.List;
 
 import com.ios.IList;
@@ -33,6 +34,11 @@ public class LabelTemplate extends ValueTemplate<String> {
 		this();
 		for(String l: ls)
 			labels.add(l);
+	}
+	
+	public LabelTemplate(Collection<? extends String> list) {
+		this();
+		labels.addAll(list);
 	}
 
 	@Override
