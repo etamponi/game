@@ -110,6 +110,8 @@ public class CSVDatasetLoader extends DatasetBuilder {
 				
 				template.setContent("targetTemplate", new ElementTemplate(new LabelTemplate(labels.toArray(new String[]{}))));
 				
+				setContent("datasetTemplate", template);
+				
 				reader.close();
 			} catch (IOException e) {}
 		}
