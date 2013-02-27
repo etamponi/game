@@ -83,10 +83,13 @@ public class ClassifierPipeline extends Classifier {
 
 	@Override
 	protected void updateOutputTemplate() {
+		setContent("outputTemplate", getContent("blocks.last.outputTemplate"));
+		/*
 		if (blocks.isEmpty() || blocks.getContent("last") == null)
 			setContent("outputTemplate", null);
 		else
 			setContent("outputTemplate", blocks.get(blocks.size()-1).outputTemplate);
+		*/
 	}
 
 	@Override

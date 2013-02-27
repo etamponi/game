@@ -43,9 +43,4 @@ public class Ensemble extends Classifier {
 		return true;
 	}
 
-	@Override
-	protected void updateOutputTemplate() {
-		// nothing to do
-	}
-
 }

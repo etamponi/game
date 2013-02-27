@@ -13,7 +13,7 @@ package game.plugins.trainingalgorithms;
 import game.core.Dataset;
 import game.core.DatasetTemplate;
 import game.core.Sample;
-import game.core.trainingalgorithms.StandardClassifierTraining;
+import game.core.trainingalgorithms.ClassifierTrainingAlgorithm;
 import game.plugins.blocks.classifiers.KNNClassifier;
 import game.plugins.blocks.classifiers.KNNClassifier.ReferenceSample;
 import game.plugins.blocks.filters.LabelToOneHot;
@@ -22,7 +22,7 @@ import java.util.Iterator;
 
 import org.apache.commons.math3.linear.RealVector;
 
-public class SimpleKNNTraining extends StandardClassifierTraining<KNNClassifier> {
+public class SimpleKNNTraining extends ClassifierTrainingAlgorithm<KNNClassifier> {
 
 	@Override
 	protected void train(Dataset trainingSet) {

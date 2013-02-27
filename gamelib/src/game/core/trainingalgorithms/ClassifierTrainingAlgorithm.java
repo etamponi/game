@@ -11,11 +11,11 @@ import game.plugins.valuetemplates.VectorTemplate;
 import com.ios.Property;
 import com.ios.triggers.MasterSlaveTrigger;
 
-public abstract class StandardClassifierTraining<C extends Classifier> extends TrainingAlgorithm<C> {
+public abstract class ClassifierTrainingAlgorithm<C extends Classifier> extends TrainingAlgorithm<C> {
 
-	public StandardClassifierTraining() {
+	public ClassifierTrainingAlgorithm() {
 		addTrigger(new MasterSlaveTrigger(this, "block.datasetTemplate", "block.outputTemplate") {
-			private StandardClassifierTraining self = StandardClassifierTraining.this;
+			private ClassifierTrainingAlgorithm self = ClassifierTrainingAlgorithm.this;
 			@Override
 			public void updateSlave(Property slave, Object content) {
 				if (self.block == null)

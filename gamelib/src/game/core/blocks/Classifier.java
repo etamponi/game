@@ -66,4 +66,9 @@ public abstract class Classifier extends Block {
 				&& template.targetTemplate.isSingletonTemplate(LabelTemplate.class) && isClassifierCompatible(template);
 	}
 
+	@Override
+	protected void updateOutputTemplate() {
+		// For Classifier, the outputTemplate is generally managed by the training algorithm
+	}
+
 }

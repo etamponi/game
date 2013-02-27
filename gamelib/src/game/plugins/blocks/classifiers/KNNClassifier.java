@@ -90,11 +90,6 @@ public class KNNClassifier extends Classifier {
 	}
 
 	@Override
-	protected void updateOutputTemplate() {
-		// Nothing to do
-	}
-
-	@Override
 	public boolean isClassifierCompatible(DatasetTemplate template) {
 		return template.sourceTemplate.isSingletonTemplate(VectorTemplate.class);
 	}
