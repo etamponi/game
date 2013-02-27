@@ -56,7 +56,11 @@ public class SCSVDatasetLoader extends DatasetBuilder {
 					Data targetSequence = new Data();
 					while (line != null && !line.matches("^$")) {
 						String[] tokens = line.split(separators);
-						assert(tokens.length == (sourceDim + targetDim));
+						if (tokens.length != (sourceDim + targetDim)) {
+							reader.close();
+							throw new RuntimeException("Expected " + (sourceDim + targetDim) + " tokens, found " + tokens.length);
+						}
+						
 						sourceSequence.add(datasetTemplate.sourceTemplate.loadElement(Arrays.copyOfRange(tokens, 0, sourceDim)));
 						targetSequence.add(datasetTemplate.targetTemplate.loadElement(Arrays.copyOfRange(tokens, sourceDim, tokens.length)));
 						line = reader.readLine();
