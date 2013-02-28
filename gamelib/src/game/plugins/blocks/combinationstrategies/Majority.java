@@ -15,12 +15,16 @@ import org.apache.commons.math3.linear.RealVector;
 public class Majority extends CombinationStrategy {
 
 	@Override
-	public boolean isCompatible(List<Classifier> list) {
+	public String compatibilityError(List<Classifier> list) {
+		if (list.isEmpty())
+			return "classifier list must contain at least one classifier";
 		for (Classifier cls: list) {
+			if (cls == null)
+				return "all classifiers must be valid";
 			if (cls.decoder == null)
-				return false;
+				return "every classifier must have a valid decoder";
 		}
-		return true;
+		return null;
 	}
 
 	@Override

@@ -162,10 +162,13 @@ public class BinaryDatasetBalancer extends ClassifierTrainingAlgorithm<DynamicTe
 	}
 
 	@Override
-	protected boolean isCompatible(DatasetTemplate datasetTemplate) {
-		return datasetTemplate.isReady() && datasetTemplate.targetTemplate.getSingleton(LabelTemplate.class).labels.size() == 2
+	protected String compatibilityError(DatasetTemplate datasetTemplate) {
+		if (!datasetTemplate.isReady())
+			return "datasetTemplate is not ready";
+		
+		return (datasetTemplate.isReady() && datasetTemplate.targetTemplate.getSingleton(LabelTemplate.class).labels.size() == 2
 				&& datasetTemplate.sourceTemplate.isSingletonTemplate(VectorTemplate.class)
-				&& datasetTemplate.sequences == false;
+				&& datasetTemplate.sequences == false) ? null : "sourceTemplate must be a VectorTemplate, target a LabelTemplate and no sequences allowed";
 	}
 
 }

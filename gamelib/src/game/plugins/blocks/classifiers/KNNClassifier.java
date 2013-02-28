@@ -13,8 +13,8 @@ import java.util.List;
 
 import org.apache.commons.math3.linear.RealVector;
 
-import com.ios.ErrorCheck;
 import com.ios.errorchecks.PositivenessCheck;
+import com.ios.errorchecks.PropertyCheck;
 
 public class KNNClassifier extends Classifier {
 	
@@ -54,10 +54,10 @@ public class KNNClassifier extends Classifier {
 	public List<ReferenceSample> reference = new ArrayList<>();
 	
 	public KNNClassifier() {
-		addErrorCheck("k", new PositivenessCheck(false));
+		addErrorCheck(new PositivenessCheck("k", false));
 		
-		addErrorCheck("distanceType", new ErrorCheck<String>() {
-			@Override public String getError(String value) {
+		addErrorCheck(new PropertyCheck<String>("distanceType") {
+			@Override protected String getError(String value) {
 				value = value.toLowerCase();
 				if (value.equals("l2") || value.equals("l1") || value.equals("linf"))
 					return null;
@@ -90,8 +90,8 @@ public class KNNClassifier extends Classifier {
 	}
 
 	@Override
-	public boolean isClassifierCompatible(DatasetTemplate template) {
-		return template.sourceTemplate.isSingletonTemplate(VectorTemplate.class);
+	public String classifierCompatibilityError(DatasetTemplate template) {
+		return template.sourceTemplate.isSingletonTemplate(VectorTemplate.class) ? null : "sourceTemplate must be a singleton VectorTemplate";
 	}
 
 }

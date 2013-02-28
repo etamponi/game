@@ -13,12 +13,15 @@ public class VectorToStringList extends Filter {
 	public String format = "%.2f";
 
 	@Override
-	public boolean isCompatible(DatasetTemplate template) {
+	public String compatibilityError(DatasetTemplate template) {
+		if (template.sourceTemplate == null || template.sourceTemplate.isEmpty())
+			return "sourceTemplate is null or empty";
+		
 		for (ValueTemplate tpl: template.sourceTemplate) {
 			if (!(tpl instanceof VectorTemplate))
-				return false;
+				return "sourceTemplate must contain only VectorTemplates";
 		}
-		return true;
+		return null;
 	}
 
 	@Override

@@ -13,7 +13,7 @@ public class BasicEnsembleTraining extends TrainingAlgorithm<Ensemble> {
 	public double subsetPercent = 1.0;
 	
 	public BasicEnsembleTraining() {
-		addErrorCheck("subsetPercent", new RangeCheck(Double.MIN_VALUE, 1.0));
+		addErrorCheck(new RangeCheck("subsetPercent", Double.MIN_VALUE, 1.0));
 	}
 
 	@Override
@@ -31,8 +31,8 @@ public class BasicEnsembleTraining extends TrainingAlgorithm<Ensemble> {
 	}
 
 	@Override
-	protected boolean isCompatible(DatasetTemplate datasetTemplate) {
-		return true;
+	protected String compatibilityError(DatasetTemplate datasetTemplate) {
+		return null;
 	}
 
 }

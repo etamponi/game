@@ -29,13 +29,13 @@ public class JoinVector extends Filter {
 	}
 
 	@Override
-	public boolean isCompatible(DatasetTemplate template) {
+	public String compatibilityError(DatasetTemplate template) {
 		if (template.sourceTemplate == null)
-			return false;
+			return "sourceTemplate is null";
 		for(ValueTemplate tpl: template.sourceTemplate)
 			if (!(tpl instanceof VectorTemplate))
-				return false;
-		return true;
+				return "every ValueTemplate in sourceTemplate must be a VectorTemplate";
+		return null;
 	}
 
 	@Override

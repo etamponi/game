@@ -45,7 +45,7 @@ public class CSVDatasetLoader extends DatasetBuilder {
 				slave.setContent(false);
 			}
 		});
-		addErrorCheck("file", new FileExistsCheck());
+		addErrorCheck(new FileExistsCheck("file"));
 	}
 
 	@Override
@@ -61,7 +61,7 @@ public class CSVDatasetLoader extends DatasetBuilder {
 				BufferedReader reader = new BufferedReader(new FileReader(file));
 				if (hasHeader)
 					reader.readLine();
-				for(String line = reader.readLine(); line != null && (instanceNumber < 0 || count < instanceNumber); line = reader.readLine(), index++) {
+				for(String line = reader.readLine(); line != null && count < getInstanceNumber(); line = reader.readLine(), index++) {
 					if (index < startIndex)
 						continue;
 					String[] tokens = line.split(separators);

@@ -26,7 +26,7 @@ public class VectorTemplate extends ValueTemplate<RealVector> {
 	public int dimension;
 	
 	public VectorTemplate() {
-		addErrorCheck("dimension", new PositivenessCheck(false));
+		addErrorCheck(new PositivenessCheck("dimension", false));
 	}
 	
 	public VectorTemplate(int dimension) {

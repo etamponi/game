@@ -45,8 +45,8 @@ public class SimpleKNNTraining extends ClassifierTrainingAlgorithm<KNNClassifier
 	}
 
 	@Override
-	protected boolean isCompatible(DatasetTemplate template) {
-		return true;
+	protected String compatibilityError(DatasetTemplate template) {
+		return null;
 	}
 
 }

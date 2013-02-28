@@ -26,7 +26,7 @@ public class KFoldCrossValidation extends ClassificationExperiment {
 	public int folds = 10;
 	
 	public KFoldCrossValidation() {
-		addErrorCheck("folds", new RangeCheck(2, Bound.LOWER));
+		addErrorCheck(new RangeCheck("folds", 2, Bound.LOWER));
 	}
 
 	@Override

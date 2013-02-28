@@ -33,7 +33,7 @@ public class Pipeline extends Block {
 				}
 			}
 		});
-		addErrorCheck("blocks", new SizeCheck(1));
+		addErrorCheck(new SizeCheck("blocks", 1));
 	}
 
 	private void updatePipelineTemplates() {
@@ -57,16 +57,13 @@ public class Pipeline extends Block {
 	}
 
 	@Override
-	public boolean isCompatible(DatasetTemplate object) {
-		return true;
+	public String compatibilityError(DatasetTemplate object) {
+		return null;
 	}
 
 	@Override
 	protected void updateOutputTemplate() {
-		if (blocks.isEmpty() || blocks.getContent("last") == null)
-			setContent("outputTemplate", null);
-		else
-			setContent("outputTemplate", blocks.get(blocks.size()-1).outputTemplate);
+		setContent("outputTemplate", getContent("blocks.last.outputTemplate"));
 	}
 
 }

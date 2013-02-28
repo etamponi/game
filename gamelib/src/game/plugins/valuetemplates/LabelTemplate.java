@@ -26,8 +26,8 @@ public class LabelTemplate extends ValueTemplate<String> {
 
 	public LabelTemplate() {
 		setContent("labels", new IList<>(String.class));
-		addErrorCheck("labels", new NoRepetitionCheck());
-		addErrorCheck("labels", new SizeCheck(2));
+		addErrorCheck(new NoRepetitionCheck("labels"));
+		addErrorCheck(new SizeCheck("labels", 2));
 	}
 	
 	public LabelTemplate(String... ls) {

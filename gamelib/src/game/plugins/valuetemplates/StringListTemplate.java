@@ -13,7 +13,7 @@ public class StringListTemplate extends ValueTemplate<List<String>> {
 	public int dimension = 0;
 	
 	public StringListTemplate() {
-		addErrorCheck("dimension", new PositivenessCheck(false));
+		addErrorCheck(new PositivenessCheck("dimension", false));
 	}
 
 	@Override

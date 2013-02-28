@@ -25,14 +25,20 @@ public class SimpleExperiment extends ClassificationExperiment {
 	public DatasetBuilder testingDataset;
 	
 	public SimpleExperiment() {
-		addErrorCheck("testingDataset.datasetTemplate", new ErrorCheck<DatasetTemplate>() {
-			private SimpleExperiment self = SimpleExperiment.this;
-			@Override
-			public String getError(DatasetTemplate value) {
-				if (value.equals(self.datasetBuilder.datasetTemplate))
+		addErrorCheck(new ErrorCheck<SimpleExperiment>() {
+			@Override public String getError() {
+				DatasetTemplate testingTpl = getRoot().getContent("testingDataset.datasetTemplate");
+				if (testingTpl == null)
+					return "testing datasetTemplate is null";
+				
+				DatasetTemplate trainingTpl = getRoot().getContent("datasetBuilder.datasetTemplate");
+				if (trainingTpl == null)
+					return null;
+				
+				if (testingTpl.equals(trainingTpl))
 					return null;
 				else
-					return "must be the same as the training dataset template";
+					return "testing and training datasetTemplate must be the equal";
 			}
 		});
 	}

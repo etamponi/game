@@ -7,9 +7,9 @@ import game.core.ElementTemplate;
 import game.plugins.valuetemplates.LabelTemplate;
 import game.plugins.valuetemplates.VectorTemplate;
 
-import com.ios.ErrorCheck;
 import com.ios.Property;
-import com.ios.constraints.CompatibleWith;
+import com.ios.constraints.CompatibilityConstraint;
+import com.ios.errorchecks.PropertyCheck;
 import com.ios.listeners.SubPathListener;
 import com.ios.triggers.BoundProperties;
 import com.ios.triggers.MasterSlaveTrigger;
@@ -38,11 +38,11 @@ public abstract class Classifier extends Block {
 			}
 		});
 		addTrigger(new MasterSlaveTrigger(this, "decoderTemplate", "decoder.datasetTemplate"));
-		addConstraint("decoder", new CompatibleWith(getProperty("decoderTemplate")));
+		addConstraint("decoder", new CompatibilityConstraint(getProperty("decoderTemplate")));
 		
-		addErrorCheck("outputTemplate", new ErrorCheck<ElementTemplate>() {
+		addErrorCheck(new PropertyCheck<ElementTemplate>("outputTemplate") {
 			@Override
-			public String getError(ElementTemplate value) {
+			protected String getError(ElementTemplate value) {
 				if (!value.isSingletonTemplate(VectorTemplate.class))
 					return "Classifier must output a single Vector";
 				else
@@ -53,7 +53,7 @@ public abstract class Classifier extends Block {
 	
 	public abstract Data classify(Data input);
 	
-	public abstract boolean isClassifierCompatible(DatasetTemplate template);
+	public abstract String classifierCompatibilityError(DatasetTemplate template);
 	
 	@Override
 	public Data transform(Data input) {
@@ -61,9 +61,12 @@ public abstract class Classifier extends Block {
 	}
 	
 	@Override
-	public boolean isCompatible(DatasetTemplate template) {
-		return template != null && template.isReady()
-				&& template.targetTemplate.isSingletonTemplate(LabelTemplate.class) && isClassifierCompatible(template);
+	public String compatibilityError(DatasetTemplate template) {
+		if (template == null || !template.isReady())
+			return "datasetTemplate is null or is not ready";
+		if (!template.targetTemplate.isSingletonTemplate(LabelTemplate.class))
+			return "targetTemplate must be a singleton LabelTemplate";
+		return classifierCompatibilityError(template);
 	}
 
 	@Override

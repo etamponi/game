@@ -166,8 +166,8 @@ public class StandardClassificationMetrics extends Metrics<ClassificationResult>
 		return this.statistics.getMatrix()[2][labels.size()].getMean();
 	}
 	
-	public boolean isCompatible(Result result) {
-		return result instanceof ClassificationResult;
+	public String compatibilityError(Result result) {
+		return result instanceof ClassificationResult ? null : "compatible with ClassificationResult only";
 	}
 	
 }

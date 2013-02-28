@@ -30,7 +30,7 @@ import javafx.stage.FileChooser;
 import com.ios.IObject;
 import com.ios.PluginManager;
 import com.ios.Property;
-import com.ios.constraints.CompatibleWith;
+import com.ios.constraints.CompatibilityConstraint;
 
 public class ResultListController implements Initializable {
 	
@@ -46,7 +46,7 @@ public class ResultListController implements Initializable {
 	public void addResult(ResultList r) {
 		TreeItem expItem = new TreeItem(r);
 		
-		Set<Class> metrics = PluginManager.getValidImplementationsOf(Metrics.class, new CompatibleWith(new Property(r.results.get(0))));
+		Set<Class> metrics = PluginManager.getValidImplementationsOf(Metrics.class, new CompatibilityConstraint(new Property(r.results.get(0))));
 		
 		for(Class<Metrics> impl: metrics) {
 			try {

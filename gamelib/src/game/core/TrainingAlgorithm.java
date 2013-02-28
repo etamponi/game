@@ -20,14 +20,14 @@ public abstract class TrainingAlgorithm<B extends Block> extends LongTask<Void, 
 	public B block;
 	
 	public TrainingAlgorithm() {
-		addErrorCheck("block", new CompatibilityCheck(this));
+		addErrorCheck(new CompatibilityCheck("block"));
 	}
 	
 	protected abstract void train(Dataset dataset);
 	
 	protected abstract String getTrainingPropertyNames();
 	
-	protected abstract boolean isCompatible(DatasetTemplate datasetTemplate);
+	protected abstract String compatibilityError(DatasetTemplate datasetTemplate);
 
 	@Override
 	public Void execute(Dataset dataset) {
@@ -42,18 +42,21 @@ public abstract class TrainingAlgorithm<B extends Block> extends LongTask<Void, 
 	}
 
 	public String[] getTrainingProperties() {
-		if (!getTrainingPropertyNames().isEmpty())
+		if (getTrainingPropertyNames() != null && !getTrainingPropertyNames().isEmpty())
 			return getTrainingPropertyNames().split(" ");
 		else
 			return new String[0];
 	}
 
 	@Override
-	public boolean isCompatible(Block block) {
-		if (!((Class)((ParameterizedType)getClass().getGenericSuperclass()).getActualTypeArguments()[0]).isAssignableFrom(block.getClass()))
-			return false;
+	public String compatibilityError(Block block) {
+		Class type = (Class)((ParameterizedType)getClass().getGenericSuperclass()).getActualTypeArguments()[0];
+		if (!type.isAssignableFrom(block.getClass()))
+			return "is compatible only with " + type.getSimpleName();
 		else
-			return block.datasetTemplate == null || !block.datasetTemplate.isReady() ? false : isCompatible(block.datasetTemplate);
+			return (block.datasetTemplate == null || !block.datasetTemplate.isReady()) ?
+					"datasetTemplate is null or is not ready"
+					: compatibilityError(block.datasetTemplate);
 	}
 
 }

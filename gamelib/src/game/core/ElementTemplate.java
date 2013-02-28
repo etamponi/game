@@ -11,7 +11,7 @@ public class ElementTemplate extends IList<ValueTemplate> {
 	public ElementTemplate() {
 		super(ValueTemplate.class);
 		
-		addErrorCheck("", new SizeCheck(1));
+		addErrorCheck(new SizeCheck("", 1));
 	}
 	
 	public ElementTemplate(ValueTemplate... templates) {

@@ -14,12 +14,12 @@ public class NoTraining extends TrainingAlgorithm<Block> {
 
 	@Override
 	protected String getTrainingPropertyNames() {
-		return "";
+		return null;
 	}
 
 	@Override
-	protected boolean isCompatible(DatasetTemplate datasetTemplate) {
-		return true;
+	protected String compatibilityError(DatasetTemplate datasetTemplate) {
+		return null;
 	}
 
 }

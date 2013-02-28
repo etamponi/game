@@ -9,7 +9,7 @@ import com.ios.Compatible;
 import com.ios.IObject;
 import com.ios.Property;
 import com.ios.Trigger;
-import com.ios.constraints.CompatibleWith;
+import com.ios.constraints.CompatibilityConstraint;
 import com.ios.errorchecks.CompatibilityCheck;
 import com.ios.listeners.SubPathListener;
 import com.ios.triggers.BoundProperties;
@@ -52,7 +52,7 @@ public abstract class Block extends IObject implements Compatible<DatasetTemplat
 				}
 			}
 		});
-		addConstraint("trainingAlgorithm", new CompatibleWith(getProperty("")));
+		addConstraint("trainingAlgorithm", new CompatibilityConstraint(getProperty("")));
 		setContent("trainingAlgorithm", new NoTraining());
 		
 		addTrigger(new BoundProperties(this, "outputTemplate"));
@@ -62,7 +62,7 @@ public abstract class Block extends IObject implements Compatible<DatasetTemplat
 			@Override public void action(Property changedPath) {
 				if (listen) {
 					listen = false;
-					if (self.datasetTemplate != null && self.isCompatible(self.datasetTemplate)) {
+					if (self.datasetTemplate != null && self.compatibilityError(self.datasetTemplate) == null) {
 						self.updateOutputTemplate();
 					} else {
 						self.setContent("outputTemplate", null);
@@ -72,7 +72,7 @@ public abstract class Block extends IObject implements Compatible<DatasetTemplat
 			}
 		});
 
-		addErrorCheck("datasetTemplate", new CompatibilityCheck(this));
+		addErrorCheck(new CompatibilityCheck("datasetTemplate"));
 	}
 
 	public abstract Data transform(Data input);

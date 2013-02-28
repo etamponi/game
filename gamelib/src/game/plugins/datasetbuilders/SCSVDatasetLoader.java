@@ -37,7 +37,7 @@ public class SCSVDatasetLoader extends DatasetBuilder {
 				slave.setContent(false);
 			}
 		});
-		addErrorCheck("file", new FileExistsCheck());
+		addErrorCheck(new FileExistsCheck("file"));
 	}
 
 	@Override
@@ -51,7 +51,7 @@ public class SCSVDatasetLoader extends DatasetBuilder {
 			try {
 				int count = 0, index = 0;
 				BufferedReader reader = new BufferedReader(new FileReader(file));
-				for(String line = reader.readLine(); line != null && (instanceNumber < 0 || count < instanceNumber); line = reader.readLine(), index++) {
+				for(String line = reader.readLine(); line != null && count < getInstanceNumber(); line = reader.readLine(), index++) {
 					Data sourceSequence = new Data();
 					Data targetSequence = new Data();
 					while (line != null && !line.matches("^$")) {

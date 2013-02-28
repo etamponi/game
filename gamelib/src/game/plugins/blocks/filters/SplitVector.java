@@ -29,13 +29,13 @@ public class SplitVector extends Filter {
 	}
 
 	@Override
-	public boolean isCompatible(DatasetTemplate template) {
+	public String compatibilityError(DatasetTemplate template) {
 		if (template.sourceTemplate == null)
-			return false;
+			return "sourceTemplate is null";
 		for(ValueTemplate tpl: template.sourceTemplate)
 			if (!(tpl instanceof VectorTemplate))
-				return false;
-		return true;
+				return "sourceTemplate must contain only VectorTemplates";
+		return null;
 	}
 
 	@Override

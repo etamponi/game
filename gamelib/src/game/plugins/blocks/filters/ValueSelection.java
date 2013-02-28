@@ -17,7 +17,7 @@ import game.core.ElementTemplate;
 import game.core.blocks.Filter;
 import game.utils.Utils;
 
-import com.ios.ErrorCheck;
+import com.ios.errorchecks.PropertyCheck;
 
 public class ValueSelection extends Filter {
 	
@@ -25,10 +25,9 @@ public class ValueSelection extends Filter {
 	public String mask = "";
 	
 	public ValueSelection() {
-		addErrorCheck("mask", new ErrorCheck<String>() {
-			private ValueSelection fs = ValueSelection.this;
-			@Override public String getError(String value) {
-				return fs.maskErrors();
+		addErrorCheck(new PropertyCheck<String>("mask") {
+			@Override protected String getError(String value) {
+				return getRoot(ValueSelection.class).maskErrors();
 			}
 		});
 	}
@@ -80,8 +79,8 @@ public class ValueSelection extends Filter {
 	}
 
 	@Override
-	public boolean isCompatible(DatasetTemplate template) {
-		return template.sourceTemplate != null;
+	public String compatibilityError(DatasetTemplate template) {
+		return template.sourceTemplate != null ? null : "sourceTemplate is null";
 	}
 
 }

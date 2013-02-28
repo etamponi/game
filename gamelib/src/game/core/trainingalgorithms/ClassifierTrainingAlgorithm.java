@@ -20,7 +20,7 @@ public abstract class ClassifierTrainingAlgorithm<C extends Classifier> extends 
 			public void updateSlave(Property slave, Object content) {
 				if (self.block == null)
 					return;
-				if (self.block.isCompatible(self.block.datasetTemplate)) {
+				if (self.block.compatibilityError(self.block.datasetTemplate) == null) {
 					int dimension = self.block.datasetTemplate.targetTemplate.getSingleton(LabelTemplate.class).labels.size();
 					self.block.setContent("outputTemplate", new ElementTemplate(new VectorTemplate(dimension)));
 				} else {

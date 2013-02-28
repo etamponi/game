@@ -22,7 +22,7 @@ public abstract class CombinationStrategy extends IObject implements Compatible<
 	public ElementTemplate outputTemplate;
 	
 	public CombinationStrategy() {
-		addErrorCheck("classifiers", new CompatibilityCheck(this));
+		addErrorCheck(new CompatibilityCheck("classifiers"));
 		addTrigger(new SimpleTrigger(new SubPathListener(getProperty("classifiers")), new SubPathListener(getProperty("datasetTemplate"))) {
 			private CombinationStrategy self = CombinationStrategy.this;
 			@Override public void action(Property changedPath) {

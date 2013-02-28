@@ -25,14 +25,19 @@ public class ProbabilityDecoder extends Decoder {
 	}
 
 	@Override
-	public boolean isCompatible(DatasetTemplate template) {
+	public String compatibilityError(DatasetTemplate template) {
+		if (template == null || !template.isReady())
+			return "template is null or is not ready!";
 		if (!template.sourceTemplate.isSingletonTemplate(VectorTemplate.class))
-			return false;
+			return "sourceTemplate must be a singleton VectorTemplate";
 		if (!template.targetTemplate.isSingletonTemplate(LabelTemplate.class))
-			return false;
+			return "targetTemplate must be a singleton LabelTemplate";
 		int sourceDimension = template.sourceTemplate.getSingleton(VectorTemplate.class).dimension;
 		int targetDimension = template.targetTemplate.getSingleton(LabelTemplate.class).labels.size();
-		return sourceDimension == targetDimension;
+		if (sourceDimension == targetDimension)
+			return null;
+		else
+			return "the dimension of the vector must be the same as the label number (found: " + sourceDimension + ", " + targetDimension + ")";
 	}
 
 }

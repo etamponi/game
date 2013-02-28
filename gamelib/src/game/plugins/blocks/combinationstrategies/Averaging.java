@@ -11,20 +11,20 @@ import org.apache.commons.math3.linear.RealVector;
 public class Averaging extends CombinationStrategy {
 
 	@Override
-	public boolean isCompatible(List<Classifier> list) {
+	public String compatibilityError(List<Classifier> list) {
 		if (list.isEmpty())
-			return false;
+			return "must contain at least one Classifier";
 		Classifier first = list.get(0);
 		if (first == null || first.outputTemplate == null)
-			return false;
+			return "classifiers must be valid and with the same outputTemplate";
 		for(int i = 1; i < list.size(); i++) {
 			Classifier curr = list.get(i);
 			if (curr == null || curr.outputTemplate == null)
-				return false;
+				return "classifiers must be valid and with the same outputTemplate";
 			if (!curr.outputTemplate.equals(first.outputTemplate))
-				return false;
+				return "classifiers must be valid and with the same outputTemplate";
 		}
-		return true;
+		return null;
 	}
 
 	@Override

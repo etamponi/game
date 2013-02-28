@@ -21,7 +21,7 @@ import game.plugins.valuetemplates.LabelTemplate;
 
 import java.util.Iterator;
 
-import com.ios.ErrorCheck;
+import com.ios.errorchecks.PropertyCheck;
 import com.ios.triggers.MasterSlaveTrigger;
 
 public abstract class ClassificationExperiment extends Experiment<ClassificationResult> {
@@ -31,8 +31,9 @@ public abstract class ClassificationExperiment extends Experiment<Classification
 	public ClassificationExperiment() {
 		addTrigger(new MasterSlaveTrigger(this, "datasetBuilder.datasetTemplate", "classifier.datasetTemplate"));
 		
-		addErrorCheck("datasetBuilder.datasetTemplate", new ErrorCheck<DatasetTemplate>() {
-			@Override public String getError(DatasetTemplate value) {
+		addErrorCheck(new PropertyCheck<DatasetTemplate>("datasetBuilder.datasetTemplate") {
+			@Override
+			protected String getError(DatasetTemplate value) {
 				if (value.targetTemplate.isSingletonTemplate(LabelTemplate.class))
 					return null;
 				else
@@ -40,7 +41,7 @@ public abstract class ClassificationExperiment extends Experiment<Classification
 			}
 		});
 		
-		addErrorCheck("classifier.decoder", new ErrorCheck<Decoder>() {
+		addErrorCheck(new PropertyCheck<Decoder>("classifier.decoder") {
 			@Override public String getError(Decoder value) {
 				if (value == null)
 					return "select a valid Decoder";

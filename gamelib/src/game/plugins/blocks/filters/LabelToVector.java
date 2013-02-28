@@ -36,8 +36,11 @@ public abstract class LabelToVector extends Filter {
 	}
 
 	@Override
-	public boolean isCompatible(DatasetTemplate template) {
-		return template.sourceTemplate.isSingletonTemplate(LabelTemplate.class);
+	public String compatibilityError(DatasetTemplate template) {
+		if (template.sourceTemplate.isSingletonTemplate(LabelTemplate.class))
+			return null;
+		else
+			return "sourceTemplate must be a singleton LabelTemplate";
 	}
 
 	@Override

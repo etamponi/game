@@ -9,7 +9,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.ios.IList;
-import com.ios.constraints.CompatibleWith;
+import com.ios.constraints.CompatibilityConstraint;
 import com.ios.triggers.MasterSlaveTrigger;
 
 public class Ensemble extends Classifier {
@@ -24,7 +24,7 @@ public class Ensemble extends Classifier {
 		
 		addTrigger(new MasterSlaveTrigger(this, "classifiers", "strategy.classifiers"));
 		addTrigger(new MasterSlaveTrigger(this, "strategy.outputTemplate", "outputTemplate"));
-		addConstraint("strategy", new CompatibleWith(getProperty("classifiers")));
+		addConstraint("strategy", new CompatibilityConstraint(getProperty("classifiers")));
 		
 		addTrigger(new MasterSlaveTrigger(this, "datasetTemplate", "classifiers.*.datasetTemplate", "strategy.datasetTemplate"));
 //		addErrorCheck("classifiers", new SizeCheck(1));
@@ -39,8 +39,8 @@ public class Ensemble extends Classifier {
 	}
 
 	@Override
-	public boolean isClassifierCompatible(DatasetTemplate template) {
-		return true;
+	public String classifierCompatibilityError(DatasetTemplate template) {
+		return null;
 	}
 
 }

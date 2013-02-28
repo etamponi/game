@@ -30,14 +30,16 @@ public class PipelineTraining extends TrainingAlgorithm<Block> {
 	}
 
 	@Override
-	public boolean isCompatible(Block block) {
-		return block instanceof Pipeline || block instanceof ClassifierPipeline;
+	public String compatibilityError(Block block) {
+		if (block instanceof Pipeline || block instanceof ClassifierPipeline)
+			return null;
+		else
+			return "compatible only with Pipeline & ClassifierPipeline";
 	}
 
 	@Override
-	protected boolean isCompatible(DatasetTemplate datasetTemplate) {
-		// Unused
-		return false;
+	protected String compatibilityError(DatasetTemplate datasetTemplate) {
+		return null;
 	}
 
 }

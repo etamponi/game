@@ -7,9 +7,9 @@ import game.core.trainingalgorithms.PipelineTraining;
 
 import java.util.List;
 
-import com.ios.ErrorCheck;
 import com.ios.IList;
 import com.ios.Property;
+import com.ios.errorchecks.PropertyCheck;
 import com.ios.listeners.SubPathListener;
 import com.ios.triggers.BoundProperties;
 import com.ios.triggers.SimpleTrigger;
@@ -32,17 +32,7 @@ public class ClassifierPipeline extends Classifier {
 				}
 			}
 		});
-		/*
-		addTrigger(new MasterSlaveTrigger<List<Block>>(this, "blocks", "decoder") {
-			@Override
-			protected void updateSlave(Property slave, List<Block> masterContent) {
-				Block last = masterContent.isEmpty() ? null : masterContent.get(masterContent.size()-1);
-				if (last instanceof Classifier) {
-					slave.setContent(last.getContent("decoder"));
-				}
-			}
-		});
-		*/
+		
 		addTrigger(new BoundProperties(this, "blocks.*.datasetTemplate"));
 		addTrigger(new SimpleTrigger(new SubPathListener(getProperty("datasetTemplate")), new SubPathListener(getProperty("blocks"))) {
 			private ClassifierPipeline self = ClassifierPipeline.this;
@@ -56,11 +46,11 @@ public class ClassifierPipeline extends Classifier {
 				}
 			}
 		});
-		addErrorCheck("blocks", new ErrorCheck<List<Block>>() {
+		addErrorCheck(new PropertyCheck<List<Block>>("blocks") {
 			@Override
-			public String getError(List<Block> value) {
+			protected String getError(List<Block> value) {
 				if (value.isEmpty())
-					return null;
+					return "must contain at least one block";
 				if (value.get(value.size()-1) instanceof Classifier)
 					return null;
 				else
@@ -84,12 +74,6 @@ public class ClassifierPipeline extends Classifier {
 	@Override
 	protected void updateOutputTemplate() {
 		setContent("outputTemplate", getContent("blocks.last.outputTemplate"));
-		/*
-		if (blocks.isEmpty() || blocks.getContent("last") == null)
-			setContent("outputTemplate", null);
-		else
-			setContent("outputTemplate", blocks.get(blocks.size()-1).outputTemplate);
-		*/
 	}
 
 	@Override
@@ -100,8 +84,8 @@ public class ClassifierPipeline extends Classifier {
 	}
 
 	@Override
-	public boolean isClassifierCompatible(DatasetTemplate template) {
-		return true;
+	public String classifierCompatibilityError(DatasetTemplate template) {
+		return null;
 	}
 
 }
