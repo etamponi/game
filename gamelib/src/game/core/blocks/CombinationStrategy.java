@@ -23,10 +23,9 @@ public abstract class CombinationStrategy extends IObject implements Compatible<
 	
 	public CombinationStrategy() {
 		addErrorCheck(new CompatibilityCheck("classifiers"));
-		addTrigger(new SimpleTrigger(new SubPathListener(getProperty("classifiers")), new SubPathListener(getProperty("datasetTemplate"))) {
-			private CombinationStrategy self = CombinationStrategy.this;
-			@Override public void action(Property changedPath) {
-				self.updateOutputTemplate();
+		addTrigger(new SimpleTrigger<CombinationStrategy>(new SubPathListener(getProperty("classifiers")), new SubPathListener(getProperty("datasetTemplate"))) {
+			@Override protected void makeAction(Property changedPath) {
+				getRoot().updateOutputTemplate();
 			}
 		});
 	}

@@ -95,9 +95,9 @@ public class MainController extends IObject implements Initializable , KryoCopya
 	public MainController() {
 		setContent("experimentList", new IList<>(Experiment.class));
 		
-		addTrigger(new SimpleTrigger(new SubPathListener(new Property(this, "experimentList"))) {
+		addTrigger(new SimpleTrigger(new SubPathListener(getProperty("experimentList"))) {
 			@Override
-			public void action(Property triggerPath) {
+			protected void makeAction(Property triggerPath) {
 				controlButtons();
 			}
 		});

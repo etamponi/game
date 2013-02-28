@@ -22,26 +22,23 @@ public class ClassifierPipeline extends Classifier {
 		setContent("blocks", new IList<>(Block.class));
 		setContent("trainingAlgorithm", new PipelineTraining());
 		
-		addTrigger(new BoundProperties(this, "decoder"));
-		addTrigger(new SimpleTrigger(new SubPathListener(getProperty("blocks"))) {
-			private ClassifierPipeline self = ClassifierPipeline.this;
-			@Override public void action(Property changedPath) {
-				Block last = self.blocks.isEmpty() ? null : self.blocks.get(self.blocks.size()-1);
+		addTrigger(new BoundProperties("decoder"));
+		addTrigger(new SimpleTrigger<ClassifierPipeline>(new SubPathListener(getProperty("blocks"))) {
+			@Override protected void makeAction(Property changedPath) {
+				Block last = getRoot().blocks.isEmpty() ? null : getRoot().blocks.get(getRoot().blocks.size()-1);
 				if (last instanceof Classifier) {
-					self.setContent("decoder", last.getContent("decoder"));
+					getRoot().setContent("decoder", last.getContent("decoder"));
 				}
 			}
 		});
 		
-		addTrigger(new BoundProperties(this, "blocks.*.datasetTemplate"));
-		addTrigger(new SimpleTrigger(new SubPathListener(getProperty("datasetTemplate")), new SubPathListener(getProperty("blocks"))) {
-			private ClassifierPipeline self = ClassifierPipeline.this;
+		addTrigger(new BoundProperties("blocks.*.datasetTemplate"));
+		addTrigger(new SimpleTrigger<ClassifierPipeline>(new SubPathListener(getProperty("datasetTemplate")), new SubPathListener(getProperty("blocks"))) {
 			private boolean listen = true;
-			@Override
-			public void action(Property changedPath) {
+			@Override protected void makeAction(Property changedPath) {
 				if (listen) {
 					listen = false;
-					self.updatePipelineTemplates();
+					getRoot().updatePipelineTemplates();
 					listen = true;
 				}
 			}

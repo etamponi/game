@@ -30,24 +30,23 @@ public abstract class Block extends IObject implements Compatible<DatasetTemplat
 	public Block() {
 		// To handle training properties
 		addTrigger(new MasterSlaveTrigger(this, "", "trainingAlgorithm.block"));
-		final Trigger t = new BoundProperties(this, "empty");
+		final Trigger t = new BoundProperties("empty");
 		addTrigger(t);
-		addTrigger(new SimpleTrigger(new SubPathListener(new Property(this, "trainingAlgorithm"))) {
-			private Block self = Block.this;
+		addTrigger(new SimpleTrigger<Block>(new SubPathListener(getProperty("trainingAlgorithm"))) {
 			private Trigger trigger = t;
 			@Override
-			public void action(Property changedPath) {
-				trigger.getBoundProperties().clear();
-				if (self.trainingAlgorithm != null) {
-					for(Object path: self.trainingAlgorithm.getTrainingProperties())
-						trigger.getBoundProperties().add(new Property(self, path.toString()));
+			protected void makeAction(Property changedPath) {
+				trigger.getBoundPaths().clear();
+				if (getRoot().trainingAlgorithm != null) {
+					for(Object path: getRoot().trainingAlgorithm.getTrainingProperties())
+						trigger.getBoundPaths().add(path.toString());
 				}
-				if (trigger.getBoundProperties().isEmpty())
-					trigger.getBoundProperties().add(new Property(self, "empty"));
+				if (trigger.getBoundPaths().isEmpty())
+					trigger.getBoundPaths().add("empty");
 				
-				for(Property linkToThis: new ArrayList<>(self.getParentsLinksToThis())) {
+				for(Property linkToThis: new ArrayList<>(getRoot().getParentsLinksToThis())) {
 					if (linkToThis.getPath().equals("block") && linkToThis.getRoot() instanceof TrainingAlgorithm)
-						if (linkToThis.getRoot() != self.trainingAlgorithm)
+						if (linkToThis.getRoot() != getRoot().trainingAlgorithm)
 							linkToThis.getRoot().detach();
 				}
 			}
@@ -55,17 +54,16 @@ public abstract class Block extends IObject implements Compatible<DatasetTemplat
 		addConstraint("trainingAlgorithm", new CompatibilityConstraint(getProperty("")));
 		setContent("trainingAlgorithm", new NoTraining());
 		
-		addTrigger(new BoundProperties(this, "outputTemplate"));
-		addTrigger(new SimpleTrigger(new SubPathListener(getProperty(""))) {
-			private Block self = Block.this;
+		addTrigger(new BoundProperties("outputTemplate"));
+		addTrigger(new Trigger<Block>() {
 			private boolean listen = true;
 			@Override public void action(Property changedPath) {
 				if (listen) {
 					listen = false;
-					if (self.datasetTemplate != null && self.compatibilityError(self.datasetTemplate) == null) {
-						self.updateOutputTemplate();
+					if (getRoot().datasetTemplate != null && getRoot().compatibilityError(getRoot().datasetTemplate) == null) {
+						getRoot().updateOutputTemplate();
 					} else {
-						self.setContent("outputTemplate", null);
+						getRoot().setContent("outputTemplate", null);
 					}
 					listen = true;
 				}

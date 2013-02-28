@@ -20,15 +20,14 @@ public class Pipeline extends Block {
 		setContent("blocks", new IList<>(Block.class));
 		setContent("trainingAlgorithm", new PipelineTraining());
 		
-		addTrigger(new BoundProperties(this, "blocks.*.datasetTemplate"));
-		addTrigger(new SimpleTrigger(new SubPathListener(getProperty("datasetTemplate")), new SubPathListener(getProperty("blocks"))) {
-			private Pipeline self = Pipeline.this;
+		addTrigger(new BoundProperties("blocks.*.datasetTemplate"));
+		addTrigger(new SimpleTrigger<Pipeline>(new SubPathListener(getProperty("datasetTemplate")), new SubPathListener(getProperty("blocks"))) {
 			private boolean listen = true;
 			@Override
-			public void action(Property changedPath) {
+			protected void makeAction(Property changedPath) {
 				if (listen) {
 					listen = false;
-					self.updatePipelineTemplates();
+					getRoot().updatePipelineTemplates();
 					listen = true;
 				}
 			}

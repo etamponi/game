@@ -47,7 +47,7 @@ public class IObjectEditor extends PropertyEditor {
 	public IObjectEditor() {
 		addTrigger(new SimpleTrigger(new SubPathListener(getProperty("root"))) {
 			@Override
-			public void action(Property changedPath) {
+			protected void makeAction(Property changedPath) {
 				updateErrorList();
 			}
 		});

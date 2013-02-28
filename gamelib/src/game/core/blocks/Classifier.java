@@ -25,16 +25,15 @@ public abstract class Classifier extends Block {
 	public Classifier() {
 		omitFromErrorCheck("decoder");
 		
-		addTrigger(new BoundProperties(this, "decoderTemplate"));
-		addTrigger(new SimpleTrigger(
+		addTrigger(new BoundProperties("decoderTemplate"));
+		addTrigger(new SimpleTrigger<Classifier>(
 				new SubPathListener(getProperty("datasetTemplate")),
 				new SubPathListener(getProperty("outputTemplate"))) {
-			private Classifier self = Classifier.this;
-			@Override public void action(Property changedPath) {
-				if (self.datasetTemplate != null && self.outputTemplate != null)
-					self.setContent("decoderTemplate", new DatasetTemplate(self.outputTemplate, self.datasetTemplate.targetTemplate));
+			@Override protected void makeAction(Property changedPath) {
+				if (getRoot().datasetTemplate != null && getRoot().outputTemplate != null)
+					getRoot().setContent("decoderTemplate", new DatasetTemplate(getRoot().outputTemplate, getRoot().datasetTemplate.targetTemplate));
 				else
-					self.setContent("decoderTemplate", null);
+					getRoot().setContent("decoderTemplate", null);
 			}
 		});
 		addTrigger(new MasterSlaveTrigger(this, "decoderTemplate", "decoder.datasetTemplate"));
