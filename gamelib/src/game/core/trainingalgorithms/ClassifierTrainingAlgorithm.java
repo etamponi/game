@@ -30,10 +30,15 @@ public abstract class ClassifierTrainingAlgorithm<C extends Classifier> extends 
 		});
 		
 		addTrigger(new MasterSlaveTrigger<Block>(this, "block", "block.decoder") {
+			private boolean listening = true;
 			@Override
 			public void updateSlave(Property slave, Block content) {
-				if (content != null)
-					content.setContent("decoder", new ProbabilityDecoder());
+				if (listening) {
+					listening = false;
+					if (content != null)
+						content.setContent("decoder", new ProbabilityDecoder());
+					listening = true;
+				}
 			}
 		});
 	}

@@ -52,7 +52,12 @@ public abstract class Block extends IObject implements Compatible<DatasetTemplat
 			}
 		});
 		addConstraint("trainingAlgorithm", new CompatibilityConstraint(getProperty("")));
+		
+		try {
 		setContent("trainingAlgorithm", new NoTraining());
+		} catch (StackOverflowError e) {
+			System.out.println("OK");
+		}
 		
 		addTrigger(new BoundProperties("outputTemplate"));
 		addTrigger(new Trigger<Block>() {
