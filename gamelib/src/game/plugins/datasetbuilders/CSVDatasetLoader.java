@@ -96,11 +96,10 @@ public class CSVDatasetLoader extends DatasetBuilder {
 				template.setContent("sourceTemplate", new ElementTemplate(new VectorTemplate(tokens.length-1)));
 				
 				List<String> labels = new ArrayList<>();
+				if (hasHeader) {
+					line = reader.readLine();
+				}
 				do {
-					if (hasHeader) {
-						line = reader.readLine();
-						continue;
-					}
 					tokens = line.split(separators);
 					if (!labels.contains(tokens[tokens.length-1]))
 						labels.add(tokens[tokens.length-1]);

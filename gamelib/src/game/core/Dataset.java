@@ -19,6 +19,7 @@ import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 import java.util.ListIterator;
+import java.util.Random;
 
 import com.esotericsoftware.kryo.Kryo;
 import com.esotericsoftware.kryo.io.Input;
@@ -53,6 +54,11 @@ public class Dataset implements List<Instance> {
 	private final List<Instance> internal = new ArrayList<>();
 	private final DatasetTemplate template;
 
+	public Dataset(Dataset other) {
+		this.template = other.template.copy();
+		this.internal.addAll(other.internal);
+	}
+	
 	public Dataset(DatasetTemplate template) {
 		this.template = template;
 	}
@@ -174,9 +180,12 @@ public class Dataset implements List<Instance> {
 	}
 	
 	public Dataset getRandomSubset(double percent) {
-		assert(percent > 0 && percent <= 1);
+		return getRandomSubset(percent, Experiment.getRandom());
+	}
+	
+	public Dataset getRandomSubset(double percent, Random random) {
 		List<Integer> temp = Utils.range(0, size());
-		Collections.shuffle(temp, Experiment.getRandom());
+		Collections.shuffle(temp, random);
 		
 		Dataset ret = new Dataset(template);
 		
@@ -330,6 +339,14 @@ public class Dataset implements List<Instance> {
 			ret.add(outInst);
 		}
 		
+		return ret;
+	}
+
+	public List<Sample> toSampleList() {
+		List<Sample> ret = new ArrayList<>();
+		SampleIterator it = sampleIterator();
+		while(it.hasNext())
+			ret.add(it.next());
 		return ret;
 	}
 	

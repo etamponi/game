@@ -156,7 +156,7 @@ public class Utils {
 		return max;
 	}
 
-	public static String printMatrix(RealMatrix matrix) {
+	public static String matrixToString(RealMatrix matrix) {
 		StringBuilder ret = new StringBuilder();
 		
 		for(int i = 0; i < matrix.getRowDimension(); i++) {

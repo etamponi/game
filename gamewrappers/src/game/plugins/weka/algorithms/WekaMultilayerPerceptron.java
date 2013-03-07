@@ -10,9 +10,7 @@
  ******************************************************************************/
 package game.plugins.weka.algorithms;
 
-import game.core.Block;
 import game.core.Dataset;
-import game.plugins.weka.classifiers.WekaClassifier;
 import weka.classifiers.functions.MultilayerPerceptron;
 import weka.core.Instances;
 
@@ -33,11 +31,6 @@ public class WekaMultilayerPerceptron extends WekaTrainingAlgorithm {
 	public boolean showGUI = false;
 
 	@Override
-	public boolean isCompatible(Block object) {
-		return object instanceof WekaClassifier;
-	}
-
-	@Override
 	protected weka.classifiers.Classifier setupInternal(Dataset dataset, Instances instances) {
 		MultilayerPerceptron nn = new MultilayerPerceptron();
 
@@ -51,11 +44,6 @@ public class WekaMultilayerPerceptron extends WekaTrainingAlgorithm {
 		nn.setGUI(showGUI);
 		
 		return nn;
-	}
-
-	@Override
-	public String getManagedPropertyNames() {
-		return "internal";
 	}
 
 }

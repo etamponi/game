@@ -11,6 +11,7 @@ import com.ios.Property;
 import com.ios.Trigger;
 import com.ios.constraints.CompatibilityConstraint;
 import com.ios.errorchecks.CompatibilityCheck;
+import com.ios.errorchecks.NotNullCheck;
 import com.ios.listeners.SubPathListener;
 import com.ios.triggers.BoundProperties;
 import com.ios.triggers.MasterSlaveTrigger;
@@ -53,11 +54,7 @@ public abstract class Block extends IObject implements Compatible<DatasetTemplat
 		});
 		addConstraint("trainingAlgorithm", new CompatibilityConstraint(getProperty("")));
 		
-		try {
 		setContent("trainingAlgorithm", new NoTraining());
-		} catch (StackOverflowError e) {
-			System.out.println("OK");
-		}
 		
 		addTrigger(new BoundProperties("outputTemplate"));
 		addTrigger(new Trigger<Block>() {
@@ -76,6 +73,7 @@ public abstract class Block extends IObject implements Compatible<DatasetTemplat
 		});
 
 		addErrorCheck(new CompatibilityCheck("datasetTemplate"));
+		addErrorCheck(new NotNullCheck("outputTemplate"));
 	}
 
 	public abstract Data transform(Data input);

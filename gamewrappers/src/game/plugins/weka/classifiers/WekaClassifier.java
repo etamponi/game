@@ -10,15 +10,17 @@
  ******************************************************************************/
 package game.plugins.weka.classifiers;
 
-import game.core.Encoding;
-import game.core.InstanceTemplate;
+import game.core.Data;
+import game.core.DatasetTemplate;
+import game.core.Element;
 import game.core.blocks.Classifier;
-import game.plugins.datatemplates.LabelTemplate;
-import game.plugins.encoders.OneHotEncoder;
+import game.plugins.valuetemplates.VectorTemplate;
+
+import org.apache.commons.math3.linear.ArrayRealVector;
+import org.apache.commons.math3.linear.RealVector;
+
 import weka.core.Instance;
 import weka.core.Instances;
-
-import com.ios.triggers.BoundProperties;
 
 public class WekaClassifier extends Classifier {
 	
@@ -26,34 +28,26 @@ public class WekaClassifier extends Classifier {
 	
 	public weka.classifiers.Classifier internal;
 
-	public WekaClassifier() {
-		setContent("outputEncoder", new OneHotEncoder());
-		addTrigger(new BoundProperties(this, "outputEncoder"));
-	}
-
 	@Override
-	public boolean isCompatible(InstanceTemplate template) {
-		return template.outputTemplate instanceof LabelTemplate;
-	}
-
-	@Override
-	protected Encoding classify(Encoding inputEncoded) {
-		Encoding ret = new Encoding(getFeatureNumber(), inputEncoded.length());
-		for(int j = 0; j < ret.length(); j++) {
-			Instance i = new Instance(1.0, inputEncoded.getElement(j).toArray());
+	public Data classify(Data input) {
+		Data ret = new Data();
+		
+		for(Element e: input) {
+			Instance i = new Instance(1.0, e.get(RealVector.class).toArray());
 			i.setDataset(dataset);
 			try {
-				ret.setColumn(j, internal.distributionForInstance(i));
-			} catch (Exception e) {
-				e.printStackTrace();
+				ret.add(new Element(new ArrayRealVector(internal.distributionForInstance(i))));
+			} catch (Exception ex) {
+				ex.printStackTrace();
 			}
 		}
+		
 		return ret;
 	}
 
 	@Override
-	public FeatureType getFeatureType(int featureIndex) {
-		return FeatureType.NUMERIC;
+	public String classifierCompatibilityError(DatasetTemplate template) {
+		return template.sourceTemplate.isSingletonTemplate(VectorTemplate.class) ? null : "can only handle singleton VectorTemplate";
 	}
 
 }
