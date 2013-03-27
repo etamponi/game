@@ -43,8 +43,12 @@ public class VectorTemplate extends ValueTemplate<RealVector> {
 	public RealVector loadValue(List<String> description) {
 		RealVector ret = new ArrayRealVector(dimension);
 		int i = 0;
+		try {
 		for(String s: description)
 			ret.setEntry(i++, Double.parseDouble(s));
+		}catch(Exception e) {
+			System.out.println("oh");
+		}
 		return ret;
 	}
 

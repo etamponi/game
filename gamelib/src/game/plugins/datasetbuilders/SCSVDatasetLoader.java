@@ -34,7 +34,7 @@ public class SCSVDatasetLoader extends DatasetBuilder {
 	public SCSVDatasetLoader() {
 		addTrigger(new MasterSlaveTrigger(this, "", "datasetTemplate.sequences") {
 			@Override protected void updateSlave(Property slave, Object content) {
-				slave.setContent(false);
+				slave.setContent(true);
 			}
 		});
 		addErrorCheck(new FileExistsCheck("file"));

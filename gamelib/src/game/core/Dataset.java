@@ -19,7 +19,6 @@ import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 import java.util.ListIterator;
-import java.util.Random;
 
 import com.esotericsoftware.kryo.Kryo;
 import com.esotericsoftware.kryo.io.Input;
@@ -180,12 +179,8 @@ public class Dataset implements List<Instance> {
 	}
 	
 	public Dataset getRandomSubset(double percent) {
-		return getRandomSubset(percent, Experiment.getRandom());
-	}
-	
-	public Dataset getRandomSubset(double percent, Random random) {
 		List<Integer> temp = Utils.range(0, size());
-		Collections.shuffle(temp, random);
+		Collections.shuffle(temp, Experiment.getRandom());
 		
 		Dataset ret = new Dataset(template);
 		

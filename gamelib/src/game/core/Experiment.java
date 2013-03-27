@@ -28,8 +28,9 @@ public abstract class Experiment<R extends Result> extends LongTask<ResultList<R
 	public DatasetBuilder datasetBuilder;
 	
 	public static Random getRandom() {
-		if (generator == null)
-			return new Random(); // We are not inside an experiment, return an arbitrary random
+		if (generator == null) {
+			generator = new Random(0);
+		}
 		return generator;
 	}
 	

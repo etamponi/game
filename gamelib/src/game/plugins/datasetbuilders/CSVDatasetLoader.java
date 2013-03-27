@@ -35,7 +35,7 @@ public class CSVDatasetLoader extends DatasetBuilder {
 	
 	public File file = new File("nonexistent.txt");
 	
-	public String separators = "[, +]";
+	public String separators = ", *";
 	
 	public boolean hasHeader = false;
 	
@@ -71,7 +71,13 @@ public class CSVDatasetLoader extends DatasetBuilder {
 					}
 					
 					Data source = new Data();
-					source.add(datasetTemplate.sourceTemplate.loadElement(Arrays.asList(Arrays.copyOfRange(tokens, 0, sourceDim))));
+					try {
+						source.add(datasetTemplate.sourceTemplate.loadElement(Arrays.asList(Arrays.copyOfRange(tokens, 0, sourceDim))));
+					} catch (Exception ex) {
+						System.out.println(line);
+						reader.close();
+						throw ex;
+					}
 					Data target = new Data();
 					target.add(datasetTemplate.targetTemplate.loadElement(Arrays.asList(Arrays.copyOfRange(tokens, sourceDim, tokens.length))));
 					ret.add(new Instance(source, target));
